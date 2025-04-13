@@ -167,15 +167,12 @@ impl<T: StringKind> DLString<T> {
         }
         let mut string = Self::new(allocator);
 
-        string.base.length = other.base.length;
-
         if other.is_inlined() {
             unsafe {
                 let slice = other.get_inline_data();
                 string.copy_inlined(slice, other.base.length)?
             };
         } else {
-            string.base.capacity = other.base.capacity;
             let source = other.get_pointer_data();
             unsafe { string.copy_allocated(source, other.base.length)? };
         }
@@ -636,8 +633,18 @@ mod tests {
         assert!(!long_string.is_inlined());
         assert_eq!(long_string.as_string(), long_text);
 
+        assert_eq!(long_string.base.length, long_text.chars().count());
+        assert_eq!(long_string.base.capacity, long_text.chars().count());
+
         let long_copy = DLString::copy(&allocator, &long_string).unwrap();
         assert_eq!(long_copy.as_string(), long_text);
         assert!(!long_copy.is_inlined());
+
+        assert_eq!(long_copy.base.length, long_text.chars().count());
+        assert_eq!(long_copy.base.capacity, long_text.chars().count());
+        assert_ne!(
+            unsafe { long_string.base.inner.pointer.unwrap().as_ptr() },
+            unsafe { long_copy.base.inner.pointer.unwrap().as_ptr() }
+        );
     }
 }
