@@ -5,7 +5,7 @@ use windows::Win32::Foundation::FILETIME;
 use crate::{
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
-    dltx::{DLCodedString, DLInplaceStr},
+    dltx::{DLCodedString, DLInplaceStr, DLUTF16StringKind},
     fd4::FD4Time,
     DoublyLinkedList, Vector,
 };
@@ -182,7 +182,7 @@ pub struct SessionManagerPlayerEntryBase {
     internal_thread_steam_connection: usize,
     internal_thread_steam_socket: usize,
     pub steam_id: u64,
-    pub steam_name: DLInplaceStr<1, 64>,
+    pub steam_name: DLInplaceStr<DLUTF16StringKind, 64>,
     connection_ref_info: usize,
     voice_chat_member_ref_info: usize,
 }

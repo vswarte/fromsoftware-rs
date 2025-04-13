@@ -9,7 +9,7 @@ use vtable_rs::VPtr;
 use crate::{
     dlio::DLIOResult,
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
-    dltx::{DLBasicString, DLString},
+    dltx::DLString,
     dlut::DLDateTime,
     Vector,
 };
@@ -75,14 +75,14 @@ pub trait DLFileEnumeratorSPIVmt {
     /// Starts a search using the given search parameter. Writes a handle to search_handle that
     /// can be passed to the rest of the methods. Also writes the first found path to the
     /// found parameter. No results have been found if the found output parameter is empty.
-    fn start_search(&mut self, search: &[u16], search_handle: &mut u64, found: &mut DLBasicString);
+    fn start_search(&mut self, search: &[u16], search_handle: &mut u64, found: &mut DLString);
 
     /// Stops a search using the search_handle.
     fn close_search(&self, search_handle: &u64);
 
     /// Attempts to find the next file that matches the search specified when creating the
     /// search_handle. If found is empty after calling no further results have been found.
-    fn search_next(&mut self, search_handle: &mut u64, found: &mut DLBasicString);
+    fn search_next(&mut self, search_handle: &mut u64, found: &mut DLString);
 }
 
 /// Represents a remote file abstracting away the storage.
@@ -278,8 +278,7 @@ where
             owning_operator_container: NonNull::from(operator_container),
             io_state: DLFileOperatorIOState::default(),
             owning_file_device: NonNull::from(file_device),
-            // TODO: Implement DLString copy constructor
-            path: DLString::default(),
+            path: DLString::copy(allocator, path).expect("Failed to copy DLString"),
         }
     }
 }

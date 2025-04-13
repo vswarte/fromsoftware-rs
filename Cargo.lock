@@ -291,6 +291,7 @@ name = "eldenring"
 version = "0.8.0"
 dependencies = [
  "bitfield",
+ "encoding_rs",
  "fromsoftware-dlrf",
  "fromsoftware-shared",
  "nalgebra",
@@ -320,6 +321,15 @@ dependencies = [
  "undname",
  "vtable-rs",
  "windows 0.54.0",
+]
+
+[[package]]
+name = "encoding_rs"
+version = "0.8.35"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "75030f3c4f45dafd7586dd6780965a8c7e8e285a5ecb86713e63a79c5b2766f3"
+dependencies = [
+ "cfg-if",
 ]
 
 [[package]]

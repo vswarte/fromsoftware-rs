@@ -21,6 +21,7 @@ pelite.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
 bitfield.workspace = true
+encoding_rs.workspace = true
 
 [build-dependencies]
 serde_derive = "1"
