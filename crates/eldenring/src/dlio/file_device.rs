@@ -423,6 +423,9 @@ where
         self.base.io_state.0 &= 0xfffffff9;
         self.base.io_state.0 |= ((((param_4 as u32 & 1) * 2) | (param_3 as u32 & 1)) * 2);
 
+        self.base.path = DLString::copy(unsafe { self.base.allocator.as_ref() }, path)
+            .expect("Failed to copy DLString");
+
         true
     }
 
