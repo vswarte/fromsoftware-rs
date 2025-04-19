@@ -250,9 +250,12 @@ impl<T: StringKind> DLString<T> {
     }
 
     fn get_pointer_data(&self) -> &[u8] {
+        let Some(ptr) = (unsafe { self.base.inner.pointer }) else {
+            return &[];
+        };
         unsafe {
             std::slice::from_raw_parts(
-                self.base.inner.pointer.unwrap().as_ptr() as *const u8,
+                ptr.as_ptr() as *const u8,
                 self.base.length * mem::size_of::<T::CharType>(),
             )
         }
@@ -283,10 +286,13 @@ impl<T: StringKind> DLString<T> {
             self.base.inner.pointer = NonNull::new(allocation);
         }
 
-        let dest_ptr = self.base.inner.pointer.unwrap().as_ptr();
+        let Some(dest_ptr) = self.base.inner.pointer else {
+            return Err("Null pointer in copy_allocated");
+        };
+
         let byte_length = length * mem::size_of::<T::CharType>();
 
-        std::ptr::copy_nonoverlapping(source.as_ptr(), dest_ptr as *mut u8, byte_length);
+        std::ptr::copy_nonoverlapping(source.as_ptr(), dest_ptr.as_ptr() as *mut u8, byte_length);
 
         self.base.length = length;
         self.null_terminate(length);
@@ -297,9 +303,8 @@ impl<T: StringKind> DLString<T> {
         if self.is_inlined() {
             let ptr = &mut self.base.inner.inline as *mut T::InlineType as *mut T::CharType;
             *ptr.add(length) = T::CharType::default();
-        } else {
-            let ptr = self.base.inner.pointer.unwrap().as_ptr();
-            *ptr.add(length) = T::CharType::default();
+        } else if let Some(ptr) = self.base.inner.pointer {
+            *ptr.as_ptr().add(length) = T::CharType::default();
         }
     }
 
@@ -344,6 +349,7 @@ impl<T: StringKind> DLString<T> {
 
             self.deallocate();
         }
+
         self.base.inner.pointer = NonNull::new(allocation);
         self.base.capacity = new_length;
 
