@@ -201,6 +201,31 @@ impl<T: StringKind> DLString<T> {
         Ok(string)
     }
 
+    pub fn set_string(&mut self, s: &str) -> Result<(), Box<dyn Error>> {
+        if s.is_empty() {
+            unsafe { self.deallocate() };
+            self.base.length = 0;
+            return Ok(());
+        }
+
+        let encoded = T::from_utf8(s)?;
+        let char_count = encoded.len() / mem::size_of::<T::CharType>();
+
+        unsafe {
+            if char_count <= T::DEFAULT_CAPACITY {
+                if !self.is_inlined() {
+                    self.deallocate();
+                    self.base.capacity = T::DEFAULT_CAPACITY;
+                }
+                self.copy_inlined(&encoded, char_count)?;
+            } else {
+                self.copy_allocated(&encoded, char_count)?;
+            }
+        }
+
+        Ok(())
+    }
+
     pub fn as_string(&self) -> String {
         if self.is_empty() {
             return String::new();
@@ -646,5 +671,31 @@ mod tests {
             unsafe { long_string.base.inner.pointer.unwrap().as_ptr() },
             unsafe { long_copy.base.inner.pointer.unwrap().as_ptr() }
         );
+    }
+
+    #[test]
+    fn test_set_string() {
+        let allocator = RustDLAllocator::default();
+        let mut dl_string = DLString::<DLUTF16StringKind>::new(&allocator);
+        dl_string.set_string("Hello").unwrap();
+        assert_eq!(dl_string.as_string(), "Hello");
+        assert_eq!(dl_string.base.length, 5);
+
+        dl_string.set_string("World").unwrap();
+        assert_eq!(dl_string.as_string(), "World");
+        assert_eq!(dl_string.base.length, 5);
+
+        dl_string.set_string("").unwrap();
+        assert!(dl_string.is_empty());
+
+        dl_string
+            .set_string("long string requiring allocation")
+            .unwrap();
+        assert_eq!(dl_string.as_string(), "long string requiring allocation");
+        assert_eq!(dl_string.base.length, 32);
+
+        dl_string.set_string("short").unwrap();
+        assert_eq!(dl_string.as_string(), "short");
+        assert_eq!(dl_string.base.length, 5);
     }
 }
