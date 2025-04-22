@@ -9,14 +9,13 @@ use crate::dltx::DLString;
 /// Source of name: RTTI
 pub struct FD4BasicHashString {
     vftable: usize,
-    allocator: usize,
     /// The contained string we're hashing for.
-    inner: DLString,
+    pub inner: DLString,
     /// Hashed representation of the string field.
     pub hash: u32,
     /// Indicates whether or not the hash field is populated.
     pub needs_hashing: u8,
-    _pad35: [u8; 0xB],
+    _pad3d: [u8; 0x3],
 }
 
 impl AsRef<DLString> for FD4BasicHashString {
