@@ -8,6 +8,7 @@ pub(crate) mod camera;
 pub(crate) mod chr;
 pub(crate) mod dlio;
 pub(crate) mod event_flag;
+pub(crate) mod event_man;
 pub(crate) mod fade;
 pub(crate) mod fe_man;
 pub(crate) mod field_area;
