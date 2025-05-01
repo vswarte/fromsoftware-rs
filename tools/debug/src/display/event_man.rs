@@ -46,7 +46,7 @@ impl DebugDisplay for CSSosSignMan {
         if ui.collapsing_header("Summon Requests", TreeNodeFlags::empty()) {
             ui.indent();
             self.summon_requests.iter().for_each(|entry| {
-                ui.text(format!("Summon Request ID: {}", entry));
+                ui.text(format!("Summon Request ID: {entry}"));
             });
             ui.unindent();
         }
@@ -77,7 +77,7 @@ impl DebugDisplay for CSSosSignMan {
                 .iter()
                 .enumerate()
                 .for_each(|(i, t)| {
-                    ui.text(format!("Cooldown {}: {:.2}s", i, t));
+                    ui.text(format!("Cooldown {i}: {t:.2}s"));
                 });
             ui.unindent();
         }
@@ -171,7 +171,10 @@ impl DebugDisplay for SosSignData {
         ));
         ui.text(format!("Multiplay Type: {:?}", self.multiplay_type));
         ui.text(format!("Is Sign Puddle: {}", self.is_sign_puddle));
-        ui.text(format!("Steam ID: {}", self.steam_id));
+        ui.text(format!(
+            "Steam ID: {}",
+            self.steam_id.to_u64().unwrap_or_default()
+        ));
         ui.text(format!("FMG Name ID: {}", self.fmg_name_id));
         ui.text(format!("NPC Param ID: {}", self.npc_param_id));
         if ui.collapsing_header("Display Ghost Data", TreeNodeFlags::empty()) {
@@ -258,7 +261,10 @@ impl DebugDisplay for PhantomJoinData {
         ui.text(format!("Multiplay Type: {:?}", self.multiplay_type));
         ui.text(format!("Is Sign Puddle: {}", self.is_sign_puddle));
         ui.text(format!("State: {}", self.state));
-        ui.text(format!("Steam ID: {}", self.steam_id));
+        ui.text(format!(
+            "Steam ID: {}",
+            self.steam_id.to_u64().unwrap_or_default()
+        ));
         ui.text(format!("NPC Entity ID: {}", self.npc_entity_id));
         ui.text(format!(
             "Summon Event Flag ID: {}",

@@ -11,6 +11,7 @@ use shared::FSVector3;
 use shared::OwnedPtr;
 
 #[repr(C)]
+/// Source of name: RTTI
 pub struct CSSosSignMan {
     vftable: usize,
     /// Tree of the sign entries
@@ -30,7 +31,7 @@ pub struct CSSosSignMan {
     timer: FD4Time,
     /// Param ID for WhiteSignCoolTimeParam, incremented with each level and capped at 10
     pub white_sign_cool_time_param_id: u8,
-    // pada9: [u8; 3],
+    // _pada9: [u8; 3],
     unkac: u32,
     /// Vector of sign cooldowns from WhiteSignCoolTimeParam
     /// Each time your coop player dies and you have someone in your world
@@ -40,45 +41,45 @@ pub struct CSSosSignMan {
     /// Leftover from Dark Souls 3, never set to true or changed
     /// Source of names: Sekiro debug menu
     pub override_guardian_of_rosalia_count_enabled: bool,
-    // padd1: [u8; 3],
+    // _padd1: [u8; 3],
     pub override_guardian_of_rosalia_count: u32,
     pub override_map_guardian_count_enabled: bool,
-    // padd9: [u8; 3],
+    // _padd9: [u8; 3],
     pub override_map_guardian_count: u32,
     pub override_force_join_black_count_enabled: bool,
-    // pade1: [u8; 3],
+    // _pade1: [u8; 3],
     pub override_force_join_black_count: u32,
     pub override_sinner_hunter_count_enabled: bool,
-    // pade9: [u8; 3],
+    // _pade9: [u8; 3],
     pub override_sinner_hunter_count: u32,
     pub override_berserker_white_count_enabled: bool,
-    // padf1: [u8; 3],
+    // _padf1: [u8; 3],
     pub override_berserker_white_count: u32,
     pub override_sinner_hero_count_enabled: bool,
-    // padf9: [u8; 3],
+    // _padf9: [u8; 3],
     pub override_sinner_hero_count: u32,
     pub override_cult_white_summon_count_enabled: bool,
-    // pad101: [u8; 3],
+    // _pad101: [u8; 3],
     pub override_cult_white_summon_count: u32,
     pub override_normal_white_count_enabled: bool,
-    // pad109: [u8; 3],
+    // _pad109: [u8; 3],
     pub override_normal_white_count: u32,
     pub override_red_summon_type_count_enabled: bool,
-    // pad111: [u8; 3],
+    // _pad111: [u8; 3],
     pub override_red_summon_type_count: u32,
 }
 
 #[repr(C)]
 pub struct SignTreeEntry {
     pub sign_id: i32,
-    // pad4: u32,
+    // _pad4: u32,
     pub sign_data: OwnedPtr<SosSignData>,
 }
 
 #[repr(C)]
 pub struct CSSosSignSfx {
     pub sign_id: i32,
-    // pad4: u32,
+    // _pad4: u32,
     fxhgsfx: usize,
 }
 
@@ -244,13 +245,7 @@ impl SteamIdStr {
 
 impl From<SteamIdStr> for u64 {
     fn from(val: SteamIdStr) -> Self {
-        val.to_u64().unwrap_or(0)
-    }
-}
-
-impl std::fmt::Display for SteamIdStr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_u64().unwrap_or(0))
+        val.to_u64().unwrap_or_default()
     }
 }
 
