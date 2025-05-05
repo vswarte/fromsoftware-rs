@@ -4,7 +4,7 @@ use thiserror::Error;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct ItemId(i32);
+pub struct ItemId(pub i32);
 
 #[derive(Debug, Error)]
 pub enum ItemIdError {
@@ -43,19 +43,30 @@ impl ItemId {
     }
 
     pub const fn item_id(&self) -> i32 {
-        if self.0 < 0 {
+        if self.0 == -1 {
             return -1;
         }
         self.0 & 0x0FFFFFFF
     }
 
     pub const fn category(&self) -> Result<ItemCategory, ItemIdError> {
-        ItemCategory::from_i8(&((self.0 >> 28) as i8))
+        ItemCategory::from_i8(&((self.0 as u32 >> 28) as i8))
     }
 }
 
 impl From<i32> for ItemId {
     fn from(value: i32) -> Self {
         Self(value)
+    }
+}
+
+impl Display for ItemId {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self.category() {
+            Ok(category) => {
+                write!(f, "ItemId({},{:?})", self.item_id(), category)
+            }
+            Err(err) => write!(f, "ItemId(0x{:x},{:?})", self.0, err),
+        }
     }
 }
