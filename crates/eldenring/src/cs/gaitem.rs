@@ -156,7 +156,7 @@ impl Display for GaitemHandle {
                     self.selector(),
                     category
                 ),
-                false => write!(f, "GaitemHandle(-1,0x{:x},{:?})", self.0, category),
+                false => write!(f, "GaitemHandle(-1,{},{:?})", self.selector(), category),
             },
             Err(err) => write!(f, "GaitemHandle(0x{:x},{:?})", self.0, err),
         }
