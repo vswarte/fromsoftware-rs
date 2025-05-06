@@ -164,6 +164,7 @@ impl DebugDisplay for SosSignData {
         ui.text(format!("Map ID: {}", self.map_id));
         ui.text(format!("Position: {:?}", self.pos));
         ui.text(format!("Yaw: {}", self.yaw));
+        ui.text(format!("Play region: {}", self.play_region_id));
         ui.text(format!("Vow Type: {}", self.vow_type));
         ui.text(format!(
             "Apply Multiplayer Rules: {}",
