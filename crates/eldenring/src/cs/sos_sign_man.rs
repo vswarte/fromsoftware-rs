@@ -113,7 +113,8 @@ pub struct SosSignData {
     pub pos: FSVector3,
     /// Rotation of the sign
     pub yaw: f32,
-    unk24: [u8; 6],
+    pub play_region_id: u32,
+    unk26: [u8; 0x2],
     /// Covenant level of the sign owner
     pub vow_type: u8,
     unk2b: [u8; 3],
