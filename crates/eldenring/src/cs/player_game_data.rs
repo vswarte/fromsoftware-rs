@@ -258,31 +258,46 @@ pub struct EquipGameData {
 }
 
 #[repr(C)]
+pub struct InventoryItemList {
+    pub capacity: u32,
+    pub item_head: OwnedPtr<EquipInventoryDataListEntry>,
+    pub item_count: u32,
+}
+
+#[repr(C)]
+pub struct InventoryItemListAccessor {
+    pub head: NonNull<EquipInventoryDataListEntry>,
+    pub count: NonNull<u32>,
+}
+
+#[repr(C)]
 pub struct InventoryItemsData {
     /// How many items can one hold in total?
     pub global_capacity: u32,
 
     /// Holds ordinary items.
-    pub normal_item_capacity: u32,
-    normal_item_head: OwnedPtr<EquipInventoryDataListEntry>,
-    pub normal_item_count: u32,
-
+    pub normal_items: InventoryItemList,
     /// Holds key items.
-    pub key_item_capacity: u32,
-    key_item_head: OwnedPtr<EquipInventoryDataListEntry>,
-    pub key_item_count: u32,
-
-    /// Holds key items as well?
-    pub secondary_key_item_capacity: u32,
-    secondary_key_item_head: OwnedPtr<EquipInventoryDataListEntry>,
-    pub secondary_key_item_count: u32,
+    pub key_items: InventoryItemList,
+    /// Holds key items, that are available in multiplayer.
+    ///
+    /// Unless new key items are somehow obtained in multiplayer, this only contains
+    /// copies of the items from `key_items` that have `REGENERATIVE_MATERIAL`
+    /// and `WONDROUS_PHYSICK_TEAR` types (pots and wondrous physic tears).
+    pub multiplay_key_items: InventoryItemList,
 
     _pad3c: u32,
-
-    normal_item_head_ptr: NonNull<EquipInventoryDataListEntry>,
-    normal_item_count_ptr: NonNull<u32>,
-    key_item_head_ptr: NonNull<EquipInventoryDataListEntry>,
-    key_item_count_ptr: NonNull<u32>,
+    /// Pointers to the active normal item list and its count, all inventory reads and writes in the game
+    /// will go through this.
+    ///
+    /// Compared to `key_items_accessor`, this is always the same as `normal_items`.
+    pub normal_items_accessor: InventoryItemListAccessor,
+    /// Pointers to the active key item list and its count, all inventory reads and writes in the game
+    /// will go through this.
+    ///
+    /// In single-player, this typically points to `key_items`.
+    /// In multiplayer, it switches to `multiplay_key_items`.
+    pub key_items_accessor: InventoryItemListAccessor,
 
     /// Contains the indices into the item ID mapping list.
     item_id_mapping_indices: OwnedPtr<[u16; 2017]>,
@@ -330,59 +345,6 @@ impl ItemIdMapping {
     /// capacity to get the index for the normal items list.
     pub fn item_slot(&self) -> u32 {
         self.bits4 & 0xFFF
-    }
-}
-
-impl InventoryItemsData {
-    pub fn normal_items(&self) -> &[EquipInventoryDataListEntry] {
-        unsafe {
-            std::slice::from_raw_parts(
-                self.normal_item_head.as_ptr(),
-                self.normal_item_count as usize,
-            )
-        }
-    }
-
-    pub fn normal_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
-        unsafe {
-            std::slice::from_raw_parts_mut(
-                self.normal_item_head.as_ptr(),
-                self.normal_item_count as usize,
-            )
-        }
-    }
-
-    pub fn key_items(&self) -> &[EquipInventoryDataListEntry] {
-        unsafe {
-            std::slice::from_raw_parts(self.key_item_head.as_ptr(), self.key_item_count as usize)
-        }
-    }
-
-    pub fn key_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
-        unsafe {
-            std::slice::from_raw_parts_mut(
-                self.key_item_head.as_ptr(),
-                self.key_item_count as usize,
-            )
-        }
-    }
-
-    pub fn secondary_key_items(&self) -> &[EquipInventoryDataListEntry] {
-        unsafe {
-            std::slice::from_raw_parts(
-                self.secondary_key_item_head.as_ptr(),
-                self.secondary_key_item_count as usize,
-            )
-        }
-    }
-
-    pub fn secondary_key_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
-        unsafe {
-            std::slice::from_raw_parts_mut(
-                self.secondary_key_item_head.as_ptr(),
-                self.secondary_key_item_count as usize,
-            )
-        }
     }
 }
 
