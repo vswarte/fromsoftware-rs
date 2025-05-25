@@ -264,6 +264,20 @@ pub struct InventoryItemList {
     pub item_count: u32,
 }
 
+impl InventoryItemList {
+    pub fn is_full(&self) -> bool {
+        self.item_count >= self.capacity
+    }
+
+    pub fn items(&self) -> &[EquipInventoryDataListEntry] {
+        unsafe { std::slice::from_raw_parts(self.item_head.as_ptr(), self.item_count as usize) }
+    }
+
+    pub fn items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+        unsafe { std::slice::from_raw_parts_mut(self.item_head.as_ptr(), self.item_count as usize) }
+    }
+}
+
 #[repr(C)]
 pub struct InventoryItemListAccessor {
     pub head: NonNull<EquipInventoryDataListEntry>,
