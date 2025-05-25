@@ -243,7 +243,6 @@ pub struct EquipGameData {
     unk60: usize,
     unk68: u32,
     pub chr_asm: ChrAsm,
-    _pad154: u32,
     pub equip_inventory_data: EquipInventoryData,
     pub equip_magic_data: OwnedPtr<EquipMagicData>,
     pub equip_item_data: EquipItemData,
@@ -536,5 +535,6 @@ pub struct ChrAsm {
     pub equipment_param_ids: [i32; 22],
     unkd4: u32,
     unkd8: u32,
-    _paddc: [u8; 12],
+    unkdc: [u8; 0xc],
+    unke8: [u8; 0x4],
 }
