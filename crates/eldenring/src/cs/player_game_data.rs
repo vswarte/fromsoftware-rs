@@ -96,8 +96,7 @@ pub struct PlayerGameData {
     group_password_4: [u16; 0x8],
     unk170: u16,
     group_password_5: [u16; 0x8],
-    unk182: u16,
-    unk184: [u8; 0x34],
+    unk182: [u8; 0x36],
     pub sp_effects: [PlayerGameDataSpEffect; 0xD],
     /// Level after any buffs and corrections
     pub effective_vigor: u32,
@@ -257,7 +256,7 @@ pub struct EquipGameData {
     unk3f8: [u8; 0xb8],
 }
 
-#[repr(C)]
+#[repr(C, packed)]
 pub struct InventoryItemList {
     pub capacity: u32,
     pub item_head: OwnedPtr<EquipInventoryDataListEntry>,
