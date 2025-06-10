@@ -384,7 +384,7 @@ impl DebugDisplay for EquipInventoryData {
 
         let label = format!(
             "Normal Items ({}/{})",
-            self.items_data.normal_items.item_count, self.items_data.normal_items.capacity
+            self.items_data.normal_items_count, self.items_data.normal_items_capacity
         );
         if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
             ui.indent();
@@ -400,8 +400,7 @@ impl DebugDisplay for EquipInventoryData {
                 TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
             ) {
                 self.items_data
-                    .normal_items
-                    .items()
+                    .normal_items()
                     .iter()
                     .enumerate()
                     .for_each(|(index, item)| {
@@ -426,7 +425,7 @@ impl DebugDisplay for EquipInventoryData {
 
         let label = format!(
             "Key Items ({}/{})",
-            self.items_data.key_items.item_count, self.items_data.key_items.capacity
+            self.items_data.key_items_count, self.items_data.key_items_capacity
         );
         if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
             ui.indent();
@@ -442,8 +441,7 @@ impl DebugDisplay for EquipInventoryData {
                 TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
             ) {
                 self.items_data
-                    .key_items
-                    .items()
+                    .key_items()
                     .iter()
                     .enumerate()
                     .for_each(|(index, item)| {
@@ -468,8 +466,7 @@ impl DebugDisplay for EquipInventoryData {
 
         let label = format!(
             "Multiplay Key Items ({}/{})",
-            self.items_data.multiplay_key_items.item_count,
-            self.items_data.multiplay_key_items.capacity
+            self.items_data.multiplay_key_items_count, self.items_data.multiplay_key_items_capacity
         );
         if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
             ui.indent();
@@ -485,8 +482,7 @@ impl DebugDisplay for EquipInventoryData {
                 TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
             ) {
                 self.items_data
-                    .multiplay_key_items
-                    .items()
+                    .multiplay_key_items()
                     .iter()
                     .enumerate()
                     .for_each(|(index, item)| {
