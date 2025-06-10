@@ -256,27 +256,6 @@ pub struct EquipGameData {
     unk3f8: [u8; 0xb8],
 }
 
-#[repr(C, packed)]
-pub struct InventoryItemList {
-    pub capacity: u32,
-    pub item_head: OwnedPtr<EquipInventoryDataListEntry>,
-    pub item_count: u32,
-}
-
-impl InventoryItemList {
-    pub fn is_full(&self) -> bool {
-        self.item_count >= self.capacity
-    }
-
-    pub fn items(&self) -> &[EquipInventoryDataListEntry] {
-        unsafe { std::slice::from_raw_parts(self.item_head.as_ptr(), self.item_count as usize) }
-    }
-
-    pub fn items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
-        unsafe { std::slice::from_raw_parts_mut(self.item_head.as_ptr(), self.item_count as usize) }
-    }
-}
-
 #[repr(C)]
 pub struct InventoryItemListAccessor {
     pub head: NonNull<EquipInventoryDataListEntry>,
@@ -288,16 +267,30 @@ pub struct InventoryItemsData {
     /// How many items can one hold in total?
     pub global_capacity: u32,
 
-    /// Holds ordinary items.
-    pub normal_items: InventoryItemList,
-    /// Holds key items.
-    pub key_items: InventoryItemList,
+    /// Capacity of the normal items inventory.
+    pub normal_items_capacity: u32,
+    /// Pointer to the head of the normal items inventory.
+    pub normal_items_head: OwnedPtr<EquipInventoryDataListEntry>,
+    /// Count of the items in the normal items inventory.
+    pub normal_items_count: u32,
+
+    /// Capacity of the key items inventory.
+    pub key_items_capacity: u32,
+    /// Pointer to the head of the key items inventory.
+    pub key_items_head: OwnedPtr<EquipInventoryDataListEntry>,
+    /// Count of the items in the key items inventory.
+    pub key_items_count: u32,
+
+    /// Capacity of the multiplayer key items inventory
+    pub multiplay_key_items_capacity: u32,
     /// Holds key items, that are available in multiplayer.
     ///
     /// Unless new key items are somehow obtained in multiplayer, this only contains
     /// copies of the items from `key_items` that have `REGENERATIVE_MATERIAL`
     /// and `WONDROUS_PHYSICK_TEAR` types (pots and wondrous physic tears).
-    pub multiplay_key_items: InventoryItemList,
+    pub multiplay_key_items_head: OwnedPtr<EquipInventoryDataListEntry>,
+    /// Count of the items in the multiplayer key items inventory.
+    pub multiplay_key_items_count: u32,
 
     _pad3c: u32,
     /// Pointers to the active normal item list and its count, all inventory reads and writes in the game
@@ -319,6 +312,65 @@ pub struct InventoryItemsData {
     /// lists.
     item_id_mapping: *mut ItemIdMapping,
     unk78: u64,
+}
+
+impl InventoryItemsData {
+    pub fn normal_items(&self) -> &[EquipInventoryDataListEntry] {
+        unsafe {
+            std::slice::from_raw_parts(
+                self.normal_items_head.as_ptr(),
+                self.normal_items_count as usize,
+            )
+        }
+    }
+    pub fn normal_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+        unsafe {
+            std::slice::from_raw_parts_mut(
+                self.normal_items_head.as_ptr(),
+                self.normal_items_count as usize,
+            )
+        }
+    }
+    pub fn is_normal_items_full(&self) -> bool {
+        self.normal_items_count >= self.normal_items_capacity
+    }
+
+    pub fn key_items(&self) -> &[EquipInventoryDataListEntry] {
+        unsafe {
+            std::slice::from_raw_parts(self.key_items_head.as_ptr(), self.key_items_count as usize)
+        }
+    }
+    pub fn key_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+        unsafe {
+            std::slice::from_raw_parts_mut(
+                self.key_items_head.as_ptr(),
+                self.key_items_count as usize,
+            )
+        }
+    }
+    pub fn is_key_items_full(&self) -> bool {
+        self.key_items_count >= self.key_items_capacity
+    }
+
+    pub fn multiplay_key_items(&self) -> &[EquipInventoryDataListEntry] {
+        unsafe {
+            std::slice::from_raw_parts(
+                self.multiplay_key_items_head.as_ptr(),
+                self.multiplay_key_items_count as usize,
+            )
+        }
+    }
+    pub fn multiplay_key_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+        unsafe {
+            std::slice::from_raw_parts_mut(
+                self.multiplay_key_items_head.as_ptr(),
+                self.multiplay_key_items_count as usize,
+            )
+        }
+    }
+    pub fn is_multiplay_key_items_full(&self) -> bool {
+        self.multiplay_key_items_count >= self.multiplay_key_items_capacity
+    }
 }
 
 #[repr(C)]
