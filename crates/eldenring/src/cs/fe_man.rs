@@ -262,7 +262,7 @@ pub struct MenuString {
 
 impl Display for MenuString {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.allocated_string.inner.length != 0 {
+        if !self.allocated_string.is_empty() {
             return write!(f, "{}", self.allocated_string);
         }
 
