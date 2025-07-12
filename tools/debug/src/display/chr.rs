@@ -196,6 +196,7 @@ impl DebugDisplay for ChrAsmEquipEntries {
 
 impl DebugDisplay for PlayerGameData {
     fn render_debug(&self, ui: &&mut Ui) {
+        ui.text(format!("Player ID: {}", self.player_id));
         ui.text(format!(
             "Furlcalling Finger Active: {:?}",
             self.furlcalling_finger_remedy_active

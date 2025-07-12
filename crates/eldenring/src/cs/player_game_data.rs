@@ -11,7 +11,7 @@ use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};
 pub struct PlayerGameData {
     vftable: usize,
     pub character_type: u32,
-    unkc: u32,
+    pub player_id: u32,
     pub current_hp: u32,
     pub current_max_hp: u32,
     pub base_max_hp: u32,
@@ -60,7 +60,7 @@ pub struct PlayerGameData {
     pub unlocked_magic_slots: u8,
     pub unlocked_talisman_slots: u8,
     unkc7: [u8; 0x18],
-    pub furlcalling_finger_remedy_active: u8,
+    pub furlcalling_finger_remedy_active: bool,
     unke0: u8,
     unke1: u8,
     pub matching_weapon_level: u8,
