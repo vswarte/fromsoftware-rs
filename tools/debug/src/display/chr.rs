@@ -669,9 +669,13 @@ impl DebugDisplay for CSChrPhysicsModule {
 
 impl DebugDisplay for CSChrModelParamModifierModule {
     fn render_debug(&self, ui: &&mut Ui) {
-        if let Some(_t) = ui.begin_table_header(
+        if let Some(_t) = ui.begin_table_header_with_flags(
             "chr-ins-model-param-modifier",
             [TableColumnSetup::new("Name")],
+            TableFlags::RESIZABLE
+                | TableFlags::BORDERS
+                | TableFlags::ROW_BG
+                | TableFlags::SIZING_STRETCH_PROP,
         ) {
             self.modifiers.items().iter().for_each(|modifier| {
                 ui.table_next_column();

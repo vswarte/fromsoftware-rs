@@ -1,7 +1,7 @@
 use eldenring::cs::{
     CSGparamIdLerper, CSWorldAreaBlockSceneDrawParam, CSWorldSceneDrawParamManager,
 };
-use hudhook::imgui::{TableColumnSetup, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 use super::DebugDisplay;
 
@@ -20,7 +20,7 @@ impl DebugDisplay for CSWorldSceneDrawParamManager {
         self.scene_draw_param.lerper.render_debug(ui);
 
         ui.text("Lerpers");
-        if let Some(_t) = ui.begin_table_header(
+        if let Some(_t) = ui.begin_table_header_with_flags(
             "cs-world-scene-draw-param-manager-lerpers",
             [
                 TableColumnSetup::new("Unk8"),
@@ -32,6 +32,10 @@ impl DebugDisplay for CSWorldSceneDrawParamManager {
                 TableColumnSetup::new("Timer"),
                 TableColumnSetup::new("Unk24"),
             ],
+            TableFlags::RESIZABLE
+                | TableFlags::BORDERS
+                | TableFlags::ROW_BG
+                | TableFlags::SIZING_STRETCH_PROP,
         ) {
             self.scene_draw_param.lerpers.iter().for_each(|lerper| {
                 ui.table_next_column();

@@ -1,6 +1,6 @@
 use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
 use eldenring_util::singleton::get_instance;
-use hudhook::imgui::{TableColumnSetup, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 use super::DebugDisplay;
 
@@ -43,12 +43,16 @@ impl DebugDisplay for CSFD4VirtualMemoryFlag {
 
         if ui.collapsing_header("Block Descriptors", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "event-flags-groups",
                 [
                     TableColumnSetup::new("Group ID"),
                     TableColumnSetup::new("Location mode"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.flag_block_descriptors.iter().for_each(|e| {
                     ui.table_next_column();

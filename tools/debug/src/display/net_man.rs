@@ -2,7 +2,7 @@ use eldenring::cs::{
     CSBattleRoyalContext, CSNetBloodMessageDb, CSNetBloodMessageDbItem, CSNetMan,
     CSQuickMatchingCtrl, QuickmatchManager,
 };
-use hudhook::imgui::{TableColumnSetup, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 use super::DebugDisplay;
 
@@ -53,7 +53,7 @@ fn render_message_table<'a>(
     messages: impl Iterator<Item = &'a CSNetBloodMessageDbItem>,
     ui: &&mut Ui,
 ) {
-    if let Some(_t) = ui.begin_table_header(
+    if let Some(_t) = ui.begin_table_header_with_flags(
         "cs-net-man-blood-messages-entries",
         [
             TableColumnSetup::new("Message ID"),
@@ -66,6 +66,10 @@ fn render_message_table<'a>(
             TableColumnSetup::new("Part 2"),
             TableColumnSetup::new("Gesture"),
         ],
+        TableFlags::RESIZABLE
+            | TableFlags::BORDERS
+            | TableFlags::ROW_BG
+            | TableFlags::SIZING_STRETCH_PROP,
     ) {
         messages.for_each(|message| {
             ui.table_next_column();
