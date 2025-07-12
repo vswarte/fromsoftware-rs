@@ -18,7 +18,9 @@ impl DebugDisplay for CSWorldGeomMan {
         }
 
         if ui.collapsing_header("Current Unk Block", TreeNodeFlags::empty()) {
+            ui.indent();
             self.curent_99_block_data.render_debug(ui);
+            ui.unindent();
         }
     }
 }
@@ -35,6 +37,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.text(format!("Objects in vector: {}", self.geom_ins_vector.len()));
         if ui.collapsing_header("Geometry Vector", TreeNodeFlags::empty()) {
+            ui.indent();
             for geometry_ins in self.geom_ins_vector.items() {
                 let name = unsafe {
                     geometry_ins
@@ -47,7 +50,6 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 }
                 .unwrap();
 
-                ui.indent();
                 if ui.collapsing_header(
                     format!(
                         "{} - {} FieldInsSelector({}, {})",
@@ -58,13 +60,16 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                     ),
                     TreeNodeFlags::empty(),
                 ) {
-                    geometry_ins.render_debug(ui)
+                    ui.indent();
+                    geometry_ins.render_debug(ui);
+                    ui.unindent();
                 }
-                ui.unindent();
             }
+            ui.unindent();
         }
 
         if ui.collapsing_header("Sign Geometry Vector", TreeNodeFlags::empty()) {
+            ui.indent();
             for geometry_ins in self.sos_sign_geometry.items() {
                 let name = unsafe {
                     geometry_ins
@@ -77,7 +82,6 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 }
                 .unwrap();
 
-                ui.indent();
                 if ui.collapsing_header(
                     format!(
                         "{} - {} FieldInsSelector({}, {})",
@@ -88,10 +92,12 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                     ),
                     TreeNodeFlags::empty(),
                 ) {
-                    geometry_ins.render_debug(ui)
+                    ui.indent();
+                    geometry_ins.render_debug(ui);
+                    ui.unindent();
                 }
-                ui.unindent();
             }
+            ui.unindent();
         }
     }
 }

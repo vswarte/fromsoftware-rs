@@ -2,14 +2,13 @@ use eldenring::{
     cs::CSSfxImp,
     gxffx::{FxrListNode, FxrWrapper, GXFfxGraphicsResourceManager, GXFfxSceneCtrl},
 };
-use hudhook::imgui::{TableColumnSetup, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 use super::DebugDisplay;
 
 impl DebugDisplay for CSSfxImp {
     fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("CSSfxImp", TreeNodeFlags::empty()) {
-            ui.text(format!("CSSfxImp: {:#01x}", self as *const _ as usize));
+        if ui.collapsing_header("Scene Ctrl", TreeNodeFlags::empty()) {
             ui.indent();
             self.scene_ctrl.render_debug(ui);
             ui.unindent();
@@ -19,12 +18,12 @@ impl DebugDisplay for CSSfxImp {
 
 impl DebugDisplay for GXFfxSceneCtrl {
     fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Scene Ctrl", TreeNodeFlags::empty()) {
+        if ui.collapsing_header("Graphics Resource Manager", TreeNodeFlags::empty()) {
+            ui.indent();
             ui.text(format!(
                 "graphics_resource_manager: {:#01x}",
                 self.graphics_resource_manager.as_ptr() as *const _ as usize
             ));
-            ui.indent();
             unsafe {
                 self.graphics_resource_manager.as_ref().render_debug(ui);
             }
@@ -35,16 +34,12 @@ impl DebugDisplay for GXFfxSceneCtrl {
 
 impl DebugDisplay for GXFfxGraphicsResourceManager {
     fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Graphics Resource Manager", TreeNodeFlags::empty()) {
-            ui.indent();
-            let scene_ctrl = unsafe { &self.resource_container.scene_ctrl.as_ref() };
-            render_graphics_resource_manager(
-                scene_ctrl,
-                self.resource_container.fxr_definitions.iter(),
-                ui,
-            );
-            ui.unindent();
-        }
+        let scene_ctrl = unsafe { &self.resource_container.scene_ctrl.as_ref() };
+        render_graphics_resource_manager(
+            scene_ctrl,
+            self.resource_container.fxr_definitions.iter(),
+            ui,
+        );
     }
 }
 
@@ -59,12 +54,16 @@ fn render_graphics_resource_manager<'a>(
         fx_resource_container_scene_ctrl as *const _ as usize
     ));
 
-    if let Some(_t) = ui.begin_table_header(
+    if let Some(_t) = ui.begin_table_header_with_flags(
         "gx-ffx-graphics-resource-manager",
         [
             TableColumnSetup::new("ID"),
             TableColumnSetup::new("FXR Ptr"),
         ],
+        TableFlags::RESIZABLE
+            | TableFlags::BORDERS
+            | TableFlags::ROW_BG
+            | TableFlags::SIZING_STRETCH_PROP,
     ) {
         fxr_nodes.for_each(|fxr_node| {
             fxr_node.render_debug(ui);

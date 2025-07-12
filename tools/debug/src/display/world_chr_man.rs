@@ -2,7 +2,7 @@ use eldenring::cs::{
     ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, PlayerIns, SummonBuddyManager,
     SummonBuddyWarpManager, WorldChrMan,
 };
-use hudhook::imgui::{TableColumnSetup, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 use super::DebugDisplay;
 
@@ -86,7 +86,9 @@ impl DebugDisplay for WorldChrMan {
         match self.summon_buddy_manager.as_ref() {
             Some(s) => {
                 if ui.collapsing_header("SummonBuddyManager", TreeNodeFlags::empty()) {
-                    s.render_debug(ui)
+                    ui.indent();
+                    s.render_debug(ui);
+                    ui.unindent();
                 }
             }
             None => ui.text("No SummonBuddyManager instance"),
@@ -112,12 +114,14 @@ impl DebugDisplay for WorldChrMan {
         }
 
         if ui.collapsing_header("Debug Character Creator", TreeNodeFlags::empty()) {
+            ui.indent();
             ui.input_text(
                 "Last Created Character",
                 &mut format!("{:x?}", self.debug_chr_creator.last_created_chr),
             )
             .read_only(true)
             .build();
+            ui.unindent();
         }
 
         if ui.collapsing_header("ChrInses by distance", TreeNodeFlags::empty()) {
@@ -182,12 +186,16 @@ impl DebugDisplay for ChrSet<ChrIns> {
 
         if ui.collapsing_header("Character event ID mapping", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "event-flags-groups",
                 [
                     TableColumnSetup::new("Event ID"),
                     TableColumnSetup::new("Field Ins Handle"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.entity_id_mapping.iter().for_each(|e| {
                     ui.table_next_column();
@@ -205,12 +213,16 @@ impl DebugDisplay for ChrSet<ChrIns> {
 
         if ui.collapsing_header("Group mapping", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "event-flags-groups",
                 [
                     TableColumnSetup::new("Group"),
                     TableColumnSetup::new("Field Ins Handle"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.group_id_mapping.iter().for_each(|e| {
                     ui.table_next_column();
@@ -253,12 +265,16 @@ impl DebugDisplay for ChrSet<PlayerIns> {
 
         if ui.collapsing_header("Character event ID mapping", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "event-flags-groups",
                 [
                     TableColumnSetup::new("Event ID"),
                     TableColumnSetup::new("Field Ins Handle"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.entity_id_mapping.iter().for_each(|e| {
                     ui.table_next_column();
@@ -276,12 +292,16 @@ impl DebugDisplay for ChrSet<PlayerIns> {
 
         if ui.collapsing_header("Group mapping", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "event-flags-groups",
                 [
                     TableColumnSetup::new("Group"),
                     TableColumnSetup::new("Field Ins Handle"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.group_id_mapping.iter().for_each(|e| {
                     ui.table_next_column();
