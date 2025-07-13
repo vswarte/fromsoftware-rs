@@ -22,7 +22,7 @@ impl DebugDisplay for DLFileDeviceManager {
                     | TableFlags::ROW_BG
                     | TableFlags::SIZING_STRETCH_PROP,
             ) {
-                self.virtual_roots.items().iter().for_each(|vr| {
+                self.virtual_roots.iter().for_each(|vr| {
                     ui.table_next_column();
                     ui.text(vr[0].to_string());
                     ui.table_next_column();
@@ -45,7 +45,7 @@ impl DebugDisplay for DLFileDeviceManager {
                     | TableFlags::ROW_BG
                     | TableFlags::SIZING_STRETCH_PROP,
             ) {
-                self.bnd4_files.items().iter().for_each(|file| {
+                self.bnd4_files.iter().for_each(|file| {
                     ui.table_next_column();
                     ui.text(file.name.to_string());
 

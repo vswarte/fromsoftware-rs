@@ -321,7 +321,6 @@ impl DebugDisplay for EquipGameData {
                     | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.qm_item_backup_vector
-                    .items()
                     .iter()
                     .enumerate()
                     .for_each(|(index, item)| {
@@ -717,7 +716,7 @@ impl DebugDisplay for CSChrModelParamModifierModule {
                 | TableFlags::ROW_BG
                 | TableFlags::SIZING_STRETCH_PROP,
         ) {
-            self.modifiers.items().iter().for_each(|modifier| {
+            self.modifiers.iter().for_each(|modifier| {
                 ui.table_next_column();
                 ui.text(unsafe { modifier.name.to_string() }.unwrap());
             });
