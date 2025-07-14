@@ -76,6 +76,7 @@ trait CxxString<CharType> {
     fn new_in(allocator: DLAllocatorRef) -> Self;
     fn from_bytes_in(bytes: &[CharType], allocator: DLAllocatorRef) -> Self;
     fn as_u8_slice(&self) -> &[u8];
+    fn as_bytes(&self) -> &[CharType];
 }
 
 macro_rules! impl_cxx_string {
@@ -96,6 +97,9 @@ macro_rules! impl_cxx_string {
                     )
                 }
             }
+            fn as_bytes(&self) -> &[$char_type] {
+                self.as_bytes()
+            }
         }
     };
 }
@@ -114,43 +118,46 @@ pub trait DLStringKind: DLStringKindSeal {
     type CharType: Sized + Copy;
     const ENCODING: DLCharacterSet;
 
-    fn encoding() -> Option<&'static encoding_rs::Encoding> {
-        match Self::ENCODING {
-            DLCharacterSet::UTF8 => Some(encoding_rs::UTF_8),
-            DLCharacterSet::Iso8859_1 => Some(encoding_rs::WINDOWS_1252),
-            DLCharacterSet::ShiftJis => Some(encoding_rs::SHIFT_JIS),
-            DLCharacterSet::EucJp => Some(encoding_rs::EUC_JP),
-            // This two are handled separately
-            DLCharacterSet::UTF16 | DLCharacterSet::UTF32 => None,
-        }
-    }
-
-    fn encode(s: &str) -> Result<Cow<'_, [u8]>, DLStringEncodingError> {
+    fn encode(s: &str) -> Result<Vec<Self::CharType>, DLStringEncodingError> {
         match Self::ENCODING {
             DLCharacterSet::UTF16 => {
-                let bytes = s
-                    .encode_utf16()
-                    .flat_map(|c| c.to_ne_bytes())
-                    .collect::<Vec<u8>>();
-                Ok(Cow::Owned(bytes))
+                let mut bytes: Vec<u16> = Vec::with_capacity(s.len() * size_of::<u16>());
+                bytes.extend(s.encode_utf16());
+                // SAFETY: Transmuting Vec<u16> to Vec<Self::CharType> is safe
+                // because the UTF16 arm ensures CharType is u16.
+                Ok(unsafe { std::mem::transmute::<Vec<u16>, Vec<Self::CharType>>(bytes) })
             }
             DLCharacterSet::UTF32 => {
-                let bytes = s
-                    .chars()
-                    .flat_map(|c| (c as u32).to_ne_bytes())
-                    .collect::<Vec<u8>>();
-                Ok(Cow::Owned(bytes))
+                let mut bytes: Vec<u32> = Vec::with_capacity(s.len() * size_of::<u32>());
+                bytes.extend(s.chars().map(|c| c as u32));
+                // SAFETY: Transmuting Vec<u32> to Vec<Self::CharType> is safe
+                // because the UTF32 arm ensures CharType is u32.
+                Ok(unsafe { std::mem::transmute::<Vec<u32>, Vec<Self::CharType>>(bytes) })
+            }
+            DLCharacterSet::UTF8 => {
+                /// We can just slice the string as UTF-8 bytes because Rust's `str` is UTF-8 encoded.
+                let bytes = s.as_bytes().to_vec();
+                // SAFETY: Transmuting Vec<u8> to Vec<Self::CharType> is safe
+                // because this arm ensures CharType is u8.
+                Ok(unsafe { std::mem::transmute::<Vec<u8>, Vec<Self::CharType>>(bytes) })
             }
             _ => {
-                let encoding = Self::encoding().ok_or(
-                    DLStringEncodingError::UnsupportedEncoding(Self::ENCODING as u8),
-                )?;
-                let (bytes, _, had_errors) = encoding.encode(s);
+                let encoding = match Self::ENCODING {
+                    DLCharacterSet::Iso8859_1 => encoding_rs::WINDOWS_1252,
+                    DLCharacterSet::ShiftJis => encoding_rs::SHIFT_JIS,
+                    DLCharacterSet::EucJp => encoding_rs::EUC_JP,
+                    _ => unreachable!(),
+                };
+                let (encoded_bytes, _, had_errors) = encoding.encode(s);
                 if had_errors {
-                    Err(DLStringEncodingError::EncodeError)
-                } else {
-                    Ok(bytes)
+                    return Err(DLStringEncodingError::EncodeError);
                 }
+
+                // SAFETY: Transmuting Vec<u8> to Vec<Self::CharType> is safe
+                // because this arm ensures CharType is u8.
+                Ok(unsafe {
+                    std::mem::transmute::<Vec<u8>, Vec<Self::CharType>>(encoded_bytes.into_owned())
+                })
             }
         }
     }
@@ -158,31 +165,39 @@ pub trait DLStringKind: DLStringKindSeal {
     fn decode(s: &[u8]) -> Result<Cow<'_, str>, DLStringEncodingError> {
         match Self::ENCODING {
             DLCharacterSet::UTF16 => {
-                if !s.len().is_multiple_of(2) {
+                if !s.len().is_multiple_of(std::mem::size_of::<u16>()) {
                     return Err(DLStringEncodingError::DecodeError);
                 }
-                char::decode_utf16(
-                    s.chunks_exact(2)
-                        .map(|c| u16::from_ne_bytes(c.try_into().unwrap())),
-                )
-                .map(|r| r.map_err(|_| DLStringEncodingError::DecodeError))
-                .collect::<Result<String, _>>()
-                .map(Cow::Owned)
-            }
-            DLCharacterSet::UTF32 => {
-                if !s.len().is_multiple_of(4) {
-                    return Err(DLStringEncodingError::DecodeError);
-                }
-                s.chunks_exact(4)
-                    .map(|c| u32::from_ne_bytes(c.try_into().unwrap()))
-                    .map(|c| std::char::from_u32(c).ok_or(DLStringEncodingError::DecodeError))
+                let u16_slice =
+                    unsafe { std::slice::from_raw_parts(s.as_ptr() as *const u16, s.len() / 2) };
+                char::decode_utf16(u16_slice.iter().cloned())
+                    .map(|r| r.map_err(|_| DLStringEncodingError::DecodeError))
                     .collect::<Result<String, _>>()
                     .map(Cow::Owned)
             }
+            DLCharacterSet::UTF32 => {
+                if !s.len().is_multiple_of(std::mem::size_of::<u32>()) {
+                    return Err(DLStringEncodingError::DecodeError);
+                }
+                let u32_slice =
+                    unsafe { std::slice::from_raw_parts(s.as_ptr() as *const u32, s.len() / 4) };
+                u32_slice
+                    .iter()
+                    .map(|&c| std::char::from_u32(c).ok_or(DLStringEncodingError::DecodeError))
+                    .collect::<Result<String, _>>()
+                    .map(Cow::Owned)
+            }
+            DLCharacterSet::UTF8 => {
+                let s = std::str::from_utf8(s).map_err(|_| DLStringEncodingError::DecodeError)?;
+                Ok(Cow::Borrowed(s))
+            }
             _ => {
-                let encoding = Self::encoding().ok_or(
-                    DLStringEncodingError::UnsupportedEncoding(Self::ENCODING as u8),
-                )?;
+                let encoding = match Self::ENCODING {
+                    DLCharacterSet::Iso8859_1 => encoding_rs::WINDOWS_1252,
+                    DLCharacterSet::ShiftJis => encoding_rs::SHIFT_JIS,
+                    DLCharacterSet::EucJp => encoding_rs::EUC_JP,
+                    _ => unreachable!(),
+                };
                 let (cow, _, had_errors) = encoding.decode(s);
                 if had_errors {
                     Err(DLStringEncodingError::DecodeError)
@@ -257,19 +272,10 @@ impl<T: DLStringKind> DLString<T> {
     }
 
     pub fn from_str(allocator: &DLAllocatorRef, s: &str) -> Result<Self, DLStringEncodingError> {
-        let encoded = T::encode(s)?;
-
-        // SAFETY: The pointer cast is safe because the size of the slice is a multiple
-        // of the size of the character type, and the alignment is correct for the character type.
-        let char_slice = unsafe {
-            std::slice::from_raw_parts(
-                encoded.as_ptr() as *const T::CharType,
-                encoded.len() / std::mem::size_of::<T::CharType>(),
-            )
-        };
+        let encoded: Vec<T::CharType> = T::encode(s)?;
 
         Ok(Self {
-            base: T::InnerType::from_bytes_in(char_slice, allocator.clone()),
+            base: T::InnerType::from_bytes_in(&encoded, allocator.clone()),
             encoding: T::ENCODING,
         })
     }
@@ -283,9 +289,19 @@ impl<T: DLStringKind> DLString<T> {
         allocator: &DLAllocatorRef,
         other: &DLString<U>,
     ) -> Result<Self, DLStringEncodingError> {
-        let bytes = other.base.as_u8_slice();
-        let decoded = T::decode(bytes).map_err(|_| DLStringEncodingError::DecodeError)?;
-        DLString::from_str(allocator, &decoded)
+        // If the encodings match, we can directly copy the bytes
+        if T::ENCODING == U::ENCODING {
+            // SAFETY: T::ENCODING == U::ENCODING implies T::CharType is compatible with U::CharType.
+            let bytes: &[T::CharType] = unsafe { std::mem::transmute(other.base.as_bytes()) };
+            Ok(Self {
+                base: T::InnerType::from_bytes_in(bytes, allocator.clone()),
+                encoding: T::ENCODING,
+            })
+        } else {
+            // If encodings differ, we need to decode and re-encode
+            let decoded = T::decode(other.base.as_u8_slice())?;
+            DLString::from_str(allocator, &decoded)
+        }
     }
 }
 
