@@ -39,11 +39,6 @@ impl From<NonNull<DLAllocatorBase>> for DLAllocatorRef {
         Self(ptr)
     }
 }
-impl From<NonNull<DLAllocatorBase>> for &DLAllocatorRef {
-    fn from(ptr: NonNull<DLAllocatorBase>) -> Self {
-        unsafe { &*(ptr.as_ptr() as *const DLAllocatorRef) }
-    }
-}
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -264,14 +259,14 @@ pub struct DLString<T: DLStringKind = DLUTF16StringKind> {
 }
 
 impl<T: DLStringKind> DLString<T> {
-    pub fn new(allocator: &DLAllocatorRef) -> Self {
+    pub fn new(allocator: DLAllocatorRef) -> Self {
         Self {
             base: T::InnerType::new_in(allocator.clone()),
             encoding: T::ENCODING,
         }
     }
 
-    pub fn from_str(allocator: &DLAllocatorRef, s: &str) -> Result<Self, DLStringEncodingError> {
+    pub fn from_str(allocator: DLAllocatorRef, s: &str) -> Result<Self, DLStringEncodingError> {
         let encoded: Vec<T::CharType> = T::encode(s)?;
 
         Ok(Self {
@@ -286,7 +281,7 @@ impl<T: DLStringKind> DLString<T> {
     }
 
     pub fn copy<U: DLStringKind>(
-        allocator: &DLAllocatorRef,
+        allocator: DLAllocatorRef,
         other: &DLString<U>,
     ) -> Result<Self, DLStringEncodingError> {
         // If the encodings match, we can directly copy the bytes
