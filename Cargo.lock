@@ -240,6 +240,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
 
 [[package]]
+name = "cstl-sys"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93cb3efebcf02ee15186d55068b8394bf5df33331feabda4f2cdcf3573d7c659"
+dependencies = [
+ "cc",
+]
+
+[[package]]
+name = "cxx-stl"
+version = "3.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb3ba5d51c332fde0852e7ec374e51d297361cbe0e8007f075765199951c4eb9"
+dependencies = [
+ "cstl-sys",
+]
+
+[[package]]
 name = "dataview"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -291,6 +309,7 @@ name = "eldenring"
 version = "0.8.0"
 dependencies = [
  "bitfield",
+ "cxx-stl",
  "encoding_rs",
  "fromsoftware-dlrf",
  "fromsoftware-shared",

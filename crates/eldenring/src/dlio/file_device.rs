@@ -271,14 +271,15 @@ where
         operator_container: &DLFileOperatorContainer,
         file_device: &DLFileDeviceBase,
     ) -> Self {
+        let allocator = unsafe { NonNull::from(allocator) };
         Self {
             vftable,
-            allocator: NonNull::from(allocator),
+            allocator,
             result: DLIOResult::Success,
             owning_operator_container: NonNull::from(operator_container),
             io_state: DLFileOperatorIOState::default(),
             owning_file_device: NonNull::from(file_device),
-            path: DLString::copy(allocator, path).expect("Failed to copy DLString"),
+            path: DLString::copy(allocator.into(), path).expect("Failed to copy DLString"),
         }
     }
 }
@@ -423,8 +424,8 @@ where
         self.base.io_state.0 &= 0xfffffff9;
         self.base.io_state.0 |= ((((param_4 as u32 & 1) * 2) | (param_3 as u32 & 1)) * 2);
 
-        self.base.path = DLString::copy(unsafe { self.base.allocator.as_ref() }, path)
-            .expect("Failed to copy DLString");
+        self.base.path =
+            DLString::copy(self.base.allocator.into(), path).expect("Failed to copy DLString");
 
         true
     }
