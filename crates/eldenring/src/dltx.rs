@@ -6,7 +6,7 @@ use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
 use std::{alloc::GlobalAlloc, error::Error};
 
-use crate::dlkr::{DLAllocatorBase, DLAllocatorVmt};
+use crate::dlkr::DLAllocatorRef;
 
 use encoding_rs;
 
@@ -17,28 +17,6 @@ use cxx_stl::string::{
 };
 
 use shared::OwnedPtr;
-
-#[repr(transparent)]
-#[derive(Clone)]
-pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
-
-unsafe impl GlobalAlloc for DLAllocatorRef {
-    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let allocator = self.0.as_ptr();
-        ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8
-    }
-
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        let allocator = self.0.as_ptr();
-        ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
-    }
-}
-
-impl From<NonNull<DLAllocatorBase>> for DLAllocatorRef {
-    fn from(ptr: NonNull<DLAllocatorBase>) -> Self {
-        Self(ptr)
-    }
-}
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
