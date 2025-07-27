@@ -33,6 +33,7 @@ nalgebra = "0.33"
 byteorder = "1"
 pelite = "0.10"
 vtable-rs = "0.1.4"
+bitfield = "0.19.1"
 
 [workspace.dependencies.windows]
 version = "0.54"
