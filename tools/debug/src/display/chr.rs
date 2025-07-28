@@ -384,7 +384,7 @@ impl DebugDisplay for EquipInventoryData {
 
         let label = format!(
             "Normal Items ({}/{})",
-            self.items_data.normal_item_count, self.items_data.normal_item_capacity
+            self.items_data.normal_items_count, self.items_data.normal_items_capacity
         );
         if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
             ui.indent();
@@ -425,7 +425,7 @@ impl DebugDisplay for EquipInventoryData {
 
         let label = format!(
             "Key Items ({}/{})",
-            self.items_data.key_item_count, self.items_data.key_item_capacity
+            self.items_data.key_items_count, self.items_data.key_items_capacity
         );
         if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
             ui.indent();
@@ -465,13 +465,13 @@ impl DebugDisplay for EquipInventoryData {
         }
 
         let label = format!(
-            "Secondary Key Items ({}/{})",
-            self.items_data.secondary_key_item_count, self.items_data.secondary_key_item_capacity
+            "Multiplay Key Items ({}/{})",
+            self.items_data.multiplay_key_items_count, self.items_data.multiplay_key_items_capacity
         );
         if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
             ui.indent();
             if let Some(_t) = ui.begin_table_header_with_flags(
-                "equip-inventory-data-secondary-key-items",
+                "equip-inventory-data-multiplay-key-items",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Gaitem Handle"),
@@ -482,7 +482,7 @@ impl DebugDisplay for EquipInventoryData {
                 TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
             ) {
                 self.items_data
-                    .secondary_key_items()
+                    .multiplay_key_items()
                     .iter()
                     .enumerate()
                     .for_each(|(index, item)| {
