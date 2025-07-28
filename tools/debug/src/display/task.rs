@@ -15,13 +15,17 @@ impl DebugDisplay for CSTaskImp {
     fn render_debug(&self, ui: &&mut Ui) {
         if ui.collapsing_header("Task Groups", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "task-group-table",
                 [
                     TableColumnSetup::new("ID"),
                     TableColumnSetup::new("Name"),
                     TableColumnSetup::new("Active"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 for task_group in self.inner.task_base.task_groups.items() {
                     ui.table_next_column();

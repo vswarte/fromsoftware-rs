@@ -128,12 +128,16 @@ impl DebugDisplay for ChrAsmEquipEntries {
 
         if ui.collapsing_header("Accessories", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "chr-asm-equip-entries-accessories",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Item ID"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.accessories
                     .iter()
@@ -152,12 +156,16 @@ impl DebugDisplay for ChrAsmEquipEntries {
 
         if ui.collapsing_header("Quick Items", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "chr-asm-equip-entries-quick-items",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Item ID"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.quick_tems
                     .iter()
@@ -174,12 +182,16 @@ impl DebugDisplay for ChrAsmEquipEntries {
 
         if ui.collapsing_header("Pouch", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "chr-asm-equip-entries-pouch",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Item ID"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.pouch.iter().enumerate().for_each(|(index, item)| {
                     ui.table_next_column();
@@ -241,13 +253,17 @@ impl DebugDisplay for EquipGameData {
 
         if ui.collapsing_header("QuickMatch Item Backup Vector", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "equip-game-data-qm-item-backup-vector",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("ItemId"),
                     TableColumnSetup::new("Quantity"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.qm_item_backup_vector
                     .items()
@@ -275,13 +291,17 @@ impl DebugDisplay for EquipMagicData {
 
         if ui.collapsing_header("EquipDataItem", TreeNodeFlags::empty()) {
             ui.indent();
-            if let Some(_t) = ui.begin_table_header(
+            if let Some(_t) = ui.begin_table_header_with_flags(
                 "equip-magic-data-entries",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Param ID"),
                     TableColumnSetup::new("Charges"),
                 ],
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.entries.iter().enumerate().for_each(|(index, item)| {
                     ui.table_next_column();
@@ -312,7 +332,10 @@ impl DebugDisplay for EquipItemData {
                     TableColumnSetup::new("Gaitem Handle"),
                     TableColumnSetup::new("Inventory Index"),
                 ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.quick_slots
                     .iter()
@@ -341,7 +364,10 @@ impl DebugDisplay for EquipItemData {
                     TableColumnSetup::new("Gaitem Handle"),
                     TableColumnSetup::new("Inventory Index"),
                 ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
+                TableFlags::RESIZABLE
+                    | TableFlags::BORDERS
+                    | TableFlags::ROW_BG
+                    | TableFlags::SIZING_STRETCH_PROP,
             ) {
                 self.pouch_slots
                     .iter()
@@ -588,9 +614,13 @@ impl DebugDisplay for CSChrPhysicsModule {
 
 impl DebugDisplay for CSChrModelParamModifierModule {
     fn render_debug(&self, ui: &&mut Ui) {
-        if let Some(_t) = ui.begin_table_header(
+        if let Some(_t) = ui.begin_table_header_with_flags(
             "chr-ins-model-param-modifier",
             [TableColumnSetup::new("Name")],
+            TableFlags::RESIZABLE
+                | TableFlags::BORDERS
+                | TableFlags::ROW_BG
+                | TableFlags::SIZING_STRETCH_PROP,
         ) {
             self.modifiers.items().iter().for_each(|modifier| {
                 ui.table_next_column();
