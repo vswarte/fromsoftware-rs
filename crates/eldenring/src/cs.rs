@@ -1,7 +1,6 @@
 mod bullet_ins;
 mod bullet_manager;
 mod camera;
-mod character_debug_flags;
 mod character_type_properties;
 mod chr_ins;
 mod chr_slot;
@@ -46,7 +45,6 @@ mod world_sfx_man;
 pub use bullet_ins::*;
 pub use bullet_manager::*;
 pub use camera::*;
-pub use character_debug_flags::*;
 pub use character_type_properties::*;
 pub use chr_ins::*;
 pub use chr_slot::*;

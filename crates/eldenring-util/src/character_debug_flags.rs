@@ -2,7 +2,7 @@ use std::mem::transmute;
 use std::sync::{LazyLock, RwLock};
 
 use crate::program::Program;
-use eldenring::cs::CharacterDebugFlags;
+use eldenring::cs::WorldChrManDbgFlags;
 use pelite::pattern;
 use pelite::pattern::Atom;
 use pelite::pe64::Pe;
@@ -19,7 +19,7 @@ const CHARACTER_DEBUG_FLAGS_PATTERN: &[Atom] = pattern!(
     "
 );
 
-pub static CHARACTER_DEBUG_FLAGS: LazyLock<RwLock<&mut CharacterDebugFlags>> =
+pub static CHARACTER_DEBUG_FLAGS: LazyLock<RwLock<&mut WorldChrManDbgFlags>> =
     LazyLock::new(|| {
         let program = Program::current();
 
@@ -34,6 +34,6 @@ pub static CHARACTER_DEBUG_FLAGS: LazyLock<RwLock<&mut CharacterDebugFlags>> =
 
         tracing::debug!("Found character properties pattern");
         RwLock::new(unsafe {
-            transmute::<u64, &mut CharacterDebugFlags>(program.rva_to_va(matches[1] + 1).unwrap())
+            transmute::<u64, &mut WorldChrManDbgFlags>(program.rva_to_va(matches[1] + 1).unwrap())
         })
     });
