@@ -1,6 +1,8 @@
 use std::ops::Index;
 use std::ptr::NonNull;
 
+use thiserror::Error;
+
 use crate::Vector;
 use shared::OwnedPtr;
 
@@ -434,6 +436,7 @@ pub struct EquipDataItem {
 }
 
 #[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ChrAsmSlot {
     WeaponLeft1 = 0,
     WeaponRight1 = 1,
@@ -451,29 +454,12 @@ pub enum ChrAsmSlot {
     ProtectorChest = 13,
     ProtectorHands = 14,
     ProtectorLegs = 15,
+    Unused16 = 16,
     Accessory1 = 17,
     Accessory2 = 18,
     Accessory3 = 19,
     Accessory4 = 20,
     AccessoryCovenant = 21,
-    // ----- Slots below are not used in the param id lists and handles -----
-    QuickItem1 = 22,
-    QuickItem2 = 23,
-    QuickItem3 = 24,
-    QuickItem4 = 25,
-    QuickItem5 = 26,
-    QuickItem6 = 27,
-    QuickItem7 = 28,
-    QuickItem8 = 29,
-    QuickItem9 = 30,
-    QuickItem10 = 31,
-    Pouch1 = 32,
-    Pouch2 = 33,
-    Pouch3 = 34,
-    Pouch4 = 35,
-    Pouch5 = 36,
-    Pouch6 = 37,
-    GreatRune = 38,
 }
 
 impl<T> Index<ChrAsmSlot> for [T] {
@@ -481,6 +467,42 @@ impl<T> Index<ChrAsmSlot> for [T] {
 
     fn index(&self, index: ChrAsmSlot) -> &Self::Output {
         &self[index as usize]
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum ChrAsmSlotError {
+    #[error("Invalid ChrAsmSlot index: {0}")]
+    InvalidIndex(u32),
+}
+
+impl ChrAsmSlot {
+    pub fn from_index(index: u32) -> Result<Self, ChrAsmSlotError> {
+        match index {
+            0 => Ok(ChrAsmSlot::WeaponLeft1),
+            1 => Ok(ChrAsmSlot::WeaponRight1),
+            2 => Ok(ChrAsmSlot::WeaponLeft2),
+            3 => Ok(ChrAsmSlot::WeaponRight2),
+            4 => Ok(ChrAsmSlot::WeaponLeft3),
+            5 => Ok(ChrAsmSlot::WeaponRight3),
+            6 => Ok(ChrAsmSlot::Arrow1),
+            7 => Ok(ChrAsmSlot::Bolt1),
+            8 => Ok(ChrAsmSlot::Arrow2),
+            9 => Ok(ChrAsmSlot::Bolt2),
+            10 => Ok(ChrAsmSlot::Arrow3),
+            11 => Ok(ChrAsmSlot::Bolt3),
+            12 => Ok(ChrAsmSlot::ProtectorHead),
+            13 => Ok(ChrAsmSlot::ProtectorChest),
+            14 => Ok(ChrAsmSlot::ProtectorHands),
+            15 => Ok(ChrAsmSlot::ProtectorLegs),
+            16 => Ok(ChrAsmSlot::Unused16),
+            17 => Ok(ChrAsmSlot::Accessory1),
+            18 => Ok(ChrAsmSlot::Accessory2),
+            19 => Ok(ChrAsmSlot::Accessory3),
+            20 => Ok(ChrAsmSlot::Accessory4),
+            21 => Ok(ChrAsmSlot::AccessoryCovenant),
+            _ => Err(ChrAsmSlotError::InvalidIndex(index)),
+        }
     }
 }
 
