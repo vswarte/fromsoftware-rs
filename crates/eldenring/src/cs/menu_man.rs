@@ -1,7 +1,6 @@
 use std::ptr::NonNull;
 
 use bitfield::bitfield;
-use windows::Win32::Foundation::BOOL;
 
 use shared::OwnedPtr;
 
@@ -21,7 +20,7 @@ pub struct CSMenuManImp {
     unk90: [u8; 0xAC],
     /// disables all save menu callbacks
     /// additionally, can disable auto save
-    pub disable_save_menu: BOOL,
+    pub disable_save_menu: u32,
     unk140: [u8; 0x520],
     pub player_menu_ctrl: CSPlayerMenuCtrl,
     null_player_menu_ctrl: usize,

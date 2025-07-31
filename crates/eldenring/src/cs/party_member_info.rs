@@ -26,11 +26,16 @@ pub struct PartyMemberInfoEntry {
     pub field_ins_handle: FieldInsHandle,
     pub member_type: MemberType,
     pub state: PartyMemberEntryState,
-    pub ceremony_event_flag: u32,
-    unk14: u32,
-    unk18: u32,
+    /// Event flag ID for the npc's invasion event
+    pub npc_invasion_event_flag: u32,
+    /// Event flag ID for the npc's return event
+    pub npc_return_event_flag_id: u32,
+    /// Time since the player was asked to leave the session
+    pub disconnect_request_delta_time: f32,
     unk1c: u8,
-    unk1d: u8,
+    /// Whether the player should be considered for multiplayer rules
+    /// eg. invader sent home when hosts starts a boss fight
+    pub apply_multiplayer_rules: u8,
     unk1e: u8,
     unk1f: u8,
     pub chr_type: u32,

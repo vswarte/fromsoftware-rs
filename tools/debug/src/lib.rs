@@ -1,15 +1,30 @@
 use std::time::Duration;
 
 use display::DebugDisplay;
+
 use eldenring::cs::CSBulletManager;
+use eldenring::cs::CSCamera;
+use eldenring::cs::CSEventFlagMan;
+use eldenring::cs::CSEventManImp;
+use eldenring::cs::CSFade;
 use eldenring::cs::CSFeManImp;
 use eldenring::cs::CSGaitemImp;
+use eldenring::cs::CSNetMan;
+use eldenring::cs::CSSessionManager;
 use eldenring::cs::CSSfxImp;
+use eldenring::cs::CSTaskGroup;
+use eldenring::cs::CSTaskImp;
 use eldenring::cs::CSWindowImp;
+use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::CSWorldSceneDrawParamManager;
 use eldenring::cs::FieldArea;
+use eldenring::cs::WorldAreaTime;
+use eldenring::cs::WorldChrMan;
+use eldenring::fd4::FD4ParamRepository;
+
 use eldenring_util::program::Program;
 use eldenring_util::system::wait_for_system_init;
+
 use hudhook::eject;
 use hudhook::hooks::dx12::ImguiDx12Hooks;
 use hudhook::imgui::Condition;
@@ -19,18 +34,6 @@ use hudhook::Hudhook;
 use hudhook::ImguiRenderLoop;
 
 use pelite::pe64::Pe;
-
-use eldenring::cs::CSCamera;
-use eldenring::cs::CSEventFlagMan;
-use eldenring::cs::CSFade;
-use eldenring::cs::CSNetMan;
-use eldenring::cs::CSSessionManager;
-use eldenring::cs::CSTaskGroup;
-use eldenring::cs::CSTaskImp;
-use eldenring::cs::CSWorldGeomMan;
-use eldenring::cs::WorldAreaTime;
-use eldenring::cs::WorldChrMan;
-use eldenring::fd4::FD4ParamRepository;
 
 use display::render_debug_singleton;
 use rva::RVA_GLOBAL_FIELD_AREA;
@@ -127,6 +130,7 @@ impl ImguiRenderLoop for EldenRingDebugGui {
                     render_debug_singleton::<CSWorldGeomMan>(&ui);
                     render_debug_singleton::<WorldAreaTime>(&ui);
                     render_debug_singleton::<CSBulletManager>(&ui);
+                    render_debug_singleton::<CSEventManImp>(&ui);
                     item.end();
                 }
 
