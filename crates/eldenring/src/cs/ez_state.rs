@@ -6,13 +6,10 @@ pub trait EzStateEventVmt {
 
     fn unk08(&mut self);
 
-    /// Yields the event ID
     fn event_id(&self) -> u32;
 
-    /// The amount of arguments for this event dispatch.
     fn arg_count(&self) -> u32;
 
-    /// Yields the argument data for the argument referenced by its index.
     fn arg(&self, index: u32) -> &EzStateExternalFuncArg;
 }
 

@@ -20,6 +20,30 @@ pub struct CSWorldGeomMan {
     pub curent_99_block_data: OwnedPtr<CSWorldGeomManBlockData>,
 }
 
+impl CSWorldGeomMan {
+    /// Find the structure describing the geometry for a block by its map ID.
+    pub fn world_geom_block_by_map_id(&self, map: &MapId) -> Option<&CSWorldGeomManBlockData> {
+        self.blocks.iter().find_map(|b| {
+            if &b.map_id == map {
+                Some(b.data.as_ref())
+            } else {
+                None
+            }
+        })
+    }
+
+    pub fn world_geom_block_by_map_id_mut(&mut self, map: &MapId) -> Option<&mut CSWorldGeomManBlockData> {
+        self.blocks.iter().find_map(|b| {
+            if &b.map_id == map {
+                Some(b.data.as_mut())
+            } else {
+                None
+            }
+        })
+    }
+
+}
+
 #[repr(C)]
 pub struct CSWorldGeomManBlocksEntry {
     pub map_id: MapId,

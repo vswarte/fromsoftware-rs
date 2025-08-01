@@ -1,4 +1,4 @@
-use eldenring::cs::{FieldArea, WorldInfoOwner};
+use eldenring::cs::{FieldArea, WorldBlockInfo, WorldInfoOwner};
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
 use super::DebugDisplay;
@@ -54,10 +54,7 @@ impl DebugDisplay for WorldInfoOwner {
                             TreeNodeFlags::empty(),
                         ) {
                             ui.indent();
-                            ui.text(format!(
-                                "Center physics coords: {}",
-                                entry.block.physics_center
-                            ));
+                            // entry.render_debug(ui);
                             ui.unindent();
                         }
                     });
@@ -81,11 +78,17 @@ impl DebugDisplay for WorldInfoOwner {
                     TreeNodeFlags::empty(),
                 ) {
                     ui.indent();
-                    ui.text(format!("Center physics coords: {}", entry.physics_center));
+                    entry.render_debug(ui);
                     ui.unindent();
                 }
             }
             ui.unindent();
         }
+    }
+}
+
+impl DebugDisplay for WorldBlockInfo {
+    fn render_debug(&self, ui: &&mut Ui) {
+        // ui.text(format!("Center physics coords: {}", entry.physics_center));
     }
 }

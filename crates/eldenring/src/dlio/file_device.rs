@@ -218,9 +218,11 @@ impl DLFileOperatorIOState {
     pub fn is_open(&self) -> bool {
         self.0 & 0x1 != 0
     }
+
     pub fn unk1(&self) -> bool {
         self.0 & 0x2 != 0
     }
+
     pub fn unk2(&self) -> bool {
         self.0 & 0x4 != 0
     }

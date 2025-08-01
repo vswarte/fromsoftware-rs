@@ -50,17 +50,17 @@ pub struct ChrCam {
     /// Setting this to True will reset the camera to the default position.
     /// (behind player's back)
     pub request_camera_reset: bool,
-    unk79: [u8; 0x3],
+    _unk79: [u8; 0x3],
     pub camera_type: ChrCamType,
-    unk80: [u8; 0xc],
+    _unk80: [u8; 0xc],
     pub pad_accelleration: FSVector4,
     pub move_accelleration: FSVector4,
-    unkb0: f32,
+    _unkb0: f32,
     pub is_movement_locked: bool,
-    unkb5: [u8; 0x11b],
-    position_recorder: [u8; 0xf20],
-    unk10f0: usize,
-    unk10f8: [u8; 0x30],
+    _unkb5: [u8; 0x11b],
+    _position_recorder: [u8; 0xf20],
+    _unk10f0: usize,
+    _unk10f8: [u8; 0x30],
     pub death_cam_target: Option<NonNull<ChrIns>>,
 }
 
