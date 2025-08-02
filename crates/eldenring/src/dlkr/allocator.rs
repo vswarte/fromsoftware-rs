@@ -74,7 +74,7 @@ pub struct DLAllocatorBase {
 
 #[repr(transparent)]
 #[derive(Clone)]
-pub(crate) struct DLAllocatorRef(NonNull<DLAllocatorBase>);
+pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
 
 unsafe impl GlobalAlloc for DLAllocatorRef {
     unsafe fn alloc(&self, layout: std::alloc::Layout) -> *mut u8 {
