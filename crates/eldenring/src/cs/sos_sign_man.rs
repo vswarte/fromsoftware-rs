@@ -266,7 +266,7 @@ pub enum MultiplayType {
     Unk10 = 10,
     Unk11 = 11,
     Unk12 = 12,
-    Unk13 = 13,
+    QuickMatch = 13,
     CultWhiteSummon = 14,
     Unk15 = 15,
     Unk16 = 16,
