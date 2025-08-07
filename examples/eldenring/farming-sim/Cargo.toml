@@ -16,6 +16,8 @@ tracing-appender = "0.2.3"
 tracing-panic = "0.1.2"
 pelite = "0.10"
 nalgebra-glm.workspace = true
+retour = { version = "=0.4.0-alpha.3", features = ["static-detour"] }
+crash-handler = "0.6"
 
 [lib]
 crate-type = ["cdylib"]

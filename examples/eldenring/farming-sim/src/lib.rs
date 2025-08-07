@@ -1,15 +1,25 @@
 use eldenring::position::{BlockPosition, HavokPosition, PositionDelta};
+use eldenring::DynamicSizeSpan;
+use eldenring_util::ez_state::{
+    CustomTalkScriptMenu, CustomTalkScriptMenuOption, EzStateExpressionExt, EzStateInstruction,
+    EZSTATE_COMMAND_ADD_TALK_LIST_DATA, EZSTATE_COMMAND_CLEAR_TALK_LIST_DATA,
+    EZSTATE_COMMAND_CLOSE_SHOP_MESSAGE, EZSTATE_COMMAND_OPEN_REPOSITORY,
+    EZSTATE_COMMAND_SHOW_SHOP_MESSAGE,
+};
 use eldenring_util::geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters};
 use nalgebra_glm as glm;
 use nalgebra_glm::{Mat4, Quat};
 use pelite::pe64::Pe;
+use retour::static_detour;
 use shared::FSVector4;
+use std::ptr::NonNull;
 use std::time::Duration;
 use thiserror::Error;
 use tracing_panic::panic_hook;
 
 use eldenring::cs::{
-    CSCamera, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, FieldArea, GeometrySpawnRequest, MapId,
+    CSCamera, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, EzStateEvent, EzStateExpression,
+    EzStateMachineImpl, EzStateState, EzStateTransition, FieldArea, GeometrySpawnRequest, MapId,
     PlayerIns, RendMan, WorldChrMan,
 };
 use eldenring::fd4::FD4TaskData;
@@ -19,6 +29,10 @@ use eldenring_util::program::Program;
 use eldenring_util::singleton::get_instance;
 use eldenring_util::system::wait_for_system_init;
 use eldenring_util::task::CSTaskImpExt;
+
+static_detour! {
+    static EZ_STATE_ENTER_STATE: extern "C" fn(NonNull<EzStateState>, NonNull<EzStateMachineImpl>, usize);
+}
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
@@ -50,6 +64,217 @@ pub enum ModError {
 fn init() -> Result<(), Box<dyn std::error::Error>> {
     let task = unsafe { get_instance::<CSTaskImp>() }?.ok_or(ModError::MissingStatic("CSTask"))?;
     let mut farming_sim = FarmingSimMod::default();
+
+    unsafe {
+        EZ_STATE_ENTER_STATE
+            .initialize(
+                std::mem::transmute::<
+                    usize,
+                    extern "C" fn(NonNull<EzStateState>, NonNull<EzStateMachineImpl>, usize),
+                >(0x1420887f0usize),
+                |state, mut machine, unk| {
+                    let machine_ref = machine.as_mut();
+
+                    // Check if the current state group contains the sort chest menu option
+                    // somewhere.
+                    let state_group = machine.as_ref().state_group.as_ref();
+                    let contains_repository_transition = machine_ref
+                        .state_group
+                            .as_mut()
+                            .states
+                            .iter_mut()
+                            // Are we in the grace's state group?
+                            .any(|s| {
+                                s.entry_events
+                                    .iter()
+                                    .any(|e| e.command == EZSTATE_COMMAND_OPEN_REPOSITORY)
+                            });
+
+                    // Check if we're entering the state group newly.
+                    let is_entering_initial_state = state == state_group.initial_state;
+
+                    if contains_repository_transition && is_entering_initial_state {
+                        let mut transition_index = usize::MAX;
+                        let mut add_menu_state = None;
+                        let mut menu_transition_state = None;
+
+                        for state in state_group.states.iter() {
+                            // Find the state that adds the Sort chest option
+                            if state.entry_events.iter().any(|event| {
+                                event.command == EZSTATE_COMMAND_ADD_TALK_LIST_DATA
+                                    && event
+                                        .arguments
+                                        .as_slice()
+                                        .get(1)
+                                        .and_then(|arg| arg.disassemble().ok())
+                                        .is_some_and(|f| {
+                                            f.low[0] == EzStateInstruction::PushInt32(15000395)
+                                        })
+                            }) {
+                                add_menu_state = Some(state as *const _ as *mut EzStateState);
+                            }
+
+                            // Find the state that adds the Sort chest transition
+                            if let Some(index) = state.transitions.iter().position(|transition| {
+                                transition
+                                    .as_ref()
+                                    .target_state
+                                    .as_ref()
+                                    .is_some_and(|target| {
+                                        target.as_ref().entry_events.iter().any(|event| {
+                                            event.command == EZSTATE_COMMAND_OPEN_REPOSITORY
+                                        })
+                                    })
+                            }) {
+                                transition_index = index;
+                                menu_transition_state = Some(state as *const _ as *mut EzStateState);
+                            }
+                        }
+
+                        if let Some(add_menu_state) = add_menu_state
+                            && let Some(menu_transition_state) = menu_transition_state
+                            && transition_index != usize::MAX {
+
+                            let test_state_4 =
+                                Box::leak(Box::new(CustomTalkScriptMenu::from_options(
+                                    73,
+                                    &[CustomTalkScriptMenuOption::new(
+                                        1,
+                                        15000372,
+                                        machine_ref.state_group.as_ref().initial_state.as_ptr(),
+                                    )],
+                                )));
+
+                            let test_state_2 =
+                                Box::leak(Box::new(CustomTalkScriptMenu::from_options(
+                                    71,
+                                    &[CustomTalkScriptMenuOption::new(
+                                        1,
+                                        15000372,
+                                        test_state_4.entry_state(),
+                                    )],
+                                )));
+
+                            let test_state_3 =
+                                Box::leak(Box::new(CustomTalkScriptMenu::from_options(
+                                    70,
+                                    &[CustomTalkScriptMenuOption::new(
+                                        1,
+                                        15000395,
+                                        test_state_2.entry_state(),
+                                    )],
+                                )));
+
+                            let test_state =
+                                Box::leak(Box::new(CustomTalkScriptMenu::from_options(
+                                    69,
+                                    &[
+                                        CustomTalkScriptMenuOption::new(
+                                            1,
+                                            15000395,
+                                            test_state_3.entry_state(),
+                                        ),
+                                        // Cancel button
+                                        CustomTalkScriptMenuOption::new(
+                                            2,
+                                            15000372,
+                                            machine_ref.state_group.as_ref().initial_state.as_ptr(),
+                                        ),
+                                    ],
+                                )));
+
+                            let test_state_transition = Box::leak(Box::new(EzStateTransition {
+                                // target_state: Some(NonNull::from_ref(test_state)),
+                                target_state: Some(NonNull::from_ref(test_state.entry_state())),
+                                pass_events: DynamicSizeSpan::empty(),
+                                sub_transitions: DynamicSizeSpan::empty(),
+                                evaluator: EzStateExpression::from_static_slice(
+                                    TEST_TRANSITION_EVALUATOR,
+                                ),
+                            }));
+
+                            {
+                                // Safety: at this point we know that add_menu-state is populated
+                                let add_menu_state = add_menu_state.as_mut().unwrap();
+                                let old_count = add_menu_state.entry_events.len();
+                                let new_count = old_count + 1;
+
+                                let layout =
+                                    std::alloc::Layout::array::<EzStateEvent>(new_count).unwrap();
+                                let alloc = std::alloc::alloc(layout) as *mut EzStateEvent;
+
+                                std::ptr::copy_nonoverlapping(
+                                    add_menu_state.entry_events.as_ptr(),
+                                    alloc,
+                                    old_count,
+                                );
+
+                                std::ptr::write(
+                                    alloc.add(old_count),
+                                    EzStateEvent {
+                                        command: EZSTATE_COMMAND_ADD_TALK_LIST_DATA,
+                                        arguments: DynamicSizeSpan::from_static_slice(
+                                            ENTRY_EVENT_ARGUMENTS,
+                                        ),
+                                    },
+                                );
+
+                                add_menu_state.entry_events =
+                                    DynamicSizeSpan::from_raw_parts(alloc, new_count);
+                            }
+
+                            // Inject new transition as well
+                            {
+                                // tracing::info!("Patching transitions");
+                                let menu_transition_state =
+                                    menu_transition_state.as_mut().unwrap();
+
+                                let old_count = menu_transition_state.transitions.len();
+                                let new_count = old_count + 1;
+
+                                let layout =
+                                    std::alloc::Layout::array::<NonNull<EzStateTransition>>(
+                                        new_count,
+                                    )
+                                    .unwrap();
+                                let alloc =
+                                    std::alloc::alloc(layout) as *mut NonNull<EzStateTransition>;
+
+                                // Copy up to the sort chest index
+                                std::ptr::copy_nonoverlapping(
+                                    menu_transition_state.transitions.as_ptr(),
+                                    alloc,
+                                    transition_index,
+                                );
+                                // Put our own transition right after
+                                std::ptr::write(
+                                    alloc.add(transition_index),
+                                    NonNull::from_ref(test_state_transition),
+                                );
+
+                                // Copy the rest of the list after we added our entry
+                                std::ptr::copy_nonoverlapping(
+                                    menu_transition_state
+                                        .transitions
+                                        .as_ptr()
+                                        .add(transition_index),
+                                    alloc.add(transition_index + 1),
+                                    new_count - transition_index,
+                                );
+
+                                menu_transition_state.transitions =
+                                    DynamicSizeSpan::from_raw_parts(alloc, new_count);
+                            }
+                        }
+                    }
+
+                    EZ_STATE_ENTER_STATE.call(state, machine, unk);
+                },
+            )
+            .unwrap()
+            .enable()
+            .unwrap();
+    }
 
     let task = task.run_recurring(
         move |_: &FD4TaskData| {
@@ -97,6 +322,18 @@ fn init() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+const ENTRY_EVENT_ARGUMENTS_1_BYTES: &[u8] = &[0x82, 0x69, 0x00, 0x00, 0x00, 0xa1];
+const ENTRY_EVENT_ARGUMENTS_2_BYTES: &[u8] = &[0x82, 0x91, 0x95, 0x6F, 0x01, 0xa1];
+const ENTRY_EVENT_ARGUMENTS_3_BYTES: &[u8] = &[0x3f, 0xa1];
+
+const ENTRY_EVENT_ARGUMENTS: &[EzStateExpression] = &[
+    EzStateExpression::from_static_slice(ENTRY_EVENT_ARGUMENTS_1_BYTES), // Set menu item idx
+    EzStateExpression::from_static_slice(ENTRY_EVENT_ARGUMENTS_2_BYTES), // Set FMG,
+    EzStateExpression::from_static_slice(ENTRY_EVENT_ARGUMENTS_3_BYTES), // ???
+];
+
+const TEST_TRANSITION_EVALUATOR: &[u8] = &[0xAF, 0x82, 0x69, 0x00, 0x00, 0x00, 0x95, 0xA1];
 
 // Grid bounds in grid cell count from (-COUNT to COUNT)
 const GRID_SIZE: i32 = 20;
@@ -266,7 +503,9 @@ impl FarmingSimMod {
             return;
         };
 
-        let Some(block_geom_data) = world_geom_man.world_geom_block_by_map_id_mut(&self.origin_block_id) else {
+        let Some(block_geom_data) =
+            world_geom_man.world_geom_block_by_map_id_mut(&self.origin_block_id)
+        else {
             return;
         };
 
