@@ -50,7 +50,7 @@ impl ItemId {
     }
 
     pub const fn category(&self) -> Result<ItemCategory, ItemIdError> {
-        ItemCategory::from_i8(&((self.0 as u32 >> 28) as i8))
+        ItemCategory::from_i8(&((self.0 >> 28) as i8))
     }
 }
 
