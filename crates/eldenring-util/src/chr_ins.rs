@@ -1,9 +1,12 @@
 use std::mem::transmute;
 
-use pelite::pe64::Pe;
 use eldenring::cs::ChrIns;
+use pelite::pe64::Pe;
 
-use crate::{program::Program, rva::{RVA_CHR_INS_APPLY_SPEFFECT, RVA_CHR_INS_REMOVE_SPEFFECT}};
+use crate::{
+    program::Program,
+    rva::{RVA_CHR_INS_APPLY_SPEFFECT, RVA_CHR_INS_REMOVE_SPEFFECT},
+};
 
 pub trait ChrInsExt {
     fn apply_speffect(&mut self, sp_effect: i32, sync: bool);

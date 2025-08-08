@@ -5,11 +5,11 @@ use eldenring::{
     fd4::FD4TaskData,
 };
 use eldenring_util::{
-    input, program::Program, singleton::get_instance, system::wait_for_system_init,
-    task::CSTaskImpExt, chr_ins::ChrInsExt,
+    chr_ins::ChrInsExt, input, program::Program, singleton::get_instance,
+    system::wait_for_system_init, task::CSTaskImpExt,
 };
 
-const SP_EFFECT: i32 = 4330; 
+const SP_EFFECT: i32 = 4330;
 
 /// # Safety
 /// This is exposed this way such that libraryloader can call it. Do not call this yourself.
@@ -29,8 +29,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 // Retrieve WorldChrMan
-                let Some(world_chr_man) = unsafe { get_instance::<WorldChrMan>() }.unwrap()
-                else {
+                let Some(world_chr_man) = unsafe { get_instance::<WorldChrMan>() }.unwrap() else {
                     return;
                 };
 
@@ -48,7 +47,6 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
                 if input::is_key_pressed(0x50) {
                     main_player.chr_ins.remove_speffect(SP_EFFECT);
                 }
-
             },
             CSTaskGroupIndex::FrameBegin,
         );
