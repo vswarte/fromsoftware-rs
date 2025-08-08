@@ -9,7 +9,7 @@ license.workspace = true
 eldenring.workspace = true
 eldenring-util.workspace = true
 pelite.workspace = true
-retour = { version = "0.3", features = ["static-detour"] }
+retour = { version = "0.4.0-alpha.3", features = ["static-detour"] }
 
 [dependencies.tracy-client]
 version = "0.17.4"

@@ -444,6 +444,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "iced-x86"
+version = "1.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c447cff8c7f384a7d4f741cfcff32f75f3ad02b406432e8d6c878d56b1edf6b"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "imgui"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -507,16 +516,6 @@ name = "libc"
 version = "0.2.174"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1171693293099992e19cddea4e8b849964e9846f4acee11b3948bcc337be8776"
-
-[[package]]
-name = "libudis86-sys"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "139bbf9ddb1bfc90c1ac64dd2923d9c957cd433cee7315c018125d72ab08a6b0"
-dependencies = [
- "cc",
- "libc",
-]
 
 [[package]]
 name = "lock_api"
@@ -945,14 +944,14 @@ dependencies = [
 
 [[package]]
 name = "retour"
-version = "0.3.1"
+version = "0.4.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9af44d40e2400b44d491bfaf8eae111b09f23ac4de6e92728e79d93e699c527"
+checksum = "d0c8503fc38eb582477fd8dbe3a1e2ff567757167cb82122fd6b649eb2e4f63f"
 dependencies = [
  "cfg-if",
  "generic-array",
+ "iced-x86",
  "libc",
- "libudis86-sys",
  "mmap-fixed-fixed",
  "once_cell",
  "region",
