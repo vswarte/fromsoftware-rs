@@ -62,6 +62,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "apply-speffect"
+version = "0.8.0"
+dependencies = [
+ "eldenring",
+ "eldenring-util",
+ "fromsoftware-dlrf",
+ "fromsoftware-shared",
+]
+
+[[package]]
 name = "approx"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

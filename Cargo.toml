@@ -10,6 +10,7 @@ members = [
     "tools/binary-mapper",
     "tools/param-generator",
     "tools/profiler",
+    "examples/apply-speffect",
 ]
 
 [workspace.package]

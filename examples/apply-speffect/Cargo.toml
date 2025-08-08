@@ -1,0 +1,15 @@
+[package]
+name = "apply-speffect"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+shared.workspace = true
+dlrf.workspace = true
+eldenring.workspace = true
+eldenring-util.workspace = true
+
+[lib]
+crate-type = ["cdylib"]

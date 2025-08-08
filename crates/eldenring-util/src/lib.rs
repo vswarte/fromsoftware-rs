@@ -3,6 +3,7 @@ pub mod bullet_manager;
 pub mod camera;
 pub mod character_debug_flags;
 pub mod character_type_properties;
+pub mod chr_ins;
 pub mod ez_draw;
 pub mod ez_state;
 pub mod fade;
