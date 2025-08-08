@@ -10,3 +10,6 @@ description = "Helpers for dealing with pointers and other common stuff across g
 [dependencies]
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
