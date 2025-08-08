@@ -37,3 +37,11 @@ captures = ["", "CS_PHYS_WORLD_CAST_RAY"]
 [[patterns]]
 pattern = "40 53 55 56 57 48 81 ec 98 07 00 00 48 c7 44 24 50 fe ff ff ff"
 captures = ["CS_BULLET_MANAGER_SPAWN_BULLET"]
+
+[[patterns]]
+pattern = "48 8b c8 45 33 c0 ba 7f 14 00 00 e8 $ { ' }"
+captures = ["", "CHR_INS_APPLY_SPEFFECT"]
+
+[[patterns]]
+pattern = "ba 1c 00 00 00 48 8b ce 84 c0 74 ? e8 $ { ' } eb ?"
+captures = ["", "CHR_INS_REMOVE_SPEFFECT"]

@@ -9,7 +9,7 @@ members = [
     "tools/debug",
     "tools/binary-mapper",
     "tools/param-generator",
-    "tools/profiler",
+    "tools/profiler", "examples/apply-speffect",
 ]
 
 [workspace.package]
