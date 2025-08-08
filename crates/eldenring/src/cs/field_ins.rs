@@ -11,7 +11,7 @@ pub struct FieldInsSelector(pub u32);
 /// Source of name: Destructor reveals this being a field in FieldIns and it's used as a means of
 /// naming some FieldIns derivant everywhere where raw pointers cannot be shared.
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct FieldInsHandle {
     pub selector: FieldInsSelector,
     pub map_id: MapId,
