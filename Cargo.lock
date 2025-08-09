@@ -804,7 +804,7 @@ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 [[package]]
 name = "pelite"
 version = "0.10.0"
-source = "git+https://github.com/lifegpc/pelite.git#d4fad2a01a9a1a71e36f10f312112bd9b63c9a3d"
+source = "git+https://github.com/CasualX/pelite.git#e9d2dfaadaa5d225d220e703f757930f70c7b8a2"
 dependencies = [
  "dataview",
  "libc",
@@ -816,7 +816,7 @@ dependencies = [
 [[package]]
 name = "pelite-macros"
 version = "0.1.1"
-source = "git+https://github.com/lifegpc/pelite.git#d4fad2a01a9a1a71e36f10f312112bd9b63c9a3d"
+source = "git+https://github.com/CasualX/pelite.git#e9d2dfaadaa5d225d220e703f757930f70c7b8a2"
 
 [[package]]
 name = "pin-project-lite"
