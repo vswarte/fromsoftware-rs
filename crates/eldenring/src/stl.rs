@@ -4,101 +4,13 @@ use std::{
     ptr::{copy_nonoverlapping, NonNull},
 };
 
-use crate::dlkr::DLAllocatorBase;
+use crate::dlkr::{DLAllocatorBase, DLAllocatorRef};
 use shared::OwnedPtr;
 
-#[repr(C)]
-pub struct DoublyLinkedListNode<T> {
-    pub next: NonNull<DoublyLinkedListNode<T>>,
-    pub previous: NonNull<DoublyLinkedListNode<T>>,
-    pub value: T,
-}
+use cxx_stl::{list::CxxList, vec::CxxVec};
 
-#[repr(C)]
-pub struct DoublyLinkedList<T> {
-    allocator: usize,
-    pub head: NonNull<DoublyLinkedListNode<T>>,
-    pub count: u64,
-}
-
-impl<T> DoublyLinkedList<T> {
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
-        let mut count = self.count;
-        let mut current = unsafe { self.head.as_ref() };
-
-        std::iter::from_fn(move || {
-            current = unsafe { current.next.as_ref() };
-            if count == 0 {
-                None
-            } else {
-                count -= 1;
-                Some(&current.value)
-            }
-        })
-    }
-
-    pub fn len(&self) -> usize {
-        self.count as usize
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-}
-
-#[repr(C)]
-pub struct Vector<T>
-where
-    T: Sized,
-{
-    allocator: NonNull<DLAllocatorBase>,
-    pub begin: Option<NonNull<T>>,
-    pub end: Option<NonNull<T>>,
-    pub capacity: Option<NonNull<T>>,
-}
-
-impl<T> Vector<T>
-where
-    T: Sized,
-{
-    pub fn items(&self) -> &[T] {
-        let Some(start) = self.begin else {
-            return &mut [];
-        };
-
-        let end = self.end.unwrap();
-        let count = (end.as_ptr() as usize - start.as_ptr() as usize) / size_of::<T>();
-
-        unsafe { std::slice::from_raw_parts(start.as_ptr(), count) }
-    }
-
-    pub fn items_mut(&mut self) -> &mut [T] {
-        let Some(start) = self.begin else {
-            return &mut [];
-        };
-
-        let end = self.end.unwrap();
-        let count = (end.as_ptr() as usize - start.as_ptr() as usize) / size_of::<T>();
-
-        unsafe { std::slice::from_raw_parts_mut(start.as_ptr(), count) }
-    }
-
-    pub fn len(&self) -> usize {
-        let Some(end) = self.end else {
-            return 0;
-        };
-
-        let Some(start) = self.begin else {
-            return 0;
-        };
-
-        (end.as_ptr() as usize - start.as_ptr() as usize) / size_of::<T>()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-}
+pub type DoublyLinkedList<T> = CxxList<T, DLAllocatorRef>;
+pub type Vector<T> = CxxVec<T, DLAllocatorRef>;
 
 #[repr(C)]
 pub struct Tree<T> {
