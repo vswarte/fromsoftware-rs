@@ -2,6 +2,8 @@ use std::ptr::NonNull;
 
 use shared::OwnedPtr;
 
+use crate::param::SP_EFFECT_PARAM_ST;
+
 use super::ChrIns;
 
 #[repr(C)]
@@ -34,9 +36,9 @@ impl SpecialEffect {
 /// Represents an active SpEffect.
 pub struct SpecialEffectEntry {
     /// The param row this speffect entry uses.
-    param_data: usize,
+    pub param_data: Option<NonNull<SP_EFFECT_PARAM_ST>>,
     /// The param ID for this speffect entry.
-    pub param_id: u32,
+    pub param_id: i32,
     _padc: u32,
     pub accumulator_info: SpecialEffectEntryAccumulatorInfo,
     /// The next param entry in the doubly linked list.

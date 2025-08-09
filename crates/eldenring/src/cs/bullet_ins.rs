@@ -1,3 +1,4 @@
+use crate::param::BULLET_PARAM_ST;
 use crate::position::{DirectionalVector, HavokPosition};
 use crate::rotation::Quaternion;
 use std::ffi::OsStr;
@@ -7,8 +8,8 @@ use vtable_rs::VPtr;
 use super::{CSBulletTargetingSystemOwner, CSTargetingSystemBase, FieldInsBaseVmt, FieldInsHandle};
 
 pub struct BulletParamLookupResult {
-    pub param_row: usize,
-    pub row_id: u32,
+    pub param_row: Option<NonNull<BULLET_PARAM_ST>>,
+    pub param_id: i32,
     version: u8,
     _padd: [u8; 3],
 }

@@ -9,6 +9,7 @@ use windows::core::PCWSTR;
 use crate::cs::MapId;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
+use crate::param::ATK_PARAM_ST;
 use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
 use crate::Vector;
@@ -39,11 +40,11 @@ pub struct P2PEntityHandle {
 
 #[repr(C)]
 pub struct AtkParamLookupResult {
-    behavior_param_id: u32,
+    behavior_param_id: i32,
     unk_param_def_meta: u32,
     is_player_atk_param: bool,
     _pad9: [u8; 7],
-    param_row: usize,
+    param_row: Option<NonNull<ATK_PARAM_ST>>,
 }
 
 #[vtable_rs::vtable]
@@ -1057,7 +1058,7 @@ pub struct CSChrDataModule {
     pub world_block_chr: NonNull<WorldBlockChr<ChrIns>>,
     unk90: [u8; 0x30],
     pub draw_params: u32,
-    pub chara_init_param_id: u32,
+    pub chara_init_param_id: i32,
     // wchar_t[6]
     unkc8: [u8; 0xc],
     unkd4: [u8; 0x64],

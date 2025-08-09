@@ -1,8 +1,7 @@
 use std::ptr::NonNull;
 
 use crate::{
-    position::{BlockPosition, HavokPosition},
-    Tree,
+    param::CEREMONY_PARAM_ST, position::{BlockPosition, HavokPosition}, Tree
 };
 use shared::OwnedPtr;
 
@@ -191,7 +190,7 @@ pub struct WorldBlockInfo {
 
 #[repr(C)]
 pub struct WorldBlockInfoCeremony {
-    pub param_id: u32,
+    pub param_id: i32,
     _pad4: u32,
-    param_row: NonNull<()>,
+    pub param_row: Option<NonNull<CEREMONY_PARAM_ST>>,
 }
