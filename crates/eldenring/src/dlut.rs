@@ -1,4 +1,10 @@
+use std::ops::{Deref, DerefMut};
+
+use bitfield::bitfield;
 use vtable_rs::VPtr;
+
+use windows::Win32::Foundation::{FILETIME, SYSTEMTIME};
+use windows::Win32::System::Time::FileTimeToSystemTime;
 
 #[vtable_rs::vtable]
 pub trait DLReferenceCountObjectVmt {
@@ -18,90 +24,85 @@ pub struct DLReferenceCountObjectBase {
     _padc: u32,
 }
 
+bitfield! {
+    #[derive(Clone, Copy, Default)]
+    pub struct PackedDate(u64);
+    impl Debug;
+    u16;
+    pub year, set_year: 11, 0;
+    pub millisecond, set_millisecond: 21, 12;
+    u8;
+    pub month, set_month: 25, 22;
+    pub day_of_week, set_day_of_week: 28, 26;
+    pub day, set_day: 33, 29;
+    pub hours, set_hours: 38, 34;
+    pub minutes, set_minutes: 44, 39;
+    pub seconds, set_seconds: 50, 45;
+    pub is_utc, set_is_utc: 51;
+}
+
 #[repr(C)]
 /// Source of name: dantelion2 leak
 /// https://archive.org/details/dantelion2
 pub struct DLDateTime {
     /// Set to FILETIME on creation.
-    pub time64: u64,
+    pub time64: FILETIME,
     /// Packed datetime value.
-    pub date: u64,
+    pub date: PackedDate,
 }
 
 impl DLDateTime {
-    pub fn new(time64: u64, is_utc: bool) -> Self {
+    /// Creates a new `DLDateTime` from a `FILETIME`.
+    pub fn new(time64: FILETIME, is_utc: bool) -> Self {
         Self::from_time64(time64, is_utc)
     }
 
-    pub fn from_time64(time64: u64, is_utc: bool) -> Self {
-        let mut packed_value: u64 = 0;
+    /// Creates a new `DLDateTime` from a `FILETIME`, converting the time
+    /// components into a packed bitfield format.
+    pub fn from_time64(time64: FILETIME, is_utc: bool) -> Self {
+        let mut date = PackedDate::default();
+        let mut system_time = SYSTEMTIME::default();
 
-        // UTC flag (1 bit)
-        packed_value |= if is_utc { 1 } else { 0 };
-
-        // seconds (6 bits)
-        packed_value <<= 6;
-        packed_value |= (time64 & 0x3F);
-
-        // minutes (6 bits)
-        packed_value <<= 6;
-        packed_value |= (time64 & 0x3F);
-
-        // hours (5 bits)
-        packed_value <<= 5;
-        packed_value |= (time64 & 0x1F);
-
-        // day (5 bits)
-        packed_value <<= 5;
-        packed_value |= (time64 & 0x1F);
-
-        // day of week (3 bits)
-        packed_value <<= 3;
-        packed_value |= (time64 & 0x7);
-
-        // month (4 bits)
-        packed_value <<= 4;
-        packed_value |= (time64 & 0xF);
-
-        // milliseconds (10 bits)
-        packed_value <<= 10;
-        packed_value |= (time64 & 0x3FF);
-
-        // year (12 bits)
-        packed_value <<= 12;
-        packed_value |= (time64 & 0xFFF);
-
-        Self {
-            time64,
-            date: packed_value,
+        if unsafe { FileTimeToSystemTime(&time64, &mut system_time) }.is_ok() {
+            date.set_year(system_time.wYear);
+            date.set_millisecond(system_time.wMilliseconds);
+            date.set_month(system_time.wMonth as u8);
+            date.set_day_of_week(system_time.wDayOfWeek as u8);
+            date.set_day(system_time.wDay as u8);
+            date.set_hours(system_time.wHour as u8);
+            date.set_minutes(system_time.wMinute as u8);
+            date.set_seconds(system_time.wSecond as u8);
+            date.set_is_utc(is_utc);
         }
+
+        Self { time64, date }
     }
 
-    pub fn years(&self) -> u16 {
-        (self.date & 0xFFF) as u16
+    pub fn year(&self) -> u16 {
+        self.date.year()
     }
-    pub fn milliseconds(&self) -> u16 {
-        ((self.date >> 12) & 0x3FF) as u16
+
+    pub fn month(&self) -> u8 {
+        self.date.month()
     }
-    pub fn months(&self) -> u8 {
-        ((self.date >> 22) & 0xF) as u8
+
+    pub fn day(&self) -> u8 {
+        self.date.day()
     }
-    pub fn day_of_week(&self) -> u8 {
-        ((self.date >> 26) & 0x7) as u8
-    }
-    pub fn days(&self) -> u8 {
-        ((self.date >> 29) & 0x1F) as u8
-    }
+
     pub fn hours(&self) -> u8 {
-        ((self.date >> 34) & 0x1F) as u8
+        self.date.hours()
     }
+
     pub fn minutes(&self) -> u8 {
-        ((self.date >> 39) & 0x3F) as u8
+        self.date.minutes()
     }
+
     pub fn seconds(&self) -> u8 {
-        ((self.date >> 45) & 0x3F) as u8
+        self.date.seconds()
     }
+
     pub fn is_utc(&self) -> bool {
-        (self.date >> 51) & 0x1 != 0
+        self.date.is_utc()
     }
 }
