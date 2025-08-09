@@ -1,10 +1,23 @@
 use std::fmt::Display;
 
+use bitfield::{bitfield, BitRange};
 use thiserror::Error;
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct ItemId(pub i32);
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    pub struct ItemId(u32);
+    impl Debug;
+
+    i32;
+    /// The raw item ID value, without the category.
+    pub item_id_raw, _: 27, 0;
+    _, set_item_id_raw: 27, 0;
+
+    i8;
+    /// The raw category value.
+    pub category_raw, _: 31, 28;
+    _, set_category_raw: 31, 28;
+}
 
 #[derive(Debug, Error)]
 pub enum ItemIdError {
@@ -24,7 +37,7 @@ pub enum ItemCategory {
 }
 
 impl ItemCategory {
-    pub const fn from_i8(val: &i8) -> Result<Self, ItemIdError> {
+    pub const fn from_i8(val: i8) -> Result<Self, ItemIdError> {
         Ok(match val {
             0 => ItemCategory::Weapon,
             1 => ItemCategory::Protector,
@@ -32,31 +45,34 @@ impl ItemCategory {
             4 => ItemCategory::Goods,
             8 => ItemCategory::Gem,
             15 | -1 => ItemCategory::None,
-            _ => return Err(ItemIdError::InvalidCategory(*val)),
+            _ => return Err(ItemIdError::InvalidCategory(val)),
         })
     }
 }
 
 impl ItemId {
-    pub const fn from_parts(item_id: i32, category: ItemCategory) -> Self {
-        Self((item_id & 0x0FFFFFFF) | ((category as i32) << 28))
+    pub fn from_parts(item_id: i32, category: ItemCategory) -> Self {
+        let mut id = ItemId(0);
+        id.set_item_id_raw(item_id);
+        id.set_category_raw(category as i8);
+        id
     }
 
-    pub const fn item_id(&self) -> i32 {
-        if self.0 == -1 {
+    pub fn item_id(&self) -> i32 {
+        if self.0 == u32::MAX {
             return -1;
         }
-        self.0 & 0x0FFFFFFF
+        self.item_id_raw()
     }
 
-    pub const fn category(&self) -> Result<ItemCategory, ItemIdError> {
-        ItemCategory::from_i8(&((self.0 >> 28) as i8))
+    pub fn category(&self) -> Result<ItemCategory, ItemIdError> {
+        ItemCategory::from_i8(self.category_raw())
     }
 }
 
 impl From<i32> for ItemId {
     fn from(value: i32) -> Self {
-        Self(value)
+        Self(value as u32)
     }
 }
 
