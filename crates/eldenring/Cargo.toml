@@ -31,6 +31,3 @@ regex = "1"
 [build-dependencies.serde]
 version = "1"
 features = ["derive"]
-
-[package.metadata.docs.rs]
-default-target = "x86_64-pc-windows-msvc"
