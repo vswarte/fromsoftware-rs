@@ -17,9 +17,9 @@ Your project's Cargo.toml should contain the following lines:
 crate-type = ["cdylib"]
 
 [dependencies]
-eldenring = "0.8.0"
-eldenring-util = "0.8.0"
-fromsoftware-shared = "0.8.0"
+eldenring = "0.10.0"
+eldenring-util = "0.10.0"
+fromsoftware-shared = "0.10.0"
 nalgebra-glm = "0.19.0"
 ```
 
