@@ -4,6 +4,8 @@ use std::{
     ops::{Index, IndexMut},
     slice,
 };
+
+use bitfield::bitfield;
 use vtable_rs::VPtr;
 
 #[vtable_rs::vtable]
@@ -24,91 +26,127 @@ pub struct DLReferenceCountObjectBase {
     _padc: u32,
 }
 
+bitfield! {
+    #[derive(Clone, Copy, Default)]
+    pub struct PackedDate(u64);
+    impl Debug;
+    u16;
+    pub year, set_year: 11, 0;
+    pub millisecond, set_millisecond: 21, 12;
+    u8;
+    pub month, set_month: 25, 22;
+    pub day_of_week, set_day_of_week: 28, 26;
+    pub day, set_day: 33, 29;
+    pub hours, set_hours: 38, 34;
+    pub minutes, set_minutes: 44, 39;
+    pub seconds, set_seconds: 50, 45;
+    pub is_utc, set_is_utc: 51;
+}
+
 #[repr(C)]
 /// Source of name: dantelion2 leak
 /// https://archive.org/details/dantelion2
 pub struct DLDateTime {
-    /// Set to FILETIME on creation.
+    /// Uses FILETIME on windows
+    /// (100-nanosecond intervals since January 1, 1601 UTC)
     pub time64: u64,
     /// Packed datetime value.
-    pub date: u64,
+    pub date: PackedDate,
 }
 
 impl DLDateTime {
-    pub fn new(time64: u64, is_utc: bool) -> Self {
-        Self::from_time64(time64, is_utc)
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        year: u16,
+        month: u8,
+        day: u8,
+        hours: u8,
+        minutes: u8,
+        seconds: u8,
+        milliseconds: u16,
+        is_utc: bool,
+    ) -> Self {
+        let mut date = PackedDate::default();
+        date.set_year(year);
+        date.set_month(month);
+        date.set_day(day);
+        date.set_hours(hours);
+        date.set_minutes(minutes);
+        date.set_seconds(seconds);
+        date.set_millisecond(milliseconds);
+        date.set_is_utc(is_utc);
+
+        let time64 =
+            Self::calculate_time64(year, month, day, hours, minutes, seconds, milliseconds);
+
+        Self { time64, date }
     }
 
-    pub fn from_time64(time64: u64, is_utc: bool) -> Self {
-        let mut packed_value: u64 = 0;
-
-        // UTC flag (1 bit)
-        packed_value |= if is_utc { 1 } else { 0 };
-
-        // seconds (6 bits)
-        packed_value <<= 6;
-        packed_value |= (time64 & 0x3F);
-
-        // minutes (6 bits)
-        packed_value <<= 6;
-        packed_value |= (time64 & 0x3F);
-
-        // hours (5 bits)
-        packed_value <<= 5;
-        packed_value |= (time64 & 0x1F);
-
-        // day (5 bits)
-        packed_value <<= 5;
-        packed_value |= (time64 & 0x1F);
-
-        // day of week (3 bits)
-        packed_value <<= 3;
-        packed_value |= (time64 & 0x7);
-
-        // month (4 bits)
-        packed_value <<= 4;
-        packed_value |= (time64 & 0xF);
-
-        // milliseconds (10 bits)
-        packed_value <<= 10;
-        packed_value |= (time64 & 0x3FF);
-
-        // year (12 bits)
-        packed_value <<= 12;
-        packed_value |= (time64 & 0xFFF);
-
-        Self {
-            time64,
-            date: packed_value,
-        }
+    pub fn year(&self) -> u16 {
+        self.date.year()
     }
 
-    pub fn years(&self) -> u16 {
-        (self.date & 0xFFF) as u16
+    pub fn month(&self) -> u8 {
+        self.date.month()
     }
-    pub fn milliseconds(&self) -> u16 {
-        ((self.date >> 12) & 0x3FF) as u16
+
+    pub fn day(&self) -> u8 {
+        self.date.day()
     }
-    pub fn months(&self) -> u8 {
-        ((self.date >> 22) & 0xF) as u8
-    }
-    pub fn day_of_week(&self) -> u8 {
-        ((self.date >> 26) & 0x7) as u8
-    }
-    pub fn days(&self) -> u8 {
-        ((self.date >> 29) & 0x1F) as u8
-    }
+
     pub fn hours(&self) -> u8 {
-        ((self.date >> 34) & 0x1F) as u8
+        self.date.hours()
     }
+
     pub fn minutes(&self) -> u8 {
-        ((self.date >> 39) & 0x3F) as u8
+        self.date.minutes()
     }
+
     pub fn seconds(&self) -> u8 {
-        ((self.date >> 45) & 0x3F) as u8
+        self.date.seconds()
     }
+
     pub fn is_utc(&self) -> bool {
-        (self.date >> 51) & 0x1 != 0
+        self.date.is_utc()
+    }
+
+    const fn calculate_time64(
+        year: u16,
+        month: u8,
+        day: u8,
+        hours: u8,
+        minutes: u8,
+        seconds: u8,
+        milliseconds: u16,
+    ) -> u64 {
+        const fn is_leap_year(year: u16) -> bool {
+            (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
+        }
+        const fn days_since_1601(year: u16, month: u8, day: u8) -> i64 {
+            const DAYS_BEFORE_MONTH: [i64; 13] =
+                [0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            let mut days = (year as i64 - 1601) * 365;
+            days +=
+                (year as i64 - 1601) / 4 - (year as i64 - 1601) / 100 + (year as i64 - 1601) / 400;
+            days += DAYS_BEFORE_MONTH[month as usize];
+            days += day as i64 - 1;
+            if is_leap_year(year) && month > 2 {
+                days += 1;
+            }
+            days
+        }
+
+        // Convert to FILETIME format (100-nanosecond intervals since January 1, 1601)
+        const INTERVALS_PER_SECOND: u64 = 10_000_000;
+        const INTERVALS_PER_MILLISECOND: u64 = 10_000;
+
+        let days_since_1601 = days_since_1601(year, month, day);
+        let total_seconds = (days_since_1601 as u64 * 86400)
+            + (hours as u64 * 3600)
+            + (minutes as u64 * 60)
+            + (seconds as u64);
+
+        total_seconds * INTERVALS_PER_SECOND + (milliseconds as u64 * INTERVALS_PER_MILLISECOND)
     }
 }
 
