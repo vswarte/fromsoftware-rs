@@ -16,7 +16,7 @@ const SP_EFFECT: i32 = 4330;
 #[no_mangle]
 pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
     // Exit early if we're not attaching a DLL
-    if reason == 1 {
+    if reason != 1 {
         return true;
     }
 
