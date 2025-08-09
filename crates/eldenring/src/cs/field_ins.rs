@@ -1,10 +1,66 @@
-use std::fmt::Display;
-
 use super::{AtkParamLookupResult, BlockId};
 
+use bitfield::bitfield;
+
+use std::fmt::Display;
+
+#[repr(u32)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+pub enum FieldInsType {
+    Hit = 0,
+    Chr = 1,
+    Obj = 2,
+    Bullet = 3,
+    Geom = 4,
+    ReplayGhost = 5,
+    ReplayEnemy = 6,
+    Map = 7,
+    HitGeom = 8,
+}
+
 /// Used to reference a specific FieldIns managed by its respective (external) domain.
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct FieldInsSelector(pub u32);
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    pub struct FieldInsSelector(u32);
+    impl Debug;
+
+    /// The index within the container.
+    pub index, _: 19, 0;
+    _, set_index: 19, 0;
+
+    /// The container for this FieldIns, used to determine which ChrSet to use.
+    pub container, _: 27, 20;
+    _, set_container: 27, 20;
+
+    /// The type of FieldIns, used to determine the container type.
+    _field_ins_type, set_field_ins_type: 31, 28;
+}
+
+impl FieldInsSelector {
+    /// Create a new FieldInsSelector by its components.
+    pub fn from_parts(field_ins_type: FieldInsType, container: u32, index: u32) -> Self {
+        let mut selector = FieldInsSelector(0);
+        selector.set_field_ins_type(field_ins_type as u32);
+        selector.set_container(container);
+        selector.set_index(index);
+        selector
+    }
+
+    pub fn field_ins_type(&self) -> Option<FieldInsType> {
+        match self._field_ins_type() {
+            0 => Some(FieldInsType::Hit),
+            1 => Some(FieldInsType::Chr),
+            2 => Some(FieldInsType::Obj),
+            3 => Some(FieldInsType::Bullet),
+            4 => Some(FieldInsType::Geom),
+            5 => Some(FieldInsType::ReplayGhost),
+            6 => Some(FieldInsType::ReplayEnemy),
+            7 => Some(FieldInsType::Map),
+            8 => Some(FieldInsType::HitGeom),
+            _ => None,
+        }
+    }
+}
 
 /// Used throughout the game engine to refer to characters, geometry, bullets, hits and more.
 ///
@@ -39,35 +95,6 @@ impl Display for FieldInsHandle {
     }
 }
 
-impl FieldInsSelector {
-    /// Create a new FieldInsSelector by its components.
-    pub fn from_parts(field_ins_type: u32, container: u32, index: u32) -> Self {
-        let mapping = &FIELD_INS_TYPE_MAPPING[field_ins_type as usize];
-        Self(index & 0xFFFFF | container << mapping.container_shift | field_ins_type << 0x1C)
-    }
-
-    /// Extracts the type map index
-    pub fn mapping_entry_index(&self) -> u32 {
-        0xF & (self.0 >> 0x1C)
-    }
-
-    /// Retrieves the type map entry for this selector.
-    fn mapping(&self) -> &'static FieldInsMapping {
-        &FIELD_INS_TYPE_MAPPING[self.mapping_entry_index() as usize]
-    }
-
-    /// Extracts the container for this FieldInsSelector. Used to ex: determine the
-    /// appropriate ChrSet to be calling into for a given NPC. Not used for every type.
-    pub fn container(&self) -> u32 {
-        self.mapping().container_mask & self.0 >> (self.mapping().container_shift & 0b00111111)
-    }
-
-    /// Extracts the index within the container for a given FieldIns.
-    pub fn index(&self) -> u32 {
-        (self.mapping().index_mask & self.0) & 0xFFFFF
-    }
-}
-
 #[vtable_rs::vtable]
 /// Describes the VMT for the FieldInsBase which ChrIns, GeomIns, BulletIns, etc derive from.
 pub trait FieldInsBaseVmt {
@@ -96,76 +123,3 @@ pub trait FieldInsBaseVmt {
     /// Obfuscated beyond recognition
     fn unk38(&self);
 }
-
-struct FieldInsMapping {
-    container_mask: u32,
-    container_shift: u32,
-    index_mask: u32,
-    unkc: u32,
-}
-
-const FIELD_INS_TYPE_MAPPING: &[FieldInsMapping] = &[
-    // HIT
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0x5,
-    },
-    // CHR
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0x2,
-    },
-    // OBJ
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0x1,
-    },
-    // BULLET
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0xE,
-    },
-    // SFX
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0xE,
-    },
-    // SOUND
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0xE,
-    },
-    // GEOM
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0xD,
-    },
-    // MAP
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0x0,
-    },
-    // GEOM(Hit)
-    FieldInsMapping {
-        container_mask: 0xFF,
-        container_shift: 0x14,
-        index_mask: 0xFFFFF,
-        unkc: 0xD,
-    },
-];
