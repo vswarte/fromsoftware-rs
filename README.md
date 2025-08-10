@@ -6,8 +6,7 @@ Rust bindings to facilitate mod creation for From Software games.
 ![Crates.io License](https://img.shields.io/crates/l/eldenring)
 
 ## Examples
-
-[Checkout the examples directory](examples/)
+[Check out the examples directory](examples/README.md)
 
 ## Project structure (crates)
 
