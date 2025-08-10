@@ -14,12 +14,6 @@ use shared::FSVector4;
 
 use nalgebra_glm as glm;
 
-#[link(name = "kernel32")]
-unsafe extern "C" {
-    // Import the DisableThreadLibraryCalls function from kernel32.dll.
-    unsafe fn DisableThreadLibraryCalls(hmodule: usize) -> bool;
-}
-
 #[unsafe(no_mangle)]
 /// # Safety
 ///
@@ -30,11 +24,6 @@ pub unsafe extern "C" fn DllMain(hmodule: usize, reason: u32) -> bool {
     if reason != 1 {
         return true;
     }
-
-    // Not important, but generally a good idea to disable DLL_THREAD_ATTACH and
-    // DLL_THREAD_DETACH calls to this DLL.
-    // Game creates quite a few threads, so this can help reduce overhead.
-    DisableThreadLibraryCalls(hmodule);
 
     // Kick off new thread.
     std::thread::spawn(|| {

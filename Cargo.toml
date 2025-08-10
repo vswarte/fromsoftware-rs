@@ -11,6 +11,7 @@ members = [
     "tools/param-generator",
     "tools/profiler",
     "examples/apply-speffect",
+    "examples/debug-line",
 ]
 
 [workspace.package]
