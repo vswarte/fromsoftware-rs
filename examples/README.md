@@ -1,15 +1,25 @@
 # Elden Ring examples
 
-[## Debug line
+## Debug line
 Draws a CSEzDraw debug line from the players position to 1m in front of the player in the direction they're facing.
 
-[code](debug-line/lib.rs)
+[Code](debug-line/src/lib.rs).
+
+<details>
+<summary>Preview image</summary>
 
 ![Debug line rendered by example mode code](img/example-mod-debug-line.png)
+
+</details>
 
 ## Apply speffect
 Applies and removes an speffect based on keypresses (O to apply and P to remove).
 
-[code](apply-speffect/lib.rs)
+[Code](apply-speffect/src/lib.rs).
+
+<details>
+<summary>Preview image</summary>
 
 ![Speffect applied on player after pressing keybind](img/example-mod-apply-speffect.png)
+
+</summary>
