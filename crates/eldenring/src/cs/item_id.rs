@@ -21,7 +21,7 @@ bitfield! {
     _, set_category_raw: 31, 28;
 }
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum ItemIdError {
     #[error("Not a valid item category {0}")]
     InvalidCategory(i8),
@@ -86,5 +86,21 @@ impl Display for ItemId {
             }
             Err(err) => write!(f, "ItemId(0x{:x},{:?})", self.0, err),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::cs::{ItemCategory, ItemId};
+
+    #[test]
+    fn test_bitfield() {
+        let mut item = ItemId(0);
+        item.set_item_id_raw(123);
+        item.set_category_raw(ItemCategory::Weapon as i8);
+
+        assert_eq!(item.item_id(), 123);
+        assert_eq!(item.category(), Ok(ItemCategory::Weapon));
+        assert_eq!(item.0 as i32, 123 | (ItemCategory::Weapon as i32) << 28);
     }
 }
