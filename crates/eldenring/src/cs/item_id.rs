@@ -5,6 +5,8 @@ use thiserror::Error;
 
 bitfield! {
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    // #FIXME: replace with i32 after
+    // https://github.com/dzamlo/rust-bitfield/pull/59 merged
     pub struct ItemId(u32);
     impl Debug;
 
