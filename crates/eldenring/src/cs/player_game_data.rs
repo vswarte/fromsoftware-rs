@@ -1,6 +1,7 @@
 use std::ops::Index;
 use std::ptr::NonNull;
 
+use bitfield::bitfield;
 use thiserror::Error;
 
 use crate::Vector;
@@ -395,23 +396,33 @@ pub struct EquipInventoryData {
     unk124: u32,
 }
 
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    struct ItemIdMappingBits(u32);
+    impl Debug;
+
+    u32;
+    mapping_index, _: 23, 12;
+    item_slot, _: 11, 0;
+}
+
 #[repr(C)]
 pub struct ItemIdMapping {
     pub item_id: u32,
-    bits4: u32,
+    bits4: ItemIdMappingBits,
 }
 
 impl ItemIdMapping {
     /// Returns the offset of the next item ID mapping with the same modulo result.
     pub fn next_mapping_item(&self) -> u32 {
-        ((self.bits4 >> 12) & 0xFFF) - 1
+        (self.bits4.mapping_index() - 1)
     }
 
     /// Returns the index of the item slot. This index is first checked against the key items
     /// capacity to see if it's contained in that. If not you will need to subtract the key items
     /// capacity to get the index for the normal items list.
     pub fn item_slot(&self) -> u32 {
-        self.bits4 & 0xFFF
+        self.bits4.item_slot()
     }
 }
 
