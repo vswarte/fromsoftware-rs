@@ -1,6 +1,8 @@
 use core::ffi;
 use std::ptr::NonNull;
 
+use bitfield::bitfield;
+
 use crate::fd4::FD4BasicHashString;
 
 /// Represents a managed resource.
@@ -226,63 +228,21 @@ pub enum FD4FileCapState {
     Ready = 0x4,
 }
 
-pub struct FD4FileCapUnk89Properties(u8);
+bitfield! {
+    pub struct FD4FileCapUnk89Properties(u8);
+    impl Debug;
 
-impl FD4FileCapUnk89Properties {
-    fn unk1(&self) -> bool {
-        self.0 & 0b00000010 != 0
-    }
-
-    // Set on creation
-    fn unk5(&self) -> bool {
-        self.0 & 0b00100000 != 0
-    }
-
-    fn set_unk1(&mut self, state: bool) {
-        match state {
-            true => self.0 |= 0b00000010,
-            false => self.0 &= !0b00000010,
-        }
-    }
-
-    fn set_unk5(&mut self, state: bool) {
-        match state {
-            true => self.0 |= 0b00100000,
-            false => self.0 &= !0b00100000,
-        }
-    }
-
-    pub fn file_load_queue_index(&self) -> u8 {
-        self.0 >> 2 & 0b00000111
-    }
-
-    pub fn set_file_load_queue_index(&mut self, slot: u8) {
-        self.0 |= (slot & 0b00000111) << 2
-    }
+    pub file_load_queue_index, set_file_load_queue_index: 4, 2;
 }
 
-pub struct FD4FileCapUnk8AProperties(u16);
+bitfield! {
+    pub struct FD4FileCapUnk8AProperties(u16);
+    impl Debug;
 
-impl FD4FileCapUnk8AProperties {
-    pub fn use_secondary_repository(&self) -> bool {
-        self.0 & 0b00000010 != 0
-    }
+    pub use_secondary_repository, set_use_secondary_repository: 1;
 
-    pub fn set_use_secondary_repository(&mut self, state: bool) {
-        match state {
-            true => self.0 |= 0b00000010,
-            false => self.0 &= !0b00000010,
-        }
-    }
-
-    pub fn mutex_index(&self) -> u16 {
-        self.0 >> 3
-    }
-
-    pub fn set_mutex_index(&mut self, slot: u16) {
-        self.0 &= 0b00000111;
-        self.0 |= slot << 3;
-    }
+    u16;
+    pub mutex_index, set_mutex_index: 15, 3;
 }
 
 /// Represents a file resource be it on-disk or virtual. Responsible for parsing the files bytes
