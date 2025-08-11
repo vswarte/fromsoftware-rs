@@ -51,20 +51,6 @@ pub struct DLDateTime {
     pub date: PackedDate,
 }
 
-impl Deref for DLDateTime {
-    type Target = PackedDate;
-
-    fn deref(&self) -> &Self::Target {
-        &self.date
-    }
-}
-
-impl DerefMut for DLDateTime {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.date
-    }
-}
-
 impl DLDateTime {
     /// Creates a new `DLDateTime` from a `FILETIME`.
     pub fn new(time64: FILETIME, is_utc: bool) -> Self {
@@ -90,5 +76,33 @@ impl DLDateTime {
         }
 
         Self { time64, date }
+    }
+
+    pub fn year(&self) -> u16 {
+        self.date.year()
+    }
+
+    pub fn month(&self) -> u8 {
+        self.date.month()
+    }
+
+    pub fn day(&self) -> u8 {
+        self.date.day()
+    }
+
+    pub fn hours(&self) -> u8 {
+        self.date.hours()
+    }
+
+    pub fn minutes(&self) -> u8 {
+        self.date.minutes()
+    }
+
+    pub fn seconds(&self) -> u8 {
+        self.date.seconds()
+    }
+
+    pub fn is_utc(&self) -> bool {
+        self.date.is_utc()
     }
 }
