@@ -4,7 +4,7 @@ use eldenring::{
 };
 use pelite::pe64::Pe;
 
-use crate::{program::Program, rva::RVA_CS_PHYS_WORLD_CAST_RAY};
+use crate::{program::Program, rva};
 
 type FnCastRay = extern "C" fn(
     *const CSPhysWorld,
@@ -37,7 +37,7 @@ impl CSPhysWorldExt for CSPhysWorld {
         let target = unsafe {
             std::mem::transmute::<u64, FnCastRay>(
                 Program::current()
-                    .rva_to_va(RVA_CS_PHYS_WORLD_CAST_RAY)
+                    .rva_to_va(rva::get().cs_phys_world_cast_ray)
                     .unwrap(),
             )
         };

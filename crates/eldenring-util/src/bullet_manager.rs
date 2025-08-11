@@ -1,7 +1,8 @@
 use eldenring::cs::{BulletSpawnData, CSBulletIns, CSBulletManager, FieldInsHandle};
 use pelite::pe64::Pe;
 
-use crate::{program::Program, rva::RVA_CS_BULLET_MANAGER_SPAWN_BULLET};
+use crate::program::Program;
+use crate::rva;
 
 pub trait CSBulletManagerExt {
     fn bullet_ins_by_handle(&mut self, handle: &FieldInsHandle) -> Option<&mut CSBulletIns>;
@@ -51,7 +52,7 @@ impl CSBulletManagerExt for CSBulletManager {
         let target = unsafe {
             std::mem::transmute::<u64, FnSpawnBullet>(
                 Program::current()
-                    .rva_to_va(RVA_CS_BULLET_MANAGER_SPAWN_BULLET)
+                    .rva_to_va(rva::get().cs_bullet_manager_spawn_bullet)
                     .unwrap(),
             )
         };

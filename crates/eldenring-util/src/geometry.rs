@@ -9,9 +9,7 @@ use eldenring::cs::GeometrySpawnRequest;
 use eldenring::cs::MapId;
 
 use crate::program::Program;
-use crate::rva::RVA_CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_MAP_ID;
-use crate::rva::RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST;
-use crate::rva::RVA_SPAWN_GEOMETRY;
+use crate::rva;
 
 #[derive(Debug, Error)]
 pub enum SpawnGeometryError {
@@ -47,12 +45,14 @@ impl CSWorldGeomManExt for CSWorldGeomMan {
         tracing::info!("Spawning {asset}");
 
         let cs_world_geom_man_block_data_by_map_id_va = Program::current()
-            .rva_to_va(RVA_CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_MAP_ID)
+            .rva_to_va(rva::get().cs_world_geom_man_block_data_by_map)
             .unwrap();
         let initialize_spawn_geometry_request_va = Program::current()
-            .rva_to_va(RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST)
+            .rva_to_va(rva::get().initialize_spawn_geometry_request)
             .unwrap();
-        let spawn_geometry_va = Program::current().rva_to_va(RVA_SPAWN_GEOMETRY).unwrap();
+        let spawn_geometry_va = Program::current()
+            .rva_to_va(rva::get().spawn_geometry)
+            .unwrap();
 
         let block_data_by_map_id = unsafe {
             transmute::<u64, fn(&CSWorldGeomMan, &MapId) -> u64>(

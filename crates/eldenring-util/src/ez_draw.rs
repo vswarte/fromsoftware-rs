@@ -5,13 +5,7 @@ use eldenring::{
 use pelite::pe64::Pe;
 use shared::FSVector4;
 
-use crate::{
-    program::Program,
-    rva::{
-        RVA_CS_EZ_DRAW_DRAW_CAPSULE, RVA_CS_EZ_DRAW_DRAW_LINE, RVA_CS_EZ_DRAW_DRAW_SPHERE,
-        RVA_CS_EZ_DRAW_DRAW_WEDGE, RVA_CS_EZ_DRAW_SET_COLOR,
-    },
-};
+use crate::{program::Program, rva};
 
 pub trait CSEzDrawExt {
     /// Set the color for the to-be-rendered primitives.
@@ -46,7 +40,7 @@ impl CSEzDrawExt for CSEzDraw {
         let target = unsafe {
             std::mem::transmute::<u64, FnSetColor>(
                 Program::current()
-                    .rva_to_va(RVA_CS_EZ_DRAW_SET_COLOR)
+                    .rva_to_va(rva::get().cs_ez_draw_set_color)
                     .unwrap(),
             )
         };
@@ -58,7 +52,7 @@ impl CSEzDrawExt for CSEzDraw {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawLine>(
                 Program::current()
-                    .rva_to_va(RVA_CS_EZ_DRAW_DRAW_LINE)
+                    .rva_to_va(rva::get().cs_ez_draw_draw_line)
                     .unwrap(),
             )
         };
@@ -70,7 +64,7 @@ impl CSEzDrawExt for CSEzDraw {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawCapsule>(
                 Program::current()
-                    .rva_to_va(RVA_CS_EZ_DRAW_DRAW_CAPSULE)
+                    .rva_to_va(rva::get().cs_ez_draw_draw_capsule)
                     .unwrap(),
             )
         };
@@ -82,7 +76,7 @@ impl CSEzDrawExt for CSEzDraw {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawSphere>(
                 Program::current()
-                    .rva_to_va(RVA_CS_EZ_DRAW_DRAW_SPHERE)
+                    .rva_to_va(rva::get().cs_ez_draw_draw_sphere)
                     .unwrap(),
             )
         };
@@ -101,7 +95,7 @@ impl CSEzDrawExt for CSEzDraw {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawFan>(
                 Program::current()
-                    .rva_to_va(RVA_CS_EZ_DRAW_DRAW_WEDGE)
+                    .rva_to_va(rva::get().cs_ez_draw_draw_wedge)
                     .unwrap(),
             )
         };
