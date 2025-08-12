@@ -34,11 +34,7 @@ pub fn get() -> &'static RvaBundle {
                 }
             });
 
-            (
-                product.unwrap(),
-                language.lang_id & 0x03FF,
-                version,
-            )
+            (product.unwrap(), language.lang_id & 0x03FF, version)
         };
 
         match (product.as_str(), lang_id_base, version.as_str()) {
