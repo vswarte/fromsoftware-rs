@@ -36,7 +36,7 @@ pub fn get() -> &'static RvaBundle {
 
             (
                 product.unwrap(),
-                (language.lang_id & 0x03FF) as u16,
+                language.lang_id & 0x03FF,
                 version,
             )
         };
