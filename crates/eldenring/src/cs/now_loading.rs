@@ -1,5 +1,4 @@
 /// Used by the game to determine what background iamge to display during a loading screen.
-
 use crate::cs::task::{CSEzTask, CSEzUpdateTask};
 
 #[repr(C)]
