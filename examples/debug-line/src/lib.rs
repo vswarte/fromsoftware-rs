@@ -18,7 +18,7 @@ use nalgebra_glm as glm;
 /// # Safety
 ///
 /// This is exposed this way such that windows LoadLibrary API can call it. Do not call this yourself.
-pub unsafe extern "C" fn DllMain(hmodule: usize, reason: u32) -> bool {
+pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
     // Check if the reason for the call is DLL_PROCESS_ATTACH.
     // This indicates that the DLL is being loaded into a process.
     if reason != 1 {
