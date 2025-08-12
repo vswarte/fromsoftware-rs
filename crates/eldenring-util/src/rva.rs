@@ -6,7 +6,7 @@ mod rva_ww;
 
 use crate::program::Program;
 
-const LANG_ID_WW: u16 = 0x0009;
+const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
 
 pub fn get() -> &'static RvaBundle {
@@ -16,7 +16,6 @@ pub fn get() -> &'static RvaBundle {
 
         let (product, lang_id_base, version) = {
             let info = resources.version_info().unwrap();
-
             let product_version = info.fixed().unwrap().dwProductVersion;
 
             let version = format!(
@@ -43,7 +42,7 @@ pub fn get() -> &'static RvaBundle {
         };
 
         match (product.as_str(), lang_id_base, version.as_str()) {
-            ("ELDEN RING™", LANG_ID_WW, "2.6.0.0") => RvaBundle {
+            ("ELDEN RING™", LANG_ID_EN, "2.6.0.0") => RvaBundle {
                 cs_ez_draw_draw_line: rva_ww::RVA_CS_EZ_DRAW_DRAW_LINE,
                 cs_ez_draw_draw_capsule: rva_ww::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
                 cs_ez_draw_draw_sphere: rva_ww::RVA_CS_EZ_DRAW_DRAW_SPHERE,
