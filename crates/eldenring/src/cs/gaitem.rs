@@ -131,7 +131,7 @@ impl GaitemHandle {
     }
 
     pub fn category(self) -> Result<GaitemCategory, GaitemHandleError> {
-        GaitemCategory::from_u8(self.category_raw())
+        GaitemCategory::try_from(self.category_raw())
     }
 }
 
@@ -145,16 +145,18 @@ pub enum GaitemCategory {
     Gem = 4,
 }
 
-impl GaitemCategory {
-    pub const fn from_u8(val: u8) -> Result<Self, GaitemHandleError> {
-        Ok(match val {
-            0 => GaitemCategory::Weapon,
-            1 => GaitemCategory::Protector,
-            2 => GaitemCategory::Accessory,
-            3 => GaitemCategory::Goods,
-            4 => GaitemCategory::Gem,
-            _ => return Err(GaitemHandleError::InvalidCategory(val)),
-        })
+impl TryFrom<u8> for GaitemCategory {
+    type Error = GaitemHandleError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(GaitemCategory::Weapon),
+            1 => Ok(GaitemCategory::Protector),
+            2 => Ok(GaitemCategory::Accessory),
+            3 => Ok(GaitemCategory::Goods),
+            4 => Ok(GaitemCategory::Gem),
+            _ => Err(GaitemHandleError::InvalidCategory(value)),
+        }
     }
 }
 
