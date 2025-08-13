@@ -408,7 +408,7 @@ bitfield! {
 
 #[repr(C)]
 pub struct ItemIdMapping {
-    pub item_id: u32,
+    pub item_id: ItemId,
     bits4: ItemIdMappingBits,
 }
 
@@ -597,4 +597,23 @@ pub struct ChrAsm {
     unkd4: u32,
     unkd8: u32,
     _paddc: [u8; 12],
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_item_id_mapping() {
+        let mapping = ItemIdMapping {
+            item_id: ItemId::from(0x40002760),
+            bits4: ItemIdMappingBits(0x003B8000),
+        };
+        assert_eq!(mapping.item_id, ItemId::from(0x40002760));
+        assert_eq!(
+            mapping.next_mapping_item(),
+            ((mapping.bits4.0 >> 12) & 0xFFF) - 1
+        );
+        assert_eq!(mapping.item_slot(), mapping.bits4.0 & 0xFFF);
+    }
 }
