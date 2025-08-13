@@ -231,9 +231,6 @@ bitfield! {
     pub struct FD4FileCapUnk89Properties(u8);
     impl Debug;
 
-    pub unk1, set_unk1: 1;
-    pub unk5, set_unk5: 5;
-
     pub file_load_queue_index, set_file_load_queue_index: 4, 2;
 }
 

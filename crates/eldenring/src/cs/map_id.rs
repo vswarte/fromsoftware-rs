@@ -2,10 +2,6 @@ use std::fmt::Display;
 
 use bitfield::bitfield;
 
-// #[repr(C)]
-// #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-// pub struct MapId(pub i32);
-
 bitfield! {
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
     // #FIXME: replace with i32 after
