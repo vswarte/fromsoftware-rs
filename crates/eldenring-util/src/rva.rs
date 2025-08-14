@@ -53,7 +53,7 @@ pub fn get() -> &'static RvaBundle {
                 chr_ins_apply_speffect: rva_ww::RVA_CHR_INS_APPLY_SPEFFECT,
                 chr_ins_remove_speffect: rva_ww::RVA_CHR_INS_REMOVE_SPEFFECT,
             },
-            ("ELDEN RING™", LANG_ID_JP, "2.6.0.1") => RvaBundle {
+            ("ELDEN RING", LANG_ID_JP, "2.6.0.1") => RvaBundle {
                 cs_ez_draw_draw_line: rva_jp::RVA_CS_EZ_DRAW_DRAW_LINE,
                 cs_ez_draw_draw_capsule: rva_jp::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
                 cs_ez_draw_draw_sphere: rva_jp::RVA_CS_EZ_DRAW_DRAW_SPHERE,
