@@ -68,7 +68,7 @@ pub fn get() -> &'static RvaBundle {
                 chr_ins_apply_speffect: rva_jp::RVA_CHR_INS_APPLY_SPEFFECT,
                 chr_ins_remove_speffect: rva_jp::RVA_CHR_INS_REMOVE_SPEFFECT,
             },
-            _ => panic!("could not fetch RVAs for executable"),
+            _ => panic!("could not fetch RVAs for executable. name = \"{product}\", lang = {lang_id_base:x}, version = {version}"),
         }
     });
 
