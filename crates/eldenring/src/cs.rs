@@ -1,3 +1,4 @@
+mod block_id;
 mod bullet_ins;
 mod bullet_manager;
 mod camera;
@@ -20,7 +21,6 @@ mod item_id;
 mod item_lot;
 mod job;
 mod location;
-mod map_id;
 mod menu_man;
 mod msb;
 mod net_chr_sync;
@@ -44,6 +44,7 @@ mod world_geom_man;
 mod world_scene_draw_param_manager;
 mod world_sfx_man;
 
+pub use block_id::*;
 pub use bullet_ins::*;
 pub use bullet_manager::*;
 pub use camera::*;
@@ -66,7 +67,6 @@ pub use item_id::*;
 pub use item_lot::*;
 pub use job::*;
 pub use location::*;
-pub use map_id::*;
 pub use menu_man::*;
 pub use msb::*;
 pub use net_chr_sync::*;

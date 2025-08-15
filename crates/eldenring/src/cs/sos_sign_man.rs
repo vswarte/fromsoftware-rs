@@ -1,6 +1,6 @@
 use std::{num::ParseIntError, ptr::NonNull};
 
-use crate::cs::{ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer, MapId};
+use crate::cs::{ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer, BlockId};
 use crate::dlkr::DLAllocatorBase;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
@@ -107,8 +107,8 @@ pub struct SosSignData {
     // _pad4: [u8; 0x4],
     /// Server-assigned identifier for the sign
     pub sign_identifier: ObjectIdentifier,
-    /// Map ID where the sign was placed
-    pub map_id: MapId,
+    /// Block ID where the sign was placed
+    pub block_id: BlockId,
     /// Position of the sign (in physics space)
     pub pos: FSVector3,
     /// Rotation of the sign
@@ -218,7 +218,7 @@ pub struct PhantomJoinData {
     /// Rotation for the phantom
     /// This is the same as the sign's rotation if phantom is joining by a sign
     pub rotation: FSVector3,
-    pub map_id: MapId,
+    pub block_id: BlockId,
     /// Player id of the sign owner from the server
     /// 1 if the sign is NPC
     pub summonee_player_id: u32,

@@ -172,7 +172,7 @@ impl DebugDisplay for ChrSet<ChrIns> {
                     format!(
                         "c{:0>4} - {} FieldInsSelector({}, {})",
                         chr_ins.character_id,
-                        chr_ins.field_ins_handle.map_id,
+                        chr_ins.field_ins_handle.block_id,
                         chr_ins.field_ins_handle.selector.container(),
                         chr_ins.field_ins_handle.selector.index()
                     ),
@@ -251,7 +251,7 @@ impl DebugDisplay for ChrSet<PlayerIns> {
                     format!(
                         "c{:0>4} - {} FieldInsSelector({}, {})",
                         player_ins.chr_ins.character_id,
-                        player_ins.chr_ins.field_ins_handle.map_id,
+                        player_ins.chr_ins.field_ins_handle.block_id,
                         player_ins.chr_ins.field_ins_handle.selector.container(),
                         player_ins.chr_ins.field_ins_handle.selector.index()
                     ),

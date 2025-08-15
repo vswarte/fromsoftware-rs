@@ -44,8 +44,8 @@ pub fn get() -> &'static RvaBundle {
                 cs_ez_draw_draw_sphere: rva_ww::RVA_CS_EZ_DRAW_DRAW_SPHERE,
                 cs_ez_draw_draw_wedge: rva_ww::RVA_CS_EZ_DRAW_DRAW_WEDGE,
                 cs_ez_draw_set_color: rva_ww::RVA_CS_EZ_DRAW_SET_COLOR,
-                cs_world_geom_man_block_data_by_map:
-                    rva_ww::RVA_CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_MAP_ID,
+                cs_world_geom_man_block_data_by_block:
+                    rva_ww::RVA_CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_BLOCK_ID,
                 initialize_spawn_geometry_request: rva_ww::RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST,
                 spawn_geometry: rva_ww::RVA_SPAWN_GEOMETRY,
                 cs_phys_world_cast_ray: rva_ww::RVA_CS_PHYS_WORLD_CAST_RAY,
@@ -59,8 +59,8 @@ pub fn get() -> &'static RvaBundle {
                 cs_ez_draw_draw_sphere: rva_jp::RVA_CS_EZ_DRAW_DRAW_SPHERE,
                 cs_ez_draw_draw_wedge: rva_jp::RVA_CS_EZ_DRAW_DRAW_WEDGE,
                 cs_ez_draw_set_color: rva_jp::RVA_CS_EZ_DRAW_SET_COLOR,
-                cs_world_geom_man_block_data_by_map:
-                    rva_jp::RVA_CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_MAP_ID,
+                cs_world_geom_man_block_data_by_block:
+                    rva_jp::RVA_CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_BLOCK_ID,
                 initialize_spawn_geometry_request: rva_jp::RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST,
                 spawn_geometry: rva_jp::RVA_SPAWN_GEOMETRY,
                 cs_phys_world_cast_ray: rva_jp::RVA_CS_PHYS_WORLD_CAST_RAY,
@@ -81,7 +81,7 @@ pub struct RvaBundle {
     pub cs_ez_draw_draw_sphere: u32,
     pub cs_ez_draw_draw_wedge: u32,
     pub cs_ez_draw_set_color: u32,
-    pub cs_world_geom_man_block_data_by_map: u32,
+    pub cs_world_geom_man_block_data_by_block: u32,
     pub initialize_spawn_geometry_request: u32,
     pub spawn_geometry: u32,
     pub cs_phys_world_cast_ray: u32,

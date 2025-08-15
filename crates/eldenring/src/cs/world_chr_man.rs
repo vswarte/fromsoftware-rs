@@ -10,7 +10,7 @@ use crate::Tree;
 use crate::{cs::ChrIns, Vector};
 use shared::{FSMatrix4x4, FSVector4, OwnedPtr};
 
-use super::{ChrCam, FieldInsHandle, MapId, NetChrSync, PlayerIns};
+use super::{ChrCam, FieldInsHandle, BlockId, NetChrSync, PlayerIns};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -61,8 +61,8 @@ pub struct WorldChrMan {
     pub main_player: Option<OwnedPtr<PlayerIns>>,
     unk_player: Option<OwnedPtr<PlayerIns>>,
 
-    unk_map_id_1: MapId,
-    unk_map_id_2: MapId,
+    unk_block_id_1: BlockId,
+    unk_block_id_2: BlockId,
 
     unk1e520: [u8; 0x18],
     /// Manages spirit summons (excluding Torrent).
@@ -189,7 +189,7 @@ pub struct WorldBlockChr<T: 'static> {
     pub chr_set_ptr: NonNull<ChrSet<T>>,
     allocator: usize,
     unk128: [u8; 0x30],
-    pub map_id: MapId,
+    pub block_id: BlockId,
     unk15c: u32,
 }
 

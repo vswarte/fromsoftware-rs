@@ -25,7 +25,7 @@ impl DebugDisplay for WorldInfoOwner {
             ui.indent();
             for entry in self.world_res.world_info.world_area_info().iter() {
                 if ui.collapsing_header(
-                    format!("World Area Info {}", entry.base.map_id),
+                    format!("World Area Info {}", entry.base.block_id),
                     TreeNodeFlags::empty(),
                 ) {
                     // chr_set.render_debug(ui);
@@ -44,13 +44,13 @@ impl DebugDisplay for WorldInfoOwner {
             ui.indent();
             for entry in self.world_res.world_info.world_grid_area_info().iter() {
                 if ui.collapsing_header(
-                    format!("World Grid Area Info {}", entry.base.map_id),
+                    format!("World Grid Area Info {}", entry.base.block_id),
                     TreeNodeFlags::empty(),
                 ) {
                     ui.indent();
                     entry.blocks.iter().for_each(|entry| {
                         if ui.collapsing_header(
-                            format!("World Block Info {}", entry.map_id),
+                            format!("World Block Info {}", entry.block_id),
                             TreeNodeFlags::empty(),
                         ) {
                             ui.indent();
@@ -77,7 +77,7 @@ impl DebugDisplay for WorldInfoOwner {
             ui.indent();
             for entry in self.world_res.world_info.world_block_info().iter() {
                 if ui.collapsing_header(
-                    format!("World Block Info {}", entry.map_id),
+                    format!("World Block Info {}", entry.block_id),
                     TreeNodeFlags::empty(),
                 ) {
                     ui.indent();

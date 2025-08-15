@@ -7,7 +7,7 @@ use crate::{
 };
 use shared::OwnedPtr;
 
-use super::MapId;
+use super::BlockId;
 
 // Source of name: RTTI
 #[dlrf::singleton("FieldArea")]
@@ -78,15 +78,15 @@ impl WorldInfo {
         &self._world_block_info[0..self.world_block_info_count as usize]
     }
 
-    pub fn world_block_info_by_map(&self, map: &MapId) -> Option<&WorldBlockInfo> {
+    pub fn world_block_info_by_map(&self, map: &BlockId) -> Option<&WorldBlockInfo> {
         match map.is_overworld() {
             true => self
                 .world_grid_area_info()
                 .iter()
                 .flat_map(|a| a.blocks.iter())
-                .find(|b| b.map_id.0 == map.0)
+                .find(|b| b.block_id.0 == map.0)
                 .map(|b| b.block.as_ref()),
-            false => self.world_block_info().iter().find(|b| b.map_id.0 == map.0),
+            false => self.world_block_info().iter().find(|b| b.block_id.0 == map.0),
         }
     }
 }
@@ -95,7 +95,7 @@ impl WorldInfo {
 #[repr(C)]
 pub struct WorldAreaInfoBase {
     vtable: usize,
-    pub map_id: MapId,
+    pub block_id: BlockId,
     pub area_id: u32,
     pub world_info_owner: NonNull<WorldInfoOwner>,
     /// Points to _99 MSB for this area.
@@ -132,7 +132,7 @@ pub struct WorldGridAreaInfo {
     unk50: [u32; 3],
     unk5c: [f32; 4],
     unk6c: [f32; 4],
-    pub skybox_map_id: MapId,
+    pub skybox_block_id: BlockId,
     pub skybox_block_info: NonNull<WorldBlockInfo>,
     pub blocks: Tree<WorldGridAreaInfoBlockElement>,
     unka0: Tree<()>,
@@ -143,7 +143,7 @@ pub struct WorldGridAreaInfo {
 
 #[repr(C)]
 pub struct WorldGridAreaInfoBlockElement {
-    pub map_id: MapId,
+    pub block_id: BlockId,
     _pad4: u32,
     pub block: OwnedPtr<WorldBlockInfo>,
 }
@@ -152,7 +152,7 @@ pub struct WorldGridAreaInfoBlockElement {
 #[repr(C)]
 pub struct WorldBlockInfo {
     vtable: usize,
-    pub map_id: MapId,
+    pub block_id: BlockId,
     unkc: u32,
     pub world_info_owner: NonNull<WorldInfoOwner>,
     /// Effective world area info. Either area or grid area.
@@ -162,7 +162,7 @@ pub struct WorldBlockInfo {
     /// World area info. Seemingly only used if block is part of the overworld.
     pub world_grid_area_info: Option<NonNull<WorldGridAreaInfo>>,
     unk30: u32,
-    map_id_2: MapId,
+    block_id_2: BlockId,
     /// Index in WorldAreaInfo's block list. Will be -1 if this is an overworld block.
     pub world_area_info_index: i32,
     unk3c: u32,

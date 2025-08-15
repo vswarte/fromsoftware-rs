@@ -5,7 +5,7 @@ use windows::core::PCWSTR;
 use crate::{Tree, Vector};
 use shared::OwnedPtr;
 
-use super::{FieldInsHandle, MapId, WorldInfoOwner};
+use super::{FieldInsHandle, BlockId, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -22,7 +22,7 @@ pub struct CSWorldGeomMan {
 
 #[repr(C)]
 pub struct CSWorldGeomManBlocksEntry {
-    pub map_id: MapId,
+    pub block_id: BlockId,
     _pad4: u32,
     pub data: OwnedPtr<CSWorldGeomManBlockData>,
 }
@@ -31,7 +31,7 @@ pub struct CSWorldGeomManBlocksEntry {
 /// Seems to host any spawned geometry for a given map. It
 pub struct CSWorldGeomManBlockData {
     /// The map ID this container hosts the assets for.
-    pub map_id: MapId,
+    pub block_id: BlockId,
     /// Might be padding?
     unk4: u32,
     pub world_block_info: usize,

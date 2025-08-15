@@ -161,7 +161,7 @@ impl DebugDisplay for SosSignData {
     fn render_debug(&self, ui: &&mut Ui) {
         ui.text(format!("Sign ID: {}", self.sign_id));
         ui.text(format!("Sign Identifier: {}", self.sign_identifier.0));
-        ui.text(format!("Map ID: {}", self.map_id));
+        ui.text(format!("Map ID: {}", self.block_id));
         ui.text(format!("Position: {:?}", self.pos));
         ui.text(format!("Yaw: {}", self.yaw));
         ui.text(format!("Play region: {}", self.play_region_id));
@@ -277,7 +277,7 @@ impl DebugDisplay for PhantomJoinData {
         ));
         ui.text(format!("Position: {:?}", self.pos));
         ui.text(format!("Rotation: {:?}", self.rotation));
-        ui.text(format!("Map ID: {}", self.map_id));
+        ui.text(format!("Block ID: {}", self.block_id));
         ui.text(format!("Summonee Player ID: {}", self.summonee_player_id));
         ui.text(format!(
             "Summon Job Error Code: {:?}",

@@ -11,7 +11,7 @@ use crate::{
 };
 use shared::{FSVector3, FSVector4, OwnedPtr};
 
-use super::{CSEzTask, CSEzUpdateTask, MapId, P2PEntityHandle};
+use super::{CSEzTask, CSEzUpdateTask, BlockId, P2PEntityHandle};
 
 #[repr(u32)]
 #[derive(Debug, PartialEq)]
@@ -226,9 +226,9 @@ pub struct CSStayInMultiplayAreaWarpData {
     /// Last position player was before stepping out of the multiplay area, relative to the map.
     /// Read from GameMan and uses same logic as bloodstains.
     pub saved_position: FSVector3,
-    /// Last MapId player was before stepping out of the multiplay area.
+    /// Last BlockId player was before stepping out of the multiplay area.
     /// Read from GameMan and uses same logic as bloodstains.
-    pub saved_map_id: MapId,
+    pub saved_block_id: BlockId,
     /// Delay before the player is warped back to the safe position.
     /// Used for fadeout effect and updated by task.
     /// This is set to 0 when the player is warped back.
