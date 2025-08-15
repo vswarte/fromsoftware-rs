@@ -33,7 +33,6 @@ impl BlockId {
         self.0 >> 8 & 0xFF
     }
 
-    /// Seemingly used for the 
     pub const fn index(&self) -> i32 {
         self.0 & 0xFF
     }
