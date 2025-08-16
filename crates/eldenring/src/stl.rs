@@ -152,7 +152,6 @@ pub struct TreeNode<T> {
     right: NonNull<TreeNode<T>>,
     black_red: u8,
     is_nil: u8,
-    _pad1a: [u8; 6],
     value: T,
 }
 
