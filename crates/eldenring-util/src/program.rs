@@ -1,5 +1,3 @@
-// TODO: replace with pelite
-
 use std::sync::LazyLock;
 
 use pelite::pe64::{Pe, PeFile, PeObject, PeView};
@@ -38,5 +36,9 @@ unsafe impl<'a> PeObject<'a> for Program<'a> {
             Self::File(file) => file.align(),
             Self::Mapping(mapping) => mapping.align(),
         }
+    }
+
+    fn image_base(&self) -> pelite::pe64::Va {
+        self.optional_header().ImageBase
     }
 }
