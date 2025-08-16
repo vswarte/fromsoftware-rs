@@ -5,7 +5,7 @@ use windows::core::PCWSTR;
 use crate::{Tree, Vector};
 use shared::OwnedPtr;
 
-use super::{FieldInsHandle, BlockId, WorldInfoOwner};
+use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI

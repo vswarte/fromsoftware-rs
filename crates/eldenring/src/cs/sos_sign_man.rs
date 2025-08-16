@@ -1,6 +1,6 @@
 use std::{num::ParseIntError, ptr::NonNull};
 
-use crate::cs::{ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer, BlockId};
+use crate::cs::{BlockId, ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer};
 use crate::dlkr::DLAllocatorBase;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;

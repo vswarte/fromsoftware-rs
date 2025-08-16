@@ -9,7 +9,7 @@ use vtable_rs::VPtr;
 use crate::cs::ChrIns;
 use crate::Tree;
 
-use super::{FieldInsHandle, BlockId, NetChrSync, PlayerIns, WorldInfoOwner};
+use super::{BlockId, FieldInsHandle, NetChrSync, PlayerIns, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI

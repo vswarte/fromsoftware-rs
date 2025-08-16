@@ -10,7 +10,7 @@ use crate::Tree;
 use crate::{cs::ChrIns, Vector};
 use shared::{FSMatrix4x4, FSVector4, OwnedPtr};
 
-use super::{ChrCam, FieldInsHandle, BlockId, NetChrSync, PlayerIns};
+use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
 #[repr(C)]
 /// Source of name: RTTI

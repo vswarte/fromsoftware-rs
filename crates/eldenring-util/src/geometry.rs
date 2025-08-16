@@ -4,9 +4,9 @@ use eldenring::position::BlockPosition;
 use pelite::pe64::Pe;
 use thiserror::Error;
 
+use eldenring::cs::BlockId;
 use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::GeometrySpawnRequest;
-use eldenring::cs::BlockId;
 
 use crate::program::Program;
 use crate::rva;

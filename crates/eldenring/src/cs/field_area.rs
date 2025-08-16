@@ -86,7 +86,10 @@ impl WorldInfo {
                 .flat_map(|a| a.blocks.iter())
                 .find(|b| b.block_id.0 == map.0)
                 .map(|b| b.block.as_ref()),
-            false => self.world_block_info().iter().find(|b| b.block_id.0 == map.0),
+            false => self
+                .world_block_info()
+                .iter()
+                .find(|b| b.block_id.0 == map.0),
         }
     }
 }

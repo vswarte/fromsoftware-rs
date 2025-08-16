@@ -9,7 +9,7 @@ use crate::{
 };
 use shared::OwnedPtr;
 
-use super::{CSEzTask, CSEzUpdateTask, BlockId, PlayerIns};
+use super::{BlockId, CSEzTask, CSEzUpdateTask, PlayerIns};
 
 #[repr(C)]
 #[dlrf::singleton("CSNetMan")]

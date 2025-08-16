@@ -11,7 +11,7 @@ use crate::{
 };
 use shared::{FSVector3, FSVector4, OwnedPtr};
 
-use super::{CSEzTask, CSEzUpdateTask, BlockId, P2PEntityHandle};
+use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
 #[repr(u32)]
 #[derive(Debug, PartialEq)]
