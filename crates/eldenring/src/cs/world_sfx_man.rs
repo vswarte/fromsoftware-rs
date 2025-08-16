@@ -9,7 +9,7 @@ use vtable_rs::VPtr;
 use crate::cs::ChrIns;
 use crate::Tree;
 
-use super::{FieldInsHandle, MapId, NetChrSync, PlayerIns, WorldInfoOwner};
+use super::{FieldInsHandle, BlockId, NetChrSync, PlayerIns, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -73,7 +73,7 @@ pub struct WorldBlockSfx {
     vftable: usize,
     world_block_info: usize,
     world_area_sfx: NonNull<WorldAreaSfx>,
-    pub map_id: MapId,
+    pub block_id: BlockId,
     unk1c: [u8; 0x40],
     pub total_sfx_count: u32,
     unk60: usize,

@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use super::{AtkParamLookupResult, MapId};
+use super::{AtkParamLookupResult, BlockId};
 
 /// Used to reference a specific FieldIns managed by its respective (external) domain.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
@@ -14,7 +14,7 @@ pub struct FieldInsSelector(pub u32);
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct FieldInsHandle {
     pub selector: FieldInsSelector,
-    pub map_id: MapId,
+    pub block_id: BlockId,
 }
 
 impl FieldInsHandle {
@@ -31,7 +31,7 @@ impl Display for FieldInsHandle {
             write!(
                 f,
                 "FieldIns({}, {}, {})",
-                self.map_id,
+                self.block_id,
                 self.selector.container(),
                 self.selector.index()
             )

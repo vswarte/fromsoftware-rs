@@ -69,7 +69,7 @@ impl DebugDisplay for CSStayInMultiplayAreaWarpData {
             "Multiplay Start Area ID: {}",
             self.multiplay_start_area_id
         ));
-        ui.text(format!("Saved Map ID: {}", self.saved_map_id));
+        ui.text(format!("Saved block ID: {}", self.saved_block_id));
         ui.text(format!(
             "Saved Position: ({}, {}, {})",
             self.saved_position.0, self.saved_position.1, self.saved_position.2

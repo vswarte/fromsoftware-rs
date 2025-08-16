@@ -592,7 +592,7 @@ impl DebugDisplay for ChrIns {
     fn render_debug(&self, ui: &&mut Ui) {
         ui.text(format!("Team: {}", self.team_type));
 
-        ui.text(format!("Map ID: {}", self.map_id_1));
+        ui.text(format!("Block ID: {}", self.block_id_1));
 
         ui.text(format!("Last hit by: {}", self.last_hit_by));
         ui.text(format!("TAE use item: {:?}", self.tae_queued_use_item));

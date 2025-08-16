@@ -6,7 +6,7 @@ use std::slice::SliceIndex;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
-use crate::cs::MapId;
+use crate::cs::BlockId;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::ATK_PARAM_ST;
@@ -30,11 +30,11 @@ use crate::cs::ItemId;
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 /// Used for communicating about characters in the networking layer. This handle is essentially the
-/// same as FieldInsHandle but has its MapID and selector swapped. In packets this might be packed
-/// into map_id (4 bytes) + chr_selector (3 bytes). According to Sekiro's debug asserts the packed
+/// same as FieldInsHandle but has its BlockId and selector swapped. In packets this might be packed
+/// into block_id (4 bytes) + chr_selector (3 bytes). According to Sekiro's debug asserts the packed
 /// version is referred to as the "whoid".
 pub struct P2PEntityHandle {
-    pub map_id: i32,
+    pub block_id: i32,
     pub chr_selector: i32,
 }
 
@@ -82,10 +82,10 @@ pub struct ChrIns {
     pub backread_state: u32,
     unk24: u32,
     chr_res: usize,
-    pub map_id_1: MapId,
-    pub map_id_origin_1: i32,
-    pub block_origin_override: MapId,
-    pub block_origin: MapId,
+    pub block_id_1: BlockId,
+    pub block_id_origin_1: i32,
+    pub block_origin_override: BlockId,
+    pub block_origin: BlockId,
     pub chr_set_cleanup: u32,
     _pad44: u32,
     unk48: usize,
@@ -1052,7 +1052,7 @@ pub struct CSChrDataModule {
     unk70: u32,
     unk74: u32,
     unk78: u32,
-    pub map_id_origin: u32,
+    pub block_id_origin: u32,
     unk80: u32,
     unk84: u32,
     pub world_block_chr: NonNull<WorldBlockChr<ChrIns>>,

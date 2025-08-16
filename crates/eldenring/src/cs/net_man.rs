@@ -9,7 +9,7 @@ use crate::{
 };
 use shared::OwnedPtr;
 
-use super::{CSEzTask, CSEzUpdateTask, MapId, PlayerIns};
+use super::{CSEzTask, CSEzUpdateTask, BlockId, PlayerIns};
 
 #[repr(C)]
 #[dlrf::singleton("CSNetMan")]
@@ -26,8 +26,8 @@ pub struct CSNetMan {
     pub server_connection_lost: bool,
     unk1a: bool,
     unk1b: u8,
-    pub map_id: MapId,
-    unk20: MapId,
+    pub block_id: BlockId,
+    unk20: BlockId,
     pub play_region_id: u32,
     unk28: [u8; 0x40],
     sos_db: usize,
@@ -79,7 +79,7 @@ pub struct CSNetBloodMessageDbItem {
     unk8: u32,
     unkc: u32,
     unk10: u32,
-    pub map_id: MapId,
+    pub block_id: BlockId,
     unk18: u32,
     pub position_x: f32,
     pub position_y: f32,
@@ -177,8 +177,8 @@ pub struct CSBattleRoyalContext {
     pub match_player_count: u32,
     unkb4: u32,
     unkb8: u32,
-    /// Map ID as an enum (1, 2, 3).
-    pub map: u32,
+    /// Selected arena enum. (1, 2, 3).
+    pub arena: u32,
     /// Password used for the quickmatch lobby.
     pub password: DLString,
     /// Seems involved in some map ID sanity checks.

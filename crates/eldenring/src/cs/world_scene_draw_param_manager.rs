@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use crate::DoublyLinkedList;
 
-use super::{MapId, WorldInfoOwner};
+use super::{BlockId, WorldInfoOwner};
 
 /// Source of name: RTTI
 #[repr(C)]
@@ -47,7 +47,7 @@ pub struct CSWorldAreaBlockSceneDrawParam {
     unk8: bool,
     pub is_gparam_ref_settings_for_overworld: bool,
     unka: [u8; 6],
-    pub area: MapId,
+    pub area: BlockId,
     unk14: u32,
     unk18: u32,
     unk1c: u32,

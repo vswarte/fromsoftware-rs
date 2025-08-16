@@ -6,7 +6,7 @@ use thiserror::Error;
 
 use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::GeometrySpawnRequest;
-use eldenring::cs::MapId;
+use eldenring::cs::BlockId;
 
 use crate::program::Program;
 use crate::rva;
@@ -18,7 +18,7 @@ pub enum SpawnGeometryError {
 }
 
 pub struct GeometrySpawnParameters {
-    pub map_id: MapId,
+    pub block_id: BlockId,
     pub position: BlockPosition,
     pub rot_x: f32,
     pub rot_y: f32,
@@ -44,8 +44,8 @@ impl CSWorldGeomManExt for CSWorldGeomMan {
     ) -> Result<(), SpawnGeometryError> {
         tracing::info!("Spawning {asset}");
 
-        let cs_world_geom_man_block_data_by_map_id_va = Program::current()
-            .rva_to_va(rva::get().cs_world_geom_man_block_data_by_map)
+        let cs_world_geom_man_block_data_by_block_id_va = Program::current()
+            .rva_to_va(rva::get().cs_world_geom_man_block_data_by_block)
             .unwrap();
         let initialize_spawn_geometry_request_va = Program::current()
             .rva_to_va(rva::get().initialize_spawn_geometry_request)
@@ -54,9 +54,9 @@ impl CSWorldGeomManExt for CSWorldGeomMan {
             .rva_to_va(rva::get().spawn_geometry)
             .unwrap();
 
-        let block_data_by_map_id = unsafe {
-            transmute::<u64, fn(&CSWorldGeomMan, &MapId) -> u64>(
-                cs_world_geom_man_block_data_by_map_id_va,
+        let block_data_by_block_id = unsafe {
+            transmute::<u64, fn(&CSWorldGeomMan, &BlockId) -> u64>(
+                cs_world_geom_man_block_data_by_block_id_va,
             )
         };
 
@@ -110,7 +110,7 @@ impl CSWorldGeomManExt for CSWorldGeomMan {
         request.scale_z = parameters.scale_z;
 
         // TODO: make this a nice as_ref call or something
-        let block_data_ptr = block_data_by_map_id(self, &parameters.map_id);
+        let block_data_ptr = block_data_by_block_id(self, &parameters.block_id);
         if block_data_ptr == 0x0 {
             return Err(SpawnGeometryError::BlockDataUnavailable);
         }

@@ -9,7 +9,7 @@ impl DebugDisplay for CSWorldGeomMan {
         if ui.collapsing_header("Loaded blocks", TreeNodeFlags::empty()) {
             ui.indent();
             for block in self.blocks.iter() {
-                let label = format!("{}", block.map_id);
+                let label = format!("{}", block.block_id);
                 if ui.collapsing_header(label, TreeNodeFlags::empty()) {
                     block.data.render_debug(ui);
                 }
@@ -27,7 +27,7 @@ impl DebugDisplay for CSWorldGeomMan {
 
 impl DebugDisplay for CSWorldGeomManBlockData {
     fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!("Block ID: {}", self.map_id));
+        ui.text(format!("Block ID: {}", self.block_id));
         ui.text(format!("World block info: {:x}", self.world_block_info));
 
         ui.text(format!(
@@ -54,7 +54,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                     format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
-                        geometry_ins.field_ins_handle.map_id,
+                        geometry_ins.field_ins_handle.block_id,
                         geometry_ins.field_ins_handle.selector.container(),
                         geometry_ins.field_ins_handle.selector.index()
                     ),
@@ -86,7 +86,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                     format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
-                        geometry_ins.field_ins_handle.map_id,
+                        geometry_ins.field_ins_handle.block_id,
                         geometry_ins.field_ins_handle.selector.container(),
                         geometry_ins.field_ins_handle.selector.index()
                     ),

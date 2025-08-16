@@ -76,7 +76,7 @@ fn render_message_table<'a>(
             ui.text(format!("{:x}", message.message_id));
 
             ui.table_next_column();
-            ui.text(message.map_id.to_string());
+            ui.text(message.block_id.to_string());
 
             ui.table_next_column();
             ui.text(format!(
