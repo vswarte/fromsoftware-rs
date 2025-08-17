@@ -1,7 +1,7 @@
 use std::mem::ManuallyDrop;
 
 use crate::Tree;
-use shared::{FSVector4, OwnedPtr};
+use shared::{F32Vector4, OwnedPtr};
 
 pub struct EventFlag(u32);
 

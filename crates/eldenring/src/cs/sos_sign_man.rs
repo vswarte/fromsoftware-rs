@@ -6,7 +6,7 @@ use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::{stl::DoublyLinkedList, Tree, Vector};
 
-use shared::FSVector3;
+use shared::F32Vector3;
 
 use shared::OwnedPtr;
 
@@ -110,7 +110,7 @@ pub struct SosSignData {
     /// Block ID where the sign was placed
     pub block_id: BlockId,
     /// Position of the sign (in physics space)
-    pub pos: FSVector3,
+    pub pos: F32Vector3,
     /// Rotation of the sign
     pub yaw: f32,
     pub play_region_id: u32,
@@ -214,10 +214,10 @@ pub struct PhantomJoinData {
     /// ID of the event flag that will be set when the NPC sign is dismissed
     pub dismissal_event_flag_id: u32,
     /// Position where phantom will be summoned (in physics space)
-    pub pos: FSVector3,
+    pub pos: F32Vector3,
     /// Rotation for the phantom
     /// This is the same as the sign's rotation if phantom is joining by a sign
-    pub rotation: FSVector3,
+    pub rotation: F32Vector3,
     pub block_id: BlockId,
     /// Player id of the sign owner from the server
     /// 1 if the sign is NPC

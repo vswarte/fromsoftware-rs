@@ -1,9 +1,9 @@
 use hudhook::imgui::Ui;
-use shared::{FSMatrix4x4, FSVector4};
+use shared::{F32Matrix4x4, F32Vector4};
 
 use super::DebugDisplay;
 
-impl DebugDisplay for FSMatrix4x4 {
+impl DebugDisplay for F32Matrix4x4 {
     fn render_debug(&self, ui: &&mut Ui) {
         self.0.render_debug(ui);
         ui.separator();
@@ -16,7 +16,7 @@ impl DebugDisplay for FSMatrix4x4 {
     }
 }
 
-impl DebugDisplay for FSVector4 {
+impl DebugDisplay for F32Vector4 {
     fn render_debug(&self, ui: &&mut Ui) {
         ui.text(format!("x: {}", self.0));
         ui.text(format!("y: {}", self.1));

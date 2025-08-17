@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{FSMatrix4x4, FSVector4, OwnedPtr};
+use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use super::ChrIns;
 
@@ -32,7 +32,7 @@ pub struct CSCam {
     vftable: usize,
     unk8: u32,
     unkc: u32,
-    pub matrix: FSMatrix4x4,
+    pub matrix: F32Matrix4x4,
     pub fov: f32,
     pub aspect_ratio: f32,
     pub near_plane: f32,
@@ -53,8 +53,8 @@ pub struct ChrCam {
     unk79: [u8; 0x3],
     pub camera_type: ChrCamType,
     unk80: [u8; 0xc],
-    pub pad_accelleration: FSVector4,
-    pub move_accelleration: FSVector4,
+    pub pad_accelleration: F32Vector4,
+    pub move_accelleration: F32Vector4,
     unkb0: f32,
     pub is_movement_locked: bool,
     unkb5: [u8; 0x11b],

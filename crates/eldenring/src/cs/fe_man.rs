@@ -1,7 +1,7 @@
 use std::{fmt::Display, ptr::NonNull};
 
 use crate::{dltx::DLString, CSFixedList};
-use shared::{FSVector4, OwnedPtr};
+use shared::{F32Vector4, OwnedPtr};
 
 use super::{CSMenuManImp, FieldInsHandle};
 
@@ -42,7 +42,7 @@ pub struct CSFeManImp {
     /// Wraps around when it reaches 6
     pub proc_status_messages_write_index: u32,
     unk59c4: [u8; 12],
-    unk59d0: FSVector4,
+    unk59d0: F32Vector4,
     unk59e0: u32,
     unk59e4: [u8; 12],
     /// Data used for the enemy character tags
@@ -342,7 +342,7 @@ pub struct ChrFriendTagEntry {
     /// X, Y - screen position
     /// Z - depth, seems to be increased when character is further away, not used elsewhere
     /// W - unused, always 0
-    pub screen_pos: FSVector4,
+    pub screen_pos: F32Vector4,
     /// Should tag be visible on screen?
     pub is_visible: bool,
     /// Is line of sight to this character blocked?
@@ -409,7 +409,7 @@ pub struct ChrEnemyTagEntry {
     /// X, Y - screen position
     /// Z - depth, seems to be increased when character is further away, not used elsewhere
     /// W - unused, always 0
-    pub screen_pos: FSVector4,
+    pub screen_pos: F32Vector4,
     unk20: [u8; 0x4],
     /// Amount of hp lost
     /// Used to render the damage number on the tag

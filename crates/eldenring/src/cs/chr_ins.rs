@@ -13,7 +13,7 @@ use crate::param::ATK_PARAM_ST;
 use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
 use crate::Vector;
-use shared::{FSMatrix4x4, FSVector4, OwnedPtr};
+use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
 use crate::cs::gaitem::GaitemHandle;
@@ -99,11 +99,11 @@ pub struct ChrIns {
     pub p2p_entity_handle: P2PEntityHandle,
     unk78: usize,
     /// Position in global map chunk coordinates.
-    pub chunk_position: FSVector4,
+    pub chunk_position: F32Vector4,
     /// Initial position of the character when it was created.
     pub initial_position: HavokPosition,
     /// Initial orientation of the character when it was created (in euler angles).
-    pub initial_orientation_euler: FSVector4,
+    pub initial_orientation_euler: F32Vector4,
     /// Time in seconds since last update ran for the ChrIns.
     pub chr_update_delta_time: f32,
     pub omission_mode: OmissionMode,
@@ -115,7 +115,7 @@ pub struct ChrIns {
     unkc8: u8,
     pub is_locked_on: bool,
     unkca: [u8; 0x6],
-    pub lock_on_target_position: FSVector4,
+    pub lock_on_target_position: F32Vector4,
     unke0: [u8; 0x80],
     /// Used by TAE's UseGoods to figure out what item to actually apply.
     pub tae_queued_use_item: ItemId,
@@ -150,7 +150,7 @@ pub struct ChrIns {
     pub chr_flags1ca: ChrInsFlags1ca,
     // _pad1cb: u8,
     pub chr_flags1cc: ChrInsFlags1cc,
-    unk1d0: FSVector4,
+    unk1d0: F32Vector4,
     unk1e0: u32,
     pub network_authority: u32,
     pub event_entity_id: u32,
@@ -733,22 +733,22 @@ pub struct CSChrPhysicsModule {
     unkc8: f32,
     pub adjust_to_hi_collision: bool,
     unkcd: [u8; 0x3],
-    root_motion: FSVector4,
-    root_motion_unk: FSVector4,
-    unkf0: FSVector4,
+    root_motion: F32Vector4,
+    root_motion_unk: F32Vector4,
+    unkf0: F32Vector4,
     unk100: [u8; 0x4],
     pub chr_push_up_factor: f32,
     ground_offset: f32,
     ground_offset_unk: f32,
     unk110: [u8; 0x10],
-    gravity: FSVector4,
-    gravity_unk: FSVector4,
+    gravity: F32Vector4,
+    gravity_unk: F32Vector4,
     unk140: [u8; 0x10],
-    unk150: FSVector4,
-    unk160: FSVector4,
-    unk170: FSVector4,
-    unk180: FSVector4,
-    pub additional_rotation: FSVector4,
+    unk150: F32Vector4,
+    unk160: F32Vector4,
+    unk170: F32Vector4,
+    unk180: F32Vector4,
+    pub additional_rotation: F32Vector4,
     unk1a0: [u8; 0x8],
     unk1a8: FD4Time,
     unk1b8: f32,
@@ -785,8 +785,8 @@ pub struct CSChrPhysicsModule {
     /// Information about character's sliding state
     pub slide_info: ChrPhysicsSlideInfo,
     unk290: [u8; 0x30],
-    unkposition: FSVector4,
-    pub orientation_euler: FSVector4,
+    unkposition: F32Vector4,
+    pub orientation_euler: F32Vector4,
     pub chr_hit_height: f32,
     pub chr_hit_radius: f32,
     unk2e8: [u8; 0x8],
@@ -813,10 +813,10 @@ pub struct CSChrPhysicsModule {
     hk_frame_data: usize,
     unk398: f32,
     unk39c: [u8; 0x4],
-    unk3a0: FSVector4,
+    unk3a0: F32Vector4,
     unk3b0: [u8; 0x10],
-    unk3c0: FSVector4,
-    unk3d0: FSVector4,
+    unk3c0: F32Vector4,
+    unk3d0: F32Vector4,
     unk3e0: [u8; 0x6],
     /// Loaded from NpcParam
     pub is_enable_step_disp_interpolate: bool,
@@ -846,21 +846,21 @@ bitfield! {
 
 #[repr(C)]
 pub struct ChrPhysicsSlopeInfo {
-    unk0: FSVector4,
-    unk10: FSVector4,
+    unk0: F32Vector4,
+    unk10: F32Vector4,
     unk20: f32,
     unk24: f32,
     unk28: f32,
     unk2c: f32,
-    unk30: FSVector4,
+    unk30: F32Vector4,
     /// Slope vector, used for slope detection.
-    pub slope_vector: FSVector4,
+    pub slope_vector: F32Vector4,
     unk50: [u8; 0x20],
 }
 #[repr(C)]
 pub struct ChrPhysicsSlideInfo {
     /// Slide direction vector
-    pub slide_vector: FSVector4,
+    pub slide_vector: F32Vector4,
     /// Information about the slope the character is sliding on
     pub slope_info: NonNull<ChrPhysicsSlopeInfo>,
     /// Angle at which the character is starting to slide
@@ -961,7 +961,7 @@ pub struct CSChrBehaviorModule {
     unk18: usize,
     unk20: usize,
     unk28: usize,
-    pub root_motion: FSVector4,
+    pub root_motion: F32Vector4,
     unk40: [u8; 0x20],
     unk60: [u8; 0xa48],
     unkaa8: [u8; 0x58],
@@ -977,7 +977,7 @@ pub struct CSChrBehaviorModule {
     /// Read from NpcParam, PI by default.
     pub max_ankle_roll_angle_rad: f32,
     unk168c: [u8; 0x104],
-    unk1790: FSVector4,
+    unk1790: F32Vector4,
     unk17a0: [u8; 0x10],
     chr_behavior_debug_anim_helper: usize,
     unk17b8: [u8; 0x10],
@@ -1094,8 +1094,8 @@ pub struct CSPairAnimNode {
     unk8: usize,
     pub owner: OwnedPtr<ChrIns>,
     pub forwarding_recipient: FieldInsHandle,
-    unk20: FSVector4,
-    unk30: FSVector4,
+    unk20: F32Vector4,
+    unk30: F32Vector4,
     unk40: u32,
     unk44: [u8; 0xc],
 }
@@ -1175,8 +1175,8 @@ pub struct ChrCtrl {
     pub flags_copy: ChrCtrlFlags,
     unkf8: u32,
     pub chr_proxy_flags: ChrCtrlChrProxyFlags,
-    unk100: FSVector4,
-    unk110: FSVector4,
+    unk100: F32Vector4,
+    unk110: F32Vector4,
     unk120: [u8; 0x8],
     pub chr_ragdoll_state: u8,
     // _pad129: [u8; 0x3],
@@ -1189,12 +1189,12 @@ pub struct ChrCtrl {
     unk190: [u8; 0x10],
     /// Offset from the character's dmypoly for the tag position (name, hp, etc).
     /// Will modify position of the resulting tag.
-    pub lock_on_chr_tag_dmypoly_offset: FSVector4,
+    pub lock_on_chr_tag_dmypoly_offset: F32Vector4,
     /// Stores the model matrix derived from `CSChrPhysicsModule::ConstructModelMatrix`.
     /// Constructed from `CSChrPhysicsModule::position` and `CSChrPhysicsModule::orientation`.
-    pub physics_model_matrix: FSMatrix4x4,
+    pub physics_model_matrix: F32Matrix4x4,
     /// Stores the `raw_physics_model_matrix` multiplied by itself.
-    pub physics_transform_matrix_squared: FSMatrix4x4,
+    pub physics_transform_matrix_squared: F32Matrix4x4,
     /// The primary model matrix for the character.
     /// It's initially constructed by combining:
     /// - Translation from `raw_physics_model_matrix` and `vertical_position_offset`.
@@ -1204,14 +1204,14 @@ pub struct ChrCtrl {
     /// This matrix is then processed by ChrEasingModule,
     /// and the eased result is stored back into this field. It's the final matrix
     /// propagated to components like `locationMtx44ChrEntity`.
-    pub model_matrix: FSMatrix4x4,
-    /// Stores the `model_matrix` multiplied by itself after all modifications.
-    pub model_matrix_squared: FSMatrix4x4,
-    unk2b0: FSVector4,
+    pub model_matrix: F32Matrix4x4,
+    /// Stores the `model_matrix` multiplied by itself after all modifications.chr_ins
+    pub model_matrix_squared: F32Matrix4x4,
+    unk2b0: F32Vector4,
     /// An additional orientation (quaternion) that is multiplied with the orientation
     /// derived from the `raw_physics_model_matrix` to produce the final orientation
     /// for the `model_matrix`.
-    pub additional_orientation_quat: FSVector4,
+    pub additional_orientation_quat: F32Vector4,
     /// An offset applied to the Y-component (vertical) of the character's position
     /// when constructing the translation part of the `model_matrix`.
     pub vertical_position_offset: f32,
@@ -1260,10 +1260,10 @@ pub struct ChrCtrl {
     /// Fetched from NpcParam
     pub undulation_correction_gain: f32,
     unk33c: [u8; 0x14],
-    unk350: FSVector4,
-    unk360: FSVector4,
+    unk350: F32Vector4,
+    unk360: F32Vector4,
     unk370: [u8; 0x10],
-    unk380: FSVector4,
+    unk380: F32Vector4,
     unk390: [u8; 0x19],
     /// Group, deciding how character will collide with other characters.
     /// Fetched from NpcParam

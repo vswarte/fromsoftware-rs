@@ -10,7 +10,7 @@ use eldenring_util::{
     task::CSTaskImpExt,
 };
 
-use shared::FSVector4;
+use shared::F32Vector4;
 
 use nalgebra_glm as glm;
 
@@ -68,7 +68,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                 };
 
                 // Set color for the to-be-rendered line.
-                ez_draw.set_color(&FSVector4(0.0, 0.0, 1.0, 1.0));
+                ez_draw.set_color(&F32Vector4(0.0, 0.0, 1.0, 1.0));
 
                 // Draw the line from the players position to a meter in front of the player.
                 ez_draw.draw_line(

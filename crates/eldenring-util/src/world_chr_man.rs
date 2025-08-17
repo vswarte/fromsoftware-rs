@@ -1,5 +1,5 @@
 use eldenring::cs::{ChrIns, FieldInsHandle, WorldChrMan};
-use shared::FSVector4;
+use shared::F32Vector4;
 
 pub trait WorldChrManExt {
     fn chr_ins_by_handle(&mut self, handle: &FieldInsHandle) -> Option<&mut ChrIns>;
@@ -33,7 +33,7 @@ impl WorldChrManExt for WorldChrMan {
         self.debug_chr_creator.init_data.talk_id = request.talk_id;
 
         self.debug_chr_creator.init_data.spawn_position =
-            FSVector4(request.pos_x, request.pos_y, request.pos_z, 0.0);
+            F32Vector4(request.pos_x, request.pos_y, request.pos_z, 0.0);
 
         self.debug_chr_creator.spawn = true;
     }
