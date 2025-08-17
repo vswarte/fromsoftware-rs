@@ -3,7 +3,7 @@ use vtable_rs::VPtr;
 
 use crate::position::HavokPosition;
 use crate::rotation::Quaternion;
-use shared::FSVector4;
+use shared::F32Vector4;
 
 use super::{CSBulletIns, ChrIns, FieldInsHandle, SpecialEffect};
 
@@ -45,9 +45,9 @@ pub trait CSTargetingSystemOwnerVmt {
 
     fn get_orientation<'a>(&self, out: &'a mut Quaternion) -> &'a mut Quaternion;
 
-    fn get_forward<'a>(&self, out: &'a mut FSVector4) -> &'a mut FSVector4;
+    fn get_forward<'a>(&self, out: &'a mut F32Vector4) -> &'a mut F32Vector4;
 
-    fn get_forward2<'a>(&self, out: &'a mut FSVector4) -> &'a mut FSVector4;
+    fn get_forward2<'a>(&self, out: &'a mut F32Vector4) -> &'a mut F32Vector4;
 
     fn get_hit_height(&self) -> f32;
 
@@ -104,7 +104,7 @@ pub trait CSTargetingSystemOwnerVmt {
 
     fn unk108(&self) -> u8;
 
-    fn unk110<'a>(&self, out: &'a mut FSVector4) -> &'a mut FSVector4;
+    fn unk110<'a>(&self, out: &'a mut F32Vector4) -> &'a mut F32Vector4;
 
     fn get_hearing_head_size(&self) -> f32;
 

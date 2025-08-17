@@ -3,13 +3,13 @@ use eldenring::{
     position::{HavokPosition, PositionDelta},
 };
 use pelite::pe64::Pe;
-use shared::FSVector4;
+use shared::F32Vector4;
 
 use crate::{program::Program, rva};
 
 pub trait CSEzDrawExt {
     /// Set the color for the to-be-rendered primitives.
-    fn set_color(&self, color: &FSVector4);
+    fn set_color(&self, color: &F32Vector4);
 
     fn draw_line(&self, from: &HavokPosition, to: &HavokPosition);
 
@@ -27,7 +27,7 @@ pub trait CSEzDrawExt {
     );
 }
 
-type FnSetColor = extern "C" fn(*const CSEzDraw, *const FSVector4);
+type FnSetColor = extern "C" fn(*const CSEzDraw, *const F32Vector4);
 type FnDrawLine = extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition);
 type FnDrawCapsule =
     extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition, f32);
@@ -36,7 +36,7 @@ type FnDrawFan =
     extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition, f32, f32, f32);
 
 impl CSEzDrawExt for CSEzDraw {
-    fn set_color(&self, color: &FSVector4) {
+    fn set_color(&self, color: &F32Vector4) {
         let target = unsafe {
             std::mem::transmute::<u64, FnSetColor>(
                 Program::current()

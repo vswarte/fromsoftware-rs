@@ -9,7 +9,7 @@ use crate::{
     fd4::FD4Time,
     DoublyLinkedList, Vector,
 };
-use shared::{FSVector3, FSVector4, OwnedPtr};
+use shared::{F32Vector3, F32Vector4, OwnedPtr};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
@@ -225,7 +225,7 @@ pub struct CSStayInMultiplayAreaWarpData {
     stay_in_multiplay_area_warp_step: [u8; 0xc8],
     /// Last position player was before stepping out of the multiplay area, relative to the map.
     /// Read from GameMan and uses same logic as bloodstains.
-    pub saved_position: FSVector3,
+    pub saved_position: F32Vector3,
     /// Last BlockId player was before stepping out of the multiplay area.
     /// Read from GameMan and uses same logic as bloodstains.
     pub saved_block_id: BlockId,

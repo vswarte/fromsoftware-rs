@@ -8,7 +8,7 @@ use vtable_rs::VPtr;
 
 use crate::Tree;
 use crate::{cs::ChrIns, Vector};
-use shared::{FSMatrix4x4, FSVector4, OwnedPtr};
+use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
@@ -126,10 +126,10 @@ pub struct CSDebugChrCreator {
 
 #[repr(C)]
 pub struct CSDebugChrCreatorInitData {
-    pub spawn_position: FSVector4,
-    spawn_rotation: FSVector4,
-    unk20: FSVector4,
-    spawn_scale: FSVector4,
+    pub spawn_position: F32Vector4,
+    spawn_rotation: F32Vector4,
+    unk20: F32Vector4,
+    spawn_scale: F32Vector4,
     pub npc_param_id: i32,
     pub npc_think_param_id: i32,
     pub event_entity_id: i32,
@@ -379,7 +379,7 @@ pub struct SummonBuddyManager {
     unk94: u32,
     unk98: u32,
     unk9c: u32,
-    unka0: FSVector4,
+    unka0: F32Vector4,
     unkb0: f32,
     unkb4: u32,
     unkb8: u32,

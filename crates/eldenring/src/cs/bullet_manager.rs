@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{FSVector4, OwnedPtr};
+use shared::{F32Vector4, OwnedPtr};
 
 use super::{CSBulletIns, ChrCam, FieldInsHandle};
 
@@ -119,16 +119,16 @@ pub struct BulletSpawnData {
     target: FieldInsHandle,
     unk28: u32,
     unk2c: u32,
-    unk30: FSVector4,
+    unk30: F32Vector4,
     unk40: u32,
     unk44: u32,
     pad48: [u8; 8],
     /// Forward vector, only applies if angle vec is 0?
-    acceleration_angle: FSVector4,
-    unk60: FSVector4,
+    acceleration_angle: F32Vector4,
+    unk60: F32Vector4,
     /// Forward vector
-    angle: FSVector4,
-    position: FSVector4,
+    angle: F32Vector4,
+    position: F32Vector4,
     unk90: u64,
     unk98: u64,
     unka0: u64,

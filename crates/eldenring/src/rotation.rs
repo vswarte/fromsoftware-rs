@@ -1,7 +1,7 @@
 use nalgebra_glm as glm;
 use std::fmt::Display;
 
-use shared::FSVector4;
+use shared::F32Vector4;
 
 #[repr(C, align(16))]
 #[derive(Debug, Clone, Copy, PartialEq)]
