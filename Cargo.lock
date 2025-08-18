@@ -1073,6 +1073,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
+name = "spawn-asset"
+version = "0.10.0"
+dependencies = [
+ "eldenring",
+ "eldenring-util",
+ "fromsoftware-shared",
+ "nalgebra-glm",
+]
+
+[[package]]
 name = "steamworks"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

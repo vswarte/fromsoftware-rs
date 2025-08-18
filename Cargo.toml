@@ -12,6 +12,7 @@ members = [
     "tools/profiler",
     "examples/apply-speffect",
     "examples/debug-line",
+    "examples/spawn-asset",
 ]
 
 [workspace.package]
