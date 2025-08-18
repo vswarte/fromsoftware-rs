@@ -23,6 +23,7 @@ Applies and removes an speffect based on keypresses (O to apply and P to remove)
 ![Speffect applied on player after pressing keybind](img/example-mod-apply-speffect.png)
 
 </summary>
+</details>
 
 ## Spawn asset (AEG)
 Spawns bloodied poop at twice the scale at the players location whenever H is pressed.
