@@ -31,7 +31,10 @@ impl CSWorldGeomMan {
         })
     }
 
-    pub fn geom_block_data_by_id_mut(&mut self, block_id: &BlockId) -> Option<&mut CSWorldGeomManBlockData> {
+    pub fn geom_block_data_by_id_mut(
+        &mut self,
+        block_id: &BlockId,
+    ) -> Option<&mut CSWorldGeomManBlockData> {
         self.blocks.iter().find_map(|b| {
             if &b.block_id == block_id {
                 Some(b.data.as_mut())
@@ -40,7 +43,6 @@ impl CSWorldGeomMan {
             }
         })
     }
-
 }
 
 #[repr(C)]

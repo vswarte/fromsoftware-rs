@@ -13,6 +13,7 @@ members = [
     "examples/apply-speffect",
     "examples/debug-line",
     "examples/spawn-asset",
+    "examples/present-action-button",
 ]
 
 [workspace.package]

@@ -831,6 +831,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
+name = "present-action-button"
+version = "0.10.0"
+dependencies = [
+ "eldenring",
+ "eldenring-util",
+ "fromsoftware-dlrf",
+ "fromsoftware-shared",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.97"
 source = "registry+https://github.com/rust-lang/crates.io-index"

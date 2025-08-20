@@ -5,10 +5,7 @@ use eldenring::cs::CSWorldGeomIns;
 use eldenring::cs::CSWorldGeomManBlockData;
 use eldenring::position::BlockPosition;
 use pelite::pe64::Pe;
-use thiserror::Error;
 
-use eldenring::cs::BlockId;
-use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::GeometrySpawnRequest;
 
 use crate::program::Program;
