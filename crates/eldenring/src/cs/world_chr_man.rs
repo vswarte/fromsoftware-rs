@@ -1,3 +1,4 @@
+use std::collections::LinkedList;
 use std::ffi;
 use std::fmt::Display;
 use std::marker::PhantomData;
@@ -7,8 +8,11 @@ use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
 use crate::cs::{CSEzTask, CSEzVoidTask};
-use crate::Tree;
-use crate::{cs::ChrIns, Vector};
+use crate::{
+    cs::{ChrIns, EnemyIns},
+    Vector,
+};
+use crate::{DoublyLinkedList, Tree};
 use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
@@ -443,9 +447,12 @@ pub struct SummonBuddyManager {
     unk8: usize,
     unk10: usize,
     unk18: usize,
-    pub to_spawn_buddy_param: i32,
-    pub spawned_buddy_param: i32,
+    /// ID of SpEffect used to summon the spirit ash.
+    pub spawn_sp_effect_id: i32,
+    /// ID of BuddyParam row used to spawn your group.
+    pub spawned_buddy_param_id: i32,
     unk28: usize,
+    /// Reference to the SummonBuddy ChrSet on WorldChrMan.
     pub chr_set: NonNull<ChrSet<ChrIns>>,
     unk38: u32,
     unk3c: u32,
@@ -455,7 +462,8 @@ pub struct SummonBuddyManager {
     unk58: usize,
     unk60: usize,
     unk68: usize,
-    pub summon_groups: Tree<()>,
+    /// Describes the groups of summons.
+    pub groups: Tree<SummonBuddyGroup>,
     unk88: i32,
     pub buddy_disappear_delay_sec: f32,
     unk90: f32,
@@ -482,4 +490,71 @@ pub struct SummonBuddyWarpManager {
     pub trigger_threshold_time_path_stacked: f32,
     pub trigger_threshold_range_path_stacked: f32,
     unk28: [u8; 0x10],
+}
+
+#[repr(C)]
+pub struct SummonBuddyGroup {
+    /// Event ID of the owner.
+    pub owner_event_id: i32,
+    /// List of group entries
+    pub entries: DoublyLinkedList<SummonBuddyGroupEntry>,
+}
+
+#[repr(C)]
+pub struct SummonBuddyGroupEntry {
+    /// ChrIns this group entry is for.
+    pub chr_ins: NonNull<EnemyIns>,
+    unk8: u64,
+    /// Refers to the BuddyStoneParam that the SummonBuddy was spawned from.
+    pub buddy_stone_param_id: i32,
+    unk14: [u8; 0xc],
+    unk20: bool,
+    /// Set to true when the SummonBuddy is going to be despawned.
+    pub disappear: bool,
+    unk22: bool,
+    unk23: bool,
+    /// Seemingly a despawn timer?
+    pub disappear_delay_sec: f32,
+    unk28: u8,
+    unk29: u8,
+    pub follow_type: u8,
+    unk2b: u8,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct SummonBuddyStoneliminateTargetEntry {
+    /// Refers to the SummonBuddy this entry represents.
+    pub buddy_field_ins_handle: FieldInsHandle,
+    /// Keeps track of if the buddy stones eliminate target is in range.
+    pub target_calc: CSBuddyStoneEliminateTargetCalc,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct CSBuddyStoneEliminateTargetCalc {
+    vftable: u64,
+    /// Refers to the SummonBuddy this target calc belongs to.
+    pub owner_field_ins_handle: FieldInsHandle,
+    /// Refers to the BuddyStoneParam that the SummonBuddy was spawned from.
+    pub buddy_stone_param_id: i32,
+    /// Refers to the elimination target using an event entity ID for this target calc.
+    /// This can be a group.
+    pub target_event_entity_id: i32,
+    /// Is the targeted entity in range of the SummonBuddy.
+    pub target_in_range: bool,
+    /// Framecount since last update, used to update target_in_range every 33 frames.
+    pub range_check_counter: u32,
+}
+
+#[cfg(test)]
+mod test {
+    use std::mem::size_of;
+
+    use crate::cs::CSBuddyStoneEliminateTargetCalc;
+
+    #[test]
+    fn proper_sizes() {
+        assert_eq!(0x20, size_of::<CSBuddyStoneEliminateTargetCalc>());
+    }
 }
