@@ -327,14 +327,37 @@ impl DebugDisplay for OpenFieldChrSet {
 
 impl DebugDisplay for SummonBuddyManager {
     fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!(
-            "To spawn buddy param: {}",
-            self.to_spawn_buddy_param
-        ));
-        ui.text(format!("Spawned buddy param: {}", self.spawned_buddy_param));
-        ui.text(format!("Next summony buddy slot: {}", self.next_buddy_slot));
+        // ui.text(format!(
+        //     "To spawn buddy param: {}",
+        //     self.to_spawn_buddy_param
+        // ));
+        // ui.text(format!("Spawned buddy param: {}", self.spawned_buddy_param));
+        ui.text(format!("Next summon buddy slot: {}", self.next_buddy_slot));
 
-        // self.w.render_debug(ui);
+        if ui.collapsing_header("Groups", TreeNodeFlags::empty()) {
+            ui.indent();
+            for group in self.groups.iter() {
+                if ui.collapsing_header(
+                    format!("Group {}", group.owner_event_id),
+                    TreeNodeFlags::empty(),
+                ) {
+                    ui.indent();
+                    for (index, v) in group.entries.iter().enumerate() {
+                        if ui.collapsing_header(
+                            format!("Entry {index}"),
+                            TreeNodeFlags::empty(),
+                        ) {
+                            ui.text(format!("Buddy stone param ID: {}", v.buddy_stone_param_id));
+                            ui.text(format!("Disappear?: {}", v.disappear));
+                            ui.text(format!("Disappear delay sec: {}", v.disappear_delay_sec));
+                            ui.text(format!("Follow type: {}", v.follow_type));
+                        }
+                    }
+                    ui.unindent();
+                }
+            }
+            ui.unindent();
+        }
     }
 }
 
