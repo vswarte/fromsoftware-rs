@@ -63,7 +63,7 @@ dependencies = [
 
 [[package]]
 name = "apply-speffect"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
@@ -94,7 +94,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "binary-mapper"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "clap",
  "memmap",
@@ -278,7 +278,7 @@ dependencies = [
 
 [[package]]
 name = "debug"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
@@ -295,7 +295,7 @@ dependencies = [
 
 [[package]]
 name = "debug-line"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
@@ -326,7 +326,7 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
 name = "eldenring"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "bitfield",
  "cxx-stl",
@@ -347,7 +347,7 @@ dependencies = [
 
 [[package]]
 name = "eldenring-util"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "fromsoftware-dlrf",
@@ -379,14 +379,14 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "fromsoftware-dlrf"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "fromsoftware-dlrf-derive",
 ]
 
 [[package]]
 name = "fromsoftware-dlrf-derive"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "quote",
  "syn",
@@ -394,7 +394,7 @@ dependencies = [
 
 [[package]]
 name = "fromsoftware-shared"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "nalgebra",
  "nalgebra-glm",
@@ -667,7 +667,7 @@ dependencies = [
 
 [[package]]
 name = "nightreign"
-version = "0.10.0"
+version = "0.11.0"
 
 [[package]]
 name = "no-std-compat"
@@ -765,7 +765,7 @@ checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 
 [[package]]
 name = "param-generator"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "clap",
  "quick-xml",
@@ -841,7 +841,7 @@ dependencies = [
 
 [[package]]
 name = "profiler"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
