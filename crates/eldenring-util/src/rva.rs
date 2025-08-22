@@ -38,7 +38,7 @@ pub fn get() -> &'static RvaBundle {
         };
 
         match (product.as_str(), lang_id_base, version.as_str()) {
-            ("ELDEN RING™", LANG_ID_EN, "2.6.0.0") => RvaBundle {
+            ("ELDEN RING™", LANG_ID_EN, "2.6.1.0") => RvaBundle {
                 cs_ez_draw_draw_line: rva_ww::RVA_CS_EZ_DRAW_DRAW_LINE,
                 cs_ez_draw_draw_capsule: rva_ww::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
                 cs_ez_draw_draw_sphere: rva_ww::RVA_CS_EZ_DRAW_DRAW_SPHERE,
@@ -53,7 +53,7 @@ pub fn get() -> &'static RvaBundle {
                 chr_ins_apply_speffect: rva_ww::RVA_CHR_INS_APPLY_SPEFFECT,
                 chr_ins_remove_speffect: rva_ww::RVA_CHR_INS_REMOVE_SPEFFECT,
             },
-            ("ELDEN RING", LANG_ID_JP, "2.6.0.1") => RvaBundle {
+            ("ELDEN RING", LANG_ID_JP, "2.6.1.1") => RvaBundle {
                 cs_ez_draw_draw_line: rva_jp::RVA_CS_EZ_DRAW_DRAW_LINE,
                 cs_ez_draw_draw_capsule: rva_jp::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
                 cs_ez_draw_draw_sphere: rva_jp::RVA_CS_EZ_DRAW_DRAW_SPHERE,
