@@ -1038,7 +1038,10 @@ pub struct CSChrToughnessModule {
     pub toughness_max: f32,
     /// Time to lost toughness reset.
     pub recover_time: f32,
-    unk20: [u8; 0x108],
+    unk20: [u8; 0xd],
+    /// Set to "true" to update the character's maximum toughness. (Normally happens when gear changes)
+    pub trigger_max_toughness_update: bool,
+    unk2e: [u8; 0xfa],
 }
 
 #[repr(C)]
