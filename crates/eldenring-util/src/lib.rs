@@ -1,3 +1,4 @@
+pub mod action_button;
 pub mod arxan;
 pub mod bullet_manager;
 pub mod camera;
@@ -11,6 +12,7 @@ pub mod gaitem;
 pub mod geometry;
 pub mod havok;
 pub mod input;
+pub mod menu_man;
 pub mod program;
 pub mod rtti;
 pub mod singleton;
