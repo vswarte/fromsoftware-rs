@@ -7,7 +7,7 @@ bitfield! {
     pub struct BlockId(i32);
     impl Debug;
 
-    i32;
+    i8;
     /// The area is generally used to indicate what type of map is being talked about.
     /// Above 60 is overworld and has special handling the engine for overworld map loading.
     pub area, _: 31, 24;
@@ -35,10 +35,10 @@ impl BlockId {
     /// Constructs a BlockId from seperate parts.
     pub fn from_parts(area: i8, block: i8, region: i8, index: i8) -> Self {
         let mut blockid = BlockId(0);
-        blockid.set_area(area as i32);
-        blockid.set_block(block as i32);
-        blockid.set_region(region as i32);
-        blockid.set_index(index as i32);
+        blockid.set_area(area);
+        blockid.set_block(block);
+        blockid.set_region(region);
+        blockid.set_index(index);
         blockid
     }
 
