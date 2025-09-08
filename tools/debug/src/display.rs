@@ -2,6 +2,7 @@ use dlrf::DLRFSingleton;
 use eldenring_util::singleton;
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
+pub(crate) mod auto_invade_point;
 pub(crate) mod area_time;
 pub(crate) mod bullet_manager;
 pub(crate) mod camera;
