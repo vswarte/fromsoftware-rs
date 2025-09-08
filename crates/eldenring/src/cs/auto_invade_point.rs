@@ -13,7 +13,6 @@ pub struct AutoInvadePoint {
 #[repr(C)]
 pub struct AutoInvadePointBlockEntry {
     pub block_id: BlockId,
-    // _pad4: [u8; 4],
     pub count: usize,
     head: OwnedPtr<AutoInvadePoint>,
 }
@@ -35,4 +34,16 @@ pub struct CSAutoInvadePoint {
     unk18: [u8; 0x28],
     unk40: F32Vector4,
     unk50: [u8; 0x20],
+}
+
+#[cfg(test)]
+mod test {
+    use crate::cs::{AutoInvadePoint, AutoInvadePointBlockEntry, CSAutoInvadePoint};
+
+    #[test]
+    fn proper_sizes() {
+        assert_eq!(std::mem::size_of::<CSAutoInvadePoint>(), 0x70);
+        assert_eq!(std::mem::size_of::<AutoInvadePointBlockEntry>(), 0x18);
+        assert_eq!(std::mem::size_of::<AutoInvadePoint>(), 0x10);
+    }
 }
