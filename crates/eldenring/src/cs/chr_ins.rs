@@ -329,7 +329,8 @@ pub struct ChrInsModuleContainer {
 pub struct CSChrActionRequestModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    action_requests: u64,
+    /// Actions that are currently being requested by the player.
+    pub action_requests: ChrActions,
     unk18: [u8; 0x8],
     unk20: u64,
     unk28: [u8; 0x8],
