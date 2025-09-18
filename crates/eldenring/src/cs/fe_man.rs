@@ -5,6 +5,20 @@ use shared::{F32Vector4, OwnedPtr};
 
 use super::{CSMenuManImp, FieldInsHandle};
 
+#[repr(u8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CSFeManHudState {
+    /// Fully hide hp, fp, stamina
+    HideAll = 0,
+    /// Fully show hp, fp, stamina
+    /// Used when esc menu is open
+    ShowAll = 1,
+    /// Special state used when popup menus are open
+    PopupMenu = 2,
+    /// Default state, used in normal gameplay
+    Default = 3,
+}
+
 #[repr(C)]
 /// Source of name: RTTI
 #[shared::singleton("CSFeMan")]
@@ -22,7 +36,7 @@ pub struct CSFeManImp {
     unk48: [u8; 40],
     unk70: usize,
     /// Toggle, to enable/disable the HUD
-    pub enable_hud: bool,
+    pub hud_state: CSFeManHudState,
     unk79: [u8; 7],
     /// Used for holding intermediate data FrontEndView
     /// read from menu window jobs

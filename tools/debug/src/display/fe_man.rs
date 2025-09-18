@@ -7,7 +7,7 @@ use super::DebugDisplay;
 
 impl DebugDisplay for CSFeManImp {
     fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!("HUD Enabled: {}", self.enable_hud));
+        ui.text(format!("HUD State: {:?}", self.hud_state));
 
         if ui.collapsing_header("Debug Tag", TreeNodeFlags::empty()) {
             ui.indent();
