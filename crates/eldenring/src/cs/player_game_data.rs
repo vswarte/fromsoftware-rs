@@ -229,22 +229,27 @@ pub struct PlayerGameDataSpEffect {
 }
 
 #[repr(C)]
-pub struct AcquiredProjectilesEntry {
+pub struct ItemReplenishStateEntry {
     pub item_id: ItemId,
-    unk4: u8,
-    unk5: u8,
-    unk6: u8,
-    unk7: u8,
+    pub auto_replenish: bool,
+    // _pad5: [u8; 3],
 }
 
 #[repr(C)]
-pub struct AcquiredProjectiles {
-    pub entries: [AcquiredProjectilesEntry; 2048],
+pub struct ItemReplenishStateEntryUnk {
+    pub item_id: ItemId,
+    pub auto_replenish: bool,
+    // _pad5: [u8; 3],
+}
+
+#[repr(C)]
+/// Tracks the state of item replenishment from the chest when you sit at a Site of Grace
+pub struct ItemReplenishStateTracker {
+    pub entries: [ItemReplenishStateEntry; 2048],
     unk4000: u32,
     unk4004: u32,
-    pub count: u32,
-    unk400c: u32,
-    unk4010: [usize; 256],
+    pub count: u64,
+    unk4010: [ItemReplenishStateEntryUnk; 256],
 }
 
 #[repr(C)]
@@ -291,7 +296,8 @@ pub struct EquipGameData {
     pub equip_magic_data: OwnedPtr<EquipMagicData>,
     pub equip_item_data: EquipItemData,
     equip_gesture_data: usize,
-    pub acquired_projectiles: OwnedPtr<AcquiredProjectiles>,
+    /// Tracker for the item replenishing from the chest
+    pub item_replenish_state_tracker: OwnedPtr<ItemReplenishStateTracker>,
     pub qm_item_backup_vector: OwnedPtr<Vector<QMItemBackupVectorItem>>,
     pub equipment_entries: ChrAsmEquipEntries,
     unk3e0: usize,
