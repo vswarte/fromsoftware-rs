@@ -59,11 +59,10 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                 }
 
                 last_pressed = Instant::now();
-                let position = player.block_position.clone();
                 block_geom_data.spawn_geometry(
                     "AEG099_831",
                     &GeometrySpawnParameters {
-                        position,
+                        position: player.block_position,
                         rot_x: 0.0,
                         rot_y: 0.0,
                         rot_z: 0.0,
