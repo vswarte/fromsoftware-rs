@@ -1,24 +1,17 @@
 use std::mem::transmute;
+use std::ptr::NonNull;
 
+use eldenring::cs::CSWorldGeomIns;
+use eldenring::cs::CSWorldGeomManBlockData;
 use eldenring::position::BlockPosition;
 use pelite::pe64::Pe;
-use thiserror::Error;
 
-use eldenring::cs::BlockId;
-use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::GeometrySpawnRequest;
 
 use crate::program::Program;
 use crate::rva;
 
-#[derive(Debug, Error)]
-pub enum SpawnGeometryError {
-    #[error("No map data found")]
-    BlockDataUnavailable,
-}
-
 pub struct GeometrySpawnParameters {
-    pub block_id: BlockId,
     pub position: BlockPosition,
     pub rot_x: f32,
     pub rot_y: f32,
@@ -28,25 +21,20 @@ pub struct GeometrySpawnParameters {
     pub scale_z: f32,
 }
 
-pub trait CSWorldGeomManExt {
+pub trait CSWorldGeomManBlockDataExt {
     fn spawn_geometry(
-        &self,
+        &mut self,
         asset: &str,
         parameters: &GeometrySpawnParameters,
-    ) -> Result<(), SpawnGeometryError>;
+    ) -> Option<NonNull<CSWorldGeomIns>>;
 }
 
-impl CSWorldGeomManExt for CSWorldGeomMan {
+impl CSWorldGeomManBlockDataExt for CSWorldGeomManBlockData {
     fn spawn_geometry(
-        &self,
+        &mut self,
         asset: &str,
         parameters: &GeometrySpawnParameters,
-    ) -> Result<(), SpawnGeometryError> {
-        tracing::info!("Spawning {asset}");
-
-        let cs_world_geom_man_block_data_by_block_id_va = Program::current()
-            .rva_to_va(rva::get().cs_world_geom_man_block_data_by_block)
-            .unwrap();
+    ) -> Option<NonNull<CSWorldGeomIns>> {
         let initialize_spawn_geometry_request_va = Program::current()
             .rva_to_va(rva::get().initialize_spawn_geometry_request)
             .unwrap();
@@ -54,20 +42,21 @@ impl CSWorldGeomManExt for CSWorldGeomMan {
             .rva_to_va(rva::get().spawn_geometry)
             .unwrap();
 
-        let block_data_by_block_id = unsafe {
-            transmute::<u64, fn(&CSWorldGeomMan, &BlockId) -> u64>(
-                cs_world_geom_man_block_data_by_block_id_va,
-            )
-        };
-
         let initialize_spawn_geometry_request = unsafe {
             transmute::<u64, fn(&mut GeometrySpawnRequest, u32)>(
                 initialize_spawn_geometry_request_va,
             )
         };
 
-        let spawn_geometry =
-            unsafe { transmute::<u64, fn(u64, &GeometrySpawnRequest) -> u64>(spawn_geometry_va) };
+        let spawn_geometry = unsafe {
+            transmute::<
+                u64,
+                fn(
+                    &mut CSWorldGeomManBlockData,
+                    &GeometrySpawnRequest,
+                ) -> Option<NonNull<CSWorldGeomIns>>,
+            >(spawn_geometry_va)
+        };
 
         let mut request = GeometrySpawnRequest {
             asset_string: [0u16; 0x20],
@@ -109,14 +98,6 @@ impl CSWorldGeomManExt for CSWorldGeomMan {
         request.scale_y = parameters.scale_y;
         request.scale_z = parameters.scale_z;
 
-        // TODO: make this a nice as_ref call or something
-        let block_data_ptr = block_data_by_block_id(self, &parameters.block_id);
-        if block_data_ptr == 0x0 {
-            return Err(SpawnGeometryError::BlockDataUnavailable);
-        }
-
-        let _geom = spawn_geometry(block_data_ptr, &request);
-
-        Ok(())
+        spawn_geometry(self, &request)
     }
 }

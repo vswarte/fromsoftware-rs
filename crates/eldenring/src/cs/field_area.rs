@@ -18,6 +18,10 @@ pub struct FieldArea {
     pub world_info_owner: OwnedPtr<WorldInfoOwner>,
     world_info_owner_2: NonNull<WorldInfoOwner>,
     // TODO: rest
+    unk20: [u8; 0x80],
+    // Flag to check if fast travel should be enabled.
+    pub enable_fast_travel_event_flag: i32,
+    unka4: [u8; 0x5EC],
 }
 
 // Source of name: RTTI
@@ -54,7 +58,6 @@ pub struct WorldInfo {
     pub world_area_info_all: [Option<NonNull<WorldAreaInfoBase>>; 34],
     /// Count of block infos.
     pub world_block_info_count: u32,
-    _pad3c: u32,
     /// Pointer to start of list of world block infos.
     pub world_block_info_list_ptr: NonNull<WorldBlockInfo>,
     unk150: u64,
@@ -198,4 +201,20 @@ pub struct WorldBlockInfoCeremony {
     pub param_id: i32,
     _pad4: u32,
     pub param_row: Option<NonNull<CEREMONY_PARAM_ST>>,
+}
+
+#[cfg(test)]
+mod test {
+    use std::mem::size_of;
+
+    use crate::cs::{FieldArea, WorldAreaInfo, WorldBlockInfo, WorldGridAreaInfo, WorldInfo};
+
+    #[test]
+    fn proper_sizes() {
+        assert_eq!(0x690, size_of::<FieldArea>());
+        assert_eq!(0xb760, size_of::<WorldInfo>());
+        assert_eq!(0xe0, size_of::<WorldBlockInfo>());
+        assert_eq!(0xe0, size_of::<WorldGridAreaInfo>());
+        assert_eq!(0x50, size_of::<WorldAreaInfo>());
+    }
 }

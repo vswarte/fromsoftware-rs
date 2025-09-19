@@ -19,10 +19,6 @@ pattern = "48 83 ec 28 48 63 41 20 f3 0f 10 22 f3 0f 10 4a 04 f3 0f 10 52 08 48 
 captures = ["CS_EZ_DRAW_SET_COLOR"]
 
 [[patterns]]
-pattern = "83 cb 02 89 5c 24 20 48 8d 54 24 38 e8 $ { ' }"
-captures = ["", "CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_BLOCK_ID"]
-
-[[patterns]]
 pattern = "b2 08 48 8d 4d 00 e8 $ { ' }"
 captures = ["", "INITIALIZE_SPAWN_GEOMETRY_REQUEST"]
 
@@ -45,3 +41,11 @@ captures = ["", "CHR_INS_APPLY_SPEFFECT"]
 [[patterns]]
 pattern = "ba 1c 00 00 00 48 8b ce 84 c0 74 ? e8 $ { ' } eb ?"
 captures = ["", "CHR_INS_REMOVE_SPEFFECT"]
+
+[[patterns]]
+pattern = "88 44 24 28 0f b6 84 24 c0 00 00 00 88 44 24 20 e8 $ { ' }"
+captures = ["", "CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON"]
+
+[[patterns]]
+pattern = "ba d0 07 00 00 48 83 c4 28 e9 $ { ' }"
+captures = ["", "CS_MENU_MAN_DISPLAY_STATUS_MESSAGE"]

@@ -1,3 +1,4 @@
+mod action_button;
 mod auto_invade_point;
 mod block_id;
 mod bullet_ins;
@@ -46,6 +47,7 @@ mod world_geom_man;
 mod world_scene_draw_param_manager;
 mod world_sfx_man;
 
+pub use action_button::*;
 pub use auto_invade_point::*;
 pub use block_id::*;
 pub use bullet_ins::*;
