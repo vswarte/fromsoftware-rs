@@ -21,7 +21,7 @@ Rust bindings to facilitate mod creation for From Software games.
 - Tremwil (for the arxan code restoration disabler, vtable-rs and a few other boilerplate-y things as well as implementing the initial FD4 singleton finder for TGA that I appropriated).
 - Dasaav (for [libER](https://github.com/Dasaav-dsv/libER) and heaps of engine-related structures).
 - Sfix (for coming up with the FD4 singleton finder approach at all).
-- Yui (for some structures as well as AOBs and hinting at some logic existing in the binary).
+- Yui (for the arxan code restoration disabler as well as some structures and AOBs).
 - Vawser (and probably many more) (for hosting the param defs used with the param struct generator).
 
 (Have you contributed to TGA in some manner and does this repository have your work in it? Reach out to @chainfailure on Discord for proper credit disclosure).

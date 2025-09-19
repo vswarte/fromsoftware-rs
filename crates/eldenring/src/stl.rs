@@ -117,31 +117,58 @@ impl<T> Tree<T> {
     }
 
     pub fn iter(&self) -> impl Iterator<Item = &mut T> {
-        let mut pending = VecDeque::new();
-
-        let start = unsafe { self.head.as_ref().parent };
-        pending.push_back(start);
-
-        // TODO: clean up this code
-        std::iter::from_fn(move || {
-            if self.size == 0 {
+        let mut current = unsafe {
+            let head = self.head;
+            let root = head.as_ref().parent;
+            let min = Self::min_node(root);
+            if min == head {
                 None
-            } else if let Some(mut entry) = pending.pop_front() {
-                let entry = unsafe { entry.as_mut() };
-
-                if unsafe { entry.left.as_ref() }.is_nil == 0 {
-                    pending.push_back(entry.left);
-                }
-
-                if unsafe { entry.right.as_ref() }.is_nil == 0 {
-                    pending.push_back(entry.right);
-                }
-
-                Some(&mut entry.value)
             } else {
-                None
+                Some(min)
+            }
+        };
+
+        std::iter::from_fn(move || {
+            let mut node = current?;
+            unsafe {
+                let node_ref = node.as_mut();
+                let value_ref = &mut node_ref.value;
+
+                // Advance current to next in-order node
+                current = Self::next_inorder(node, self.head);
+
+                Some(value_ref)
             }
         })
+    }
+
+    /// Finds the minimum (leftmost) node in a subtree.
+    unsafe fn min_node(mut node: NonNull<TreeNode<T>>) -> NonNull<TreeNode<T>> {
+        while node.as_ref().is_nil == 0 && node.as_ref().left.as_ref().is_nil == 0 {
+            node = node.as_ref().left;
+        }
+        node
+    }
+
+    /// Returns the next in-order node from the given node.
+    /// `head` is the sentinel node.
+    unsafe fn next_inorder(
+        mut node: NonNull<TreeNode<T>>,
+        head: NonNull<TreeNode<T>>,
+    ) -> Option<NonNull<TreeNode<T>>> {
+        if node.as_ref().right.as_ref().is_nil == 0 {
+            // Go to the leftmost node in the right subtree
+            Some(Self::min_node(node.as_ref().right))
+        } else {
+            // Walk up the tree until we find a node that is a left child
+            loop {
+                let parent = node.as_ref().parent;
+                if parent == head || node != parent.as_ref().right {
+                    return if parent == head { None } else { Some(parent) };
+                }
+                node = parent;
+            }
+        }
     }
 }
 

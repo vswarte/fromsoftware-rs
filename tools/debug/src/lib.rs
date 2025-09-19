@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use display::DebugDisplay;
 
+use eldenring::cs::CSAutoInvadePoint;
 use eldenring::cs::CSBulletManager;
 use eldenring::cs::CSCamera;
 use eldenring::cs::CSEventFlagMan;
@@ -131,6 +132,7 @@ impl ImguiRenderLoop for EldenRingDebugGui {
                     render_debug_singleton::<WorldAreaTime>(&ui);
                     render_debug_singleton::<CSBulletManager>(&ui);
                     render_debug_singleton::<CSEventManImp>(&ui);
+                    render_debug_singleton::<CSAutoInvadePoint>(&ui);
                     item.end();
                 }
 
