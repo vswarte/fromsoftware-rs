@@ -16,6 +16,9 @@ use eldenring_util::{
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
 #[unsafe(no_mangle)]
+/// # Safety
+///
+/// This is exposed this way such that windows LoadLibrary API can call it. Do not call this yourself.
 pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
     if reason != 1 {
         return true;

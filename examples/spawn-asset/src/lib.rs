@@ -9,6 +9,9 @@ use eldenring_util::{
 };
 
 #[unsafe(no_mangle)]
+/// # Safety
+///
+/// This is exposed this way such that windows LoadLibrary API can call it. Do not call this yourself.
 pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
     if reason != 1 {
         return true;
@@ -40,11 +43,10 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                     return;
                 };
 
-                let position = player.block_position.clone();
                 block_geom_data.spawn_geometry(
                     "AEG099_831",
                     &GeometrySpawnParameters {
-                        position,
+                        position: player.block_position,
                         rot_x: 0.0,
                         rot_y: 0.0,
                         rot_z: 0.0,
