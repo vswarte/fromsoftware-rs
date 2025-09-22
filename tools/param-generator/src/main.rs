@@ -46,7 +46,12 @@ fn main() -> io::Result<()> {
             }
         }
     }
-    File::create(&args.output)?.write_all(output.as_bytes())?;
+
+    let output_path = Path::new(&args.output);
+    if let Some(parent) = output_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    File::create(output_path)?.write_all(output.as_bytes())?;
     Ok(())
 }
 
