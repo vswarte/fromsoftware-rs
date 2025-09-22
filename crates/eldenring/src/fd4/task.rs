@@ -1,12 +1,12 @@
 use std::{
     cell::UnsafeCell,
     ptr::NonNull,
-    sync::{Arc, atomic::AtomicBool},
+    sync::{atomic::AtomicBool, Arc},
 };
 
 use vtable_rs::VPtr;
 
-use crate::{Tree, Vector, dlrf::DLRuntimeClass};
+use crate::{dlrf::DLRuntimeClass, Tree, Vector};
 
 use super::FD4Time;
 

@@ -4,7 +4,7 @@ use crate::cs::{BlockId, ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer};
 use crate::dlkr::DLAllocatorBase;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
-use crate::{Tree, Vector, stl::DoublyLinkedList};
+use crate::{stl::DoublyLinkedList, Tree, Vector};
 
 use shared::F32Vector3;
 

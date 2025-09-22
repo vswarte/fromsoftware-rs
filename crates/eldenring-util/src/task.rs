@@ -1,8 +1,8 @@
 use std::{
     cell::UnsafeCell,
     sync::{
-        Arc,
         atomic::{AtomicBool, Ordering},
+        Arc,
     },
 };
 

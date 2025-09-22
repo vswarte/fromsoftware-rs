@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use shared::{F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
 
-use crate::{Tree, cs::BlockId};
+use crate::{cs::BlockId, Tree};
 
 #[repr(C)]
 pub struct AutoInvadePoint {

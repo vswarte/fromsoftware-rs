@@ -1,6 +1,6 @@
 use vtable_rs::VPtr;
 
-use crate::{DLFixedVector, dlut::DLReferenceCountObjectVmt, fd4::FD4Time};
+use crate::{dlut::DLReferenceCountObjectVmt, fd4::FD4Time, DLFixedVector};
 use shared::OwnedPtr;
 
 #[repr(C)]

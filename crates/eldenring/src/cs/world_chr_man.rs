@@ -7,7 +7,7 @@ use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
 use crate::Tree;
-use crate::{Vector, cs::ChrIns};
+use crate::{cs::ChrIns, Vector};
 use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};

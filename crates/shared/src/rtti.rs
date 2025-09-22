@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use pelite::pe64::{Pe, Rva, Va, msvc::RTTICompleteObjectLocator};
+use pelite::pe64::{msvc::RTTICompleteObjectLocator, Pe, Rva, Va};
 use undname::Flags;
 
 use crate::program::Program;

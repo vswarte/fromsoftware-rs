@@ -2,8 +2,8 @@ use std::ffi;
 
 use vtable_rs::VPtr;
 use windows::Win32::System::Threading::{
-    CRITICAL_SECTION, DeleteCriticalSection, EnterCriticalSection, InitializeCriticalSection,
-    LeaveCriticalSection,
+    DeleteCriticalSection, EnterCriticalSection, InitializeCriticalSection, LeaveCriticalSection,
+    CRITICAL_SECTION,
 };
 
 #[vtable_rs::vtable]

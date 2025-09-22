@@ -6,8 +6,8 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::Tree;
 use crate::cs::ChrIns;
+use crate::Tree;
 
 use super::{BlockId, FieldInsHandle, NetChrSync, PlayerIns, WorldInfoOwner};
 

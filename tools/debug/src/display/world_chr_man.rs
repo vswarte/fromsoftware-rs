@@ -153,7 +153,7 @@ impl DebugDisplay for NetChrSetSync {
             self.update_flags()
                 .iter()
                 .enumerate()
-                .for_each(|e| ui.text(format!("{} {:016b}", e.0, e.1.0)));
+                .for_each(|e| ui.text(format!("{} {:016b}", e.0, e.1 .0)));
             ui.unindent();
         }
 

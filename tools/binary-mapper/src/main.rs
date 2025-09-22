@@ -2,7 +2,7 @@ use std::{fs::File, path::PathBuf};
 
 use clap::{Parser, ValueEnum};
 use memmap::MmapOptions;
-use pelite::{PeFile, pattern};
+use pelite::{pattern, PeFile};
 use rayon::prelude::*;
 use serde::Deserialize;
 
