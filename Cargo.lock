@@ -832,7 +832,7 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
 name = "present-action-button"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
@@ -1084,7 +1084,7 @@ checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
 name = "spawn-asset"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",

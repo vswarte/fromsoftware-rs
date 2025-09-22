@@ -2,6 +2,8 @@ use std::ptr::NonNull;
 
 use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
+use crate::position::{HavokPosition, PositionDelta};
+
 use super::ChrIns;
 
 #[repr(C)]
@@ -37,6 +39,41 @@ pub struct CSCam {
     pub aspect_ratio: f32,
     pub near_plane: f32,
     pub far_plane: f32,
+}
+
+impl CSCam {
+    pub fn right(&self) -> PositionDelta {
+        PositionDelta(
+            self.matrix.0 .0,
+            self.matrix.0 .1,
+            self.matrix.0 .2,
+        )
+    }
+
+    pub fn up(&self) -> PositionDelta {
+        PositionDelta(
+            self.matrix.1 .0,
+            self.matrix.1 .1,
+            self.matrix.1 .2,
+        )
+    }
+
+    pub fn forward(&self) -> PositionDelta {
+        PositionDelta(
+            self.matrix.2 .0,
+            self.matrix.2 .1,
+            self.matrix.2 .2,
+        )
+    }
+
+    pub fn position(&self) -> HavokPosition {
+        HavokPosition(
+            self.matrix.3 .0,
+            self.matrix.3 .1,
+            self.matrix.3 .2,
+            self.matrix.3 .3,
+        )
+    }
 }
 
 pub type CSPersCam = CSCam;
