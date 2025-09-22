@@ -6,4 +6,4 @@ pub struct CSActionButtonManImp {
     vftable: usize,
     unk8: [u8; 0x88],
     pub mutex: DLPlainLightMutex,
- }
+}

@@ -1,26 +1,16 @@
 pub mod action_button;
-pub mod arxan;
 pub mod bullet_manager;
-pub mod camera;
-pub mod character_debug_flags;
-pub mod character_type_properties;
 pub mod chr_ins;
 pub mod ez_draw;
 pub mod ez_state;
-pub mod fade;
 pub mod gaitem;
 pub mod geometry;
 pub mod havok;
 pub mod input;
 pub mod menu_man;
-pub mod program;
-pub mod rtti;
 pub mod singleton;
-pub mod steam;
 pub mod system;
 pub mod task;
-pub mod team_relation;
-pub mod world_area_time;
 pub mod world_chr_man;
 
 pub(crate) mod rva;

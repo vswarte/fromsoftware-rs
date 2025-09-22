@@ -1,5 +1,6 @@
-/// OG comes from Dasaav
-/// https://github.com/Dasaav-dsv/libER/blob/main/source/dantelion2/system.cpp
+/// Util to await game startup.
+// OG comes from Dasaav
+// https://github.com/Dasaav-dsv/libER/blob/main/source/dantelion2/system.cpp
 use std::sync::atomic::{AtomicPtr, Ordering};
 use std::time::{Duration, Instant};
 
@@ -8,7 +9,7 @@ use pelite::pattern::Atom;
 use pelite::pe64::{Pe, Rva};
 use thiserror::Error;
 
-use crate::program::Program;
+use shared::program::Program;
 
 // WinMain -> SethInstance
 // used to set global hInstance later used by CSWindow

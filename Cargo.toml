@@ -9,7 +9,6 @@ members = [
     "tools/debug",
     "tools/binary-mapper",
     "tools/param-generator",
-    "tools/profiler",
     "examples/apply-speffect",
     "examples/debug-line",
     "examples/spawn-asset",

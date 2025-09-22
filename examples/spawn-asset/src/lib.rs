@@ -5,8 +5,13 @@ use eldenring::{
     fd4::FD4TaskData,
 };
 use eldenring_util::{
-    geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters}, input, program::Program, singleton::get_instance, system::wait_for_system_init, task::CSTaskImpExt
+    geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
+    input,
+    singleton::get_instance,
+    system::wait_for_system_init,
+    task::CSTaskImpExt,
 };
+use shared::program::Program;
 
 #[unsafe(no_mangle)]
 /// # Safety

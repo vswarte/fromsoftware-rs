@@ -5,9 +5,10 @@ use eldenring::{
     fd4::FD4TaskData,
 };
 use eldenring_util::{
-    chr_ins::ChrInsExt, input, program::Program, singleton::get_instance,
-    system::wait_for_system_init, task::CSTaskImpExt,
+    chr_ins::ChrInsExt, input, singleton::get_instance, system::wait_for_system_init,
+    task::CSTaskImpExt,
 };
+use shared::program::Program;
 
 const SP_EFFECT: i32 = 4330;
 

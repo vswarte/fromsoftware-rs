@@ -16,6 +16,14 @@ pub struct WorldAreaTime {
     // TODO: rest
 }
 
+impl WorldAreaTime {
+    fn request_time(&mut self, hour: u32, minute: u32, second: u32) {
+        self.target_hour = hour;
+        self.target_minute = minute;
+        self.target_second = second;
+    }
+}
+
 #[repr(u32)]
 pub enum AiSightTimeOfDay {
     Morning = 0x0,

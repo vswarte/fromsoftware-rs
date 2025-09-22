@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 mod rva_jp;
 mod rva_ww;
 
-use crate::program::Program;
+use shared::program::Program;
 
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
@@ -50,8 +50,10 @@ pub fn get() -> &'static RvaBundle {
                 cs_bullet_manager_spawn_bullet: rva_ww::RVA_CS_BULLET_MANAGER_SPAWN_BULLET,
                 chr_ins_apply_speffect: rva_ww::RVA_CHR_INS_APPLY_SPEFFECT,
                 chr_ins_remove_speffect: rva_ww::RVA_CHR_INS_REMOVE_SPEFFECT,
-                cs_action_button_man_execute_action_button: rva_ww::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
-                cs_menu_man_imp_display_status_message: rva_ww::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
+                cs_action_button_man_execute_action_button:
+                    rva_ww::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
+                cs_menu_man_imp_display_status_message:
+                    rva_ww::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
             },
             ("ELDEN RING", LANG_ID_JP, "2.6.1.1") => RvaBundle {
                 cs_ez_draw_draw_line: rva_jp::RVA_CS_EZ_DRAW_DRAW_LINE,
@@ -65,10 +67,14 @@ pub fn get() -> &'static RvaBundle {
                 cs_bullet_manager_spawn_bullet: rva_jp::RVA_CS_BULLET_MANAGER_SPAWN_BULLET,
                 chr_ins_apply_speffect: rva_jp::RVA_CHR_INS_APPLY_SPEFFECT,
                 chr_ins_remove_speffect: rva_jp::RVA_CHR_INS_REMOVE_SPEFFECT,
-                cs_action_button_man_execute_action_button: rva_jp::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
-                cs_menu_man_imp_display_status_message: rva_jp::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
+                cs_action_button_man_execute_action_button:
+                    rva_jp::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
+                cs_menu_man_imp_display_status_message:
+                    rva_jp::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
             },
-            _ => panic!("could not fetch RVAs for executable. name = \"{product}\", lang = {lang_id_base:x}, version = {version}"),
+            _ => panic!(
+                "could not fetch RVAs for executable. name = \"{product}\", lang = {lang_id_base:x}, version = {version}"
+            ),
         }
     });
 

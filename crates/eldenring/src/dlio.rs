@@ -1,7 +1,7 @@
 mod common;
 mod file_device;
-mod streams;
+mod stream;
 
 pub use common::*;
 pub use file_device::*;
-pub use streams::*;
+pub use stream::*;

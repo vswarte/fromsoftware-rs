@@ -6,9 +6,9 @@ use eldenring::{
     position::PositionDelta,
 };
 use eldenring_util::{
-    ez_draw::CSEzDrawExt, program::Program, singleton::get_instance, system::wait_for_system_init,
-    task::CSTaskImpExt,
+    ez_draw::CSEzDrawExt, singleton::get_instance, system::wait_for_system_init, task::CSTaskImpExt,
 };
+use shared::program::Program;
 
 use shared::F32Vector4;
 

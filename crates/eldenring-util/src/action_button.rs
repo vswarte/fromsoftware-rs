@@ -1,7 +1,8 @@
-use pelite::pe::Pe;
 use eldenring::cs::CSActionButtonManImp;
+use pelite::pe::Pe;
 
-use crate::{program::Program, rva};
+use crate::rva;
+use shared::program::Program;
 
 type FnExecuteActionButton = extern "C" fn(
     *const CSActionButtonManImp,
