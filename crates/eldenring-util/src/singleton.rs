@@ -6,7 +6,7 @@ use std::collections;
 use std::sync;
 use thiserror::Error;
 
-use crate::program::Program;
+use shared::program::Program;
 
 pub type SingletonMap = collections::HashMap<String, usize>;
 static SINGLETON_MAP: sync::OnceLock<SingletonMap> = sync::OnceLock::new();

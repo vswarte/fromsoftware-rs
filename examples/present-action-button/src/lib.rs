@@ -1,5 +1,6 @@
 use std::time::{Duration, Instant};
 
+use shared::program::Program;
 use eldenring::{
     cs::{CSActionButtonManImp, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, WorldChrMan},
     fd4::FD4TaskData,
@@ -7,7 +8,6 @@ use eldenring::{
 use eldenring_util::{
     action_button::CSActionButtonManImpExt,
     geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
-    program::Program,
     singleton::get_instance,
     system::wait_for_system_init,
     task::CSTaskImpExt,

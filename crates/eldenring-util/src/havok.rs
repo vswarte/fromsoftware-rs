@@ -4,7 +4,9 @@ use eldenring::{
 };
 use pelite::pe64::Pe;
 
-use crate::{program::Program, rva};
+use shared::program::Program;
+
+use crate::rva;
 
 type FnCastRay = extern "C" fn(
     *const CSPhysWorld,

@@ -5,7 +5,8 @@ use eldenring::{
 use pelite::pe64::Pe;
 use shared::F32Vector4;
 
-use crate::{program::Program, rva};
+use crate::rva;
+use shared::program::Program;
 
 pub trait CSEzDrawExt {
     /// Set the color for the to-be-rendered primitives.

@@ -6,7 +6,7 @@ use std::{
     },
 };
 
-use crate::program::Program;
+use shared::program::Program;
 use eldenring::fd4::FD4TaskData;
 use eldenring::{
     cs::{CSTaskGroupIndex, CSTaskImp},

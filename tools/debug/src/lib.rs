@@ -23,7 +23,7 @@ use eldenring::cs::WorldAreaTime;
 use eldenring::cs::WorldChrMan;
 use eldenring::fd4::FD4ParamRepository;
 
-use eldenring_util::program::Program;
+use shared::program::Program;
 use eldenring_util::system::wait_for_system_init;
 
 use hudhook::eject;

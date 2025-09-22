@@ -42,8 +42,6 @@ pub unsafe fn disable_code_restoration_at(
 ) -> Result<(), Box<dyn Error>> {
     let jb_ptr = program.rva_to_va(rva)? as *mut u8;
 
-    tracing::debug!("Disabling code restoration at {:#x}", jb_ptr as usize);
-
     std::ptr::write(jb_ptr, 0xEB);
 
     Ok(())

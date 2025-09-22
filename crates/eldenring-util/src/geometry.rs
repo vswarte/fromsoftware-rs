@@ -8,7 +8,7 @@ use pelite::pe64::Pe;
 
 use eldenring::cs::GeometrySpawnRequest;
 
-use crate::program::Program;
+use shared::program::Program;
 use crate::rva;
 
 pub struct GeometrySpawnParameters {

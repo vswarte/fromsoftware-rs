@@ -3,7 +3,7 @@ use std::mem::transmute;
 use eldenring::cs::ChrIns;
 use pelite::pe64::Pe;
 
-use crate::program::Program;
+use shared::program::Program;
 use crate::rva;
 
 pub trait ChrInsExt {

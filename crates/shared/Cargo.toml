@@ -8,5 +8,8 @@ readme = false
 description = "Helpers for dealing with pointers and other common stuff across games"
 
 [dependencies]
+windows.workspace = true
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
+pelite.workspace = true
+undname = "2"

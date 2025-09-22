@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 mod rva_jp;
 mod rva_ww;
 
-use crate::program::Program;
+use shared::program::Program;
 
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;

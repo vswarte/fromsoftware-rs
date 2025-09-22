@@ -1,12 +1,13 @@
 use std::time::Duration;
 
+use shared::program::Program;
 use eldenring::{
     cs::{CSTaskGroupIndex, CSTaskImp, RendMan, WorldChrMan},
     fd4::FD4TaskData,
     position::PositionDelta,
 };
 use eldenring_util::{
-    ez_draw::CSEzDrawExt, program::Program, singleton::get_instance, system::wait_for_system_init,
+    ez_draw::CSEzDrawExt, singleton::get_instance, system::wait_for_system_init,
     task::CSTaskImpExt,
 };
 
