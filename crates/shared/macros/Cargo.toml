@@ -1,11 +1,11 @@
 [package]
-name = "fromsoftware-dlrf-derive"
+name = "fromsoftware-shared-macros"
 version.workspace = true
 edition.workspace = true
 repository.workspace = true
 license.workspace = true
 readme = false
-description = "Macro for generating singleton specifier for usage with the DLRF singleton finder. Depend on fromsoftware-dlrf instead."
+description = "Macro helpers for dealing with pointers and other common stuff across From Software games. Depend on fromsoftware-shared instead."
 
 [lib]
 proc-macro = true

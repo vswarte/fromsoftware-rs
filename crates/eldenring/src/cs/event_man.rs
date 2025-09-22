@@ -4,7 +4,7 @@ use shared::OwnedPtr;
 
 use super::CSSosSignMan;
 
-#[dlrf::singleton("CSEventMan")]
+#[shared::singleton("CSEventMan")]
 #[repr(C)]
 pub struct CSEventManImp {
     vftable: usize,

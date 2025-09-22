@@ -8,7 +8,7 @@ use super::ChrIns;
 
 #[repr(C)]
 /// Source of name: RTTI
-#[dlrf::singleton("CSCamera")]
+#[shared::singleton("CSCamera")]
 pub struct CSCamera {
     vftable: usize,
     pub pers_cam_1: OwnedPtr<CSPersCam>,

@@ -1,7 +1,7 @@
 use shared::OwnedPtr;
 
 // Source of name: RTTI
-#[dlrf::singleton("CSHavokMan")]
+#[shared::singleton("CSHavokMan")]
 #[repr(C)]
 pub struct CSHavokMan {
     vftable: usize,

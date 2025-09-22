@@ -60,7 +60,7 @@ impl ProtocolState {
 }
 
 #[repr(C)]
-#[dlrf::singleton("CSSessionManager")]
+#[shared::singleton("CSSessionManager")]
 pub struct CSSessionManager {
     vftable: usize,
     unk8: u32,

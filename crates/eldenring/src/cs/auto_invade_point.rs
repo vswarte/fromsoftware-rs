@@ -28,7 +28,7 @@ impl AutoInvadePointBlockEntry {
 /// Holds the list of automatically generated (by fromsoftware)
 /// invasion points, when current region param has isAutoIntrudePoint set to true, game will use one of these
 /// instead of looking for the point on msb
-#[dlrf::singleton("CSAutoInvadePoint")]
+#[shared::singleton("CSAutoInvadePoint")]
 pub struct CSAutoInvadePoint {
     pub entries: Tree<AutoInvadePointBlockEntry>,
     unk18: [u8; 0x28],

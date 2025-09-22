@@ -9,7 +9,9 @@ description = "Helpers for dealing with pointers and other common stuff across g
 
 [dependencies]
 windows.workspace = true
+from-singleton.workspace = true
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
 pelite.workspace = true
+shared-macros.workspace = true
 undname = "2"

@@ -9,7 +9,6 @@ description = "Implement common helpers for Elden Ring modding"
 
 [dependencies]
 shared.workspace = true
-dlrf.workspace = true
 eldenring.workspace = true
 thiserror.workspace = true
 tracing.workspace = true

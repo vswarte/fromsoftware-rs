@@ -4,7 +4,7 @@ use std::ptr::NonNull;
 use super::PlayerSessionHolder;
 
 #[repr(C)]
-#[dlrf::singleton("WorldChrManDbg")]
+#[shared::singleton("WorldChrManDbg")]
 pub struct WorldChrManDbg {
     unk0: [u8; 0xa8],
     pub debug_manipulator: usize,

@@ -6,7 +6,7 @@ use super::{BlockId, WorldInfoOwner};
 
 /// Source of name: RTTI
 #[repr(C)]
-#[dlrf::singleton("CSWorldSceneDrawParamManager")]
+#[shared::singleton("CSWorldSceneDrawParamManager")]
 pub struct CSWorldSceneDrawParamManager {
     vftable: usize,
     pub world_info_owner: NonNull<WorldInfoOwner>,

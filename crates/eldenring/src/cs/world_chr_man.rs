@@ -14,7 +14,7 @@ use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[dlrf::singleton("WorldChrMan")]
+#[shared::singleton("WorldChrMan")]
 pub struct WorldChrMan {
     vftable: usize,
     unk8: usize,

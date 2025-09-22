@@ -1,7 +1,7 @@
 use crate::dlut::DLDateTime;
 
 #[repr(C)]
-#[dlrf::singleton("WorldAreaTime")]
+#[shared::singleton("WorldAreaTime")]
 pub struct WorldAreaTime {
     pub clock: DLDateTime,
     pub previous_tick_clock: DLDateTime,
