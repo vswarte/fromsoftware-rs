@@ -13,7 +13,7 @@ use encoding_rs;
 use thiserror::Error;
 
 use cxx_stl::string::{
-    CxxNarrowString, CxxUtf16String, CxxUtf32String, CxxUtf8String, CxxWideString,
+    CxxNarrowString, CxxUtf8String, CxxUtf16String, CxxUtf32String, CxxWideString,
 };
 
 use shared::OwnedPtr;

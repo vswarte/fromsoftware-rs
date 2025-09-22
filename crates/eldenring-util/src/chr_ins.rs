@@ -3,8 +3,8 @@ use std::mem::transmute;
 use eldenring::cs::ChrIns;
 use pelite::pe64::Pe;
 
-use shared::program::Program;
 use crate::rva;
+use shared::program::Program;
 
 pub trait ChrInsExt {
     fn apply_speffect(&mut self, sp_effect: i32, sync: bool);

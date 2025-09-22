@@ -1,14 +1,14 @@
 use std::time::Duration;
 
-use shared::program::Program;
 use eldenring::{
     cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan},
     fd4::FD4TaskData,
 };
 use eldenring_util::{
-    chr_ins::ChrInsExt, input, singleton::get_instance,
-    system::wait_for_system_init, task::CSTaskImpExt,
+    chr_ins::ChrInsExt, input, singleton::get_instance, system::wait_for_system_init,
+    task::CSTaskImpExt,
 };
+use shared::program::Program;
 
 const SP_EFFECT: i32 = 4330;
 

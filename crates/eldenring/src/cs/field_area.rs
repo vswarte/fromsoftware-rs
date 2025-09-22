@@ -1,9 +1,9 @@
 use std::ptr::NonNull;
 
 use crate::{
+    Tree,
     param::CEREMONY_PARAM_ST,
     position::{BlockPosition, HavokPosition},
-    Tree,
 };
 use shared::OwnedPtr;
 

@@ -7,9 +7,9 @@ use crate::dlkr::DLPlainConditionSignal;
 use crate::dlrf::DLRuntimeClass;
 use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
 use crate::{
+    Tree, Vector,
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
-    Tree, Vector,
 };
 use shared::OwnedPtr;
 

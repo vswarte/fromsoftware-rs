@@ -1,5 +1,4 @@
 /// Util to await game startup.
-
 // OG comes from Dasaav
 // https://github.com/Dasaav-dsv/libER/blob/main/source/dantelion2/system.cpp
 use std::sync::atomic::{AtomicPtr, Ordering};

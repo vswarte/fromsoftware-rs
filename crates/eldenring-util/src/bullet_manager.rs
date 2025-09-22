@@ -1,8 +1,8 @@
 use eldenring::cs::{BulletSpawnData, CSBulletIns, CSBulletManager, FieldInsHandle};
 use pelite::pe64::Pe;
 
-use shared::program::Program;
 use crate::rva;
+use shared::program::Program;
 
 pub trait CSBulletManagerExt {
     fn bullet_ins_by_handle(&mut self, handle: &FieldInsHandle) -> Option<&mut CSBulletIns>;

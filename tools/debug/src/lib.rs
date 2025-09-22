@@ -23,16 +23,16 @@ use eldenring::cs::WorldAreaTime;
 use eldenring::cs::WorldChrMan;
 use eldenring::fd4::FD4ParamRepository;
 
-use shared::program::Program;
 use eldenring_util::system::wait_for_system_init;
+use shared::program::Program;
 
+use hudhook::Hudhook;
+use hudhook::ImguiRenderLoop;
 use hudhook::eject;
 use hudhook::hooks::dx12::ImguiDx12Hooks;
 use hudhook::imgui::Condition;
 use hudhook::imgui::*;
 use hudhook::windows::Win32::Foundation::HINSTANCE;
-use hudhook::Hudhook;
-use hudhook::ImguiRenderLoop;
 
 use pelite::pe64::Pe;
 

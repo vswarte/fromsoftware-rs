@@ -1,7 +1,7 @@
 use std::{
     collections::VecDeque,
     marker::PhantomData,
-    ptr::{copy_nonoverlapping, NonNull},
+    ptr::{NonNull, copy_nonoverlapping},
 };
 
 use crate::dlkr::DLAllocatorBase;
@@ -121,11 +121,7 @@ impl<T> Tree<T> {
             let head = self.head;
             let root = head.as_ref().parent;
             let min = Self::min_node(root);
-            if min == head {
-                None
-            } else {
-                Some(min)
-            }
+            if min == head { None } else { Some(min) }
         };
 
         std::iter::from_fn(move || {

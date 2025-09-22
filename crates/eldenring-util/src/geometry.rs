@@ -8,8 +8,8 @@ use pelite::pe64::Pe;
 
 use eldenring::cs::GeometrySpawnRequest;
 
-use shared::program::Program;
 use crate::rva;
+use shared::program::Program;
 
 pub struct GeometrySpawnParameters {
     pub position: BlockPosition,

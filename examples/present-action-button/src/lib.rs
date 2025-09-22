@@ -1,6 +1,5 @@
 use std::time::{Duration, Instant};
 
-use shared::program::Program;
 use eldenring::{
     cs::{CSActionButtonManImp, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, WorldChrMan},
     fd4::FD4TaskData,
@@ -12,6 +11,7 @@ use eldenring_util::{
     system::wait_for_system_init,
     task::CSTaskImpExt,
 };
+use shared::program::Program;
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 

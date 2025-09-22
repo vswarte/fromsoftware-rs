@@ -1,8 +1,8 @@
 use std::sync::LazyLock;
 
 use pelite::pe64::{Pe, PeFile, PeObject, PeView};
-use windows::core::PCSTR;
 use windows::Win32::System::LibraryLoader::GetModuleHandleA;
+use windows::core::PCSTR;
 
 #[derive(Copy, Clone)]
 pub enum Program<'a> {

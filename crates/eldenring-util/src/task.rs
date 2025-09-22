@@ -1,12 +1,11 @@
 use std::{
     cell::UnsafeCell,
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc,
+        atomic::{AtomicBool, Ordering},
     },
 };
 
-use shared::program::Program;
 use eldenring::fd4::FD4TaskData;
 use eldenring::{
     cs::{CSTaskGroupIndex, CSTaskImp},
@@ -15,6 +14,7 @@ use eldenring::{
 };
 use pelite::pe64::Pe;
 use pelite::{pattern, pattern::Atom};
+use shared::program::Program;
 use std::sync::LazyLock;
 use vtable_rs::VPtr;
 
