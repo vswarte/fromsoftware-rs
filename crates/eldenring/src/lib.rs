@@ -1,5 +1,3 @@
-#![feature(once_cell_get_mut)]
-
 mod stl;
 pub use stl::*;
 
