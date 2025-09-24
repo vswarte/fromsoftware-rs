@@ -27,7 +27,7 @@ eldenring = { path = "crates/eldenring", version = "0.11.0", package = "eldenrin
 eldenring-util = { path = "crates/eldenring-util", version = "0.11.0", package = "eldenring-util" }
 nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightreign" }
 binary_mapper = { path = "crates/binary-mapper" }
-from-singleton = { git = "https://github.com/Dasaav-dsv/from-singleton" }
+from-singleton = { version = "2" }
 thiserror = "1"
 tracing = "0.1"
 nalgebra-glm = "0.19"
