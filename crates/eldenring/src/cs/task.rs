@@ -1,5 +1,6 @@
+use pelite::{pattern, pattern::Atom, pe64::Pe};
 use std::ptr::NonNull;
-use std::{ffi, marker::PhantomData};
+use std::{ffi, marker::PhantomData, sync::LazyLock};
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
@@ -11,7 +12,7 @@ use crate::{
     fd4::{FD4BasicHashString, FD4Time},
     Tree, Vector,
 };
-use shared::OwnedPtr;
+use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
 
 #[vtable_rs::vtable]
 pub trait CSEzTaskVmt: FD4TaskBaseVmt {
@@ -112,6 +113,36 @@ pub struct CSTimeLineTaskGroupIns {
 pub struct CSTaskImp {
     vftable: usize,
     pub inner: OwnedPtr<CSTask>,
+}
+
+const REGISTER_TASK_PATTERN: &[Atom] =
+    pattern!("e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }");
+
+static REGISTER_TASK_VA: LazyLock<u64> = LazyLock::new(|| {
+    let program = Program::current();
+    let mut matches = [0u32; 2];
+
+    if !program
+        .scanner()
+        .finds_code(REGISTER_TASK_PATTERN, &mut matches)
+    {
+        panic!("Could not find REGISTER_TASK_PATTERN or found duplicates.");
+    }
+
+    program
+        .rva_to_va(matches[1])
+        .expect("Call target for REGISTER_TASK_PATTERN was not in exe")
+});
+
+impl SharedTaskImp<CSTaskGroupIndex, FD4TaskData> for CSTaskImp {
+    fn register_task_internal(&self, index: CSTaskGroupIndex, task: &RecurringTask<FD4TaskData>) {
+        let register_task: extern "C" fn(
+            &CSTaskImp,
+            CSTaskGroupIndex,
+            &RecurringTask<FD4TaskData>,
+        ) = unsafe { std::mem::transmute(*REGISTER_TASK_VA) };
+        register_task(self, index, task);
+    }
 }
 
 #[repr(C)]
