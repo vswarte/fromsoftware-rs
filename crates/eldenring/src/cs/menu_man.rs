@@ -7,7 +7,7 @@ use shared::OwnedPtr;
 use super::{CSEzTask, CSEzUpdateTask, ItemId};
 
 #[repr(C)]
-#[dlrf::singleton("CSMenuMan")]
+#[shared::singleton("CSMenuMan")]
 pub struct CSMenuManImp {
     vftable: usize,
     menu_data: usize,

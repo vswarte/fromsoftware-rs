@@ -7,7 +7,7 @@ use super::{CSMenuManImp, FieldInsHandle};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[dlrf::singleton("CSFeMan")]
+#[shared::singleton("CSFeMan")]
 pub struct CSFeManImp {
     vftable: usize,
     unk8: usize,

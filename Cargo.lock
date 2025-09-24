@@ -67,7 +67,6 @@ version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
- "fromsoftware-dlrf",
  "fromsoftware-shared",
 ]
 
@@ -282,7 +281,7 @@ version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
- "fromsoftware-dlrf",
+ "from-singleton",
  "fromsoftware-shared",
  "hudhook",
  "pelite",
@@ -331,7 +330,7 @@ dependencies = [
  "bitfield",
  "cxx-stl",
  "encoding_rs",
- "fromsoftware-dlrf",
+ "from-singleton",
  "fromsoftware-shared",
  "nalgebra",
  "nalgebra-glm",
@@ -350,7 +349,6 @@ name = "eldenring-util"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "fromsoftware-dlrf",
  "fromsoftware-shared",
  "pelite",
  "steamworks",
@@ -378,29 +376,34 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "fromsoftware-dlrf"
-version = "0.11.0"
+name = "from-singleton"
+version = "2.0.1"
+source = "git+https://github.com/Dasaav-dsv/from-singleton#088daee427c282f5e21b7e0766349ce789a4e6f3"
 dependencies = [
- "fromsoftware-dlrf-derive",
-]
-
-[[package]]
-name = "fromsoftware-dlrf-derive"
-version = "0.11.0"
-dependencies = [
- "quote",
- "syn",
+ "pelite",
+ "regex",
+ "windows",
 ]
 
 [[package]]
 name = "fromsoftware-shared"
 version = "0.11.0"
 dependencies = [
+ "from-singleton",
+ "fromsoftware-shared-macros",
  "nalgebra",
  "nalgebra-glm",
  "pelite",
  "undname",
  "windows",
+]
+
+[[package]]
+name = "fromsoftware-shared-macros"
+version = "0.11.0"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -774,7 +777,6 @@ version = "0.11.0"
 dependencies = [
  "eldenring",
  "eldenring-util",
- "fromsoftware-dlrf",
  "fromsoftware-shared",
 ]
 

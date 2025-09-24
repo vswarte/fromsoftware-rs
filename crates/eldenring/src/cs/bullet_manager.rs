@@ -5,7 +5,7 @@ use shared::{F32Vector4, OwnedPtr};
 use super::{CSBulletIns, ChrCam, FieldInsHandle};
 
 #[repr(C)]
-#[dlrf::singleton("CSBulletManager")]
+#[shared::singleton("CSBulletManager")]
 /// Manages bullets...
 ///
 /// Source of name: DLRF RuntimeClass metadata

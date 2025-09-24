@@ -7,11 +7,10 @@ use eldenring::{
 use eldenring_util::{
     action_button::CSActionButtonManImpExt,
     geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
-    singleton::get_instance,
     system::wait_for_system_init,
     task::CSTaskImpExt,
 };
-use shared::program::Program;
+use shared::{program::Program, singleton::get_instance};
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
@@ -30,28 +29,24 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             .expect("Could not await system init.");
 
         let mut last_pressed = Instant::now();
-        let cs_task = get_instance::<CSTaskImp>().unwrap().unwrap();
+        let cs_task = get_instance::<CSTaskImp>().unwrap();
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
                 if Instant::now() - last_pressed < DEBOUNCE_DELAY {
                     return;
                 }
 
-                let Some(action_button_man) = get_instance::<CSActionButtonManImp>()
-                    .expect("No reflection data for CSActionButtonManImp")
-                else {
+                let Some(action_button_man) = get_instance::<CSActionButtonManImp>() else {
                     return;
                 };
 
-                let Some(player) = get_instance::<WorldChrMan>()
-                    .expect("No reflection data for WorldChrMan")
-                    .and_then(|w| w.main_player.as_ref())
+                let Some(player) =
+                    get_instance::<WorldChrMan>().and_then(|w| w.main_player.as_ref())
                 else {
                     return;
                 };
 
                 let Some(block_geom_data) = unsafe { get_instance::<CSWorldGeomMan>() }
-                    .unwrap()
                     .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id_1))
                 else {
                     return;

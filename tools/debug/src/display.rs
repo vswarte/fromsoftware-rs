@@ -1,5 +1,5 @@
-use dlrf::DLRFSingleton;
-use eldenring_util::singleton;
+use ::shared::singleton;
+use from_singleton::FromSingleton;
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
 pub(crate) mod area_time;
@@ -28,17 +28,16 @@ pub trait DebugDisplay {
     fn render_debug(&self, ui: &&mut Ui);
 }
 
-pub fn render_debug_singleton<T: DLRFSingleton + DebugDisplay + 'static>(ui: &&mut Ui) {
-    let singleton = unsafe { singleton::get_instance::<T>() }
-        .unwrap_or_else(|_| panic!("Could not get reflection data for {}", T::DLRF_NAME));
+pub fn render_debug_singleton<T: FromSingleton + Sized + DebugDisplay + 'static>(ui: &&mut Ui) {
+    let singleton = unsafe { singleton::get_instance::<T>() };
 
     match singleton {
         Some(instance) => {
-            if ui.collapsing_header(T::DLRF_NAME, TreeNodeFlags::empty()) {
+            if ui.collapsing_header(T::name(), TreeNodeFlags::empty()) {
                 ui.indent();
                 let pointer = instance as *const T;
                 let mut pointer_string = format!("{pointer:#x?}");
-                let label = format!("{} instance", T::DLRF_NAME);
+                let label = format!("{} instance", T::name());
                 ui.input_text(label.as_str(), &mut pointer_string)
                     .read_only(true)
                     .build();
@@ -48,6 +47,6 @@ pub fn render_debug_singleton<T: DLRFSingleton + DebugDisplay + 'static>(ui: &&m
                 ui.separator();
             }
         }
-        None => ui.text(format!("No instance of {} found", T::DLRF_NAME)),
+        None => ui.text(format!("No instance of {} found", T::name())),
     }
 }

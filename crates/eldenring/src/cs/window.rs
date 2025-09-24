@@ -2,7 +2,7 @@ use windows::core::PCWSTR;
 
 #[repr(C)]
 /// Source of name: RTTI
-#[dlrf::singleton("CSWindow")]
+#[shared::singleton("CSWindow")]
 pub struct CSWindowImp {
     vftable: usize,
     pub window_handle: isize,

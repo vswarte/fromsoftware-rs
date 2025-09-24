@@ -87,7 +87,7 @@ pub struct CSEzTaskProxy {
 }
 
 #[repr(C)]
-#[dlrf::singleton("CSTaskGroup")]
+#[shared::singleton("CSTaskGroup")]
 pub struct CSTaskGroup {
     vftable: usize,
     pub task_groups: [OwnedPtr<CSTimeLineTaskGroupIns>; 168],
@@ -108,7 +108,7 @@ pub struct CSTimeLineTaskGroupIns {
 }
 
 #[repr(C)]
-#[dlrf::singleton("CSTask")]
+#[shared::singleton("CSTask")]
 pub struct CSTaskImp {
     vftable: usize,
     pub inner: OwnedPtr<CSTask>,

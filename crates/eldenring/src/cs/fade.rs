@@ -5,7 +5,7 @@ use shared::OwnedPtr;
 /// Controls fades in the game. Used for cutscene transitions and such.
 ///
 /// Source of name: RTTI
-#[dlrf::singleton("CSFade")]
+#[shared::singleton("CSFade")]
 pub struct CSFade {
     vftable: usize,
     pub fade_system: OwnedPtr<CSFD4FadeSystem>,

@@ -29,7 +29,7 @@ impl EventFlag {
 /// Manages the event flags for the game.
 ///
 /// Source of name: DLRF RuntimeClass metadata
-#[dlrf::singleton("CSEventFlagMan")]
+#[shared::singleton("CSEventFlagMan")]
 pub struct CSEventFlagMan {
     pub virtual_memory_flag: CSFD4VirtualMemoryFlag,
     pub world_type: u32,

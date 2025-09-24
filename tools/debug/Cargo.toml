@@ -7,9 +7,9 @@ license.workspace = true
 
 [dependencies]
 shared.workspace = true
-dlrf.workspace = true
 eldenring.workspace = true
 eldenring-util.workspace = true
+from-singleton.workspace = true
 windows.workspace = true
 pelite.workspace = true
 tracing.workspace = true

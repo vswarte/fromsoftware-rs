@@ -12,7 +12,6 @@ unused = "allow"
 
 [dependencies]
 shared.workspace = true
-dlrf.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
 nalgebra-glm.workspace = true
@@ -22,6 +21,7 @@ vtable-rs.workspace = true
 windows.workspace = true
 bitfield.workspace = true
 encoding_rs.workspace = true
+from-singleton.workspace = true
 cxx-stl = "3.4"
 
 [build-dependencies]

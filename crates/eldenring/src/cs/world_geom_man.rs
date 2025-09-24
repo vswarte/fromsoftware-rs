@@ -9,7 +9,7 @@ use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[dlrf::singleton("CSWorldGeomMan")]
+#[shared::singleton("CSWorldGeomMan")]
 pub struct CSWorldGeomMan {
     vftable: usize,
     unk8: usize,

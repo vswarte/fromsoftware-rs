@@ -8,7 +8,6 @@ pub mod geometry;
 pub mod havok;
 pub mod input;
 pub mod menu_man;
-pub mod singleton;
 pub mod system;
 pub mod task;
 pub mod world_chr_man;

@@ -4,7 +4,7 @@ use shared::{F32Matrix4x4, OwnedPtr};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[dlrf::singleton("CSSfx")]
+#[shared::singleton("CSSfx")]
 pub struct CSSfxImp {
     vftable: usize,
     unk8: usize,

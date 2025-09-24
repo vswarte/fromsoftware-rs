@@ -1,7 +1,7 @@
 use shared::OwnedPtr;
 
 #[repr(C)]
-#[dlrf::singleton("RendMan")]
+#[shared::singleton("RendMan")]
 pub struct RendMan {
     vftable: usize,
     allocator: usize,

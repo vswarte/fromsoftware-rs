@@ -7,11 +7,10 @@ use eldenring::{
 use eldenring_util::{
     geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
     input,
-    singleton::get_instance,
     system::wait_for_system_init,
     task::CSTaskImpExt,
 };
-use shared::program::Program;
+use shared::{program::Program, singleton::get_instance};
 
 #[unsafe(no_mangle)]
 /// # Safety
@@ -27,22 +26,20 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
         wait_for_system_init(&Program::current(), Duration::MAX)
             .expect("Could not await system init.");
 
-        let cs_task = get_instance::<CSTaskImp>().unwrap().unwrap();
+        let cs_task = get_instance::<CSTaskImp>().unwrap();
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 if !input::is_key_pressed(0x48) {
                     return;
                 }
 
-                let Some(player) = get_instance::<WorldChrMan>()
-                    .expect("No reflection data for WorldChrMan")
-                    .and_then(|w| w.main_player.as_ref())
+                let Some(player) =
+                    get_instance::<WorldChrMan>().and_then(|w| w.main_player.as_ref())
                 else {
                     return;
                 };
 
                 let Some(block_geom_data) = unsafe { get_instance::<CSWorldGeomMan>() }
-                    .unwrap()
                     .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id_1))
                 else {
                     return;

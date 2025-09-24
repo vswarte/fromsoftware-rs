@@ -9,7 +9,7 @@ use super::resource::FD4ResCap;
 use super::FD4ResRep;
 
 #[repr(C)]
-#[dlrf::singleton("FD4ParamRepository")]
+#[shared::singleton("FD4ParamRepository")]
 pub struct FD4ParamRepository {
     /// Resource repository holding the actual param data.
     pub res_rep: FD4ResRep<FD4ParamResCap>,

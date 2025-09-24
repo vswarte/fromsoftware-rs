@@ -2,7 +2,6 @@
 resolver = "2"
 members = [
     "crates/shared",
-    "crates/dlrf",
     "crates/eldenring",
     "crates/eldenring-util",
     "crates/nightreign",
@@ -23,12 +22,12 @@ license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 shared = { path = "crates/shared", version = "0.11.0", package = "fromsoftware-shared" }
-dlrf-derive = { path = "crates/dlrf/derive", version = "0.11.0", package = "fromsoftware-dlrf-derive" }
-dlrf = { path = "crates/dlrf", version = "0.11.0", package = "fromsoftware-dlrf" }
+shared-macros = { path = "crates/shared/macros", version = "0.11.0", package = "fromsoftware-shared-macros" }
 eldenring = { path = "crates/eldenring", version = "0.11.0", package = "eldenring" }
 eldenring-util = { path = "crates/eldenring-util", version = "0.11.0", package = "eldenring-util" }
 nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightreign" }
 binary_mapper = { path = "crates/binary-mapper" }
+from-singleton = { git = "https://github.com/Dasaav-dsv/from-singleton" }
 thiserror = "1"
 tracing = "0.1"
 nalgebra-glm = "0.19"

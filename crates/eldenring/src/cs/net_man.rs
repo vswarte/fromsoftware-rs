@@ -12,7 +12,7 @@ use shared::OwnedPtr;
 use super::{BlockId, CSEzTask, CSEzUpdateTask, PlayerIns};
 
 #[repr(C)]
-#[dlrf::singleton("CSNetMan")]
+#[shared::singleton("CSNetMan")]
 pub struct CSNetMan {
     vftable: usize,
     unk8: u32,
