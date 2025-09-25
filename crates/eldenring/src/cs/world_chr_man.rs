@@ -6,6 +6,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
+use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::Tree;
 use crate::{cs::ChrIns, Vector};
 use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
@@ -93,13 +94,24 @@ pub struct WorldChrMan {
     unk1e6b0: usize,
     unk1e6b8: [u8; 0x628],
     pub chr_cam: Option<NonNull<ChrCam>>,
-    // tasks and other stuff
-    // list of players by distance may be useful
-    // see ghidra structure for reference
+    // WorldChrMan tasks
     unk1ece8: [u8; 0x4e8],
     /// A list of ChrIns references sorted by distance to the main player.
     pub chr_inses_by_distance: Vector<ChrInsDistanceEntry>,
-    unk1f1f0: [u8; 0x1f0],
+    unk1f1f0: [u8; 0x10],
+    /// A list of ChrIns references sorted by their update priority.
+    pub chr_inses_by_update_priority: Vector<NonNull<ChrIns>>,
+    unk1f220: [u8; 0x30],
+    chr_ins_calc_update_info_perf_begin_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_calc_update_info_perf_end_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_ailogic_perf_begin_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_ailogic_perf_end_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_behavior_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_behavior_safe_task2: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_cloth_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_cloth_safe_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_post_physics_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_post_physics_safe_task: CSEzVoidTask<CSEzTask, Self>,
 }
 
 #[repr(C)]

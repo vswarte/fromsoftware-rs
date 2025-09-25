@@ -6,10 +6,56 @@ use super::PlayerSessionHolder;
 #[repr(C)]
 #[shared::singleton("WorldChrManDbg")]
 pub struct WorldChrManDbg {
-    unk0: [u8; 0xa8],
+    vftable: usize,
+    unk8: u8,
+    pub lod_level_debug_view: bool,
+    unka: [u8; 0x36],
+    unk40: f32,
+    unk44: f32,
+    /// Modifier for character update priority when the character was recently on screen.
+    pub update_priority_modifier_onscreen_recent: f32,
+    /// Modifier for character update priority when the character is on screen.
+    pub update_priority_modifier_onscreen: f32,
+    /// Modifier for character update priority when the character is an NPC.
+    pub update_priority_modifier_npc: f32,
+    /// Modifier for character update priority when character is turning its lower body.
+    pub update_priority_modifier_lower_body_turn_requested: f32,
+    /// Default modifier for character update priority.
+    pub update_priority_default_modifier: f32,
+    /// Modifier for character update priority when the character is moving.
+    pub update_priority_modifier_is_moving: f32,
+    unk60: [u8; 8],
+    pub toughness_debug_view: bool,
+    pub poise_debug_view: bool,
+    unk6a: [u8; 2],
+    unk6c: f32,
+    unk70: f32,
+    unk74: f32,
+    unk78: f32,
+    unk7c: f32,
+    unk80: f32,
+    unk84: f32,
+    unk88: f32,
+    unk8c: f32,
+    unk90: u32,
+    unk94: f32,
+    unk98: f32,
+    unk9c: f32,
+    unka0: f32,
+    unka4: u32,
     pub debug_manipulator: usize,
     pub player_session_holder: Option<NonNull<PlayerSessionHolder>>,
     pub cam_override_chr_ins: Option<NonNull<ChrIns>>,
+    unkc0: [u8; 0x30],
+    unkf0: u32,
+    unkf4: [u8; 0x8],
+    unkfc: u32,
+    pub chr_load_state_debug_view: bool,
+    /// Modifier for character activation threshold when the character is out of render distance.
+    pub chr_activate_threshold_modifier_out_of_range: f32,
+    /// Modifier for character activation threshold when the character's tag is visible on screen.
+    pub chr_activate_threshold_modifier_visible_tag: f32,
+    unk10c: [u8; 0x1c],
 }
 
 #[repr(C)]

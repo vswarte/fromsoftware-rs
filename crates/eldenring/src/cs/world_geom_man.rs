@@ -2,7 +2,7 @@ use std::{fmt::Formatter, ptr::NonNull};
 
 use windows::core::PCWSTR;
 
-use crate::{Tree, Vector};
+use crate::{param::ASSET_GEOMETORY_PARAM_ST, Tree, Vector};
 use shared::OwnedPtr;
 
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
@@ -106,7 +106,7 @@ pub struct CSWorldGeomInfo {
     /// Points to the map data hosting the GeomIns for this info struct.
     pub block_data: OwnedPtr<CSWorldGeomManBlockData>,
     /// Points to the param row this geometry instance uses.
-    pub asset_geometry_param: usize,
+    pub asset_geometry_param: NonNull<ASSET_GEOMETORY_PARAM_ST>,
     unk10: u32,
     unk14: u32,
     pub msb_parts_geom: CSMsbPartsGeom,

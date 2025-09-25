@@ -9,7 +9,7 @@ use windows::core::PCWSTR;
 use crate::cs::BlockId;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
-use crate::param::ATK_PARAM_ST;
+use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
 use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
 use crate::Vector;
@@ -77,7 +77,7 @@ pub enum OmissionMode {
 pub struct ChrIns {
     pub vftable: VPtr<dyn ChrInsVmt, Self>,
     pub field_ins_handle: FieldInsHandle,
-    chr_set_entry: usize,
+    pub chr_set_entry: NonNull<ChrSetEntry<Self>>,
     unk18: usize,
     pub backread_state: u32,
     unk24: u32,
@@ -92,10 +92,9 @@ pub struct ChrIns {
     pub chr_model_ins: OwnedPtr<CSChrModelIns>,
     pub chr_ctrl: OwnedPtr<ChrCtrl>,
     pub think_param_id: i32,
-    pub npc_id_1: i32,
+    pub npc_id: i32,
     pub chr_type: ChrType,
     pub team_type: u8,
-    pad6d: [u8; 3],
     pub p2p_entity_handle: P2PEntityHandle,
     unk78: usize,
     /// Position in global map chunk coordinates.
@@ -116,7 +115,14 @@ pub struct ChrIns {
     pub is_locked_on: bool,
     unkca: [u8; 0x6],
     pub lock_on_target_position: F32Vector4,
-    unke0: [u8; 0x80],
+    unke0: i32,
+    /// Fractional stamina carried between update ticks.
+    /// It accumulates the non-integer portion of stamina recovered so that partial recovery across frames is preserved until it sums to a whole stamina point.
+    pub stamina_recovery_remainder: f32,
+    /// Multiplier applied to stamina recovery rate.
+    /// Used together with regen rate percent to compute stamina recovered per tick.
+    pub stamina_recovery_modifier: f32,
+    unkec: [u8; 0x74],
     /// Used by TAE's UseGoods to figure out what item to actually apply.
     pub tae_queued_use_item: ItemId,
     unk164: u32,
@@ -132,10 +138,14 @@ pub struct ChrIns {
     unk18c: u32,
     pub module_container: OwnedPtr<ChrInsModuleContainer>,
     unk198: usize,
-    unk1a0: f32,
-    unk1a4: f32,
-    unk1a8: f32,
-    unk1ac: f32,
+    /// Squared distance at which the character will be deactivated.
+    pub squared_deactivation_distance: f32,
+    /// Squared distance at which the character will start fading out.
+    pub squared_fade_out_start_distance: f32,
+    /// Optional squared override for the full deactivation distance. <0 means no override.
+    pub squared_deactivation_distance_override: f32,
+    /// Optional squared override for the fade-out start distance.  <0 means no override.
+    pub squared_fade_out_start_distance_override: f32,
     unk1b0: f32,
     unk1b4: f32,
     unk1b8: f32,
@@ -148,8 +158,7 @@ pub struct ChrIns {
     pub chr_flags1c8: ChrInsFlags1c8,
     pub net_chr_sync_flags: NetChrSyncFlags,
     pub chr_flags1ca: ChrInsFlags1ca,
-    // _pad1cb: u8,
-    pub chr_flags1cc: ChrInsFlags1cc,
+    pub chr_activation_flags: ChrInsActivationFlags,
     unk1d0: F32Vector4,
     unk1e0: u32,
     pub network_authority: u32,
@@ -157,7 +166,12 @@ pub struct ChrIns {
     unk1ec: f32,
     unk1f0: usize,
     pub npc_sp_effect_equip_ctrl: OwnedPtr<NpcSpEffectEquipCtrl>,
-    unk200: [u8; 0x18],
+    unk200: usize,
+    /// Amount of coop players currently in the session
+    pub coop_players_for_multiplay_correction: u32,
+    unk20c: u32,
+    unk210: [u8; 0x8],
+    /// Steam ID of the player that created this character if it's a summon
     pub character_creator_steam_id: u64,
     /// What asset to use for the mimic veil.
     pub mimicry_asset: i32,
@@ -173,18 +187,28 @@ pub struct ChrIns {
     pub opacity_keyframes_multiplier: f32,
     /// Transparency multiplier, applied to the previous frame.
     pub opacity_keyframes_multiplier_previous: f32,
-    unk240: f32,
-    unk244: f32,
+    /// Transparency multiplier for tint effects
+    pub tint_alpha_multiplier: f32,
+    /// Modifier for the tint transparency multiplier.
+    /// Negative values will fade tint_alpha_multiplier to 0 and
+    /// positive values will fade it to 1
+    pub tint_alpha_multiplier_modifier: f32,
     /// Camouflage transparency multiplier.
     /// Changed by ChrCamouflageSlot
     pub camouflage_transparency: f32,
     /// Base transparency of the character.
     pub base_transparency: f32,
-    unk250: [u8; 0xc],
-    unk25c: [u8; 0x20],
-    unk27c: [u8; 0x84],
+    /// Modifier for the base transparency of the character.
+    /// Negative values will fade base_transparency to 0 and
+    /// positive values will fade it to 1
+    pub base_transparency_modifier: f32,
+    unk254: [u8; 0x8],
+    /// Render group mask from MapStudio
+    pub render_group_mask: [u8; 0x20],
+    render_group_mask_2: [u8; 0x20],
+    render_group_mask_3: [u8; 0x20],
+    unk2bc: [u8; 0x4c],
     chr_slot_sys: [u8; 0x40],
-    unk340: usize,
     unk348: [u8; 0x40],
     last_received_packet60: u32,
     unk38c: [u8; 0xc],
@@ -193,15 +217,32 @@ pub struct ChrIns {
     anim_skeleton_to_model_modifier: usize,
     unk3b0: usize,
     cloth_state: [u8; 0x30],
-    unk3e8: [u8; 0x28],
+    unk3e8: u32,
+    unk3ec: u32,
+    unk3f0: f32,
+    /// Squared 3D distance to the main player character.
+    pub distance_to_player_sqr: f32,
+    /// Squared horizontal distance to the main player
+    pub horizontal_distance_to_player_sqr: f32,
+    pub distance_based_update_priority_sqr: f32,
+    /// Threshold used for comparison with CSOpenChrActivateThresholdRegionMan
+    pub chr_activate_threshold: f32,
+    pub max_render_range: f32,
+    pub update_priority: f32,
+    unk40c: u32,
     update_data_module_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_chr_ctrl_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_chr_model_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_havok_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_replay_recorder_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_behavior_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
-    unk530_debug_flags: u64,
-    unk538: u64,
+    pub debug_flags: ChrDebugFlags,
+    /// Amount of stamina points recovered per tick.
+    pub stamina_recovery: u32,
+    unk538: u32,
+    /// Param ID of the current material character standing on
+    /// (e.g. water, lava, etc.), -1 if none.
+    pub hit_material_override: i32,
     unk540: u32,
     pub role_param_id: i32,
     unk548: [u8; 0x38],
@@ -213,6 +254,11 @@ bitfield! {
     impl Debug;
     /// Skips omission mode updates
     pub skip_omission_mode_updates, set_skip_omission_mode_updates: 0;
+    /// Set when character is valid for rendering by MapStudio render group mask
+    pub is_render_group_enabled, set_is_render_group_enabled:       3;
+    /// If set, character is in camera's view frustum.
+    /// Doesn't consider walls or other occluders.
+    pub is_onscreen, set_is_onscreen:                               4;
     /// Disables gravity for this character.
     pub no_gravity, set_no_gravity:                                 5;
 
@@ -261,6 +307,8 @@ bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct NetChrSyncFlags(u8);
     impl Debug;
+    /// Set for main player character.
+    pub replay_recorder_enabled, set_replay_recorder_enabled: 3;
     /// When set, the character will use distance-based network update authority.
     pub distance_based_network_update_authority, set_distance_based_network_update_authority: 5;
 }
@@ -268,13 +316,44 @@ bitfield! {
 bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct ChrInsFlags1ca(u8);
+    /// Set when character's chr_activate_threshold is exceeded threshold in CSOpenChrActivateThresholdRegionMan
+    pub activate_threshold_exceeded, set_activate_threshold_exceeded: 2;
     impl Debug;
 }
 
 bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
-    pub struct ChrInsFlags1cc(u32);
+    pub struct ChrInsActivationFlags(u32);
+    /// Set when the character is determined to be "left behind" (too far from other players).
+    pub is_left_behind, set_is_left_behind: 0;
+    /// Controlled by npc param NPC_PARAM_ST::disableActivateOpen or NPC_PARAM_ST::disableActivateLegacy depending on
+    /// block id in ChrDataModule
+    pub activation_enabled, set_activation_enabled: 3;
     impl Debug;
+}
+
+bitfield! {
+    #[derive(Clone, Copy, PartialEq, Eq, Hash)]
+    pub struct ChrDebugFlags(u32);
+    impl Debug;
+    /// Makes character ignore all incoming damage
+    pub disable_hit, set_disable_hit: 3;
+    /// Disables attack, jump, crouch and any other actions except movement
+    pub disable_secondary_actions, set_disable_secondary_actions: 4;
+    /// Disables all movement inputs
+    pub disable_movement, set_disable_movement: 5;
+    /// Enables debug view render of character target and real facing rotation
+    pub debug_character_rotation_view, set_debug_character_rotation_view: 6;
+    /// Enables debug view render of character model facing rotation
+    pub debug_model_rotation_view, set_debug_model_rotation_view: 7;
+    pub disable_updates, set_disable_updates: 8;
+    /// Will set base_transparency_modifier to -1 when set
+    pub fade_out, set_fade_out: 10;
+    /// Will disable character entirely (no updates, no rendering, no physics)
+    /// Set most of the time on remote character's horses
+    pub character_disabled, set_character_disabled: 13;
+    /// Disables item consumption when using items
+    pub infinite_consumables, set_infinite_consumables: 16;
 }
 
 #[repr(C)]
@@ -300,7 +379,7 @@ pub struct ChrInsModuleContainer {
     pub throw: OwnedPtr<CSChrThrowModule>,
     hitstop: usize,
     damage: usize,
-    material: usize,
+    pub material: OwnedPtr<CSChrMaterialModule>,
     knockback: usize,
     sfx: usize,
     vfx: usize,
@@ -318,7 +397,7 @@ pub struct ChrInsModuleContainer {
     auto_homing: usize,
     above_shadow_test: usize,
     sword_arts: usize,
-    grass_hit: usize,
+    pub grass_hit: OwnedPtr<CSChrGrassHitModule>,
     wheel_rot: usize,
     cliff_wind: usize,
     navimesh_cost_effect: usize,
@@ -781,8 +860,8 @@ pub struct CSChrPhysicsModule {
     /// Only true for Watcher Stones character (stone sphere catapillars).
     pub is_watcher_stones: bool,
     unk1e2: [u8; 0xe],
-    /// Information about the slope the character is currently on
-    pub slope_info: ChrPhysicsSlopeInfo,
+    /// Information about the material the character is currently on
+    pub material_info: ChrPhysicsMaterialInfo,
     /// Information about character's sliding state
     pub slide_info: ChrPhysicsSlideInfo,
     unk290: [u8; 0x30],
@@ -846,32 +925,45 @@ bitfield! {
 }
 
 #[repr(C)]
-pub struct ChrPhysicsSlopeInfo {
-    unk0: F32Vector4,
-    unk10: F32Vector4,
-    unk20: f32,
-    unk24: f32,
-    unk28: f32,
-    unk2c: f32,
-    unk30: F32Vector4,
-    /// Slope vector, used for slope detection.
-    pub slope_vector: F32Vector4,
-    unk50: [u8; 0x20],
+pub struct ChrPhysicsMaterialInfo {
+    /// Local orientation matrix (rightm, up, forward, 1)
+    pub orientation_matrix: F32Matrix4x4,
+    /// Normal vector of the hit surface
+    pub normal_vector: F32Vector4,
+    unk50: [u8; 8],
+    unk58: i32,
+    unk5c: i32,
+    /// Material ID of the surface the character is standing on
+    pub hit_material: i32,
+    /// True when hit_material / 100 = 1
+    /// completely disables sliding
+    pub is_non_slippery_surface: bool,
+    /// True when hit_material / 100 = 4 or 5
+    /// makes so sliding calculations ignore ChrPhysicsSlideInfo.max_slide_angle
+    /// and makes character always slide
+    pub is_slippery_surface: bool,
+    unk66: bool,
 }
+
 #[repr(C)]
 pub struct ChrPhysicsSlideInfo {
     /// Slide direction vector
     pub slide_vector: F32Vector4,
-    /// Information about the slope the character is sliding on
-    pub slope_info: NonNull<ChrPhysicsSlopeInfo>,
-    /// Angle at which the character is starting to slide
-    pub max_slide_angle: f32,
+    /// Information about the material the character is standing on
+    pub material_info: NonNull<ChrPhysicsMaterialInfo>,
+    /// Angle (radians) of the slope the character is currently on
+    pub normal_angle: f32,
     /// Is character currently sliding?
     pub is_sliding: bool,
-    unk1d: [u8; 0x3],
-    unk20: f32,
-    unk24: bool,
-    unk25: [u8; 0xb],
+    /// Enable angle checks for sliding
+    pub enable_angle_check: bool,
+    /// Angle (degrees) of the slope the character is currently on, derived from normal_angle
+    pub normal_angle_deg: f32,
+    /// Enable/disable sliding
+    /// false when CSChrPhysicsModule.no_gravity_unk2 is true
+    pub enabled: bool,
+    /// When true use smoothed/interpolated slide updates; when false use immediate additive updates
+    pub enable_slide_interpolation: bool,
 }
 
 #[repr(C)]
@@ -880,6 +972,24 @@ pub struct CSChrWetModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
     unk10: [u8; 0x60],
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct CSChrGrassHitModule {
+    vftable: usize,
+    pub owner: NonNull<ChrIns>,
+    /// Param ID of the grass this character is currently colliding with.
+    /// Can be only set to 0 or 1 by the game.
+    pub grass_hit_param_id: u8,
+    /// Param ID of the grass this character collided with on the last update.
+    pub last_update_grass_hit_param_id: u8,
+    /// Timer that counts when grass_hit_param_id should be reset to 0.
+    pub state_decay_timer: FD4Time,
+    /// Time in seconds after which grass_hit_param_id is reset to 0.
+    /// Set to 0.1 by default.
+    pub default_decay_time: f32,
+    unk2c: [u8; 0x14],
 }
 
 #[repr(C)]
@@ -1160,6 +1270,19 @@ bitfield! {
 
 #[repr(C)]
 /// Source of name: RTTI
+pub struct CSChrMaterialModule {
+    vftable: usize,
+    pub owner: NonNull<ChrIns>,
+    pub material_param_id: i16,
+    unk12: [i16; 4],
+    unk1a: u8,
+    /// True when material under the character disables fall damage.
+    pub disable_fall_damage: bool,
+    unk1c: [u8; 0x4],
+}
+
+#[repr(C)]
+/// Source of name: RTTI
 pub struct ChrCtrl {
     vftable: usize,
     unk8: u64,
@@ -1338,6 +1461,8 @@ bitfield! {
     pub disable_ability_to_lock_on, set_disable_ability_to_lock_on: 3;
     /// Set by TAE Event 0 ChrActionFlag (action 40 TEMPORARY_DEATH_STATE)
     pub temporary_death_state, set_temporary_death_state:           5;
+    /// Makes the character unable to regenerate stamina.
+    pub disable_stamina_regeneration, set_disable_stamina_regeneration: 6;
 }
 
 bitfield! {
@@ -1458,14 +1583,14 @@ pub struct PlayerIns {
     unk590: usize,
     pub player_session_holder: PlayerSessionHolder,
     unk5c0: usize,
-    replay_recorder: usize,
+    pub replay_recorder: Option<OwnedPtr<ReplayRecorder>>,
     unk5d0: u32,
     unk5d4: u32,
     pub snipe_mode_draw_alpha_fade_timer: f32,
     unk5bc: u32,
     unk5e0: usize,
     fg_model: usize,
-    npc_param: usize,
+    pub npc_param: Option<NonNull<NPC_PARAM_ST>>,
     think_param: u32,
     unk5fc: u32,
     rng_sp_effect_equip_ctrl: usize,
@@ -1512,6 +1637,32 @@ impl AsRef<ChrIns> for PlayerIns {
 
 #[repr(C)]
 /// Source of name: RTTI
+pub struct ReplayRecorder {
+    pub vftable: usize,
+    unk8: usize,
+    pub owning_player: NonNull<PlayerIns>,
+    unk18: usize,
+    unk20: usize,
+    unk28: usize,
+    unk30: usize,
+    unk38: usize,
+    pub max_frame_rate: u32,
+    pub frame_counter: u32,
+    pub frame_duration: u32,
+    /// Position of the character in the oldest recorded frame
+    pub position: F32Vector3,
+    /// Rotation of the character in the oldest recorded frame
+    pub rotation: f32,
+    /// Block ID of the character in the oldest recorded frame
+    pub block_id: BlockId,
+    unk60: i32,
+    unk64: i32,
+    unk68: i32,
+    unk6c: i32,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
 pub struct EnemyIns {
     pub chr_ins: ChrIns,
     pub com_manipulator: usize,
@@ -1548,8 +1699,10 @@ pub enum ChrType {
     Ghost1 = 4,
     Npc = 5,
     GrayPhantom = 8,
+    BloodstainGhost = 10,
+    BonfireGhost = 11,
     Arena = 13,
-    Quickmatch = 14,
+    MessageGhost = 14,
     Invader = 15,
     Invader2 = 16,
     BluePhantom = 17,
