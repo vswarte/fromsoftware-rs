@@ -232,24 +232,32 @@ pub struct PlayerGameDataSpEffect {
 pub struct ItemReplenishStateEntry {
     pub item_id: ItemId,
     pub auto_replenish: bool,
-    // _pad5: [u8; 3],
 }
 
 #[repr(C)]
 pub struct ItemReplenishStateEntryUnk {
     pub item_id: ItemId,
     pub auto_replenish: bool,
-    // _pad5: [u8; 3],
 }
 
 #[repr(C)]
 /// Tracks the state of item replenishment from the chest when you sit at a Site of Grace
 pub struct ItemReplenishStateTracker {
-    pub entries: [ItemReplenishStateEntry; 2048],
+    entries: [ItemReplenishStateEntry; 2048],
     unk4000: u32,
     unk4004: u32,
     pub count: u64,
     unk4010: [ItemReplenishStateEntryUnk; 256],
+}
+
+impl ItemReplenishStateTracker {
+    pub fn entries(&self) -> &[ItemReplenishStateEntry] {
+        &self.entries[..self.count as usize]
+    }
+
+    pub fn entries_mut(&mut self) -> &mut [ItemReplenishStateEntry] {
+        &mut self.entries[..self.count as usize]
+    }
 }
 
 #[repr(C)]

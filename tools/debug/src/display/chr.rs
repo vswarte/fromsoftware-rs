@@ -357,20 +357,16 @@ impl DebugDisplay for ItemReplenishStateTracker {
                     | TableFlags::ROW_BG
                     | TableFlags::SIZING_STRETCH_PROP,
             ) {
-                self.entries
-                    .iter()
-                    .take(self.count as usize)
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
+                self.entries().iter().enumerate().for_each(|(index, item)| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.item_id.to_string());
+                    ui.table_next_column();
+                    ui.text(item.item_id.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.auto_replenish.to_string());
-                    });
+                    ui.table_next_column();
+                    ui.text(item.auto_replenish.to_string());
+                });
             }
             ui.unindent();
         }
