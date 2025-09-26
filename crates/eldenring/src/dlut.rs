@@ -52,30 +52,42 @@ pub struct DLDateTime {
 }
 
 impl DLDateTime {
-    /// Creates a new `DLDateTime` from a `FILETIME`.
-    pub fn new(time64: FILETIME, is_utc: bool) -> Self {
-        Self::from_time64(time64, is_utc)
-    }
-
-    /// Creates a new `DLDateTime` from a `FILETIME`, converting the time
-    /// components into a packed bitfield format.
-    pub fn from_time64(time64: FILETIME, is_utc: bool) -> Self {
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        year: u16,
+        month: u8,
+        day: u8,
+        hours: u8,
+        minutes: u8,
+        seconds: u8,
+        milliseconds: u16,
+        is_utc: bool,
+    ) -> Self {
         let mut date = PackedDate::default();
-        let mut system_time = SYSTEMTIME::default();
+        date.set_year(year);
+        date.set_month(month);
+        date.set_day(day);
+        date.set_hours(hours);
+        date.set_minutes(minutes);
+        date.set_seconds(seconds);
+        date.set_millisecond(milliseconds);
+        date.set_is_utc(is_utc);
 
-        if unsafe { FileTimeToSystemTime(&time64, &mut system_time) }.is_ok() {
-            date.set_year(system_time.wYear);
-            date.set_millisecond(system_time.wMilliseconds);
-            date.set_month(system_time.wMonth as u8);
-            date.set_day_of_week(system_time.wDayOfWeek as u8);
-            date.set_day(system_time.wDay as u8);
-            date.set_hours(system_time.wHour as u8);
-            date.set_minutes(system_time.wMinute as u8);
-            date.set_seconds(system_time.wSecond as u8);
-            date.set_is_utc(is_utc);
+        let mut system_time = SYSTEMTIME {
+            wYear: year,
+            wMonth: month as u16,
+            wDayOfWeek: 0,
+            wDay: day as u16,
+            wHour: hours as u16,
+            wMinute: minutes as u16,
+            wSecond: seconds as u16,
+            wMilliseconds: milliseconds,
+        };
+
+        Self {
+            time64: FILETIME::default(),
+            date,
         }
-
-        Self { time64, date }
     }
 
     pub fn year(&self) -> u16 {
