@@ -14,4 +14,5 @@ nalgebra-glm.workspace = true
 nalgebra.workspace = true
 pelite.workspace = true
 shared-macros.workspace = true
+vtable-rs.workspace = true
 undname = "2"

@@ -396,6 +396,7 @@ dependencies = [
  "nalgebra-glm",
  "pelite",
  "undname",
+ "vtable-rs",
  "windows",
 ]
 

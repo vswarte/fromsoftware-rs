@@ -8,9 +8,8 @@ use eldenring_util::{
     action_button::CSActionButtonManImpExt,
     geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
     system::wait_for_system_init,
-    task::CSTaskImpExt,
 };
-use shared::{program::Program, singleton::get_instance};
+use shared::{program::Program, singleton::get_instance, task::*};
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
