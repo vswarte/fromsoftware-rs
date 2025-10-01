@@ -355,13 +355,14 @@ bitfield! {
     pub character_rotation_debug_view, set_character_rotation_debug_view: 6;
     /// Enables debug view render of facing angle correction applied to model
     pub facing_angle_debug_view, set_facing_angle_debug_view:             7;
+    /// Disables all updates to the character (physics, ai, etc)
     pub disable_updates, set_disable_updates:                             8;
     /// Will set base_transparency_modifier to -1 when set
     /// and change chrSetEntry status to Unloading
     pub force_unload, set_force_unload:                                   10;
     /// Will set base_transparency_modifier to 1 when set
     /// and change chrSetEntry status to Loading
-    pub fade_in, set_fade_in:                                             11;
+    pub force_load, set_force_load:                                       11;
     /// Will disable character entirely (no updates, no rendering, no physics)
     /// Set most of the time on remote character's horses
     pub character_disabled, set_character_disabled:                       12;
