@@ -108,7 +108,7 @@ pub struct ChrIns {
     pub omission_mode: OmissionMode,
     /// Amount of frames between updates for this ChrIns.
     /// Uses same values as omission mode.
-    pub frames_per_update: OmissionMode,
+    pub omission_mode_override: OmissionMode,
     unkbc: OmissionMode,
     pub target_velocity_recorder: usize,
     unkc8: u8,
@@ -169,7 +169,8 @@ pub struct ChrIns {
     unk200: usize,
     /// Amount of coop players currently in the session
     pub coop_players_for_multiplay_correction: u32,
-    unk20c: u32,
+    /// Changes what phantom param is applied to the character
+    pub phantom_param_override: i32,
     unk210: [u8; 0x8],
     /// Steam ID of the player that created this character if it's a summon
     pub character_creator_steam_id: u64,
@@ -224,10 +225,13 @@ pub struct ChrIns {
     pub distance_to_player_sqr: f32,
     /// Squared horizontal distance to the main player
     pub horizontal_distance_to_player_sqr: f32,
+    /// Squared distance-based update priority, lower is higher priority.
     pub distance_based_update_priority_sqr: f32,
+    /// Maximum distance at which the character will be rendered.
+    pub max_render_range: f32,
     /// Threshold used for comparison with CSOpenChrActivateThresholdRegionMan
     pub chr_activate_threshold: f32,
-    pub max_render_range: f32,
+    /// Final update priority used to sort characters for updates, lower is higher priority.
     pub update_priority: f32,
     unk40c: u32,
     update_data_module_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
@@ -254,6 +258,9 @@ bitfield! {
     impl Debug;
     /// Skips omission mode updates
     pub skip_omission_mode_updates, set_skip_omission_mode_updates: 0;
+    /// Forces update for this character.
+    /// Will be reset every frame.
+    pub force_update, set_force_update:                             1;
     /// Set when character is valid for rendering by MapStudio render group mask
     pub is_render_group_enabled, set_is_render_group_enabled:       3;
     /// If set, character is in camera's view frustum.
@@ -261,7 +268,6 @@ bitfield! {
     pub is_onscreen, set_is_onscreen:                               4;
     /// Disables gravity for this character.
     pub no_gravity, set_no_gravity:                                 5;
-
 }
 
 bitfield! {
@@ -299,8 +305,8 @@ bitfield! {
     impl Debug;
     /// Request the fall death camera to be enabled.
     pub request_falldeath_camera, set_request_falldeath_camera: 2;
-    /// This flag controls whether the character tag (name, hp, etc) should be rendered or not.
-    pub enable_character_tag, set_enable_character_tag:         4;
+    /// This flag controls whether the character considered active or not
+    pub is_active, set_is_active:                               4;
 }
 
 bitfield! {
@@ -316,6 +322,9 @@ bitfield! {
 bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct ChrInsFlags1ca(u8);
+    /// Controls character sounds activation based on distance
+    /// When character is close enough to player, this flag is set
+    pub sounds_active, set_sounds_active:                             1;
     /// Set when character's chr_activate_threshold is exceeded threshold in CSOpenChrActivateThresholdRegionMan
     pub activate_threshold_exceeded, set_activate_threshold_exceeded: 2;
     impl Debug;
@@ -325,7 +334,7 @@ bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct ChrInsActivationFlags(u32);
     /// Set when the character is determined to be "left behind" (too far from other players).
-    pub is_left_behind, set_is_left_behind: 0;
+    pub is_left_behind, set_is_left_behind:         0;
     /// Controlled by npc param NPC_PARAM_ST::disableActivateOpen or NPC_PARAM_ST::disableActivateLegacy depending on
     /// block id in ChrDataModule
     pub activation_enabled, set_activation_enabled: 3;
@@ -337,23 +346,41 @@ bitfield! {
     pub struct ChrDebugFlags(u32);
     impl Debug;
     /// Makes character ignore all incoming damage
-    pub disable_hit, set_disable_hit: 3;
+    pub disable_hit, set_disable_hit:                                     3;
     /// Disables attack, jump, crouch and any other actions except movement
-    pub disable_secondary_actions, set_disable_secondary_actions: 4;
+    pub disable_secondary_actions, set_disable_secondary_actions:         4;
     /// Disables all movement inputs
-    pub disable_movement, set_disable_movement: 5;
+    pub disable_movement, set_disable_movement:                           5;
     /// Enables debug view render of character target and real facing rotation
-    pub debug_character_rotation_view, set_debug_character_rotation_view: 6;
-    /// Enables debug view render of character model facing rotation
-    pub debug_model_rotation_view, set_debug_model_rotation_view: 7;
-    pub disable_updates, set_disable_updates: 8;
+    pub character_rotation_debug_view, set_character_rotation_debug_view: 6;
+    /// Enables debug view render of facing angle correction applied to model
+    pub facing_angle_debug_view, set_facing_angle_debug_view:             7;
+    pub disable_updates, set_disable_updates:                             8;
     /// Will set base_transparency_modifier to -1 when set
-    pub fade_out, set_fade_out: 10;
+    /// and change chrSetEntry status to Unloading
+    pub force_unload, set_force_unload:                                   10;
+    /// Will set base_transparency_modifier to 1 when set
+    /// and change chrSetEntry status to Loading
+    pub fade_in, set_fade_in:                                             11;
     /// Will disable character entirely (no updates, no rendering, no physics)
     /// Set most of the time on remote character's horses
-    pub character_disabled, set_character_disabled: 13;
+    pub character_disabled, set_character_disabled:                       12;
+    /// Makes character use ChrIns.role_param_id instead of combination of chr_type and vow_type
+    pub use_role_param, set_use_role_param:                               13;
+    /// Enables debug view render of state info 110 speffect (counter attack frames)
+    pub state_info_110_debug_view, set_state_info_110_debug_view:         14;
+    /// Enables debug view render of state info 434 speffect
+    /// (seems to be used for increasing damage dealt to stance-broken enemies)
+    pub state_info_434_debug_view, set_state_info_434_debug_view:         15;
     /// Disables item consumption when using items
-    pub infinite_consumables, set_infinite_consumables: 16;
+    pub infinite_consumables, set_infinite_consumables:                   16;
+    /// Enables debug view render of lock-on angle disable cone
+    /// (see ChrActionFlags::disableLockOnAng)
+    pub lock_on_angle_debug_view, set_lock_on_angle_debug_view:           19;
+    /// Enables debug view render of parryable window frames
+    pub parryable_window_debug_view, set_parryable_window_debug_view:     23;
+    /// Enables debug view render of parry window frames
+    pub parry_window_debug_view, set_parry_window_debug_view:             24;
 }
 
 #[repr(C)]
@@ -630,7 +657,10 @@ pub struct CSChrActionFlagModule {
     /// Set by TAE Event 0 ChrActionFlag (action 5 SET_PARRYABLE_WINDOW)
     pub unused_parry_window_arg: u8,
     unk1d1: [u8; 0xf],
-    unk1e0: f32,
+    /// Angle for a cone to disable lock-on when character is inside it.
+    /// Read from npc param NPC_PARAM_ST::disableLockOnAngle
+    /// Only set for the Fire Giant in the second phase of the fight.
+    pub disable_lock_on_angle: f32,
     unk1e4: f32,
     unk1e8: [u8; 0x10],
     /// Set by TAE Event 800 SetMovementMultiplier
