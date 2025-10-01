@@ -874,7 +874,8 @@ pub struct CSChrPhysicsModule {
     pub is_falling: bool,
     pub is_touching_ground: bool,
     unk1d2: u8,
-    no_gravity_unk: bool,
+    /// Debug flag to disable gravity effect on character
+    pub debug_disable_gravity: bool,
     unk1d4: u8,
     /// Set by TAE Event 0 ChrActionFlag (action 27 DISABLE_GRAVITY)
     pub gravity_disabled: bool,
