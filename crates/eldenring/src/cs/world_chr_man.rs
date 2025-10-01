@@ -321,9 +321,31 @@ impl<T> ChrSet<T> {
 #[repr(C)]
 pub struct ChrSetEntry<T> {
     pub chr_ins: Option<NonNull<T>>,
-    unk8: u16,
+    pub chr_load_status: ChrLoadStatus,
+    pub chr_update_type: ChrUpdateType,
     pub entry_flags: u8,
     _padb: [u8; 5],
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum ChrLoadStatus {
+    Unloaded = 0,
+    Initializing = 1,
+    Active = 2,
+    NetworkInitializing = 3,
+    ReadyForActivation = 4,
+    Unloading = 5,
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum ChrUpdateType {
+    Local = 0,
+    Unknown1 = 1,
+    Unknown2 = 2,
+    Unknown3 = 3,
+    Remote = 4,
 }
 
 #[repr(C)]
