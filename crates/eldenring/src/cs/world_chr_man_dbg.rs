@@ -9,9 +9,16 @@ pub struct WorldChrManDbg {
     vftable: usize,
     unk8: u8,
     pub lod_level_debug_view: bool,
-    unka: [u8; 0x36],
-    unk40: f32,
-    unk44: f32,
+    unka: [u8; 0x32],
+    /// Distance threshold determining whether characters receive LVL5 (every 5 FPS) updates
+    /// rather than LVL30 (every 30 FPS) updates.
+    pub close_omission_threshold: f32,
+    /// Maximum distance at which offscreen characters still receive priority updates.
+    /// Characters beyond this distance will only receive minimal updates.
+    pub offscreen_omission_distance: f32,
+    /// Distance threshold used in WorldChrMan_CalcOmissionLevel_End.
+    /// Controls transition between update levels based on distance.
+    pub omission_level_transition_distance: f32,
     /// Modifier for character update priority when the character was recently on screen.
     pub update_priority_modifier_onscreen_recent: f32,
     /// Modifier for character update priority when the character is on screen.
