@@ -81,15 +81,15 @@ mod tests {
     fn test_bitfield() {
         let mut blockid = BlockId(0);
         blockid.set_area(61);
-        blockid.set_block(48);
-        blockid.set_region(10);
+        blockid.set_block(57);
+        blockid.set_region(39);
         blockid.set_index(3);
 
         assert_eq!(blockid.area(), 61);
-        assert_eq!(blockid.block(), 48);
-        assert_eq!(blockid.region(), 10);
+        assert_eq!(blockid.block(), 57);
+        assert_eq!(blockid.region(), 39);
         assert_eq!(blockid.index(), 3);
 
-        assert_eq!(blockid.0, 0x3d300a03);
+        assert_eq!(blockid.0, 0x3D392703);
     }
 }
