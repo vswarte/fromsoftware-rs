@@ -1,7 +1,7 @@
+mod linear;
 mod matrix;
 mod vector;
-mod linear;
 
+pub use linear::*;
 pub use matrix::*;
 pub use vector::*;
-pub use linear::*;
