@@ -305,6 +305,8 @@ bitfield! {
     impl Debug;
     /// Request the fall death camera to be enabled.
     pub request_falldeath_camera, set_request_falldeath_camera: 2;
+    /// True when update tasks for this character have been registered.
+    pub update_tasks_registered, set_update_tasks_registered:   3;
     /// This flag controls whether the character considered active or not
     pub is_active, set_is_active:                               4;
 }
