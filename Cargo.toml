@@ -35,7 +35,7 @@ nalgebra = "0.33"
 byteorder = "1"
 pelite = "0.10"
 vtable-rs = "0.1.4"
-bitfield = "0.19.1"
+bitfield = "0.19.2"
 encoding_rs = "0.8.35"
 
 [workspace.dependencies.windows]
@@ -49,6 +49,7 @@ features = [
 	"Win32_System_Diagnostics_Debug",
 	"Win32_System_LibraryLoader",
     "Win32_System_Memory",
+    "Win32_System_Time",
 ]
 
 # https://github.com/CasualX/pelite/issues/287
