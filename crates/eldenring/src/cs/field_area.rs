@@ -10,7 +10,6 @@ use shared::OwnedPtr;
 use super::BlockId;
 
 // Source of name: RTTI
-#[shared::singleton("FieldArea")]
 #[repr(C)]
 pub struct FieldArea {
     vtable: usize,
