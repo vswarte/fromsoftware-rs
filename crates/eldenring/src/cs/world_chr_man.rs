@@ -101,7 +101,11 @@ pub struct WorldChrMan {
     unk1f1f0: [u8; 0x10],
     /// A list of ChrIns references sorted by their update priority.
     pub chr_inses_by_update_priority: Vector<NonNull<ChrIns>>,
-    unk1f220: [u8; 0x30],
+    /// The remaining budget for characters that can receive high-detail (NORMAL) updates this frame.
+    pub omission_update_budget_near: u32,
+    /// The remaining budget for characters that can receive medium-detail (LVL2) updates this frame.
+    pub omission_update_budget_far: u32,
+    unk1f228: [u8; 0x28],
     chr_ins_calc_update_info_perf_begin_task: CSEzVoidTask<CSEzTask, Self>,
     chr_ins_calc_update_info_perf_end_task: CSEzVoidTask<CSEzTask, Self>,
     chr_ins_ailogic_perf_begin_task: CSEzVoidTask<CSEzTask, Self>,

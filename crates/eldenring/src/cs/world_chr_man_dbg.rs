@@ -9,7 +9,15 @@ pub struct WorldChrManDbg {
     vftable: usize,
     unk8: u8,
     pub lod_level_debug_view: bool,
-    unka: [u8; 0x32],
+    unka: [u8; 0x12],
+    /// Will be changed depending on current performance load.
+    pub omission_update_num_type: OmissionUpdateNumType,
+    /// Overrides `omission_update_num_type` if not -1 (None).
+    pub omission_update_num_type_override: OmissionUpdateNumType,
+    /// The budgets for characters that can receive high-detail (NORMAL) updates this frame.
+    pub omission_update_num_near: OmissionUpdateNum,
+    /// The budgets for characters that can receive medium-detail (LVL2) updates this frame.
+    pub omission_update_num_far: OmissionUpdateNum,
     /// Distance threshold determining whether characters receive LVL5 (every 5 FPS) updates
     /// rather than LVL30 (every 30 FPS) updates.
     pub close_omission_threshold: f32,
@@ -31,10 +39,16 @@ pub struct WorldChrManDbg {
     pub update_priority_default_modifier: f32,
     /// Modifier for character update priority when the character is moving.
     pub update_priority_modifier_is_moving: f32,
-    unk60: [u8; 8],
+    pub chr_update_state_reason_debug_view: bool,
+    unk61: [u8; 4],
+    /// Graphics.DbgDraw.ChrDbgDrawEnable
+    pub chr_dbg_draw_enable: bool,
+    unk66: u8,
+    unk67: u8,
     pub toughness_debug_view: bool,
     pub poise_debug_view: bool,
-    unk6a: [u8; 2],
+    unk6a: u8,
+    unk6b: u8,
     unk6c: f32,
     unk70: f32,
     unk74: f32,
@@ -53,7 +67,10 @@ pub struct WorldChrManDbg {
     pub debug_manipulator: usize,
     pub player_session_holder: Option<NonNull<PlayerSessionHolder>>,
     pub cam_override_chr_ins: Option<NonNull<ChrIns>>,
-    unkc0: [u8; 0x30],
+    unkc0: [u8; 0x14],
+    /// Game.Debug.IsEnableDefaultBonfireMenu
+    pub is_enable_default_bonfire_menu: bool,
+    unkd5: [u8; 0x1b],
     unkf0: u32,
     unkf4: [u8; 0x8],
     unkfc: u32,
@@ -66,42 +83,75 @@ pub struct WorldChrManDbg {
 }
 
 #[repr(C)]
+/// Name source: debug properties OmissionUpdateNum.Normal.Near/Overload/Emergency
+pub struct OmissionUpdateNum {
+    pub normal: i32,
+    pub overload: i32,
+    pub emergency: i32,
+}
+
+#[repr(i32)]
+/// Name source: debug properties OmissionUpdateNum.Normal.Near/Overload/Emergency
+pub enum OmissionUpdateNumType {
+    None = -1,
+    Normal = 0,
+    Overload = 1,
+    Emergency = 2,
+}
+
+#[repr(C)]
 #[derive(Debug)]
 /// Usually located immediately after the `WorldChrManDbg` singleton.
 /// Game also checks if WorldChrManDbg exists before accessing this struct.
 pub struct WorldChrManDbgFlags {
     /// prevents death by setting HP to 1 when they are less than 0
-    pub no_dead: bool,
-    unk1: bool,
+    /// Read from debug property GameData.PlayerNoDead
+    pub player_no_dead: bool,
+    /// prevents death of the player's horse
+    /// Read from debug property GameData.PlayerHorseNoDead
+    pub player_horse_no_dead: bool,
     /// deals 9999999 damage on every hit
-    pub exterminate: bool,
+    /// Read from debug property GameData.PlayerExterminate
+    pub player_exterminate: bool,
     /// prevents consumption of usable items
-    pub no_goods_consume: bool,
+    /// Read from debug property GameData.PlayerNoGoodsConsume
+    pub player_no_goods_consume: bool,
     /// prevents stamina consumption
-    pub no_stamina_consume: bool,
-    /// prevents FP consumption
-    pub no_fp_consume: bool,
-    /// prevents durability loss (leftover from Dark Souls)
-    pub no_item_damage: bool,
+    /// Read from debug property GameData.AllNoStaminaConsume
+    pub all_no_stamina_consume: bool,
+    /// prevents MP consumption
+    /// Read from debug property GameData.AllNoMpConsume
+    pub all_no_mp_consume: bool,
+    /// prevents arrow consumption
+    /// Read from debug property GameData.AllNoArrowConsume
+    pub all_no_arrow_consume: bool,
     /// prevents spell consumption (leftover from Dark Souls)
-    pub no_spells_consume: bool,
+    /// Read from debug property GameData.AllNoMagicQtyConsume
+    pub all_no_magic_qty_consume: bool,
     unk8: bool,
     unk9: bool,
     /// prevents death of enemies, same as `no_dead`
-    pub enemy_no_dead: bool,
-    /// does the same as `no_fp_consume`
-    pub no_fp_consume2: bool,
+    /// Read from debug property GameData.AllNoDead
+    pub all_no_dead: bool,
     /// prevents enemies from being hit
-    pub enemy_no_hit: bool,
-    /// prevents enemies from attacking
-    pub enemy_no_attack: bool,
-    /// prevents enemies from pursuing the player
-    pub enemy_no_pursuit: bool,
+    /// Read from debug property GameData.AllNoDamage
+    pub all_no_damage: bool,
+    /// prevents enemies from hitting the player
+    /// Read from debug property GameData.AllNoHit
+    pub all_no_hit: bool,
+    /// prevents enemies from attacking the player
+    /// Read from debug property GameData.AllNoAttack
+    pub all_no_attack: bool,
     /// prevents enemies from moving
-    pub enemy_no_move: bool,
-    unk10: bool,
+    /// Read from debug property GameData.AllNoMove
+    pub all_no_move: bool,
+    unkf: u8,
+    /// prevents durability loss on weapons and protectors
+    /// Read from debug property GameRule.IsDbgNotDurabilityLossWeaponProtector
+    pub is_dbg_not_durability_loss_weapon_protector: bool,
     /// prevents fp consumption by ashes of war
-    pub no_aow_fp_consume: bool,
+    /// Read from debug property GameRule.IsNoArtsPointConsume
+    pub is_no_arts_point_consume: bool,
     /// same as `no_goods_consume` but for enemies (gives infinite heal flasks for npc invaders)
     pub enemy_no_goods_consume: bool,
     /// auto-parries all attacks for both player and enemies
@@ -114,8 +164,6 @@ pub struct WorldChrManDbgFlags {
     unk17: bool,
     unk18: bool,
     unk19: bool,
-    unk1a: u8,
-    unk1b: u8,
     unk1c: i32,
     unk20: i32,
     unk24: u8,
@@ -125,23 +173,30 @@ pub struct WorldChrManDbgFlags {
     unk28: bool,
     unk29: bool,
     unk2a: bool,
-    unk2b: bool,
+    /// Read from debug property Game.Debug.IsIgnoreChrDisableBackread
+    pub is_ignore_chr_disable_backread: bool,
     unk2c: u8,
-    unk2d: u8,
-    pub hks_enemy_anim_speed_multiplier_enabled: bool,
-    unk2f: bool,
-    unk30: u8,
-    unk31: u8,
-    pub hks_player_anim_speed_multiplier_enabled: bool,
-    unk33: bool,
-    unk34: u8,
+    /// Read from debug property GameData.TaeDebugEnableBehaviorFlag
+    pub tae_debug_enable_behavior_flag: bool,
+    /// Read from debug property GameData.TaeDebugEnableAnimePlaySpped
+    pub tae_debug_enable_anime_play_spped: bool,
+    /// Read from debug property GameData.TaeDebugEnableTestParam
+    pub tae_debug_enable_test_param: bool,
+    /// Read from debug property GameData.TaeDebugEnableMovementAdjustment
+    pub tae_debug_enable_movement_adjustment: bool,
+    /// Read from debug property GameData.TaeDebugPlayerEnableBehaviorFlag
+    pub tae_debug_player_enable_behavior_flag: bool,
+    /// Read from debug property GameData.TaeDebugPlayerEnableAnimePlaySpped
+    pub tae_debug_player_enable_anime_play_spped: bool,
+    /// Read from debug property GameData.TaeDebugPlayerEnableTestParam
+    pub tae_debug_player_enable_test_param: bool,
+    /// Read from debug property GameData.TaeDebugPlayerEnableMovementAdjustment
+    pub tae_debug_player_enable_movement_adjustment: bool,
     unk35: u8,
     unk36: bool,
     unk37: u8,
     unk38: u8,
     unk39: u8,
-    unk3a: u8,
-    unk3b: u8,
     unk3c: i32,
     unk40: i32,
 }
