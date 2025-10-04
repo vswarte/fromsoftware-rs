@@ -40,7 +40,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             // The registered task will be our closure.
             |_: &FD4TaskData| {
                 // Grab the debug ez draw from RendMan if it's available. Bail otherwise.
-                let Some(ez_draw) = get_instance::<RendMan>().map(|r| r.debug_ez_draw.as_ref())
+                let Some(ez_draw) = get_instance::<RendMan>().map(|r| r.debug_ez_draw.as_mut())
                 else {
                     return;
                 };
