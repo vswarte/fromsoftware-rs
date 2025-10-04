@@ -15,8 +15,8 @@ pattern = "f3 44 0f 11 6c 24 20 41 0f 28 df 4c 8d 45 e0 48 8d 55 90 48 8b cb e8 
 captures = ["", "CS_EZ_DRAW_DRAW_WEDGE"]
 
 [[patterns]]
-pattern = "48 83 ec 28 48 63 41 20 f3 0f 10 22 f3 0f 10 4a 04 f3 0f 10 52 08 48 8b 4c c1 10 f3 0f 10 5a 0c"
-captures = ["CS_EZ_DRAW_SET_COLOR"]
+pattern = "0f c6 c4 e8 0f c6 d0 d4 0f 29 55 20 48 8d 55 00 48 8b ce e8 $ { ' }"
+captures = ["", "CS_EZ_DRAW_DRAW_TRIANGLE"]
 
 [[patterns]]
 pattern = "b2 08 48 8d 4d 00 e8 $ { ' }"
