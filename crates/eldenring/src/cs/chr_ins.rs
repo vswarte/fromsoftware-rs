@@ -348,42 +348,42 @@ bitfield! {
     pub struct ChrDebugFlags(u32);
     impl Debug;
     /// Makes character ignore all incoming damage
-    pub disable_hit, set_disable_hit:                                     3;
+    pub disabled_hit, set_disabled_hit:                                     3;
     /// Disables attack, jump, crouch and any other actions except movement
-    pub disable_secondary_actions, set_disable_secondary_actions:         4;
+    pub disabled_secondary_actions, set_disabled_secondary_actions:         4;
     /// Disables all movement inputs
-    pub disable_movement, set_disable_movement:                           5;
+    pub disabled_movement, set_disabled_movement:                           5;
     /// Enables debug view render of character target and real facing rotation
-    pub character_rotation_debug_view, set_character_rotation_debug_view: 6;
+    pub character_rotation_debug_view, set_character_rotation_debug_view:   6;
     /// Enables debug view render of facing angle correction applied to model
-    pub facing_angle_debug_view, set_facing_angle_debug_view:             7;
+    pub facing_angle_debug_view, set_facing_angle_debug_view:               7;
     /// Disables all updates to the character (physics, ai, etc)
-    pub disable_updates, set_disable_updates:                             8;
+    pub disabled_updates, set_disabled_updates:                             8;
     /// Will set base_transparency_modifier to -1 when set
     /// and change chrSetEntry status to Unloading
-    pub force_unload, set_force_unload:                                   10;
+    pub force_unloaded, set_force_unloaded:                                 10;
     /// Will set base_transparency_modifier to 1 when set
     /// and change chrSetEntry status to Loading
-    pub force_load, set_force_load:                                       11;
+    pub force_loaded, set_force_loaded:                                     11;
     /// Will disable character entirely (no updates, no rendering, no physics)
     /// Set most of the time on remote character's horses
-    pub character_disabled, set_character_disabled:                       12;
+    pub character_disabled, set_character_disabled:                         12;
     /// Makes character use ChrIns.role_param_id instead of combination of chr_type and vow_type
-    pub use_role_param, set_use_role_param:                               13;
+    pub use_role_param, set_use_role_param:                                 13;
     /// Enables debug view render of state info 110 speffect (counter attack frames)
-    pub state_info_110_debug_view, set_state_info_110_debug_view:         14;
+    pub state_info_110_debug_view, set_state_info_110_debug_view:           14;
     /// Enables debug view render of state info 434 speffect
     /// (seems to be used for increasing damage dealt to stance-broken enemies)
-    pub state_info_434_debug_view, set_state_info_434_debug_view:         15;
+    pub state_info_434_debug_view, set_state_info_434_debug_view:           15;
     /// Disables item consumption when using items
-    pub infinite_consumables, set_infinite_consumables:                   16;
+    pub infinite_consumables, set_infinite_consumables:                     16;
     /// Enables debug view render of lock-on angle disable cone
     /// (see ChrActionFlags::disableLockOnAng)
-    pub lock_on_angle_debug_view, set_lock_on_angle_debug_view:           19;
+    pub lock_on_angle_debug_view, set_lock_on_angle_debug_view:             19;
     /// Enables debug view render of parryable window frames
-    pub parryable_window_debug_view, set_parryable_window_debug_view:     23;
+    pub parryable_window_debug_view, set_parryable_window_debug_view:       23;
     /// Enables debug view render of parry window frames
-    pub parry_window_debug_view, set_parry_window_debug_view:             24;
+    pub parry_window_debug_view, set_parry_window_debug_view:               24;
 }
 
 #[repr(C)]
