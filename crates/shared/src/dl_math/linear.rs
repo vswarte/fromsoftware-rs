@@ -93,9 +93,9 @@ pub struct Rss {
 pub struct Triangle {
     /// The first vertex of the triangle.
     pub origin: F32Vector4,
-    /// The vector from the first vertex to the second.
+    /// The vector from the origin to the second vertex.
     pub edge1: F32Vector4,
-    /// The vector from the first vertex to the third.
+    /// The vector from the origin to the third vertex.
     pub edge2: F32Vector4,
 }
 
@@ -104,9 +104,9 @@ pub struct Triangle {
 pub struct Triangle3 {
     /// The first vertex of the triangle.
     pub origin: F32Vector3,
-    /// The vector from the first vertex to the second.
+    /// The vector from the origin to the second vertex.
     pub edge1: F32Vector3,
-    /// The vector from the first vertex to the third.
+    /// The vector from the origin to the third vertex.
     pub edge2: F32Vector3,
 }
 
