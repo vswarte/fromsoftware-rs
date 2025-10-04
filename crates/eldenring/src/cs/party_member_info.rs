@@ -1,3 +1,5 @@
+use crate::cs::BlockId;
+
 use super::FieldInsHandle;
 
 #[repr(u32)]
