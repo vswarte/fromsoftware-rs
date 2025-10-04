@@ -1,16 +1,25 @@
 use eldenring::{
-    cs::CSEzDraw,
+    cs::{CSEzDraw, EzDrawFillMode},
     position::{HavokPosition, PositionDelta},
 };
 use pelite::pe64::Pe;
-use shared::F32Vector4;
+use shared::{F32Vector4, Triangle};
 
-use crate::rva;
 use shared::program::Program;
 
+use crate::rva;
+
 pub trait CSEzDrawExt {
-    /// Set the color for the to-be-rendered primitives.
-    fn set_color(&self, color: &F32Vector4);
+    /// Set the fill and line color for the to-be-rendered primitives.
+    fn set_color(&mut self, color: &F32Vector4);
+    /// Set the line color for the to-be-rendered primitives.
+    fn set_line_color(&mut self, color: &F32Vector4);
+    /// Set the fill color for the to-be-rendered primitives.
+    fn set_fill_color(&mut self, color: &F32Vector4);
+    /// Set the fill mode for the to-be-rendered primitives.
+    fn set_fill_mode(&mut self, mode: EzDrawFillMode);
+    /// Set the depth mode for the to-be-rendered primitives.
+    fn set_depth_mode(&mut self, mode: u32);
 
     fn draw_line(&self, from: &HavokPosition, to: &HavokPosition);
 
@@ -26,27 +35,58 @@ pub trait CSEzDrawExt {
         outer_length: f32,
         degrees: f32,
     );
+
+    fn draw_triangle(&self, triangle: &Triangle);
+    fn draw_dodecadron(&self, top: &HavokPosition, bottom: &HavokPosition, radius: f32);
 }
 
-type FnSetColor = extern "C" fn(*const CSEzDraw, *const F32Vector4);
 type FnDrawLine = extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition);
 type FnDrawCapsule =
     extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition, f32);
 type FnDrawSphere = extern "C" fn(*const CSEzDraw, *const HavokPosition, f32);
 type FnDrawFan =
     extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition, f32, f32, f32);
+type FnDrawDodecadron =
+    extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition, f32);
+type FnDrawTriangle = extern "C" fn(*const CSEzDraw, *const Triangle);
 
 impl CSEzDrawExt for CSEzDraw {
-    fn set_color(&self, color: &F32Vector4) {
-        let target = unsafe {
-            std::mem::transmute::<u64, FnSetColor>(
-                Program::current()
-                    .rva_to_va(rva::get().cs_ez_draw_set_color)
-                    .unwrap(),
-            )
-        };
+    fn set_color(&mut self, color: &F32Vector4) {
+        self.set_line_color(color);
+        self.set_fill_color(color);
+    }
 
-        target(self, color);
+    fn set_line_color(&mut self, color: &F32Vector4) {
+        let buffer = self.current_buffer_mut();
+        if buffer.ez_draw_state.base.line_color != *color {
+            buffer.ez_draw_state.base.line_color = *color;
+            buffer.ez_draw_state.base.draw_flags.set_line_color(true);
+        }
+    }
+
+    fn set_fill_color(&mut self, color: &F32Vector4) {
+        let buffer = self.current_buffer_mut();
+        if buffer.ez_draw_state.base.fill_color != *color {
+            buffer.ez_draw_state.base.fill_color = *color;
+            buffer.ez_draw_state.base.draw_flags.set_fill_color(true);
+        }
+    }
+
+    fn set_fill_mode(&mut self, mode: EzDrawFillMode) {
+        let buffer = self.current_buffer_mut();
+        if buffer.ez_draw_state.base.fill_mode != mode {
+            buffer.ez_draw_state.base.fill_mode = mode;
+            buffer.ez_draw_state.base.draw_flags.set_fill_mode(true);
+        }
+    }
+
+    fn set_depth_mode(&mut self, mode: u32) {
+        let buffer = self.current_buffer_mut();
+
+        if buffer.ez_draw_state.base.depth_mode != mode {
+            buffer.ez_draw_state.base.depth_mode = mode;
+            buffer.ez_draw_state.base.draw_flags.set_depth_mode(true);
+        }
     }
 
     fn draw_line(&self, from: &HavokPosition, to: &HavokPosition) {
@@ -111,5 +151,29 @@ impl CSEzDrawExt for CSEzDraw {
             outer_length,
             degrees,
         );
+    }
+
+    fn draw_triangle(&self, triangle: &Triangle) {
+        let target = unsafe {
+            std::mem::transmute::<u64, FnDrawTriangle>(
+                Program::current()
+                    .rva_to_va(rva::get().cs_ez_draw_draw_triangle)
+                    .unwrap(),
+            )
+        };
+
+        target(self, triangle);
+    }
+
+    fn draw_dodecadron(&self, top: &HavokPosition, bottom: &HavokPosition, radius: f32) {
+        let target = unsafe {
+            std::mem::transmute::<u64, FnDrawDodecadron>(
+                Program::current()
+                    .rva_to_va(rva::get().cs_ez_draw_draw_dodecadron)
+                    .unwrap(),
+            )
+        };
+
+        target(self, top, bottom, radius);
     }
 }
