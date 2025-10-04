@@ -21,14 +21,14 @@ pub trait CSEzDrawExt {
     /// Set the depth mode for the to-be-rendered primitives.
     fn set_depth_mode(&mut self, mode: u32);
 
-    fn draw_line(&self, from: &HavokPosition, to: &HavokPosition);
+    fn draw_line(&mut self, from: &HavokPosition, to: &HavokPosition);
 
-    fn draw_capsule(&self, top: &HavokPosition, bottom: &HavokPosition, radius: f32);
+    fn draw_capsule(&mut self, top: &HavokPosition, bottom: &HavokPosition, radius: f32);
 
-    fn draw_sphere(&self, origin: &HavokPosition, radius: f32);
+    fn draw_sphere(&mut self, origin: &HavokPosition, radius: f32);
 
     fn draw_wedge(
-        &self,
+        &mut self,
         origin: &HavokPosition,
         direction: &PositionDelta,
         inner_length: f32,
@@ -36,8 +36,8 @@ pub trait CSEzDrawExt {
         degrees: f32,
     );
 
-    fn draw_triangle(&self, triangle: &Triangle);
-    fn draw_dodecadron(&self, top: &HavokPosition, bottom: &HavokPosition, radius: f32);
+    fn draw_triangle(&mut self, triangle: &Triangle);
+    fn draw_dodecadron(&mut self, top: &HavokPosition, bottom: &HavokPosition, radius: f32);
 }
 
 type FnDrawLine = extern "C" fn(*const CSEzDraw, *const HavokPosition, *const HavokPosition);
@@ -89,7 +89,7 @@ impl CSEzDrawExt for CSEzDraw {
         }
     }
 
-    fn draw_line(&self, from: &HavokPosition, to: &HavokPosition) {
+    fn draw_line(&mut self, from: &HavokPosition, to: &HavokPosition) {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawLine>(
                 Program::current()
@@ -101,7 +101,7 @@ impl CSEzDrawExt for CSEzDraw {
         target(self, from, to);
     }
 
-    fn draw_capsule(&self, top: &HavokPosition, bottom: &HavokPosition, radius: f32) {
+    fn draw_capsule(&mut self, top: &HavokPosition, bottom: &HavokPosition, radius: f32) {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawCapsule>(
                 Program::current()
@@ -113,7 +113,7 @@ impl CSEzDrawExt for CSEzDraw {
         target(self, top, bottom, radius);
     }
 
-    fn draw_sphere(&self, origin: &HavokPosition, radius: f32) {
+    fn draw_sphere(&mut self, origin: &HavokPosition, radius: f32) {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawSphere>(
                 Program::current()
@@ -126,7 +126,7 @@ impl CSEzDrawExt for CSEzDraw {
     }
 
     fn draw_wedge(
-        &self,
+        &mut self,
         origin: &HavokPosition,
         direction: &PositionDelta,
         inner_length: f32,
@@ -153,7 +153,7 @@ impl CSEzDrawExt for CSEzDraw {
         );
     }
 
-    fn draw_triangle(&self, triangle: &Triangle) {
+    fn draw_triangle(&mut self, triangle: &Triangle) {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawTriangle>(
                 Program::current()
@@ -165,7 +165,7 @@ impl CSEzDrawExt for CSEzDraw {
         target(self, triangle);
     }
 
-    fn draw_dodecadron(&self, top: &HavokPosition, bottom: &HavokPosition, radius: f32) {
+    fn draw_dodecadron(&mut self, top: &HavokPosition, bottom: &HavokPosition, radius: f32) {
         let target = unsafe {
             std::mem::transmute::<u64, FnDrawDodecadron>(
                 Program::current()
