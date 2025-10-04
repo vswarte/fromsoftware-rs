@@ -13,7 +13,7 @@ use crate::param::ATK_PARAM_ST;
 use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
 use crate::Vector;
-use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
+use shared::{Aabb, F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
 
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
 use crate::cs::gaitem::GaitemHandle;
@@ -1401,9 +1401,46 @@ bitfield! {
 pub struct CSModelIns {
     vftable: usize,
     unk8: usize,
-    pub model_item: usize,
+    pub model_item: OwnedPtr<CSFD4ModelItem>,
     pub model_disp_entity: usize,
     pub location_entity: usize,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct CSFD4ModelItem {
+    pub vftable: usize,
+    unk8: [u8; 0x18],
+    unk20: usize,
+    unk28: usize,
+    unk30: usize,
+    unk38: usize,
+    unk40: [u8; 0x8],
+    unk48: usize,
+    unk50: usize,
+    unk58: usize,
+    unk60: usize,
+    flver_model_data: usize,
+    unk70: usize,
+    unk78: [u8; 0x5c8],
+    mtx43_array_entity: usize,
+    unk648: [u8; 0x8],
+    default_dmypoly_location_modifier: usize,
+    pub location_aabb_exporter: OwnedPtr<CSFD4LocationGxModelMatricesAndAabbExporter>,
+    pub owning_model: NonNull<CSModelIns>,
+    unk668: [u8; 0x58],
+    unk6c0: DLString,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct CSFD4LocationGxModelMatricesAndAabbExporter {
+    csfd4_location_modifier: [u8; 0x48],
+    csfd4_location_node0x20: [u8; 0x20],
+    csfd4_location_node0x40: [u8; 0x20],
+    unk88: bool,
+    pub aabb: Aabb,
+    // TODO: rest
 }
 
 #[repr(C)]
