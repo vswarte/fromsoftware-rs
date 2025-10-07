@@ -181,8 +181,10 @@ pub struct ChrIns {
     pub mimicry_establishment_param_id: i32,
     unk228: u32,
     unk22c: u32,
-    pub chr_fade_multiplier: f32,
-    pub chr_fade_multiplier_reset: f32,
+    // Possibly contains some id related to current gparam and attached to chr geometry
+    unk230: u32,
+    // Same as above
+    unk234: u32,
     /// Transparency multiplier for the character
     /// Controlled by TAE Event 193 SetOpacityKeyframe
     pub opacity_keyframes_multiplier: f32,
