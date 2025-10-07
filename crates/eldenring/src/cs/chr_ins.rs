@@ -296,6 +296,11 @@ bitfield! {
 bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct ChrInsFlags1c7(u8);
+    /// True when the character is currently using a mimic's veil.
+    /// Will mute walk/run sounds.
+    pub mimicry_enabled, set_mimicry_enabled:             5;
+    /// If set, character's gravity will be disabled when tint_alpha_multiplier reaches 0
+    pub tint_alpha_no_gravity, set_tint_alpha_no_gravity: 7;
     impl Debug;
 }
 
@@ -876,8 +881,9 @@ pub struct CSChrPhysicsModule {
     pub is_falling: bool,
     pub is_touching_ground: bool,
     unk1d2: u8,
-    /// Debug flag to disable gravity effect on character
-    pub debug_disable_gravity: bool,
+    /// Fade out disable gravity
+    /// Set when PlayerIns.tint_alpha_multiplier is at 0 and ChrInsFlags1c7 bit 7 is set
+    pub fade_out_gravity_disabled: bool,
     unk1d4: u8,
     /// Set by TAE Event 0 ChrActionFlag (action 27 DISABLE_GRAVITY)
     pub gravity_disabled: bool,
