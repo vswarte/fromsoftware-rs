@@ -197,6 +197,8 @@ pub struct PhantomJoinData {
     /// Multiplay type
     pub multiplay_type: MultiplayType,
     /// Whether the sign is in the sign pool
+    /// IMPORTANT: can be anything if multiplay_type is not a sign type
+    /// because FromSoftware forgot to zero it out in the constructor
     pub is_sign_puddle: bool,
     // _pad16: [u8; 2],
     /// State of the joining player
