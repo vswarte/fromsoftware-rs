@@ -149,7 +149,7 @@ pub struct CSSessionManager {
     unk2e4: u32,
     unk2e8: u32,
     unk2ec: u8,
-    unk2ed: bool,
+    pub enable_p2p_queue_stats: bool,
     unk2ee: u8,
     unk2ef: u8,
     unk2f0: DoublyLinkedList<()>,
