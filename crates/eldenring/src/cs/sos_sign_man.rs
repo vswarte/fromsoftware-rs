@@ -21,7 +21,9 @@ pub struct CSSosSignMan {
     /// List of signs that were requested to be summoned
     /// Inserting values here will not do anything unless you also have data in `join_data`
     pub summon_requests: DoublyLinkedList<i32>,
-    unk50: [u8; 8],
+    /// Similar to MultiplayType, but negative
+    pub summon_param_type: i32,
+    unk54: [u8; 4],
     /// List of data for join push notifications
     pub join_data: DoublyLinkedList<NonNull<PhantomJoinData>>,
     /// Completely unused, no reads or writes other then initialization and destruction
@@ -197,6 +199,8 @@ pub struct PhantomJoinData {
     /// Multiplay type
     pub multiplay_type: MultiplayType,
     /// Whether the sign is in the sign pool
+    /// IMPORTANT: can be anything if multiplay_type is not a sign type
+    /// because FromSoftware forgot to zero it out in the constructor
     pub is_sign_puddle: bool,
     // _pad16: [u8; 2],
     /// State of the joining player

@@ -87,7 +87,7 @@ pub struct CSSessionManager {
     unk58: u32,
     unk5c: u32,
     manager_impl_steam: usize,
-    unk68: usize,
+    unk68: bool,
     pub players: Vector<SessionManagerPlayerEntry>,
     pub host_player: SessionManagerPlayerEntryBase,
     unk160: usize,
@@ -149,7 +149,7 @@ pub struct CSSessionManager {
     unk2e4: u32,
     unk2e8: u32,
     unk2ec: u8,
-    unk2ed: bool,
+    pub enable_p2p_queue_stats: bool,
     unk2ee: u8,
     unk2ef: u8,
     unk2f0: DoublyLinkedList<()>,
@@ -192,12 +192,20 @@ pub struct SessionManagerPlayerEntry {
     pub base: SessionManagerPlayerEntryBase,
     /// Index in networked player game data list, will be -1 for host.
     pub game_data_index: i32,
-    unkd4: u32,
+    /// Character id for all emevd and other character related stuff.
+    pub character_event_id: u32,
     unkd8: usize,
-    pub p2p_entity_handle: P2PEntityHandle,
-    unke8: u8,
+    pub horse_entity_handle: P2PEntityHandle,
     pub is_host: bool,
-    unkea: [u8; 0x16],
+    unke9: u8,
+    pub join_wait: bool,
+    pub check: bool,
+    unkec: u8,
+    pub rebreak_in: bool,
+    unkee: [u8; 0xe],
+    /// Team type this player had before starting a pseudo multiplayer ceremony.
+    /// Used to restore the team type after the ceremony ends.
+    pub pre_ceremony_team_type: u8,
 }
 
 #[repr(C)]

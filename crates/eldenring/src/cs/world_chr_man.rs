@@ -6,6 +6,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
+use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::Tree;
 use crate::{cs::ChrIns, Vector};
 use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
@@ -93,13 +94,28 @@ pub struct WorldChrMan {
     unk1e6b0: usize,
     unk1e6b8: [u8; 0x628],
     pub chr_cam: Option<NonNull<ChrCam>>,
-    // tasks and other stuff
-    // list of players by distance may be useful
-    // see ghidra structure for reference
+    // WorldChrMan tasks
     unk1ece8: [u8; 0x4e8],
     /// A list of ChrIns references sorted by distance to the main player.
     pub chr_inses_by_distance: Vector<ChrInsDistanceEntry>,
-    unk1f1f0: [u8; 0x1f0],
+    unk1f1f0: [u8; 0x10],
+    /// A list of ChrIns references sorted by their update priority.
+    pub chr_inses_by_update_priority: Vector<NonNull<ChrIns>>,
+    /// The remaining budget for characters that can receive high-detail (NORMAL) updates this frame.
+    pub omission_update_budget_near: u32,
+    /// The remaining budget for characters that can receive medium-detail (LVL2) updates this frame.
+    pub omission_update_budget_far: u32,
+    unk1f228: [u8; 0x28],
+    chr_ins_calc_update_info_perf_begin_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_calc_update_info_perf_end_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_ailogic_perf_begin_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_ailogic_perf_end_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_behavior_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_behavior_safe_task2: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_cloth_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_pre_cloth_safe_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_post_physics_task: CSEzVoidTask<CSEzTask, Self>,
+    chr_ins_post_physics_safe_task: CSEzVoidTask<CSEzTask, Self>,
 }
 
 #[repr(C)]
@@ -309,9 +325,31 @@ impl<T> ChrSet<T> {
 #[repr(C)]
 pub struct ChrSetEntry<T> {
     pub chr_ins: Option<NonNull<T>>,
-    unk8: u16,
+    pub chr_load_status: ChrLoadStatus,
+    pub chr_update_type: ChrUpdateType,
     pub entry_flags: u8,
     _padb: [u8; 5],
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum ChrLoadStatus {
+    Unloaded = 0,
+    Initializing = 1,
+    Active = 2,
+    NetworkInitializing = 3,
+    ReadyForActivation = 4,
+    Unloading = 5,
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum ChrUpdateType {
+    Local = 0,
+    Unknown1 = 1,
+    Unknown2 = 2,
+    Unknown3 = 3,
+    Remote = 4,
 }
 
 #[repr(C)]
