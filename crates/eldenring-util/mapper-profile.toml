@@ -20,7 +20,7 @@ captures = ["", "CS_EZ_DRAW_DRAW_TRIANGLE"]
 
 [[patterns]]
 pattern = "0f 28 df ? 8d 45 07 ? 8d 55 f7 ? 8b cb e8 $ { ' }"
-captures = ["CS_EZ_DRAW_DRAW_DODECADRON"]
+captures = ["", "CS_EZ_DRAW_DRAW_DODECADRON"]
 
 [[patterns]]
 pattern = "b2 08 48 8d 4d 00 e8 $ { ' }"
