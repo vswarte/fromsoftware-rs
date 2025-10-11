@@ -281,6 +281,9 @@ bitfield! {
     pub precision_shooting, set_precision_shooting: 1;
     /// Enables rendering for this character.
     pub enable_render, set_enable_render:           3;
+    /// Makes character invincible,
+    /// used in lua events while loading in area
+    pub is_invincible, set_is_invincible:           4;
     /// Controls whether the character is dead or not.
     pub death_flag, set_death_flag:                 7;
 }
