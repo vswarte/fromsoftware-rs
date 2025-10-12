@@ -10,36 +10,36 @@ use std::{
 use vtable_rs::VPtr;
 
 /// The trait shared by task implementations across FSW games.
-pub trait SharedTaskImp<IndexType: Send + 'static, DataType: Send + 'static> {
+pub trait SharedTaskImp<TIndex, TTaskData: Send + 'static> {
     /// Directly calls the internal task registration function. Users should not
     /// call this directly.
-    fn register_task_internal(&self, index: IndexType, task: &RecurringTask<DataType>);
+    fn register_task_internal(&self, index: TIndex, task: &RecurringTask<TTaskData>);
 }
 
 /// An extension on each game's task implementation to allow users to easily
 /// register custom tasks as Rust closures.
-pub trait SharedTaskImpExt<IndexType: Send + 'static, DataType: Send + 'static> {
+pub trait SharedTaskImpExt<TIndex, TTaskData: Send + 'static> {
     /// Registers the given closure as a task to the games task runtime.
-    fn run_recurring<T: Into<RecurringTask<DataType>>>(
+    fn run_recurring<T: Into<RecurringTask<TTaskData>>>(
         &self,
         execute: T,
-        group: IndexType,
-    ) -> RecurringTaskHandle<DataType>;
+        group: TIndex,
+    ) -> RecurringTaskHandle<TTaskData>;
 }
 
 impl<
-        IndexType: Send + 'static,
-        DataType: Send + 'static,
-        S: SharedTaskImp<IndexType, DataType>,
-    > SharedTaskImpExt<IndexType, DataType> for S
+        TIndex,
+        TTaskData: Send + 'static,
+        S: SharedTaskImp<TIndex, TTaskData>,
+    > SharedTaskImpExt<TIndex, TTaskData> for S
 {
-    fn run_recurring<T: Into<RecurringTask<DataType>>>(
+    fn run_recurring<T: Into<RecurringTask<TTaskData>>>(
         &self,
         task: T,
-        group: IndexType,
-    ) -> RecurringTaskHandle<DataType> {
+        group: TIndex,
+    ) -> RecurringTaskHandle<TTaskData> {
         #[allow(clippy::arc_with_non_send_sync)]
-        let task: Arc<RecurringTask<DataType>> = Arc::new(task.into());
+        let task: Arc<RecurringTask<TTaskData>> = Arc::new(task.into());
         // SAFETY: we hold a unique reference to the contents of `arc`
         unsafe {
             *task.self_ref.get() = Some(task.clone());
@@ -53,11 +53,11 @@ impl<
 
 /// A handle for the a task registered through `SharedTaskImpExt.run_recurring`
 /// that allows users to cancel it later using `Drop.drop`.
-pub struct RecurringTaskHandle<DataType: Send + 'static> {
-    _task: Arc<RecurringTask<DataType>>,
+pub struct RecurringTaskHandle<TTaskData: Send + 'static> {
+    _task: Arc<RecurringTask<TTaskData>>,
 }
 
-impl<DataType: Send + 'static> Drop for RecurringTaskHandle<DataType> {
+impl<TTaskData: Send + 'static> Drop for RecurringTaskHandle<TTaskData> {
     fn drop(&mut self) {
         self._task.cancel();
     }
@@ -70,16 +70,16 @@ impl<DataType: Send + 'static> Drop for RecurringTaskHandle<DataType> {
 /// the vftable) about is the same across games. So far, we know it works on both
 /// DS3 and ER.
 #[repr(C)]
-pub struct RecurringTask<DataType: Send + 'static> {
+pub struct RecurringTask<TTaskData: Send + 'static> {
     vftable: VPtr<dyn SharedTaskBaseVmt, Self>,
     unk8: usize,
-    closure: Box<dyn FnMut(&DataType)>,
+    closure: Box<dyn FnMut(&TTaskData)>,
     unregister_requested: AtomicBool,
     self_ref: UnsafeCell<Option<Arc<Self>>>,
 }
 
-impl<DataType: Send + 'static> RecurringTask<DataType> {
-    pub fn new<F: FnMut(&DataType) + 'static + Send>(closure: F) -> Self {
+impl<TTaskData: Send + 'static> RecurringTask<TTaskData> {
+    pub fn new<F: FnMut(&TTaskData) + 'static + Send>(closure: F) -> Self {
         Self {
             vftable: Default::default(),
             unk8: 0,
@@ -94,7 +94,7 @@ impl<DataType: Send + 'static> RecurringTask<DataType> {
     }
 }
 
-impl<DataType: Send + 'static> SharedTaskBaseVmt for RecurringTask<DataType> {
+impl<TTaskData: Send + 'static> SharedTaskBaseVmt for RecurringTask<TTaskData> {
     extern "C" fn get_runtime_class(&self) -> usize {
         unimplemented!();
     }
@@ -108,7 +108,7 @@ impl<DataType: Send + 'static> SharedTaskBaseVmt for RecurringTask<DataType> {
         // if !self.unregister_requested.load(Ordering::Relaxed) {
 
         // SAFETY: We're declaring the type of the data in the first place.
-        (self.closure)(unsafe { &*(data as *const DataType) });
+        (self.closure)(unsafe { &*(data as *const TTaskData) });
 
         // }
 
@@ -122,8 +122,8 @@ impl<DataType: Send + 'static> SharedTaskBaseVmt for RecurringTask<DataType> {
     }
 }
 
-impl<DataType: Send + 'static, F: FnMut(&DataType) + 'static + Send> From<F>
-    for RecurringTask<DataType>
+impl<TTaskData: Send + 'static, F: FnMut(&TTaskData) + 'static + Send> From<F>
+    for RecurringTask<TTaskData>
 {
     fn from(value: F) -> Self {
         Self::new(value)

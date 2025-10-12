@@ -115,6 +115,8 @@ pub struct CSTaskImp {
     pub inner: OwnedPtr<CSTask>,
 }
 
+// TODO: Implement this by directly manipulating the CSTaskImp's vectors rather
+// than relying on hooking through an AOB.
 const REGISTER_TASK_PATTERN: &[Atom] =
     pattern!("e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }");
 
