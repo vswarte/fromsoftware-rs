@@ -19,7 +19,7 @@ impl ChrInsExt for ChrIns {
             .unwrap();
 
         let call = unsafe { transmute::<u64, fn(&mut ChrIns, i32, bool) -> u64>(rva) };
-        call(self, sp_effect, sync);
+        call(self, sp_effect, dont_sync);
     }
 
     fn remove_speffect(&mut self, sp_effect: i32) {
