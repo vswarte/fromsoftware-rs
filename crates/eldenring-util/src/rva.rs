@@ -1,86 +1,68 @@
-use pelite::pe::Pe;
+use pelite::pe64::{Pe, PeView};
 use std::sync::LazyLock;
+use windows::core::PCSTR;
+use windows::Win32::System::LibraryLoader::GetModuleHandleA;
 
 mod rva_jp;
 mod rva_ww;
 
-use shared::program::Program;
-
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GameVersion {
+    Ww261,
+    Jp2611,
+}
+
+impl GameVersion {
+    fn from_metadata(product: &str, lang_id: u16, version: &str) -> Option<Self> {
+        match (product, lang_id, version) {
+            ("ELDEN RING™", LANG_ID_EN, "2.6.1.0") => Some(Self::Ww261),
+            ("ELDEN RING", LANG_ID_JP, "2.6.1.1") => Some(Self::Jp2611),
+            _ => None,
+        }
+    }
+}
+
 pub fn get() -> &'static RvaBundle {
     static RVAS: LazyLock<RvaBundle> = LazyLock::new(|| {
-        let program = Program::current();
-        let resources = program.resources().unwrap();
-
-        let (product, lang_id_base, version) = {
-            let info = resources.version_info().unwrap();
-            let product_version = info.fixed().unwrap().dwProductVersion;
-
-            let version = format!(
-                "{}.{}.{}.{}",
-                product_version.Major,
-                product_version.Minor,
-                product_version.Patch,
-                product_version.Build,
-            );
-
-            let mut product: Option<String> = None;
-            let language = info.translation().first().unwrap();
-            info.strings(*language, |k, v| {
-                if k == "ProductName" {
-                    product = Some(v.to_string())
-                }
-            });
-
-            (product.unwrap(), language.lang_id & 0x03FF, version)
+        let module = unsafe {
+            PeView::module(GetModuleHandleA(PCSTR(std::ptr::null())).unwrap().0 as *const u8)
         };
-
-        match (product.as_str(), lang_id_base, version.as_str()) {
-            ("ELDEN RING™", LANG_ID_EN, "2.6.1.0") => RvaBundle {
-                cs_ez_draw_draw_line: rva_ww::RVA_CS_EZ_DRAW_DRAW_LINE,
-                cs_ez_draw_draw_capsule: rva_ww::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
-                cs_ez_draw_draw_sphere: rva_ww::RVA_CS_EZ_DRAW_DRAW_SPHERE,
-                cs_ez_draw_draw_wedge: rva_ww::RVA_CS_EZ_DRAW_DRAW_WEDGE,
-                cs_ez_draw_draw_triangle: rva_ww::RVA_CS_EZ_DRAW_DRAW_TRIANGLE,
-                cs_ez_draw_draw_dodecadron: rva_ww::RVA_CS_EZ_DRAW_DRAW_DODECADRON,
-                initialize_spawn_geometry_request: rva_ww::RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST,
-                spawn_geometry: rva_ww::RVA_SPAWN_GEOMETRY,
-                cs_phys_world_cast_ray: rva_ww::RVA_CS_PHYS_WORLD_CAST_RAY,
-                cs_bullet_manager_spawn_bullet: rva_ww::RVA_CS_BULLET_MANAGER_SPAWN_BULLET,
-                chr_ins_apply_speffect: rva_ww::RVA_CHR_INS_APPLY_SPEFFECT,
-                chr_ins_remove_speffect: rva_ww::RVA_CHR_INS_REMOVE_SPEFFECT,
-                cs_action_button_man_execute_action_button:
-                    rva_ww::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
-                cs_menu_man_imp_display_status_message:
-                    rva_ww::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
-            },
-            ("ELDEN RING", LANG_ID_JP, "2.6.1.1") => RvaBundle {
-                cs_ez_draw_draw_line: rva_jp::RVA_CS_EZ_DRAW_DRAW_LINE,
-                cs_ez_draw_draw_capsule: rva_jp::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
-                cs_ez_draw_draw_sphere: rva_jp::RVA_CS_EZ_DRAW_DRAW_SPHERE,
-                cs_ez_draw_draw_wedge: rva_jp::RVA_CS_EZ_DRAW_DRAW_WEDGE,
-                cs_ez_draw_draw_triangle: rva_jp::RVA_CS_EZ_DRAW_DRAW_TRIANGLE,
-                cs_ez_draw_draw_dodecadron: rva_jp::RVA_CS_EZ_DRAW_DRAW_DODECADRON,
-                initialize_spawn_geometry_request: rva_jp::RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST,
-                spawn_geometry: rva_jp::RVA_SPAWN_GEOMETRY,
-                cs_phys_world_cast_ray: rva_jp::RVA_CS_PHYS_WORLD_CAST_RAY,
-                cs_bullet_manager_spawn_bullet: rva_jp::RVA_CS_BULLET_MANAGER_SPAWN_BULLET,
-                chr_ins_apply_speffect: rva_jp::RVA_CHR_INS_APPLY_SPEFFECT,
-                chr_ins_remove_speffect: rva_jp::RVA_CHR_INS_REMOVE_SPEFFECT,
-                cs_action_button_man_execute_action_button:
-                    rva_jp::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
-                cs_menu_man_imp_display_status_message:
-                    rva_jp::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
-            },
-            _ => panic!(
-                "could not fetch RVAs for executable. name = \"{product}\", lang = {lang_id_base:x}, version = {version}"
-            ),
-        }
+        detect_version_and_get_rvas(&module)
+            .expect("This game version or distribution is not supported")
     });
 
     &RVAS
+}
+
+fn detect_version_and_get_rvas(module: &PeView) -> Option<RvaBundle> {
+    let resources = module.resources().ok()?;
+    let info = resources.version_info().ok()?;
+
+    // Extract version info
+    let product_version = info.fixed()?.dwProductVersion;
+    let version = format!(
+        "{}.{}.{}.{}",
+        product_version.Major, product_version.Minor, product_version.Patch, product_version.Build,
+    );
+
+    // Extract product name
+    let language = *info.translation().first()?;
+    let mut product_name: Option<String> = None;
+    info.strings(language, |k, v| {
+        if k == "ProductName" {
+            product_name = Some(v.to_string());
+        }
+    });
+
+    let product = product_name?;
+    let lang_id_base = language.lang_id & 0x03FF;
+
+    // Detect version and return appropriate RVAs
+    let version = GameVersion::from_metadata(&product, lang_id_base, &version)?;
+    Some(RvaBundle::for_version(version))
 }
 
 pub struct RvaBundle {
@@ -98,4 +80,37 @@ pub struct RvaBundle {
     pub chr_ins_remove_speffect: u32,
     pub cs_action_button_man_execute_action_button: u32,
     pub cs_menu_man_imp_display_status_message: u32,
+    pub global_hinstance: u32,
+}
+
+macro_rules! rva_bundle {
+    ($module:ident) => {
+        Self {
+            cs_ez_draw_draw_line: $module::RVA_CS_EZ_DRAW_DRAW_LINE,
+            cs_ez_draw_draw_capsule: $module::RVA_CS_EZ_DRAW_DRAW_CAPSULE,
+            cs_ez_draw_draw_sphere: $module::RVA_CS_EZ_DRAW_DRAW_SPHERE,
+            cs_ez_draw_draw_wedge: $module::RVA_CS_EZ_DRAW_DRAW_WEDGE,
+            cs_ez_draw_draw_triangle: $module::RVA_CS_EZ_DRAW_DRAW_TRIANGLE,
+            cs_ez_draw_draw_dodecadron: $module::RVA_CS_EZ_DRAW_DRAW_DODECADRON,
+            initialize_spawn_geometry_request: $module::RVA_INITIALIZE_SPAWN_GEOMETRY_REQUEST,
+            spawn_geometry: $module::RVA_SPAWN_GEOMETRY,
+            cs_phys_world_cast_ray: $module::RVA_CS_PHYS_WORLD_CAST_RAY,
+            cs_bullet_manager_spawn_bullet: $module::RVA_CS_BULLET_MANAGER_SPAWN_BULLET,
+            chr_ins_apply_speffect: $module::RVA_CHR_INS_APPLY_SPEFFECT,
+            chr_ins_remove_speffect: $module::RVA_CHR_INS_REMOVE_SPEFFECT,
+            cs_action_button_man_execute_action_button:
+                $module::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
+            cs_menu_man_imp_display_status_message: $module::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
+            global_hinstance: $module::RVA_GLOBAL_HINSTANCE,
+        }
+    };
+}
+
+impl RvaBundle {
+    fn for_version(version: GameVersion) -> Self {
+        match version {
+            GameVersion::Ww261 => rva_bundle!(rva_ww),
+            GameVersion::Jp2611 => rva_bundle!(rva_jp),
+        }
+    }
 }

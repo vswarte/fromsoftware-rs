@@ -4,26 +4,11 @@
 use std::sync::atomic::{AtomicPtr, Ordering};
 use std::time::{Duration, Instant};
 
-use pelite::pattern;
-use pelite::pattern::Atom;
-use pelite::pe64::{Pe, Rva};
+use pelite::pe64::Pe;
+use shared::Program;
 use thiserror::Error;
 
-use shared::program::Program;
-
-// WinMain -> SethInstance
-// used to set global hInstance later used by CSWindow
-// and can be used to determine if the game has finished initializing
-const GLOBAL_SET_HINSTANCE_PATTERN: &[Atom] = pattern!(
-    "
-    48 8b ce
-    48 8b f8
-    e8 $ {
-        48 89 0d $ { ' }
-        c3
-    }
-    "
-);
+use crate::rva;
 
 static GLOBAL_HINSTANCE: AtomicPtr<usize> = AtomicPtr::new(0x0 as _);
 
@@ -39,16 +24,11 @@ pub enum SystemInitError {
 /// This happens after the CRT init and after duplicate instance checks.
 pub fn wait_for_system_init(module: &Program, timeout: Duration) -> Result<(), SystemInitError> {
     if std::ptr::eq(GLOBAL_HINSTANCE.load(Ordering::Relaxed), 0x0 as _) {
-        let mut captures = [Rva::default(); 2];
-        module
-            .scanner()
-            .finds_code(GLOBAL_SET_HINSTANCE_PATTERN, &mut captures);
-
-        let global_hinstance = module
-            .rva_to_va(captures[1])
+        let va = module
+            .rva_to_va(rva::get().global_hinstance)
             .map_err(|_| SystemInitError::InvalidRva)?;
 
-        GLOBAL_HINSTANCE.store(global_hinstance as _, Ordering::Relaxed);
+        GLOBAL_HINSTANCE.store(va as _, Ordering::Relaxed);
     }
 
     let start = Instant::now();
