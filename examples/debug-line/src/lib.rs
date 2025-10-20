@@ -40,14 +40,17 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             // The registered task will be our closure.
             |_: &FD4TaskData| {
                 // Grab the debug ez draw from RendMan if it's available. Bail otherwise.
-                let Some(ez_draw) = get_instance::<RendMan>().map(|r| r.debug_ez_draw.as_mut())
+                let Some(ez_draw) = get_instance::<RendMan>()
+                    .ok()
+                    .map(|r| r.debug_ez_draw.as_mut())
                 else {
                     return;
                 };
 
                 // Grab the main player from WorldChrMan if it's available. Bail otherwise.
-                let Some(player) =
-                    get_instance::<WorldChrMan>().and_then(|w| w.main_player.as_ref())
+                let Some(player) = get_instance::<WorldChrMan>()
+                    .ok()
+                    .and_then(|w| w.main_player.as_ref())
                 else {
                     return;
                 };

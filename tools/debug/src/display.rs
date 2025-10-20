@@ -32,7 +32,7 @@ pub fn render_debug_singleton<T: FromSingleton + Sized + DebugDisplay + 'static>
     let singleton = unsafe { singleton::get_instance::<T>() };
 
     match singleton {
-        Some(instance) => {
+        Ok(instance) => {
             if ui.collapsing_header(T::name(), TreeNodeFlags::empty()) {
                 ui.indent();
                 let pointer = instance as *const T;
@@ -47,6 +47,6 @@ pub fn render_debug_singleton<T: FromSingleton + Sized + DebugDisplay + 'static>
                 ui.separator();
             }
         }
-        None => ui.text(format!("No instance of {} found", T::name())),
+        Err(err) => ui.text(format!("Couldn't load {}: {:?}", T::name(), err)),
     }
 }
