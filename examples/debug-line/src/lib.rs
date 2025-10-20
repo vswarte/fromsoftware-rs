@@ -5,8 +5,8 @@ use eldenring::{
     fd4::FD4TaskData,
     position::PositionDelta,
 };
-use eldenring_util::{ez_draw::CSEzDrawExt, system::wait_for_system_init, task::CSTaskImpExt};
-use shared::{program::Program, singleton::get_instance};
+use eldenring_util::{ez_draw::CSEzDrawExt, system::wait_for_system_init};
+use shared::{program::Program, singleton::get_instance, task::*};
 
 use shared::F32Vector4;
 

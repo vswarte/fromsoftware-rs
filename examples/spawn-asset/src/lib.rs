@@ -8,9 +8,8 @@ use eldenring_util::{
     geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
     input,
     system::wait_for_system_init,
-    task::CSTaskImpExt,
 };
-use shared::{program::Program, singleton::get_instance};
+use shared::{program::Program, singleton::get_instance, task::*};
 
 #[unsafe(no_mangle)]
 /// # Safety
