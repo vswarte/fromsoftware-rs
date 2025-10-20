@@ -27,7 +27,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 // Retrieve WorldChrMan
-                let Some(world_chr_man) = (unsafe { get_instance::<WorldChrMan>() }) else {
+                let Ok(world_chr_man) = (unsafe { get_instance::<WorldChrMan>() }) else {
                     return;
                 };
 

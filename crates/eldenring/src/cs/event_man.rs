@@ -127,7 +127,7 @@ impl CSEventWorldAreaTimeCtrl {
 
         self.fade_out_requested = true;
 
-        if let Some(wat) = (unsafe { get_instance::<WorldAreaTime>() }) {
+        if let Ok(wat) = (unsafe { get_instance::<WorldAreaTime>() }) {
             let current_total_seconds = (wat.clock.hours() as i64 * 3600)
                 + (wat.clock.minutes() as i64 * 60)
                 + wat.clock.seconds() as i64;
