@@ -122,7 +122,7 @@ pub struct CSEventWorldAreaTimeCtrl {
 impl CSEventWorldAreaTimeCtrl {
     /// Implementation of TalkESD function: FadeOutAndPassTime
     #[allow(clippy::too_many_arguments)]
-    fn fade_out_and_pass_time(
+    pub fn fade_out_and_pass_time(
         &mut self,
         add_hours: i32,
         add_minutes: i32,
