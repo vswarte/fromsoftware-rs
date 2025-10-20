@@ -885,7 +885,8 @@ pub struct CSChrPhysicsModule {
     pub gravity_multiplier: f32,
     pub is_falling: bool,
     pub is_touching_ground: bool,
-    unk1d2: u8,
+    // true once jumped untill touching ground again.
+    pub is_jumping: bool,
     /// Fade out disable gravity
     /// Set when PlayerIns.tint_alpha_multiplier is at 0 and ChrInsFlags1c7 bit 7 is set
     pub fade_out_gravity_disabled: bool,
@@ -1113,7 +1114,8 @@ pub struct CSChrTimeActModule {
 pub struct CSChrBehaviorModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    unk10: usize,
+    // made pub for accessing &hkbcharacter in NR-Wallclimb
+    pub unk10: usize,
     unk18: usize,
     unk20: usize,
     unk28: usize,
