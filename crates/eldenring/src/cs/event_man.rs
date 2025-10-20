@@ -120,25 +120,7 @@ pub struct CSEventWorldAreaTimeCtrl {
 }
 
 impl CSEventWorldAreaTimeCtrl {
-    /// Implementation of TalkESD function: FadeOutAndPassTime
-    #[allow(clippy::too_many_arguments)]
-    pub fn fade_out_and_pass_time(
-        &mut self,
-        add_hours: i32,
-        add_minutes: i32,
-        add_seconds: i32,
-        black_screen_time: f32,
-        bonfire_entity_id: Option<u32>,
-        reset_world: bool,
-        reset_main_character: bool,
-        reset_magic_charges: bool,
-        restore_estus: bool,
-        clock_startup_delay_s: f32,
-        clock_move_time_s: f32,
-        clock_finish_delay_s: f32,
-        fade_out_time: f32,
-        fade_in_time: f32,
-    ) {
+    pub fn fade_out_and_pass_time(&mut self, params: TimeTransitionParams) {
         if self.fade_out_requested {
             return;
         }
@@ -150,8 +132,9 @@ impl CSEventWorldAreaTimeCtrl {
                 + (wat.clock.minutes() as i64 * 60)
                 + wat.clock.seconds() as i64;
 
-            let delta_total_seconds =
-                (add_hours as i64 * 3600) + (add_minutes as i64 * 60) + add_seconds as i64;
+            let delta_total_seconds = (params.add_hours as i64 * 3600)
+                + (params.add_minutes as i64 * 60)
+                + params.add_seconds as i64;
 
             let normalized_seconds =
                 ((current_total_seconds + delta_total_seconds) % 86400 + 86400) % 86400;
@@ -161,20 +144,80 @@ impl CSEventWorldAreaTimeCtrl {
             self.target_seconds = (normalized_seconds % 60) as u32;
         }
 
-        self.clock_startup_delay_s = clock_startup_delay_s;
-        self.clock_move_time_s = clock_move_time_s;
-        self.clock_finish_delay_s = clock_finish_delay_s;
-        self.black_screen_time = black_screen_time;
+        self.clock_startup_delay_s = params.clock_startup_delay_s;
+        self.clock_move_time_s = params.clock_move_time_s;
+        self.clock_finish_delay_s = params.clock_finish_delay_s;
+        self.black_screen_time = params.black_screen_time;
         self.fade_transition = true;
         self.show_clock = false;
 
-        self.bonfire_entity_id = bonfire_entity_id.unwrap_or(0);
+        self.bonfire_entity_id = params.bonfire_entity_id;
 
-        self.reset_world = reset_world;
-        self.reset_main_character = reset_main_character;
-        self.reset_magic_charges = reset_magic_charges;
-        self.restore_estus = restore_estus;
-        self.fade_out_time = fade_out_time;
-        self.fade_in_time = fade_in_time;
+        self.reset_world = params.reset_world;
+        self.reset_main_character = params.reset_main_character;
+        self.reset_magic_charges = params.reset_magic_charges;
+        self.restore_estus = params.restore_estus;
+        self.fade_out_time = params.fade_out_time;
+        self.fade_in_time = params.fade_in_time;
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TimeTransitionParams {
+    pub add_hours: i32,
+    pub add_minutes: i32,
+    pub add_seconds: i32,
+    pub black_screen_time: f32,
+    pub bonfire_entity_id: u32,
+    pub reset_world: bool,
+    pub reset_main_character: bool,
+    pub reset_magic_charges: bool,
+    pub restore_estus: bool,
+    pub clock_startup_delay_s: f32,
+    pub clock_move_time_s: f32,
+    pub clock_finish_delay_s: f32,
+    pub fade_out_time: f32,
+    pub fade_in_time: f32,
+}
+
+impl Default for TimeTransitionParams {
+    fn default() -> Self {
+        Self {
+            add_hours: 0,
+            add_minutes: 0,
+            add_seconds: 0,
+            black_screen_time: 1.5,
+            bonfire_entity_id: 0,
+            reset_world: false,
+            reset_main_character: false,
+            reset_magic_charges: false,
+            restore_estus: false,
+            clock_startup_delay_s: 0.0,
+            clock_move_time_s: 0.0,
+            clock_finish_delay_s: 0.0,
+            fade_out_time: 0.75,
+            fade_in_time: 0.5,
+        }
+    }
+}
+
+impl TimeTransitionParams {
+    pub fn bonfire_rest() -> Self {
+        Self {
+            reset_world: true,
+            reset_main_character: true,
+            reset_magic_charges: true,
+            restore_estus: true,
+            ..Default::default()
+        }
+    }
+
+    pub fn time_skip(hours: i32, minutes: i32, seconds: i32) -> Self {
+        Self {
+            add_hours: hours,
+            add_minutes: minutes,
+            add_seconds: seconds,
+            ..Default::default()
+        }
     }
 }
