@@ -1,6 +1,5 @@
 /*
 Licensed under the MIT and ASL2 License.
-
 */
 
 use std::{
