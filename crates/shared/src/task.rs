@@ -27,11 +27,8 @@ pub trait SharedTaskImpExt<TIndex, TTaskData: Send + 'static> {
     ) -> RecurringTaskHandle<TTaskData>;
 }
 
-impl<
-        TIndex,
-        TTaskData: Send + 'static,
-        S: SharedTaskImp<TIndex, TTaskData>,
-    > SharedTaskImpExt<TIndex, TTaskData> for S
+impl<TIndex, TTaskData: Send + 'static, S: SharedTaskImp<TIndex, TTaskData>>
+    SharedTaskImpExt<TIndex, TTaskData> for S
 {
     fn run_recurring<T: Into<RecurringTask<TTaskData>>>(
         &self,
