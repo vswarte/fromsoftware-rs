@@ -271,7 +271,7 @@ impl DebugDisplay for PlayerGameData {
         ui.text(format!("White Ring Active: {:?}", self.white_ring_active));
         ui.text(format!("Blue Ring Active: {:?}", self.blue_ring_active));
 
-        ui.text(format!("Character Type: {:?}", self.character_type));
+        ui.text(format!("Character Event ID: {:?}", self.character_event_id));
         ui.text(format!("Team Type: {:?}", self.team_type));
 
         if ui.collapsing_header("EquipGameData", TreeNodeFlags::empty()) {
