@@ -1,3 +1,4 @@
+use std::io;
 use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
@@ -84,6 +85,14 @@ pub struct DLFileInputStream {
     pub status: DLIOResult,
 }
 
+impl io::Read for DLFileInputStream {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        (self.vftable.read_bytes)(self, buf.as_mut_ptr(), buf.len())
+            .try_into()
+            .map_err(io::Error::other)
+    }
+}
+
 #[repr(C)]
 pub struct DLMemoryInputStream {
     /// Allocator used for this stream.
@@ -104,6 +113,14 @@ pub struct DLMemoryInputStream {
     // _pad2c: [u8; 4],
 }
 
+impl io::Read for DLMemoryInputStream {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        (self.vftable.read_bytes)(self, buf.as_mut_ptr(), buf.len())
+            .try_into()
+            .map_err(io::Error::other)
+    }
+}
+
 #[repr(C)]
 /// Input stream used as base in all decompress streams and DLBufferedInputStream.
 pub struct PseudoAsyncInputStream {
@@ -112,6 +129,14 @@ pub struct PseudoAsyncInputStream {
     /// Used to emulate the behavior of ReadAsync and return the amount of bytes read.
     pub last_read_bytes: u32,
     // _pad: [u8; 4],
+}
+
+impl io::Read for PseudoAsyncInputStream {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        (self.vftable.read_bytes)(self, buf.as_mut_ptr(), buf.len())
+            .try_into()
+            .map_err(io::Error::other)
+    }
 }
 
 #[repr(C)]
@@ -206,6 +231,17 @@ pub struct DLFileOutputStream {
     pub status: DLIOResult,
 }
 
+impl io::Write for DLFileOutputStream {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        Ok((self.vftable.write)(self, buf.as_ptr(), buf.len()))
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        (self.vftable.flush)(self);
+        Ok(())
+    }
+}
+
 #[repr(C)]
 pub struct DLStreamBuffer {
     /// Allocator used for this stream.
@@ -239,4 +275,15 @@ pub struct DLMemoryOutputStream {
     /// Status of latest operation.
     pub status: DLIOResult,
     // _pad: [u8; 4],
+}
+
+impl io::Write for DLMemoryOutputStream {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        Ok((self.vftable.write)(self, buf.as_ptr(), buf.len()))
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        (self.vftable.flush)(self);
+        Ok(())
+    }
 }
