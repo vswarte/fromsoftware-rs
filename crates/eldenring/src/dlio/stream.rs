@@ -113,11 +113,69 @@ pub struct DLMemoryInputStream {
     // _pad2c: [u8; 4],
 }
 
+impl DLMemoryInputStream {
+    /// Safely moves the cursor to [difference] relative to [base].
+    fn seek_relative(&mut self, difference: i64, base: usize) -> io::Result<u64> {
+        if !difference.is_negative() {
+            Ok(self.current_position as u64)
+        } else if let Some(new) = base.checked_add_signed(difference.try_into_io()?) {
+            let new = std::cmp::min(new, self.capacity);
+            self.current_position = new;
+            Ok(new as u64)
+        } else {
+            Err(io::Error::from(io::ErrorKind::InvalidInput))
+        }
+    }
+}
+
 impl io::Read for DLMemoryInputStream {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         (self.vftable.read_bytes)(self, buf.as_mut_ptr(), buf.len())
             .try_into()
             .map_err(io::Error::other)
+    }
+}
+
+impl io::Seek for DLMemoryInputStream {
+    fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
+        if !self.is_open {
+            return Err(io::Error::from(io::ErrorKind::BrokenPipe));
+        }
+
+        match pos {
+            io::SeekFrom::Start(pos) => {
+                let new = std::cmp::min(pos.try_into_io()?, self.capacity);
+                self.current_position = new;
+                Ok(new as u64)
+            }
+            io::SeekFrom::End(difference) => self.seek_relative(difference, self.capacity),
+            io::SeekFrom::Current(difference) => {
+                self.seek_relative(difference, self.current_position)
+            }
+        }
+    }
+
+    fn stream_position(&mut self) -> io::Result<u64> {
+        if !self.is_open {
+            Err(io::Error::from(io::ErrorKind::BrokenPipe))
+        } else {
+            Ok(self.current_position as u64)
+        }
+    }
+}
+
+trait TryIntoIoExt<T>: Sized {
+    /// Like try_into, but wraps any errors in [io::Error].
+    fn try_into_io(self) -> io::Result<T>;
+}
+
+impl<T, U> TryIntoIoExt<T> for U
+where
+    U: TryInto<T>,
+    U::Error: std::error::Error + Send + Sync + 'static,
+{
+    fn try_into_io(self) -> io::Result<T> {
+        self.try_into().map_err(io::Error::other)
     }
 }
 
