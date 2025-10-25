@@ -9,6 +9,8 @@ use super::RvaBundle;
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub const RVAS: RvaBundle = RvaBundle {
+    equip_game_data_deserialize: 0x5843f0,
+    equip_game_data_serialize: 0x584b60,
     gesture_data_store: 0x45672e0,
     map_item_man_grant_item: 0x7c4080,
     map_item_man_ptr: 0x4769240,

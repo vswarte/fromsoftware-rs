@@ -11,6 +11,7 @@ description = "Raw structures and bindings for From Software's title Dark Souls 
 bitfield.workspace = true
 encoding_rs.workspace = true
 glam.workspace = true
+ilhook.workspace = true
 pelite.workspace = true
 fromsoftware-shared.workspace = true
 thiserror.workspace = true
