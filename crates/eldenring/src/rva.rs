@@ -10,7 +10,7 @@ const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GameVersion {
+enum GameVersion {
     Ww261,
     Jp2611,
 }
@@ -25,6 +25,9 @@ impl GameVersion {
     }
 }
 
+/// Returns the RVA bundle for the current executable region and version.
+///
+/// This will panic if the current executable isn't supported by this package.
 pub fn get() -> &'static RvaBundle {
     static RVAS: LazyLock<RvaBundle> = LazyLock::new(|| {
         let module = unsafe {
@@ -37,6 +40,8 @@ pub fn get() -> &'static RvaBundle {
     &RVAS
 }
 
+/// Determines the region and version of the current executable and, if it's
+/// known, returns the [RvaBundle] for it.
 fn detect_version_and_get_rvas(module: &PeView) -> Option<RvaBundle> {
     let resources = module.resources().ok()?;
     let info = resources.version_info().ok()?;
@@ -65,6 +70,12 @@ fn detect_version_and_get_rvas(module: &PeView) -> Option<RvaBundle> {
     Some(RvaBundle::for_version(version))
 }
 
+/// A struct containing offsets (relative to the beginning of the executable) of
+/// various addresses of structures and functions. They can be converted to a
+/// usable address using the [Pe::rva_to_va] trait function of [Program].
+///
+/// These are populated from `mapper-profile.toml` in the root of this package
+/// using `tools/binary-generator`.
 pub struct RvaBundle {
     pub cs_ez_draw_draw_line: u32,
     pub cs_ez_draw_draw_capsule: u32,
@@ -81,6 +92,7 @@ pub struct RvaBundle {
     pub cs_action_button_man_execute_action_button: u32,
     pub cs_menu_man_imp_display_status_message: u32,
     pub global_hinstance: u32,
+    pub register_task: u32,
 }
 
 macro_rules! rva_bundle {
@@ -102,6 +114,7 @@ macro_rules! rva_bundle {
                 $module::RVA_CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON,
             cs_menu_man_imp_display_status_message: $module::RVA_CS_MENU_MAN_DISPLAY_STATUS_MESSAGE,
             global_hinstance: $module::RVA_GLOBAL_HINSTANCE,
+            register_task: $module::RVA_REGISTER_TASK,
         }
     };
 }

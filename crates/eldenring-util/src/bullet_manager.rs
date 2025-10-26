@@ -1,7 +1,7 @@
 use eldenring::cs::{BulletSpawnData, CSBulletIns, CSBulletManager, FieldInsHandle};
+use eldenring::rva;
 use pelite::pe64::Pe;
 
-use crate::rva;
 use shared::program::Program;
 
 pub trait CSBulletManagerExt {

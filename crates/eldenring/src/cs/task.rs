@@ -10,7 +10,7 @@ use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
 use crate::{
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
-    Tree, Vector,
+    rva, Tree, Vector,
 };
 use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
 
@@ -117,23 +117,10 @@ pub struct CSTaskImp {
 
 // TODO: Implement this by directly manipulating the CSTaskImp's vectors rather
 // than relying on hooking through an AOB.
-const REGISTER_TASK_PATTERN: &[Atom] =
-    pattern!("e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }");
-
 static REGISTER_TASK_VA: LazyLock<u64> = LazyLock::new(|| {
-    let program = Program::current();
-    let mut matches = [0u32; 2];
-
-    if !program
-        .scanner()
-        .finds_code(REGISTER_TASK_PATTERN, &mut matches)
-    {
-        panic!("Could not find REGISTER_TASK_PATTERN or found duplicates.");
-    }
-
-    program
-        .rva_to_va(matches[1])
-        .expect("Call target for REGISTER_TASK_PATTERN was not in exe")
+    Program::current()
+        .rva_to_va(rva::get().register_task)
+        .expect("Call target for REGISTER_TASK was not in exe")
 });
 
 impl SharedTaskImp<CSTaskGroupIndex, FD4TaskData> for CSTaskImp {

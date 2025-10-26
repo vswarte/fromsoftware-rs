@@ -1,13 +1,12 @@
 use eldenring::{
     cs::{CSEzDraw, EzDrawFillMode},
     position::{HavokPosition, PositionDelta},
+    rva,
 };
 use pelite::pe64::Pe;
 use shared::{F32Vector4, Triangle};
 
 use shared::program::Program;
-
-use crate::rva;
 
 pub trait CSEzDrawExt {
     /// Set the fill and line color for the to-be-rendered primitives.

@@ -1,12 +1,11 @@
 use eldenring::{
     cs::{CSPhysWorld, PlayerIns},
     position::{HavokPosition, PositionDelta},
+    rva,
 };
 use pelite::pe64::Pe;
 
 use shared::program::Program;
-
-use crate::rva;
 
 type FnCastRay = extern "C" fn(
     *const CSPhysWorld,
