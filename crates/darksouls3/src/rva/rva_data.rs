@@ -12,6 +12,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     chr_ins_vmt: 0x284f478,
     game_data_man_ptr: 0x47572b8,
     gesture_data_store: 0x45672e0,
+    global_hinstance: 0x489d5a0,
     lua_event_man_give_item_directly: 0x46cad0,
     lua_event_man_remove_item: 0x473bd0,
     map_item_man_grant_item: 0x7c4080,
