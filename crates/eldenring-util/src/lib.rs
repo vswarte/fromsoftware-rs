@@ -10,5 +10,3 @@ pub mod input;
 pub mod menu_man;
 pub mod system;
 pub mod world_chr_man;
-
-pub(crate) mod rva;

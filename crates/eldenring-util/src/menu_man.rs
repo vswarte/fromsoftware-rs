@@ -1,10 +1,8 @@
 use pelite::pe::Pe;
 
-use eldenring::cs::CSMenuManImp;
+use eldenring::{cs::CSMenuManImp, rva};
 
 use shared::program::Program;
-
-use crate::rva;
 
 pub trait CSMenuManImpExt {
     fn display_status_message(&mut self, message: i32) -> bool;

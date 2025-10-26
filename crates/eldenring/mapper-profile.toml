@@ -57,3 +57,7 @@ captures = ["", "CS_MENU_MAN_DISPLAY_STATUS_MESSAGE"]
 [[patterns]]
 captures = ["", "GLOBAL_HINSTANCE"]
 pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
+
+[[patterns]]
+captures = ["", "REGISTER_TASK"]
+pattern = "e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }"

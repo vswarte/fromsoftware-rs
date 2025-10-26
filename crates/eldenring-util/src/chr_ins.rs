@@ -1,9 +1,8 @@
 use std::mem::transmute;
 
-use eldenring::cs::ChrIns;
+use eldenring::{cs::ChrIns, rva};
 use pelite::pe64::Pe;
 
-use crate::rva;
 use shared::program::Program;
 
 pub trait ChrInsExt {
