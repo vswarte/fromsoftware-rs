@@ -4,8 +4,8 @@ use eldenring::{
     cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan},
     fd4::FD4TaskData,
 };
-use eldenring_util::{chr_ins::ChrInsExt, input, system::wait_for_system_init, task::CSTaskImpExt};
-use shared::{program::Program, singleton::get_instance};
+use eldenring_util::{chr_ins::ChrInsExt, input, system::wait_for_system_init};
+use shared::{program::Program, singleton::get_instance, task::*};
 
 const SP_EFFECT: i32 = 4330;
 
