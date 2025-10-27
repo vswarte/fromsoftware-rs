@@ -40,7 +40,7 @@ impl BlockPosition {
 impl Display for BlockPosition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let Self { x, y, z, yaw } = self;
-        write!(f, "BlockPosition({x}, {y}, {z}, {yaw})")
+        write!(f, "BlockPosition({x}, {y}, {z}, yaw:{yaw})")
     }
 }
 

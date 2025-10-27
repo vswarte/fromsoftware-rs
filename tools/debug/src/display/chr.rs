@@ -35,7 +35,6 @@ impl DebugDisplay for PlayerIns {
         ));
         ui.text(format!("Locked on enemy: {}", self.locked_on_enemy));
         ui.text(format!("Block position: {}", self.block_position));
-        ui.text(format!("Block orientation: {}", self.block_orientation));
     }
 }
 
