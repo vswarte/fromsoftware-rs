@@ -22,21 +22,25 @@ use std::{
 
 use nalgebra::{Vector, Vector3};
 
-/// Represents a position relative to some block center.
-#[repr(C, align(16))]
+/// Represents a position relative to some block center and character's yaw.
+#[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct BlockPosition(pub f32, pub f32, pub f32, pub f32);
-
+pub struct BlockPosition {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub yaw: f32,
+}
 impl BlockPosition {
     pub const fn from_xyz(x: f32, y: f32, z: f32) -> Self {
-        Self(x, y, z, 0.0)
+        Self { x, y, z, yaw: 0.0 }
     }
 }
 
 impl Display for BlockPosition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let Self(x, y, z, _) = self;
-        write!(f, "BlockPosition({x}, {y}, {z})")
+        let Self { x, y, z, yaw } = self;
+        write!(f, "BlockPosition({x}, {y}, {z}, {yaw})")
     }
 }
 
@@ -44,7 +48,7 @@ impl Sub for BlockPosition {
     type Output = PositionDelta;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        PositionDelta(self.0 - rhs.0, self.1 - rhs.1, self.2 - rhs.2)
+        PositionDelta(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
 
@@ -52,7 +56,12 @@ impl Add<PositionDelta> for BlockPosition {
     type Output = Self;
 
     fn add(self, rhs: PositionDelta) -> Self::Output {
-        Self(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2, 0.0)
+        Self {
+            x: self.x + rhs.0,
+            y: self.y + rhs.1,
+            z: self.z + rhs.2,
+            yaw: 0.0,
+        }
     }
 }
 
@@ -60,7 +69,12 @@ impl Sub<PositionDelta> for BlockPosition {
     type Output = Self;
 
     fn sub(self, rhs: PositionDelta) -> Self::Output {
-        Self(self.0 - rhs.0, self.1 - rhs.1, self.2 - rhs.2, 0.0)
+        Self {
+            x: self.x - rhs.0,
+            y: self.y - rhs.1,
+            z: self.z - rhs.2,
+            yaw: 0.0,
+        }
     }
 }
 

@@ -1657,9 +1657,14 @@ pub struct PlayerIns {
     pub session_manager_player_entry: OwnedPtr<SessionManagerPlayerEntryBase>,
     /// Position within the current block.
     pub block_position: BlockPosition,
-    /// Angle as radians. Relative to the orientation of the current block.
-    pub block_orientation: f32,
-    unk6d4: [u8; 0x1c],
+    /// Current block ID the player is in.
+    pub current_block_id: BlockId,
+    /// Last "safe" block position the player was in.
+    pub safe_block_pos: BlockPosition,
+    /// Last "safe" block ID the player was in.
+    pub safe_block_id: BlockId,
+    /// Current play region id the player is in.
+    pub play_region_id: u32,
     unk6f0: usize,
     unk6f8: [u8; 0xb],
     unk703: bool,
