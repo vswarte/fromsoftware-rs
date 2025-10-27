@@ -1,44 +1,50 @@
 use std::fmt::Display;
 
-/// Refers to a part of the games overal map.
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct BlockId(pub i32);
+use bitfield::bitfield;
+
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    pub struct BlockId(i32);
+    impl Debug;
+
+    u8;
+    /// The area is generally used to indicate what type of map is being talked about.
+    /// Above 60 is overworld and has special handling the engine for overworld map loading.
+    pub area, _: 31, 24;
+    _, set_area: 31, 24;
+
+    /// The smallest loadable unit for a map. Region and index generally are used to refer to
+    /// specific variants of the same map.
+    pub block, _: 23, 16;
+    _, set_block: 23, 16;
+
+    // TODO: fact-check this term because I have no clue how region would be an appropriate name.
+    pub region, _: 15, 8;
+    _, set_region: 15, 8;
+
+    pub index, _: 7, 0;
+    _, set_index: 7, 0;
+}
 
 impl BlockId {
     /// BlockId -1 indicating that some entity is global or not segregated by map.
     pub const fn none() -> Self {
-        Self::from_parts(-1, -1, -1, -1)
+        Self(-1)
     }
 
     /// Constructs a BlockId from seperate parts.
-    pub const fn from_parts(area: i8, block: i8, region: i8, index: i8) -> Self {
-        Self((index as i32) | (region as i32) << 8 | (block as i32) << 16 | (area as i32) << 24)
+    pub fn from_parts(area: u8, block: u8, region: u8, index: u8) -> Self {
+        let mut blockid = BlockId(0);
+        blockid.set_area(area);
+        blockid.set_block(block);
+        blockid.set_region(region);
+        blockid.set_index(index);
+        blockid
     }
 
-    /// The area is generally used to indicate what type of map is being talked about.
-    /// Above 60 is overworld and has special handling the engine for overworld map loading.
-    pub const fn area(&self) -> i32 {
-        self.0 >> 24 & 0xFF
-    }
-
-    /// The smallest loadable unit for a map. Region and index generally are used to refer to
-    /// specific variants of the same map.
-    pub const fn block(&self) -> i32 {
-        self.0 >> 16 & 0xFF
-    }
-
-    // TODO: fact-check this term because I have no clue how regio nwould be an appropriate name.
-    pub const fn region(&self) -> i32 {
-        self.0 >> 8 & 0xFF
-    }
-
-    pub const fn index(&self) -> i32 {
-        self.0 & 0xFF
-    }
-
-    pub const fn is_overworld(&self) -> bool {
-        self.area() >= 50 && self.area() < 89
+    pub fn is_overworld(&self) -> bool {
+        let area = self.area();
+        (50..89).contains(&area)
     }
 }
 
@@ -64,5 +70,26 @@ impl Display for BlockId {
             self.region(),
             self.index()
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::cs::BlockId;
+
+    #[test]
+    fn test_bitfield() {
+        let mut blockid = BlockId(0);
+        blockid.set_area(61);
+        blockid.set_block(57);
+        blockid.set_region(39);
+        blockid.set_index(3);
+
+        assert_eq!(blockid.area(), 61);
+        assert_eq!(blockid.block(), 57);
+        assert_eq!(blockid.region(), 39);
+        assert_eq!(blockid.index(), 3);
+
+        assert_eq!(blockid.0, 0x3D392703);
     }
 }
