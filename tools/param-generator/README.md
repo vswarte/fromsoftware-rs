@@ -9,4 +9,7 @@ To rebuild `crates/eldenring`'s param.rs, invoke the following from the repo's r
 To rebuild `crates/nightreign`'s param.rs, invoke the following from the repo's root:
 `$ cargo run --bin param-generator -- --input tools/param-generator/params/nightreign --output crates/nightreign/src/param.rs`
 
+To rebuild `crates/darksouls3`'s param.rs, invoke the following from the repo's root:
+`$ cargo run --bin param-generator -- --input tools/param-generator/params/darksouls3 --output crates/darksouls3/src/param.rs`
+
 Make sure to run a round of rustfmt on the output, otherwise the output will not comply with the enforced styleguide.
