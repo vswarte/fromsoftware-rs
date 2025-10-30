@@ -37,8 +37,4 @@ unsafe impl<'a> PeObject<'a> for Program<'a> {
             Self::Mapping(mapping) => mapping.align(),
         }
     }
-
-    fn image_base(&self) -> pelite::pe64::Va {
-        self.optional_header().ImageBase
-    }
 }
