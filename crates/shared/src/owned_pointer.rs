@@ -1,4 +1,5 @@
 use std::{
+    fmt,
     ops::{Deref, DerefMut},
     ptr::NonNull,
 };
@@ -43,6 +44,12 @@ impl<T> DerefMut for OwnedPtr<T> {
 impl<T> AsMut<T> for OwnedPtr<T> {
     fn as_mut(&mut self) -> &mut T {
         self.deref_mut()
+    }
+}
+
+impl<T> fmt::Debug for OwnedPtr<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        self.0.fmt(f)
     }
 }
 
