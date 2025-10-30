@@ -51,10 +51,6 @@ features = [
     "Win32_System_Memory",
 ]
 
-# https://github.com/CasualX/pelite/issues/287
-[patch.crates-io]
-pelite = { git = "https://github.com/CasualX/pelite.git" }
-
 [profile.release]
 strip = true
 lto = true
