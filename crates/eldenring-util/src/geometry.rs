@@ -4,11 +4,11 @@ use std::ptr::NonNull;
 use eldenring::cs::CSWorldGeomIns;
 use eldenring::cs::CSWorldGeomManBlockData;
 use eldenring::position::BlockPosition;
+use eldenring::rva;
 use pelite::pe64::Pe;
 
 use eldenring::cs::GeometrySpawnRequest;
 
-use crate::rva;
 use shared::program::Program;
 
 pub struct GeometrySpawnParameters {
