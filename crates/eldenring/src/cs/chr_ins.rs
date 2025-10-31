@@ -1659,9 +1659,11 @@ pub struct PlayerIns {
     pub block_position: BlockPosition,
     /// Current block ID the player is in.
     pub current_block_id: BlockId,
-    /// Last "safe" block position the player was in.
+    /// Last safe for saving block position the player was in.
+    /// Used for save files and some multiplayer features like signs
     pub safe_block_pos: BlockPosition,
-    /// Last "safe" block ID the player was in.
+    /// Last safe for saving block ID the player was in.
+    /// Used for save files and some multiplayer features like signs
     pub safe_block_id: BlockId,
     /// Current play region id the player is in.
     pub play_region_id: u32,
