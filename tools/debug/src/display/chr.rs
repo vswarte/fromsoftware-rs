@@ -1,7 +1,7 @@
 use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment,
-    ChrAsmSlot, ChrIns, ChrInsModuleContainer, EquipGameData, EquipInventoryData, EquipItemData,
-    EquipMagicData, PlayerGameData, PlayerIns,
+    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrTimeActModule, ChrAsm,
+    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, EquipGameData,
+    EquipInventoryData, EquipItemData, EquipMagicData, PlayerGameData, PlayerIns,
 };
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
@@ -656,6 +656,12 @@ impl DebugDisplay for ChrInsModuleContainer {
             self.model_param_modifier.render_debug(ui);
             ui.unindent();
         }
+
+        if ui.collapsing_header("Time Act", TreeNodeFlags::empty()) {
+            ui.indent();
+            self.time_act.render_debug(ui);
+            ui.unindent();
+        }
     }
 }
 
@@ -680,6 +686,51 @@ impl DebugDisplay for CSChrModelParamModifierModule {
                 ui.table_next_column();
                 ui.text(unsafe { modifier.name.to_string() }.unwrap());
             });
+        }
+    }
+}
+
+impl DebugDisplay for CSChrTimeActModule {
+    fn render_debug(&self, ui: &&mut Ui) {
+        if let Some(_t) = ui.begin_table_header_with_flags(
+            "chr-ins-time-act-module",
+            [
+                TableColumnSetup::new("Index"),
+                TableColumnSetup::new("Anim ID"),
+                TableColumnSetup::new("Play Time"),
+                TableColumnSetup::new("Length"),
+            ],
+            TableFlags::RESIZABLE
+                | TableFlags::BORDERS
+                | TableFlags::ROW_BG
+                | TableFlags::SIZING_STRETCH_PROP,
+        ) {
+            self.anim_queue
+                .iter()
+                .enumerate()
+                .for_each(|(index, entry)| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
+
+                    ui.table_next_column();
+                    ui.text(entry.anim_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(entry.play_time.to_string());
+
+                    ui.table_next_column();
+                    ui.text(entry.anim_length.to_string());
+                });
+        }
+        ui.text(format!("Read IDX: {}", self.read_idx));
+        ui.text(format!("Write IDX: {}", self.write_idx));
+        if ui.collapsing_header("Current Anim Info", TreeNodeFlags::empty()) {
+            ui.indent();
+            let current_anim_info = &self.anim_queue[self.read_idx as usize];
+            ui.text(format!("Anim ID: {}", current_anim_info.anim_id));
+            ui.text(format!("Play Time: {}", current_anim_info.play_time));
+            ui.text(format!("Anim Length: {}", current_anim_info.anim_length));
+            ui.unindent();
         }
     }
 }
