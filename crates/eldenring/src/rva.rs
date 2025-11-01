@@ -28,6 +28,11 @@ impl GameVersion {
 /// Returns the RVA bundle for the current executable region and version.
 ///
 /// This will panic if the current executable isn't supported by this package.
+///
+/// **Warning:** Manually resolving RVAs is complicated and error-prone. In most
+/// cases, this crate and eldenring-util provide more robust, easier-to-use APIs
+/// for working with these values. The only major use-case for handling them
+/// directly is adding custom hooks to functions.
 pub fn get() -> &'static RvaBundle {
     static RVAS: LazyLock<RvaBundle> = LazyLock::new(|| {
         let module = unsafe {
