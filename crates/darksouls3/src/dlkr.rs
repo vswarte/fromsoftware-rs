@@ -2,6 +2,10 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
+mod mutex;
+
+pub use mutex::*;
+
 #[vtable_rs::vtable]
 pub trait DLAllocatorVmt {
     fn destructor(&mut self, param_2: bool);

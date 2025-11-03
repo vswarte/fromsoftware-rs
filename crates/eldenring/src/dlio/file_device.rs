@@ -13,7 +13,7 @@ use crate::{
     dltx::DLString,
     dlut::DLDateTime,
 };
-use shared::OwnedPtr;
+use shared::{MutexBearer, OwnedPtr};
 
 use super::{DLFileSeekDirection, OpenFileMode};
 
@@ -32,6 +32,16 @@ pub struct DLFileDeviceBase {
     // _pad9: [u8; 3],
     ref_count: u32,
     pub mutex: DLPlainLightMutex,
+}
+
+impl MutexBearer for DLFileDeviceBase {
+    fn lock(&self) {
+        self.mutex.lock();
+    }
+
+    fn unlock(&self) {
+        self.mutex.lock();
+    }
 }
 
 /// Represents a source of files.
@@ -321,6 +331,16 @@ pub struct DLFileDeviceManager {
     pub bnd3_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
     pub bnd4_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
     pub mutex: DLPlainLightMutex,
+}
+
+impl MutexBearer for DLFileDeviceManager {
+    fn lock(&self) {
+        self.mutex.lock();
+    }
+
+    fn unlock(&self) {
+        self.mutex.lock();
+    }
 }
 
 impl DLFileDeviceVmt for DLFileDeviceBase {
