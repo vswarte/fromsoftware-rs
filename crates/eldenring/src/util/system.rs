@@ -4,10 +4,11 @@
 use std::sync::atomic::{AtomicPtr, Ordering};
 use std::time::{Duration, Instant};
 
-use eldenring::rva;
 use pelite::pe64::Pe;
 use shared::Program;
 use thiserror::Error;
+
+use crate::rva;
 
 static GLOBAL_HINSTANCE: AtomicPtr<usize> = AtomicPtr::new(0x0 as _);
 

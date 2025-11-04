@@ -1,11 +1,12 @@
-use std::{fmt::Formatter, ptr::NonNull};
+use std::{fmt::Formatter, mem::transmute, ptr::NonNull};
 
+use pelite::pe64::Pe;
 use windows::core::PCWSTR;
 
-use crate::{param::ASSET_GEOMETORY_PARAM_ST, Tree, Vector};
-use shared::OwnedPtr;
-
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
+use crate::position::BlockPosition;
+use crate::{param::ASSET_GEOMETORY_PARAM_ST, rva, Tree, Vector};
+use shared::{program::Program, OwnedPtr};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -82,6 +83,89 @@ pub struct CSWorldGeomManBlockData {
     pub sos_sign_geometry: Vector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
     pub disable_on_singleplay_geometry: Vector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
     unk3c8: [u8; 0x2E0],
+}
+
+pub struct GeometrySpawnParameters {
+    pub position: BlockPosition,
+    pub rot_x: f32,
+    pub rot_y: f32,
+    pub rot_z: f32,
+    pub scale_x: f32,
+    pub scale_y: f32,
+    pub scale_z: f32,
+}
+
+impl CSWorldGeomManBlockData {
+    pub fn spawn_geometry(
+        &mut self,
+        asset: &str,
+        parameters: &GeometrySpawnParameters,
+    ) -> Option<NonNull<CSWorldGeomIns>> {
+        let initialize_spawn_geometry_request_va = Program::current()
+            .rva_to_va(rva::get().initialize_spawn_geometry_request)
+            .unwrap();
+        let spawn_geometry_va = Program::current()
+            .rva_to_va(rva::get().spawn_geometry)
+            .unwrap();
+
+        let initialize_spawn_geometry_request = unsafe {
+            transmute::<u64, fn(&mut GeometrySpawnRequest, u32)>(
+                initialize_spawn_geometry_request_va,
+            )
+        };
+
+        let spawn_geometry = unsafe {
+            transmute::<
+                u64,
+                fn(
+                    &mut CSWorldGeomManBlockData,
+                    &GeometrySpawnRequest,
+                ) -> Option<NonNull<CSWorldGeomIns>>,
+            >(spawn_geometry_va)
+        };
+
+        let mut request = GeometrySpawnRequest {
+            asset_string: [0u16; 0x20],
+            unk40: 0,
+            unk44: 0,
+            asset_string_ptr: 0,
+            unk50: 0,
+            unk54: 0,
+            unk58: 0,
+            unk5c: 0,
+            unk60: 0,
+            unk64: 0,
+            unk68: 0,
+            unk6c: 0,
+            pos_x: 0.0,
+            pos_y: 0.0,
+            pos_z: 0.0,
+            rot_x: 0.0,
+            rot_y: 0.0,
+            rot_z: 0.0,
+            scale_x: 0.0,
+            scale_y: 0.0,
+            scale_z: 0.0,
+            unk94: [0u8; 0x6C],
+        };
+
+        initialize_spawn_geometry_request(&mut request, 0x5);
+        request.set_asset(asset);
+
+        let BlockPosition { x, y, z, yaw: _ } = parameters.position;
+        request.pos_x = x;
+        request.pos_y = y;
+        request.pos_z = z;
+
+        request.rot_x = parameters.rot_x;
+        request.rot_y = parameters.rot_y;
+        request.rot_z = parameters.rot_z;
+        request.scale_x = parameters.scale_x;
+        request.scale_y = parameters.scale_y;
+        request.scale_z = parameters.scale_z;
+
+        spawn_geometry(self, &request)
+    }
 }
 
 #[repr(C)]

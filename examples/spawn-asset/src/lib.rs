@@ -1,13 +1,9 @@
 use std::time::Duration;
 
 use eldenring::{
-    cs::{CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, WorldChrMan},
+    cs::{CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, GeometrySpawnParameters, WorldChrMan},
     fd4::FD4TaskData,
-};
-use eldenring_util::{
-    geometry::{CSWorldGeomManBlockDataExt, GeometrySpawnParameters},
-    input,
-    system::wait_for_system_init,
+    util::{input, system::wait_for_system_init},
 };
 use shared::{program::Program, singleton::get_instance, task::*};
 

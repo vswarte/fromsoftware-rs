@@ -1,19 +1,17 @@
-use std::collections;
-use std::collections::hash_map::Entry;
-use std::sync;
-use std::sync::Mutex;
-use std::time;
-use std::time::Duration;
+use std::collections::{hash_map::Entry, HashMap};
+use std::sync::{LazyLock, Mutex};
+use std::time::{Duration, Instant};
+
 use windows::Win32::UI::Input::KeyboardAndMouse;
 
 const DEBOUNCE_TIMEOUT: Duration = Duration::from_millis(250);
 
-type DebounceMap = collections::HashMap<i32, time::Instant>;
-static DEBOUNCE_MAP: sync::LazyLock<Mutex<DebounceMap>> = sync::LazyLock::new(Default::default);
+type DebounceMap = HashMap<i32, Instant>;
+static DEBOUNCE_MAP: LazyLock<Mutex<DebounceMap>> = LazyLock::new(Default::default);
 
 pub fn is_key_pressed(key: i32) -> bool {
     if unsafe { KeyboardAndMouse::GetKeyState(key) } < 0 {
-        let now = std::time::Instant::now();
+        let now = Instant::now();
 
         match DEBOUNCE_MAP.lock().unwrap().entry(key) {
             Entry::Occupied(mut o) => {
@@ -24,7 +22,7 @@ pub fn is_key_pressed(key: i32) -> bool {
                     return false;
                 }
             }
-            collections::hash_map::Entry::Vacant(v) => {
+            Entry::Vacant(v) => {
                 v.insert(now);
                 return true;
             }

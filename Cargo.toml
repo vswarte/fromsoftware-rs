@@ -3,7 +3,6 @@ resolver = "2"
 members = [
     "crates/shared",
     "crates/eldenring",
-    "crates/eldenring-util",
     "crates/nightreign",
     "tools/debug",
     "tools/binary-mapper",
@@ -24,7 +23,6 @@ license = "MIT OR Apache-2.0"
 shared = { path = "crates/shared", version = "0.11.0", package = "fromsoftware-shared" }
 shared-macros = { path = "crates/shared/macros", version = "0.11.0", package = "fromsoftware-shared-macros" }
 eldenring = { path = "crates/eldenring", version = "0.11.0", package = "eldenring" }
-eldenring-util = { path = "crates/eldenring-util", version = "0.11.0", package = "eldenring-util" }
 nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightreign" }
 binary_mapper = { path = "crates/binary-mapper" }
 from-singleton = { version = "2" }

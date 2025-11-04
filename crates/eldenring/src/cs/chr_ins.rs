@@ -1,19 +1,13 @@
 use bitfield::bitfield;
 use std::ffi;
+use std::mem::transmute;
 use std::ops::Index;
 use std::ptr::NonNull;
 use std::slice::SliceIndex;
+
+use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
-
-use crate::cs::BlockId;
-use crate::dltx::DLString;
-use crate::fd4::FD4Time;
-use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
-use crate::position::{BlockPosition, HavokPosition};
-use crate::rotation::Quaternion;
-use crate::Vector;
-use shared::{Aabb, F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
 
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
 use crate::cs::gaitem::GaitemHandle;
@@ -24,8 +18,16 @@ use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
 use crate::cs::world_geom_man::{CSMsbParts, CSMsbPartsEne};
-use crate::cs::CSPlayerMenuCtrl;
-use crate::cs::ItemId;
+use crate::cs::{BlockId, CSPlayerMenuCtrl, ItemId};
+use crate::dltx::DLString;
+use crate::fd4::FD4Time;
+use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
+use crate::position::{BlockPosition, HavokPosition};
+use crate::rotation::Quaternion;
+use crate::rva;
+use crate::Vector;
+use shared::program::Program;
+use shared::{Aabb, F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -252,6 +254,26 @@ pub struct ChrIns {
     unk540: u32,
     pub role_param_id: i32,
     unk548: [u8; 0x38],
+}
+
+impl ChrIns {
+    pub fn apply_speffect(&mut self, sp_effect: i32, dont_sync: bool) {
+        let rva = Program::current()
+            .rva_to_va(rva::get().chr_ins_apply_speffect)
+            .unwrap();
+
+        let call = unsafe { transmute::<u64, fn(&mut ChrIns, i32, bool) -> u64>(rva) };
+        call(self, sp_effect, dont_sync);
+    }
+
+    pub fn remove_speffect(&mut self, sp_effect: i32) {
+        let rva = Program::current()
+            .rva_to_va(rva::get().chr_ins_remove_speffect)
+            .unwrap();
+
+        let call = unsafe { transmute::<u64, fn(&mut ChrIns, i32) -> u64>(rva) };
+        call(self, sp_effect);
+    }
 }
 
 bitfield! {
