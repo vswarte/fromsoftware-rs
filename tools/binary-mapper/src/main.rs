@@ -149,10 +149,7 @@ impl MapperProfileVmt {
                 // Safety: We're not actually dereferencing the VA.
                 if let Some(va) = unsafe { class.vmt_fn(index) } {
                     if let Ok(rva) = program.va_to_rva(va) {
-                        return MapperEntryResult {
-                            name: name,
-                            rva,
-                        };
+                        return MapperEntryResult { name, rva };
                     }
                 }
 
