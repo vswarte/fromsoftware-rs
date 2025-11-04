@@ -1,7 +1,7 @@
 mod stl;
 pub use stl::*;
 
-mod rva;
+pub(crate) mod rva;
 
 pub mod cs;
 pub mod dlcr;
