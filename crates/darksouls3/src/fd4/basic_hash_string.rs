@@ -11,8 +11,11 @@ pub struct FD4BasicHashString<T: DLStringKind = DLUTF16StringKind> {
     vftable: usize,
     /// The contained string we're hashing for.
     pub inner: DLString<T>,
-    // The rest of this is probably the same as in ER, but this hasn't been
-    // verified yet.
+    /// Hashed representation of the string field.
+    pub hash: u32,
+    /// Indicates whether or not [hash](Self.hash) is populated.
+    pub needs_hashing: bool,
+    // _pad3d: [u8; 0x3],
 }
 
 impl<T: DLStringKind> AsRef<DLString<T>> for FD4BasicHashString<T> {
@@ -24,5 +27,15 @@ impl<T: DLStringKind> AsRef<DLString<T>> for FD4BasicHashString<T> {
 impl<T: DLStringKind> Display for FD4BasicHashString<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.inner.fmt(f)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::fd4::FD4BasicHashString;
+
+    #[test]
+    fn proper_sizes() {
+        assert_eq!(0x40, size_of::<FD4BasicHashString>());
     }
 }
