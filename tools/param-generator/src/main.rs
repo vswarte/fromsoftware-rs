@@ -30,21 +30,33 @@ fn main() -> io::Result<()> {
     output.push_str("/// Trait to perform safe param lookups.\n");
     output.push_str("pub trait ParamDef {\n");
     output.push_str("    const NAME: &str;\n");
+    output.push_str("    const INDEX: usize;\n");
     output.push_str("}\n\n");
 
-    for entry in fs::read_dir(input_path)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.extension().and_then(|s| s.to_str()) == Some("xml") {
-            let content = fs::read_to_string(&path)?;
-            match from_str::<ParamDef>(&content) {
-                Ok(param) => {
-                    let structure = build_definition(&param);
-                    output.push_str(&generate_code(&structure));
-                }
-                Err(e) => eprintln!("Failed to parse {}: {}", path.display(), e),
+    let mut definitions = fs::read_dir(input_path)?
+        .filter_map(|entry| {
+            let entry = entry.unwrap();
+            let path = entry.path();
+            if path.extension().and_then(|s| s.to_str()) != Some("xml") {
+                return None;
             }
-        }
+
+            let content = fs::read_to_string(&path)
+                .inspect_err(|e| eprintln!("Failed to read {}: {}", path.display(), e))
+                .ok()?;
+            let param_def = from_str::<ParamDef>(&content)
+                .inspect_err(|e| eprintln!("Failed to parse {}: {}", path.display(), e))
+                .ok()?;
+            Some(build_definition(&param_def))
+        })
+        .collect::<Vec<_>>();
+
+    // Parameters are always stored alphabetically in-game. We sort them by name
+    // so that we can provide alphabetic indices to look them up by position.
+    definitions.sort_by(|def1, def2| def1.name.cmp(&def2.name));
+
+    for (i, definition) in definitions.iter().enumerate() {
+        output.push_str(&generate_code(i, definition));
     }
 
     let output_path = Path::new(&args.output);
@@ -55,7 +67,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn generate_code(def: &StructDef) -> String {
+fn generate_code(index: usize, def: &StructDef) -> String {
     let mut code = String::new();
 
     // Group the bitfields
@@ -109,6 +121,7 @@ fn generate_code(def: &StructDef) -> String {
 
     code.push_str(&format!("impl ParamDef for {} {{\n", def.name));
     code.push_str(&format!("    const NAME: &str = \"{}\";\n", def.name));
+    code.push_str(&format!("    const INDEX: usize = {};\n", index));
     code.push_str("}\n\n");
 
     code.push_str(&format!("impl {} {{\n", def.name));

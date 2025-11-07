@@ -5,6 +5,7 @@
 /// Trait to perform safe param lookups.
 pub trait ParamDef {
     const NAME: &str;
+    const INDEX: usize;
 }
 
 #[derive(Debug, Clone)]
@@ -46,6 +47,7 @@ pub struct ACROSS_DAY_CORRECT_PARAM_ST {
 
 impl ParamDef for ACROSS_DAY_CORRECT_PARAM_ST {
     const NAME: &str = "ACROSS_DAY_CORRECT_PARAM_ST";
+    const INDEX: usize = 0;
 }
 
 impl ACROSS_DAY_CORRECT_PARAM_ST {}
@@ -85,6 +87,7 @@ pub struct ACTIONBUTTON_PARAM_ST {
 
 impl ParamDef for ACTIONBUTTON_PARAM_ST {
     const NAME: &str = "ACTIONBUTTON_PARAM_ST";
+    const INDEX: usize = 1;
 }
 
 impl ACTIONBUTTON_PARAM_ST {
@@ -301,6 +304,7 @@ pub struct AI_SOUND_PARAM_ST {
 
 impl ParamDef for AI_SOUND_PARAM_ST {
     const NAME: &str = "AI_SOUND_PARAM_ST";
+    const INDEX: usize = 2;
 }
 
 impl AI_SOUND_PARAM_ST {
@@ -442,6 +446,7 @@ pub struct ANTIQUE_STAND_PARAM_ST {
 
 impl ParamDef for ANTIQUE_STAND_PARAM_ST {
     const NAME: &str = "ANTIQUE_STAND_PARAM_ST";
+    const INDEX: usize = 3;
 }
 
 impl ANTIQUE_STAND_PARAM_ST {
@@ -624,6 +629,7 @@ pub struct ASSET_GEOMETORY_PARAM_ST {
 
 impl ParamDef for ASSET_GEOMETORY_PARAM_ST {
     const NAME: &str = "ASSET_GEOMETORY_PARAM_ST";
+    const INDEX: usize = 4;
 }
 
 impl ASSET_GEOMETORY_PARAM_ST {
@@ -1654,6 +1660,7 @@ pub struct ASSET_MATERIAL_SFX_PARAM_ST {
 
 impl ParamDef for ASSET_MATERIAL_SFX_PARAM_ST {
     const NAME: &str = "ASSET_MATERIAL_SFX_PARAM_ST";
+    const INDEX: usize = 5;
 }
 
 impl ASSET_MATERIAL_SFX_PARAM_ST {
@@ -1947,6 +1954,7 @@ pub struct ASSET_MODEL_SFX_PARAM_ST {
 
 impl ParamDef for ASSET_MODEL_SFX_PARAM_ST {
     const NAME: &str = "ASSET_MODEL_SFX_PARAM_ST";
+    const INDEX: usize = 6;
 }
 
 impl ASSET_MODEL_SFX_PARAM_ST {
@@ -2294,6 +2302,7 @@ pub struct ATK_PARAM_ST {
 
 impl ParamDef for ATK_PARAM_ST {
     const NAME: &str = "ATK_PARAM_ST";
+    const INDEX: usize = 7;
 }
 
 impl ATK_PARAM_ST {
@@ -3976,6 +3985,7 @@ pub struct ATTACHEFFECT_FILTER_CATEGORY_PARAM_ST {
 
 impl ParamDef for ATTACHEFFECT_FILTER_CATEGORY_PARAM_ST {
     const NAME: &str = "ATTACHEFFECT_FILTER_CATEGORY_PARAM_ST";
+    const INDEX: usize = 8;
 }
 
 impl ATTACHEFFECT_FILTER_CATEGORY_PARAM_ST {
@@ -4010,6 +4020,7 @@ pub struct ATTACHEFFECT_FILTER_PARAM_ST {
 
 impl ParamDef for ATTACHEFFECT_FILTER_PARAM_ST {
     const NAME: &str = "ATTACHEFFECT_FILTER_PARAM_ST";
+    const INDEX: usize = 9;
 }
 
 impl ATTACHEFFECT_FILTER_PARAM_ST {
@@ -4087,6 +4098,7 @@ pub struct ATTACHEFFECT_PARAM_ST {
 
 impl ParamDef for ATTACHEFFECT_PARAM_ST {
     const NAME: &str = "ATTACHEFFECT_PARAM_ST";
+    const INDEX: usize = 10;
 }
 
 impl ATTACHEFFECT_PARAM_ST {
@@ -4324,6 +4336,7 @@ pub struct ATTACHEFFECT_TABLE_PARAM_ST {
 
 impl ParamDef for ATTACHEFFECT_TABLE_PARAM_ST {
     const NAME: &str = "ATTACHEFFECT_TABLE_PARAM_ST";
+    const INDEX: usize = 11;
 }
 
 impl ATTACHEFFECT_TABLE_PARAM_ST {
@@ -4407,6 +4420,7 @@ pub struct ATTACK_ELEMENT_CORRECT_PARAM_ST {
 
 impl ParamDef for ATTACK_ELEMENT_CORRECT_PARAM_ST {
     const NAME: &str = "ATTACK_ELEMENT_CORRECT_PARAM_ST";
+    const INDEX: usize = 12;
 }
 
 impl ATTACK_ELEMENT_CORRECT_PARAM_ST {
@@ -5077,6 +5091,7 @@ pub struct AUTO_CREATE_ENV_SOUND_PARAM_ST {
 
 impl ParamDef for AUTO_CREATE_ENV_SOUND_PARAM_ST {
     const NAME: &str = "AUTO_CREATE_ENV_SOUND_PARAM_ST";
+    const INDEX: usize = 13;
 }
 
 impl AUTO_CREATE_ENV_SOUND_PARAM_ST {
@@ -5165,6 +5180,7 @@ pub struct BEHAVIOR_PARAM_ST {
 
 impl ParamDef for BEHAVIOR_PARAM_ST {
     const NAME: &str = "BEHAVIOR_PARAM_ST";
+    const INDEX: usize = 14;
 }
 
 impl BEHAVIOR_PARAM_ST {
@@ -5332,6 +5348,7 @@ pub struct BONFIRE_WARP_PARAM_ST {
 
 impl ParamDef for BONFIRE_WARP_PARAM_ST {
     const NAME: &str = "BONFIRE_WARP_PARAM_ST";
+    const INDEX: usize = 15;
 }
 
 impl BONFIRE_WARP_PARAM_ST {
@@ -5968,6 +5985,7 @@ pub struct BUDDY_PARAM_ST {
 
 impl ParamDef for BUDDY_PARAM_ST {
     const NAME: &str = "BUDDY_PARAM_ST";
+    const INDEX: usize = 16;
 }
 
 impl BUDDY_PARAM_ST {
@@ -6212,6 +6230,7 @@ pub struct BUDDY_STONE_PARAM_ST {
 
 impl ParamDef for BUDDY_STONE_PARAM_ST {
     const NAME: &str = "BUDDY_STONE_PARAM_ST";
+    const INDEX: usize = 17;
 }
 
 impl BUDDY_STONE_PARAM_ST {
@@ -6344,6 +6363,7 @@ pub struct BUDGET_PARAM_ST {
 
 impl ParamDef for BUDGET_PARAM_ST {
     const NAME: &str = "BUDGET_PARAM_ST";
+    const INDEX: usize = 18;
 }
 
 impl BUDGET_PARAM_ST {
@@ -6559,6 +6579,40 @@ impl BUDGET_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct BULLET_CREATE_LIMIT_PARAM_ST {
+    limit_num_by_group: u8,
+    bits_1: u8,
+    pad: [u8; 30],
+}
+
+impl ParamDef for BULLET_CREATE_LIMIT_PARAM_ST {
+    const NAME: &str = "BULLET_CREATE_LIMIT_PARAM_ST";
+    const INDEX: usize = 19;
+}
+
+impl BULLET_CREATE_LIMIT_PARAM_ST {
+    pub fn limit_num_by_group(&self) -> u8 {
+        self.limit_num_by_group
+    }
+
+    pub fn set_limit_num_by_group(&mut self, value: u8) {
+        self.limit_num_by_group = value;
+    }
+
+    #[allow(clippy::identity_op)]
+    pub fn is_limit_each_owner(&self) -> u8 {
+        (self.bits_1 >> 0) & 0b00000001
+    }
+
+    #[allow(clippy::identity_op)]
+    pub fn set_is_limit_each_owner(&mut self, value: u8) {
+        self.bits_1 = (self.bits_1 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct BULLET_PARAM_ST {
     atk_id_bullet: i32,
     sfx_id_bullet: i32,
@@ -6674,6 +6728,7 @@ pub struct BULLET_PARAM_ST {
 
 impl ParamDef for BULLET_PARAM_ST {
     const NAME: &str = "BULLET_PARAM_ST";
+    const INDEX: usize = 20;
 }
 
 impl BULLET_PARAM_ST {
@@ -7661,39 +7716,6 @@ impl BULLET_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct BULLET_CREATE_LIMIT_PARAM_ST {
-    limit_num_by_group: u8,
-    bits_1: u8,
-    pad: [u8; 30],
-}
-
-impl ParamDef for BULLET_CREATE_LIMIT_PARAM_ST {
-    const NAME: &str = "BULLET_CREATE_LIMIT_PARAM_ST";
-}
-
-impl BULLET_CREATE_LIMIT_PARAM_ST {
-    pub fn limit_num_by_group(&self) -> u8 {
-        self.limit_num_by_group
-    }
-
-    pub fn set_limit_num_by_group(&mut self, value: u8) {
-        self.limit_num_by_group = value;
-    }
-
-    #[allow(clippy::identity_op)]
-    pub fn is_limit_each_owner(&self) -> u8 {
-        (self.bits_1 >> 0) & 0b00000001
-    }
-
-    #[allow(clippy::identity_op)]
-    pub fn set_is_limit_each_owner(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct CACL_CORRECT_GRAPH_ST {
     stage_max_val0: f32,
     stage_max_val1: f32,
@@ -7719,6 +7741,7 @@ pub struct CACL_CORRECT_GRAPH_ST {
 
 impl ParamDef for CACL_CORRECT_GRAPH_ST {
     const NAME: &str = "CACL_CORRECT_GRAPH_ST";
+    const INDEX: usize = 21;
 }
 
 impl CACL_CORRECT_GRAPH_ST {
@@ -7889,6 +7912,7 @@ pub struct CAMERA_FADE_PARAM_ST {
 
 impl ParamDef for CAMERA_FADE_PARAM_ST {
     const NAME: &str = "CAMERA_FADE_PARAM_ST";
+    const INDEX: usize = 22;
 }
 
 impl CAMERA_FADE_PARAM_ST {
@@ -7947,6 +7971,7 @@ pub struct CEREMONY_PARAM_ST {
 
 impl ParamDef for CEREMONY_PARAM_ST {
     const NAME: &str = "CEREMONY_PARAM_ST";
+    const INDEX: usize = 23;
 }
 
 impl CEREMONY_PARAM_ST {
@@ -8139,6 +8164,7 @@ pub struct CHARACTER_INIT_PARAM {
 
 impl ParamDef for CHARACTER_INIT_PARAM {
     const NAME: &str = "CHARACTER_INIT_PARAM";
+    const INDEX: usize = 24;
 }
 
 impl CHARACTER_INIT_PARAM {
@@ -8938,46 +8964,6 @@ impl CHARACTER_INIT_PARAM {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct CHARMAKEMENU_LISTITEM_PARAM_ST {
-    value: i32,
-    caption_id: i32,
-    icon_id: u8,
-    reserved: [u8; 7],
-}
-
-impl ParamDef for CHARMAKEMENU_LISTITEM_PARAM_ST {
-    const NAME: &str = "CHARMAKEMENU_LISTITEM_PARAM_ST";
-}
-
-impl CHARMAKEMENU_LISTITEM_PARAM_ST {
-    pub fn value(&self) -> i32 {
-        self.value
-    }
-
-    pub fn set_value(&mut self, value: i32) {
-        self.value = value;
-    }
-
-    pub fn caption_id(&self) -> i32 {
-        self.caption_id
-    }
-
-    pub fn set_caption_id(&mut self, value: i32) {
-        self.caption_id = value;
-    }
-
-    pub fn icon_id(&self) -> u8 {
-        self.icon_id
-    }
-
-    pub fn set_icon_id(&mut self, value: u8) {
-        self.icon_id = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct CHARMAKEMENUTOP_PARAM_ST {
     command_type: i32,
     caption_id: i32,
@@ -8996,6 +8982,7 @@ pub struct CHARMAKEMENUTOP_PARAM_ST {
 
 impl ParamDef for CHARMAKEMENUTOP_PARAM_ST {
     const NAME: &str = "CHARMAKEMENUTOP_PARAM_ST";
+    const INDEX: usize = 25;
 }
 
 impl CHARMAKEMENUTOP_PARAM_ST {
@@ -9091,6 +9078,47 @@ impl CHARMAKEMENUTOP_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct CHARMAKEMENU_LISTITEM_PARAM_ST {
+    value: i32,
+    caption_id: i32,
+    icon_id: u8,
+    reserved: [u8; 7],
+}
+
+impl ParamDef for CHARMAKEMENU_LISTITEM_PARAM_ST {
+    const NAME: &str = "CHARMAKEMENU_LISTITEM_PARAM_ST";
+    const INDEX: usize = 26;
+}
+
+impl CHARMAKEMENU_LISTITEM_PARAM_ST {
+    pub fn value(&self) -> i32 {
+        self.value
+    }
+
+    pub fn set_value(&mut self, value: i32) {
+        self.value = value;
+    }
+
+    pub fn caption_id(&self) -> i32 {
+        self.caption_id
+    }
+
+    pub fn set_caption_id(&mut self, value: i32) {
+        self.caption_id = value;
+    }
+
+    pub fn icon_id(&self) -> u8 {
+        self.icon_id
+    }
+
+    pub fn set_icon_id(&mut self, value: u8) {
+        self.icon_id = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct CHR_MODEL_PARAM_ST {
     bits_0: u8,
     disable_param_reserve2: [u8; 3],
@@ -9103,6 +9131,7 @@ pub struct CHR_MODEL_PARAM_ST {
 
 impl ParamDef for CHR_MODEL_PARAM_ST {
     const NAME: &str = "CHR_MODEL_PARAM_ST";
+    const INDEX: usize = 27;
 }
 
 impl CHR_MODEL_PARAM_ST {
@@ -9168,6 +9197,7 @@ pub struct CHR_PHYSICS_VELOCITY_CHANGE_ST {
 
 impl ParamDef for CHR_PHYSICS_VELOCITY_CHANGE_ST {
     const NAME: &str = "CHR_PHYSICS_VELOCITY_CHANGE_ST";
+    const INDEX: usize = 28;
 }
 
 impl CHR_PHYSICS_VELOCITY_CHANGE_ST {
@@ -9252,6 +9282,7 @@ pub struct CLEAR_COUNT_CORRECT_PARAM_ST {
 
 impl ParamDef for CLEAR_COUNT_CORRECT_PARAM_ST {
     const NAME: &str = "CLEAR_COUNT_CORRECT_PARAM_ST";
+    const INDEX: usize = 29;
 }
 
 impl CLEAR_COUNT_CORRECT_PARAM_ST {
@@ -9514,6 +9545,7 @@ pub struct COMMON_SYSTEM_PARAM_ST {
 
 impl ParamDef for COMMON_SYSTEM_PARAM_ST {
     const NAME: &str = "COMMON_SYSTEM_PARAM_ST";
+    const INDEX: usize = 30;
 }
 
 impl COMMON_SYSTEM_PARAM_ST {
@@ -9542,6 +9574,7 @@ pub struct COOL_TIME_PARAM_ST {
 
 impl ParamDef for COOL_TIME_PARAM_ST {
     const NAME: &str = "COOL_TIME_PARAM_ST";
+    const INDEX: usize = 31;
 }
 
 impl COOL_TIME_PARAM_ST {
@@ -9613,6 +9646,1117 @@ impl COOL_TIME_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct CS_AA_QUALITY_DETAIL {
+    enabled: u8,
+    force_fxaa2: u8,
+    dmy: [u8; 2],
+}
+
+impl ParamDef for CS_AA_QUALITY_DETAIL {
+    const NAME: &str = "CS_AA_QUALITY_DETAIL";
+    const INDEX: usize = 32;
+}
+
+impl CS_AA_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+
+    pub fn force_fxaa2(&self) -> u8 {
+        self.force_fxaa2
+    }
+
+    pub fn set_force_fxaa2(&mut self, value: u8) {
+        self.force_fxaa2 = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_DECAL_QUALITY_DETAIL {
+    enabled: u8,
+    dmy: [u8; 3],
+}
+
+impl ParamDef for CS_DECAL_QUALITY_DETAIL {
+    const NAME: &str = "CS_DECAL_QUALITY_DETAIL";
+    const INDEX: usize = 33;
+}
+
+impl CS_DECAL_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_DOF_QUALITY_DETAIL {
+    enabled: u8,
+    dmy: [u8; 3],
+    force_hi_reso_blur: i32,
+    max_blur_level: i32,
+}
+
+impl ParamDef for CS_DOF_QUALITY_DETAIL {
+    const NAME: &str = "CS_DOF_QUALITY_DETAIL";
+    const INDEX: usize = 34;
+}
+
+impl CS_DOF_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+
+    pub fn force_hi_reso_blur(&self) -> i32 {
+        self.force_hi_reso_blur
+    }
+
+    pub fn set_force_hi_reso_blur(&mut self, value: i32) {
+        self.force_hi_reso_blur = value;
+    }
+
+    pub fn max_blur_level(&self) -> i32 {
+        self.max_blur_level
+    }
+
+    pub fn set_max_blur_level(&mut self, value: i32) {
+        self.max_blur_level = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_EFFECT_QUALITY_DETAIL {
+    soft_particle_enabled: u8,
+    glow_enabled: u8,
+    distortion_enable: u8,
+    cs_up_scale_enabled_type: u8,
+    f_num_once_emits_scale: f32,
+    f_emit_span_scale: f32,
+    f_lod_distance1_scale: f32,
+    f_lod_distance2_scale: f32,
+    f_lod_distance3_scale: f32,
+    f_lod_distance4_scale: f32,
+    f_scale_render_distance_scale: f32,
+    dmy: [u8; 4],
+}
+
+impl ParamDef for CS_EFFECT_QUALITY_DETAIL {
+    const NAME: &str = "CS_EFFECT_QUALITY_DETAIL";
+    const INDEX: usize = 35;
+}
+
+impl CS_EFFECT_QUALITY_DETAIL {
+    pub fn soft_particle_enabled(&self) -> u8 {
+        self.soft_particle_enabled
+    }
+
+    pub fn set_soft_particle_enabled(&mut self, value: u8) {
+        self.soft_particle_enabled = value;
+    }
+
+    pub fn glow_enabled(&self) -> u8 {
+        self.glow_enabled
+    }
+
+    pub fn set_glow_enabled(&mut self, value: u8) {
+        self.glow_enabled = value;
+    }
+
+    pub fn distortion_enable(&self) -> u8 {
+        self.distortion_enable
+    }
+
+    pub fn set_distortion_enable(&mut self, value: u8) {
+        self.distortion_enable = value;
+    }
+
+    pub fn cs_up_scale_enabled_type(&self) -> u8 {
+        self.cs_up_scale_enabled_type
+    }
+
+    pub fn set_cs_up_scale_enabled_type(&mut self, value: u8) {
+        self.cs_up_scale_enabled_type = value;
+    }
+
+    pub fn f_num_once_emits_scale(&self) -> f32 {
+        self.f_num_once_emits_scale
+    }
+
+    pub fn set_f_num_once_emits_scale(&mut self, value: f32) {
+        self.f_num_once_emits_scale = value;
+    }
+
+    pub fn f_emit_span_scale(&self) -> f32 {
+        self.f_emit_span_scale
+    }
+
+    pub fn set_f_emit_span_scale(&mut self, value: f32) {
+        self.f_emit_span_scale = value;
+    }
+
+    pub fn f_lod_distance1_scale(&self) -> f32 {
+        self.f_lod_distance1_scale
+    }
+
+    pub fn set_f_lod_distance1_scale(&mut self, value: f32) {
+        self.f_lod_distance1_scale = value;
+    }
+
+    pub fn f_lod_distance2_scale(&self) -> f32 {
+        self.f_lod_distance2_scale
+    }
+
+    pub fn set_f_lod_distance2_scale(&mut self, value: f32) {
+        self.f_lod_distance2_scale = value;
+    }
+
+    pub fn f_lod_distance3_scale(&self) -> f32 {
+        self.f_lod_distance3_scale
+    }
+
+    pub fn set_f_lod_distance3_scale(&mut self, value: f32) {
+        self.f_lod_distance3_scale = value;
+    }
+
+    pub fn f_lod_distance4_scale(&self) -> f32 {
+        self.f_lod_distance4_scale
+    }
+
+    pub fn set_f_lod_distance4_scale(&mut self, value: f32) {
+        self.f_lod_distance4_scale = value;
+    }
+
+    pub fn f_scale_render_distance_scale(&self) -> f32 {
+        self.f_scale_render_distance_scale
+    }
+
+    pub fn set_f_scale_render_distance_scale(&mut self, value: f32) {
+        self.f_scale_render_distance_scale = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_GRAPHICS_CONFIG_PARAM_ST {
+    m_texture_filter_quality: u8,
+    m_aa_quality: u8,
+    m_ssao_quality: u8,
+    m_dof_quality: u8,
+    m_motion_blur_quality: u8,
+    m_shadow_quality: u8,
+    m_lighting_quality: u8,
+    m_effect_quality: u8,
+    m_decal_quality: u8,
+    m_reflection_quality: u8,
+    m_water_quality: u8,
+    m_shader_quality: u8,
+    m_volumetric_effect_quality: u8,
+    m_ray_tracing_quality: u8,
+    m_dummy: [u8; 2],
+}
+
+impl ParamDef for CS_GRAPHICS_CONFIG_PARAM_ST {
+    const NAME: &str = "CS_GRAPHICS_CONFIG_PARAM_ST";
+    const INDEX: usize = 36;
+}
+
+impl CS_GRAPHICS_CONFIG_PARAM_ST {
+    pub fn m_texture_filter_quality(&self) -> u8 {
+        self.m_texture_filter_quality
+    }
+
+    pub fn set_m_texture_filter_quality(&mut self, value: u8) {
+        self.m_texture_filter_quality = value;
+    }
+
+    pub fn m_aa_quality(&self) -> u8 {
+        self.m_aa_quality
+    }
+
+    pub fn set_m_aa_quality(&mut self, value: u8) {
+        self.m_aa_quality = value;
+    }
+
+    pub fn m_ssao_quality(&self) -> u8 {
+        self.m_ssao_quality
+    }
+
+    pub fn set_m_ssao_quality(&mut self, value: u8) {
+        self.m_ssao_quality = value;
+    }
+
+    pub fn m_dof_quality(&self) -> u8 {
+        self.m_dof_quality
+    }
+
+    pub fn set_m_dof_quality(&mut self, value: u8) {
+        self.m_dof_quality = value;
+    }
+
+    pub fn m_motion_blur_quality(&self) -> u8 {
+        self.m_motion_blur_quality
+    }
+
+    pub fn set_m_motion_blur_quality(&mut self, value: u8) {
+        self.m_motion_blur_quality = value;
+    }
+
+    pub fn m_shadow_quality(&self) -> u8 {
+        self.m_shadow_quality
+    }
+
+    pub fn set_m_shadow_quality(&mut self, value: u8) {
+        self.m_shadow_quality = value;
+    }
+
+    pub fn m_lighting_quality(&self) -> u8 {
+        self.m_lighting_quality
+    }
+
+    pub fn set_m_lighting_quality(&mut self, value: u8) {
+        self.m_lighting_quality = value;
+    }
+
+    pub fn m_effect_quality(&self) -> u8 {
+        self.m_effect_quality
+    }
+
+    pub fn set_m_effect_quality(&mut self, value: u8) {
+        self.m_effect_quality = value;
+    }
+
+    pub fn m_decal_quality(&self) -> u8 {
+        self.m_decal_quality
+    }
+
+    pub fn set_m_decal_quality(&mut self, value: u8) {
+        self.m_decal_quality = value;
+    }
+
+    pub fn m_reflection_quality(&self) -> u8 {
+        self.m_reflection_quality
+    }
+
+    pub fn set_m_reflection_quality(&mut self, value: u8) {
+        self.m_reflection_quality = value;
+    }
+
+    pub fn m_water_quality(&self) -> u8 {
+        self.m_water_quality
+    }
+
+    pub fn set_m_water_quality(&mut self, value: u8) {
+        self.m_water_quality = value;
+    }
+
+    pub fn m_shader_quality(&self) -> u8 {
+        self.m_shader_quality
+    }
+
+    pub fn set_m_shader_quality(&mut self, value: u8) {
+        self.m_shader_quality = value;
+    }
+
+    pub fn m_volumetric_effect_quality(&self) -> u8 {
+        self.m_volumetric_effect_quality
+    }
+
+    pub fn set_m_volumetric_effect_quality(&mut self, value: u8) {
+        self.m_volumetric_effect_quality = value;
+    }
+
+    pub fn m_ray_tracing_quality(&self) -> u8 {
+        self.m_ray_tracing_quality
+    }
+
+    pub fn set_m_ray_tracing_quality(&mut self, value: u8) {
+        self.m_ray_tracing_quality = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_KEY_ASSIGN_MENUITEM_PARAM {
+    text_id: i32,
+    key: i32,
+    enable_unassign: u8,
+    enable_pad_config: u8,
+    enable_mouse_config: u8,
+    group: u8,
+    mapping_text_id: i32,
+    view_pad: u8,
+    view_keyboard_mouse: u8,
+    padding: [u8; 6],
+}
+
+impl ParamDef for CS_KEY_ASSIGN_MENUITEM_PARAM {
+    const NAME: &str = "CS_KEY_ASSIGN_MENUITEM_PARAM";
+    const INDEX: usize = 37;
+}
+
+impl CS_KEY_ASSIGN_MENUITEM_PARAM {
+    pub fn text_id(&self) -> i32 {
+        self.text_id
+    }
+
+    pub fn set_text_id(&mut self, value: i32) {
+        self.text_id = value;
+    }
+
+    pub fn key(&self) -> i32 {
+        self.key
+    }
+
+    pub fn set_key(&mut self, value: i32) {
+        self.key = value;
+    }
+
+    pub fn enable_unassign(&self) -> u8 {
+        self.enable_unassign
+    }
+
+    pub fn set_enable_unassign(&mut self, value: u8) {
+        self.enable_unassign = value;
+    }
+
+    pub fn enable_pad_config(&self) -> u8 {
+        self.enable_pad_config
+    }
+
+    pub fn set_enable_pad_config(&mut self, value: u8) {
+        self.enable_pad_config = value;
+    }
+
+    pub fn enable_mouse_config(&self) -> u8 {
+        self.enable_mouse_config
+    }
+
+    pub fn set_enable_mouse_config(&mut self, value: u8) {
+        self.enable_mouse_config = value;
+    }
+
+    pub fn group(&self) -> u8 {
+        self.group
+    }
+
+    pub fn set_group(&mut self, value: u8) {
+        self.group = value;
+    }
+
+    pub fn mapping_text_id(&self) -> i32 {
+        self.mapping_text_id
+    }
+
+    pub fn set_mapping_text_id(&mut self, value: i32) {
+        self.mapping_text_id = value;
+    }
+
+    pub fn view_pad(&self) -> u8 {
+        self.view_pad
+    }
+
+    pub fn set_view_pad(&mut self, value: u8) {
+        self.view_pad = value;
+    }
+
+    pub fn view_keyboard_mouse(&self) -> u8 {
+        self.view_keyboard_mouse
+    }
+
+    pub fn set_view_keyboard_mouse(&mut self, value: u8) {
+        self.view_keyboard_mouse = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_LIGHTING_QUALITY_DETAIL {
+    local_light_dist_factor: f32,
+    local_light_shadow_enabled: u8,
+    forward_pass_lighting_enabled: u8,
+    local_light_shadow_spec_level_max: u8,
+    dmy: [u8; 1],
+}
+
+impl ParamDef for CS_LIGHTING_QUALITY_DETAIL {
+    const NAME: &str = "CS_LIGHTING_QUALITY_DETAIL";
+    const INDEX: usize = 38;
+}
+
+impl CS_LIGHTING_QUALITY_DETAIL {
+    pub fn local_light_dist_factor(&self) -> f32 {
+        self.local_light_dist_factor
+    }
+
+    pub fn set_local_light_dist_factor(&mut self, value: f32) {
+        self.local_light_dist_factor = value;
+    }
+
+    pub fn local_light_shadow_enabled(&self) -> u8 {
+        self.local_light_shadow_enabled
+    }
+
+    pub fn set_local_light_shadow_enabled(&mut self, value: u8) {
+        self.local_light_shadow_enabled = value;
+    }
+
+    pub fn forward_pass_lighting_enabled(&self) -> u8 {
+        self.forward_pass_lighting_enabled
+    }
+
+    pub fn set_forward_pass_lighting_enabled(&mut self, value: u8) {
+        self.forward_pass_lighting_enabled = value;
+    }
+
+    pub fn local_light_shadow_spec_level_max(&self) -> u8 {
+        self.local_light_shadow_spec_level_max
+    }
+
+    pub fn set_local_light_shadow_spec_level_max(&mut self, value: u8) {
+        self.local_light_shadow_spec_level_max = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_MOTION_BLUR_QUALITY_DETAIL {
+    enabled: u8,
+    omb_enabled: u8,
+    force_scale_velocity_buffer: u8,
+    cheap_filter_mode: u8,
+    sample_count_bias: i32,
+    recurrence_count_bias: i32,
+    blur_max_length_scale: f32,
+}
+
+impl ParamDef for CS_MOTION_BLUR_QUALITY_DETAIL {
+    const NAME: &str = "CS_MOTION_BLUR_QUALITY_DETAIL";
+    const INDEX: usize = 39;
+}
+
+impl CS_MOTION_BLUR_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+
+    pub fn omb_enabled(&self) -> u8 {
+        self.omb_enabled
+    }
+
+    pub fn set_omb_enabled(&mut self, value: u8) {
+        self.omb_enabled = value;
+    }
+
+    pub fn force_scale_velocity_buffer(&self) -> u8 {
+        self.force_scale_velocity_buffer
+    }
+
+    pub fn set_force_scale_velocity_buffer(&mut self, value: u8) {
+        self.force_scale_velocity_buffer = value;
+    }
+
+    pub fn cheap_filter_mode(&self) -> u8 {
+        self.cheap_filter_mode
+    }
+
+    pub fn set_cheap_filter_mode(&mut self, value: u8) {
+        self.cheap_filter_mode = value;
+    }
+
+    pub fn sample_count_bias(&self) -> i32 {
+        self.sample_count_bias
+    }
+
+    pub fn set_sample_count_bias(&mut self, value: i32) {
+        self.sample_count_bias = value;
+    }
+
+    pub fn recurrence_count_bias(&self) -> i32 {
+        self.recurrence_count_bias
+    }
+
+    pub fn set_recurrence_count_bias(&mut self, value: i32) {
+        self.recurrence_count_bias = value;
+    }
+
+    pub fn blur_max_length_scale(&self) -> f32 {
+        self.blur_max_length_scale
+    }
+
+    pub fn set_blur_max_length_scale(&mut self, value: f32) {
+        self.blur_max_length_scale = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_RAYTRACING_QUALITY_DETAIL {
+    enable_raytrace_ao: u8,
+    enable_raytrace_shadows: u8,
+    unk0x02: u8,
+    unk0x03: u8,
+    unk_float0x04: f32,
+    unk0x08: i32,
+    unk_float0x0_c: f32,
+    unk0x10: i32,
+    penumbra_size: f32,
+    render_distance: f32,
+}
+
+impl ParamDef for CS_RAYTRACING_QUALITY_DETAIL {
+    const NAME: &str = "CS_RAYTRACING_QUALITY_DETAIL";
+    const INDEX: usize = 40;
+}
+
+impl CS_RAYTRACING_QUALITY_DETAIL {
+    pub fn enable_raytrace_ao(&self) -> u8 {
+        self.enable_raytrace_ao
+    }
+
+    pub fn set_enable_raytrace_ao(&mut self, value: u8) {
+        self.enable_raytrace_ao = value;
+    }
+
+    pub fn enable_raytrace_shadows(&self) -> u8 {
+        self.enable_raytrace_shadows
+    }
+
+    pub fn set_enable_raytrace_shadows(&mut self, value: u8) {
+        self.enable_raytrace_shadows = value;
+    }
+
+    pub fn penumbra_size(&self) -> f32 {
+        self.penumbra_size
+    }
+
+    pub fn set_penumbra_size(&mut self, value: f32) {
+        self.penumbra_size = value;
+    }
+
+    pub fn render_distance(&self) -> f32 {
+        self.render_distance
+    }
+
+    pub fn set_render_distance(&mut self, value: f32) {
+        self.render_distance = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_REFLECTION_QUALITY_DETAIL {
+    enabled: u8,
+    local_light_enabled: u8,
+    local_light_force_enabled: u8,
+    dmy: [u8; 1],
+    resolution_divider: u32,
+    ssr_enabled: u8,
+    ssr_gaussian_blur_enabled: u8,
+    dmy2: [u8; 2],
+    ssr_depth_reject_threshold_scale: f32,
+    ssr_ray_trace_step_scale: f32,
+    ssr_fade_to_viewer_bias: f32,
+    ssr_fresnel_reject_bias: f32,
+}
+
+impl ParamDef for CS_REFLECTION_QUALITY_DETAIL {
+    const NAME: &str = "CS_REFLECTION_QUALITY_DETAIL";
+    const INDEX: usize = 41;
+}
+
+impl CS_REFLECTION_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+
+    pub fn local_light_enabled(&self) -> u8 {
+        self.local_light_enabled
+    }
+
+    pub fn set_local_light_enabled(&mut self, value: u8) {
+        self.local_light_enabled = value;
+    }
+
+    pub fn local_light_force_enabled(&self) -> u8 {
+        self.local_light_force_enabled
+    }
+
+    pub fn set_local_light_force_enabled(&mut self, value: u8) {
+        self.local_light_force_enabled = value;
+    }
+
+    pub fn resolution_divider(&self) -> u32 {
+        self.resolution_divider
+    }
+
+    pub fn set_resolution_divider(&mut self, value: u32) {
+        self.resolution_divider = value;
+    }
+
+    pub fn ssr_enabled(&self) -> u8 {
+        self.ssr_enabled
+    }
+
+    pub fn set_ssr_enabled(&mut self, value: u8) {
+        self.ssr_enabled = value;
+    }
+
+    pub fn ssr_gaussian_blur_enabled(&self) -> u8 {
+        self.ssr_gaussian_blur_enabled
+    }
+
+    pub fn set_ssr_gaussian_blur_enabled(&mut self, value: u8) {
+        self.ssr_gaussian_blur_enabled = value;
+    }
+
+    pub fn ssr_depth_reject_threshold_scale(&self) -> f32 {
+        self.ssr_depth_reject_threshold_scale
+    }
+
+    pub fn set_ssr_depth_reject_threshold_scale(&mut self, value: f32) {
+        self.ssr_depth_reject_threshold_scale = value;
+    }
+
+    pub fn ssr_ray_trace_step_scale(&self) -> f32 {
+        self.ssr_ray_trace_step_scale
+    }
+
+    pub fn set_ssr_ray_trace_step_scale(&mut self, value: f32) {
+        self.ssr_ray_trace_step_scale = value;
+    }
+
+    pub fn ssr_fade_to_viewer_bias(&self) -> f32 {
+        self.ssr_fade_to_viewer_bias
+    }
+
+    pub fn set_ssr_fade_to_viewer_bias(&mut self, value: f32) {
+        self.ssr_fade_to_viewer_bias = value;
+    }
+
+    pub fn ssr_fresnel_reject_bias(&self) -> f32 {
+        self.ssr_fresnel_reject_bias
+    }
+
+    pub fn set_ssr_fresnel_reject_bias(&mut self, value: f32) {
+        self.ssr_fresnel_reject_bias = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_SHADER_QUALITY_DETAIL {
+    sss_enabled: u8,
+    tessellation_enabled: u8,
+    high_precision_normal_enabled: u8,
+    dmy: [u8; 1],
+}
+
+impl ParamDef for CS_SHADER_QUALITY_DETAIL {
+    const NAME: &str = "CS_SHADER_QUALITY_DETAIL";
+    const INDEX: usize = 42;
+}
+
+impl CS_SHADER_QUALITY_DETAIL {
+    pub fn sss_enabled(&self) -> u8 {
+        self.sss_enabled
+    }
+
+    pub fn set_sss_enabled(&mut self, value: u8) {
+        self.sss_enabled = value;
+    }
+
+    pub fn tessellation_enabled(&self) -> u8 {
+        self.tessellation_enabled
+    }
+
+    pub fn set_tessellation_enabled(&mut self, value: u8) {
+        self.tessellation_enabled = value;
+    }
+
+    pub fn high_precision_normal_enabled(&self) -> u8 {
+        self.high_precision_normal_enabled
+    }
+
+    pub fn set_high_precision_normal_enabled(&mut self, value: u8) {
+        self.high_precision_normal_enabled = value;
+    }
+
+    pub fn dmy(&self) -> &[u8; 1] {
+        &self.dmy
+    }
+
+    pub fn set_dmy(&mut self, value: [u8; 1]) {
+        self.dmy = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_SHADOW_QUALITY_DETAIL {
+    enabled: u8,
+    max_filter_level: u8,
+    dmy: [u8; 2],
+    texture_size_scaler: u32,
+    texture_size_divider: u32,
+    texture_min_size: u32,
+    texture_max_size: u32,
+    blur_count_bias: i32,
+}
+
+impl ParamDef for CS_SHADOW_QUALITY_DETAIL {
+    const NAME: &str = "CS_SHADOW_QUALITY_DETAIL";
+    const INDEX: usize = 43;
+}
+
+impl CS_SHADOW_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+
+    pub fn max_filter_level(&self) -> u8 {
+        self.max_filter_level
+    }
+
+    pub fn set_max_filter_level(&mut self, value: u8) {
+        self.max_filter_level = value;
+    }
+
+    pub fn texture_size_scaler(&self) -> u32 {
+        self.texture_size_scaler
+    }
+
+    pub fn set_texture_size_scaler(&mut self, value: u32) {
+        self.texture_size_scaler = value;
+    }
+
+    pub fn texture_size_divider(&self) -> u32 {
+        self.texture_size_divider
+    }
+
+    pub fn set_texture_size_divider(&mut self, value: u32) {
+        self.texture_size_divider = value;
+    }
+
+    pub fn texture_min_size(&self) -> u32 {
+        self.texture_min_size
+    }
+
+    pub fn set_texture_min_size(&mut self, value: u32) {
+        self.texture_min_size = value;
+    }
+
+    pub fn texture_max_size(&self) -> u32 {
+        self.texture_max_size
+    }
+
+    pub fn set_texture_max_size(&mut self, value: u32) {
+        self.texture_max_size = value;
+    }
+
+    pub fn blur_count_bias(&self) -> i32 {
+        self.blur_count_bias
+    }
+
+    pub fn set_blur_count_bias(&mut self, value: i32) {
+        self.blur_count_bias = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_SSAO_QUALITY_DETAIL {
+    enabled: u8,
+    cs_reproj_enabled_type: u8,
+    cs_up_scale_enabled_type: u8,
+    cs_use_normal_enabled_type: u8,
+    dmy: [u8; 1],
+}
+
+impl ParamDef for CS_SSAO_QUALITY_DETAIL {
+    const NAME: &str = "CS_SSAO_QUALITY_DETAIL";
+    const INDEX: usize = 44;
+}
+
+impl CS_SSAO_QUALITY_DETAIL {
+    pub fn enabled(&self) -> u8 {
+        self.enabled
+    }
+
+    pub fn set_enabled(&mut self, value: u8) {
+        self.enabled = value;
+    }
+
+    pub fn cs_reproj_enabled_type(&self) -> u8 {
+        self.cs_reproj_enabled_type
+    }
+
+    pub fn set_cs_reproj_enabled_type(&mut self, value: u8) {
+        self.cs_reproj_enabled_type = value;
+    }
+
+    pub fn cs_up_scale_enabled_type(&self) -> u8 {
+        self.cs_up_scale_enabled_type
+    }
+
+    pub fn set_cs_up_scale_enabled_type(&mut self, value: u8) {
+        self.cs_up_scale_enabled_type = value;
+    }
+
+    pub fn cs_use_normal_enabled_type(&self) -> u8 {
+        self.cs_use_normal_enabled_type
+    }
+
+    pub fn set_cs_use_normal_enabled_type(&mut self, value: u8) {
+        self.cs_use_normal_enabled_type = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_TEXTURE_FILTER_QUALITY_DETAIL {
+    filter: u8,
+    dmy: [u8; 3],
+    max_aniso_level: u32,
+}
+
+impl ParamDef for CS_TEXTURE_FILTER_QUALITY_DETAIL {
+    const NAME: &str = "CS_TEXTURE_FILTER_QUALITY_DETAIL";
+    const INDEX: usize = 45;
+}
+
+impl CS_TEXTURE_FILTER_QUALITY_DETAIL {
+    pub fn filter(&self) -> u8 {
+        self.filter
+    }
+
+    pub fn set_filter(&mut self, value: u8) {
+        self.filter = value;
+    }
+
+    pub fn max_aniso_level(&self) -> u32 {
+        self.max_aniso_level
+    }
+
+    pub fn set_max_aniso_level(&mut self, value: u32) {
+        self.max_aniso_level = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
+    fog_enabled: u8,
+    fog_shadow_enabled: u8,
+    dmy: [u8; 2],
+    fog_shadow_sample_count_bias: i32,
+    fog_local_light_dist_scale: f32,
+    fog_volue_size_scaler: u32,
+    fog_volue_size_divider: u32,
+    fog_volume_depth_scaler: u32,
+    fog_volume_depth_divider: u32,
+    fog_volume_enabled: u8,
+    fog_volume_up_scale_type: u8,
+    fog_volume_edge_correction_level: u8,
+    fog_volume_ray_marcing_sample_count_offset: i8,
+    fog_volume_shadow_enabled: u8,
+    fog_volume_force_shadowing: u8,
+    fog_volume_resolution: u8,
+    pad2: [u8; 1],
+}
+
+impl ParamDef for CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
+    const NAME: &str = "CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL";
+    const INDEX: usize = 46;
+}
+
+impl CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
+    pub fn fog_enabled(&self) -> u8 {
+        self.fog_enabled
+    }
+
+    pub fn set_fog_enabled(&mut self, value: u8) {
+        self.fog_enabled = value;
+    }
+
+    pub fn fog_shadow_enabled(&self) -> u8 {
+        self.fog_shadow_enabled
+    }
+
+    pub fn set_fog_shadow_enabled(&mut self, value: u8) {
+        self.fog_shadow_enabled = value;
+    }
+
+    pub fn fog_shadow_sample_count_bias(&self) -> i32 {
+        self.fog_shadow_sample_count_bias
+    }
+
+    pub fn set_fog_shadow_sample_count_bias(&mut self, value: i32) {
+        self.fog_shadow_sample_count_bias = value;
+    }
+
+    pub fn fog_local_light_dist_scale(&self) -> f32 {
+        self.fog_local_light_dist_scale
+    }
+
+    pub fn set_fog_local_light_dist_scale(&mut self, value: f32) {
+        self.fog_local_light_dist_scale = value;
+    }
+
+    pub fn fog_volue_size_scaler(&self) -> u32 {
+        self.fog_volue_size_scaler
+    }
+
+    pub fn set_fog_volue_size_scaler(&mut self, value: u32) {
+        self.fog_volue_size_scaler = value;
+    }
+
+    pub fn fog_volue_size_divider(&self) -> u32 {
+        self.fog_volue_size_divider
+    }
+
+    pub fn set_fog_volue_size_divider(&mut self, value: u32) {
+        self.fog_volue_size_divider = value;
+    }
+
+    pub fn fog_volume_depth_scaler(&self) -> u32 {
+        self.fog_volume_depth_scaler
+    }
+
+    pub fn set_fog_volume_depth_scaler(&mut self, value: u32) {
+        self.fog_volume_depth_scaler = value;
+    }
+
+    pub fn fog_volume_depth_divider(&self) -> u32 {
+        self.fog_volume_depth_divider
+    }
+
+    pub fn set_fog_volume_depth_divider(&mut self, value: u32) {
+        self.fog_volume_depth_divider = value;
+    }
+
+    pub fn fog_volume_enabled(&self) -> u8 {
+        self.fog_volume_enabled
+    }
+
+    pub fn set_fog_volume_enabled(&mut self, value: u8) {
+        self.fog_volume_enabled = value;
+    }
+
+    pub fn fog_volume_up_scale_type(&self) -> u8 {
+        self.fog_volume_up_scale_type
+    }
+
+    pub fn set_fog_volume_up_scale_type(&mut self, value: u8) {
+        self.fog_volume_up_scale_type = value;
+    }
+
+    pub fn fog_volume_edge_correction_level(&self) -> u8 {
+        self.fog_volume_edge_correction_level
+    }
+
+    pub fn set_fog_volume_edge_correction_level(&mut self, value: u8) {
+        self.fog_volume_edge_correction_level = value;
+    }
+
+    pub fn fog_volume_ray_marcing_sample_count_offset(&self) -> i8 {
+        self.fog_volume_ray_marcing_sample_count_offset
+    }
+
+    pub fn set_fog_volume_ray_marcing_sample_count_offset(&mut self, value: i8) {
+        self.fog_volume_ray_marcing_sample_count_offset = value;
+    }
+
+    pub fn fog_volume_shadow_enabled(&self) -> u8 {
+        self.fog_volume_shadow_enabled
+    }
+
+    pub fn set_fog_volume_shadow_enabled(&mut self, value: u8) {
+        self.fog_volume_shadow_enabled = value;
+    }
+
+    pub fn fog_volume_force_shadowing(&self) -> u8 {
+        self.fog_volume_force_shadowing
+    }
+
+    pub fn set_fog_volume_force_shadowing(&mut self, value: u8) {
+        self.fog_volume_force_shadowing = value;
+    }
+
+    pub fn fog_volume_resolution(&self) -> u8 {
+        self.fog_volume_resolution
+    }
+
+    pub fn set_fog_volume_resolution(&mut self, value: u8) {
+        self.fog_volume_resolution = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct CS_WATER_QUALITY_DETAIL {
+    interaction_enabled: u8,
+    dmy: [u8; 3],
+}
+
+impl ParamDef for CS_WATER_QUALITY_DETAIL {
+    const NAME: &str = "CS_WATER_QUALITY_DETAIL";
+    const INDEX: usize = 47;
+}
+
+impl CS_WATER_QUALITY_DETAIL {
+    pub fn interaction_enabled(&self) -> u8 {
+        self.interaction_enabled
+    }
+
+    pub fn set_interaction_enabled(&mut self, value: u8) {
+        self.interaction_enabled = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct CUTSCENE_GPARAM_TIME_PARAM_ST {
     bits_0: u8,
     disable_param_reserve2: [u8; 3],
@@ -9629,6 +10773,7 @@ pub struct CUTSCENE_GPARAM_TIME_PARAM_ST {
 
 impl ParamDef for CUTSCENE_GPARAM_TIME_PARAM_ST {
     const NAME: &str = "CUTSCENE_GPARAM_TIME_PARAM_ST";
+    const INDEX: usize = 48;
 }
 
 impl CUTSCENE_GPARAM_TIME_PARAM_ST {
@@ -9778,6 +10923,7 @@ pub struct CUTSCENE_GPARAM_WEATHER_PARAM_ST {
 
 impl ParamDef for CUTSCENE_GPARAM_WEATHER_PARAM_ST {
     const NAME: &str = "CUTSCENE_GPARAM_WEATHER_PARAM_ST";
+    const INDEX: usize = 49;
 }
 
 impl CUTSCENE_GPARAM_WEATHER_PARAM_ST {
@@ -10111,6 +11257,7 @@ pub struct CUTSCENE_MAP_ID_PARAM_ST {
 
 impl ParamDef for CUTSCENE_MAP_ID_PARAM_ST {
     const NAME: &str = "CUTSCENE_MAP_ID_PARAM_ST";
+    const INDEX: usize = 50;
 }
 
 impl CUTSCENE_MAP_ID_PARAM_ST {
@@ -10225,6 +11372,7 @@ pub struct CUTSCENE_TEXTURE_LOAD_PARAM_ST {
 
 impl ParamDef for CUTSCENE_TEXTURE_LOAD_PARAM_ST {
     const NAME: &str = "CUTSCENE_TEXTURE_LOAD_PARAM_ST";
+    const INDEX: usize = 51;
 }
 
 impl CUTSCENE_TEXTURE_LOAD_PARAM_ST {
@@ -10387,6 +11535,7 @@ pub struct CUTSCENE_TIMEZONE_CONVERT_PARAM_ST {
 
 impl ParamDef for CUTSCENE_TIMEZONE_CONVERT_PARAM_ST {
     const NAME: &str = "CUTSCENE_TIMEZONE_CONVERT_PARAM_ST";
+    const INDEX: usize = 52;
 }
 
 impl CUTSCENE_TIMEZONE_CONVERT_PARAM_ST {
@@ -10416,6 +11565,7 @@ pub struct CUTSCENE_WEATHER_OVERRIDE_GPARAM_ID_CONVERT_PARAM_ST {
 
 impl ParamDef for CUTSCENE_WEATHER_OVERRIDE_GPARAM_ID_CONVERT_PARAM_ST {
     const NAME: &str = "CUTSCENE_WEATHER_OVERRIDE_GPARAM_ID_CONVERT_PARAM_ST";
+    const INDEX: usize = 53;
 }
 
 impl CUTSCENE_WEATHER_OVERRIDE_GPARAM_ID_CONVERT_PARAM_ST {
@@ -10512,6 +11662,7 @@ pub struct DECAL_PARAM_ST {
 
 impl ParamDef for DECAL_PARAM_ST {
     const NAME: &str = "DECAL_PARAM_ST";
+    const INDEX: usize = 54;
 }
 
 impl DECAL_PARAM_ST {
@@ -11271,6 +12422,7 @@ pub struct DEFAULT_KEY_ASSIGN {
 
 impl ParamDef for DEFAULT_KEY_ASSIGN {
     const NAME: &str = "DEFAULT_KEY_ASSIGN";
+    const INDEX: usize = 55;
 }
 
 impl DEFAULT_KEY_ASSIGN {
@@ -12373,6 +13525,7 @@ pub struct DEFEAT_BOSS_SOUL_PARAM_ST {
 
 impl ParamDef for DEFEAT_BOSS_SOUL_PARAM_ST {
     const NAME: &str = "DEFEAT_BOSS_SOUL_PARAM_ST";
+    const INDEX: usize = 56;
 }
 
 impl DEFEAT_BOSS_SOUL_PARAM_ST {}
@@ -12387,6 +13540,7 @@ pub struct DIRECTION_CAMERA_PARAM_ST {
 
 impl ParamDef for DIRECTION_CAMERA_PARAM_ST {
     const NAME: &str = "DIRECTION_CAMERA_PARAM_ST";
+    const INDEX: usize = 57;
 }
 
 impl DIRECTION_CAMERA_PARAM_ST {
@@ -12448,6 +13602,7 @@ pub struct ENEMY_COMMON_PARAM_ST {
 
 impl ParamDef for ENEMY_COMMON_PARAM_ST {
     const NAME: &str = "ENEMY_COMMON_PARAM_ST";
+    const INDEX: usize = 58;
 }
 
 impl ENEMY_COMMON_PARAM_ST {
@@ -12525,6 +13680,7 @@ pub struct ENV_OBJ_LOT_PARAM_ST {
 
 impl ParamDef for ENV_OBJ_LOT_PARAM_ST {
     const NAME: &str = "ENV_OBJ_LOT_PARAM_ST";
+    const INDEX: usize = 59;
 }
 
 impl ENV_OBJ_LOT_PARAM_ST {
@@ -12688,6 +13844,7 @@ pub struct EQUIP_MTRL_SET_PARAM_ST {
 
 impl ParamDef for EQUIP_MTRL_SET_PARAM_ST {
     const NAME: &str = "EQUIP_MTRL_SET_PARAM_ST";
+    const INDEX: usize = 60;
 }
 
 impl EQUIP_MTRL_SET_PARAM_ST {
@@ -12918,6 +14075,7 @@ pub struct EQUIP_PARAM_ACCESSORY_ST {
 
 impl ParamDef for EQUIP_PARAM_ACCESSORY_ST {
     const NAME: &str = "EQUIP_PARAM_ACCESSORY_ST";
+    const INDEX: usize = 61;
 }
 
 impl EQUIP_PARAM_ACCESSORY_ST {
@@ -13005,6 +14163,7 @@ pub struct EQUIP_PARAM_ANTIQUE_ST {
 
 impl ParamDef for EQUIP_PARAM_ANTIQUE_ST {
     const NAME: &str = "EQUIP_PARAM_ANTIQUE_ST";
+    const INDEX: usize = 62;
 }
 
 impl EQUIP_PARAM_ANTIQUE_ST {
@@ -13086,6 +14245,7 @@ pub struct EQUIP_PARAM_CUSTOM_WEAPON_ST {
 
 impl ParamDef for EQUIP_PARAM_CUSTOM_WEAPON_ST {
     const NAME: &str = "EQUIP_PARAM_CUSTOM_WEAPON_ST";
+    const INDEX: usize = 63;
 }
 
 impl EQUIP_PARAM_CUSTOM_WEAPON_ST {
@@ -13248,6 +14408,7 @@ pub struct EQUIP_PARAM_GOODS_ST {
 
 impl ParamDef for EQUIP_PARAM_GOODS_ST {
     const NAME: &str = "EQUIP_PARAM_GOODS_ST";
+    const INDEX: usize = 64;
 }
 
 impl EQUIP_PARAM_GOODS_ST {
@@ -14447,6 +15608,7 @@ pub struct EQUIP_PARAM_PROTECTOR_ST {
 
 impl ParamDef for EQUIP_PARAM_PROTECTOR_ST {
     const NAME: &str = "EQUIP_PARAM_PROTECTOR_ST";
+    const INDEX: usize = 65;
 }
 
 impl EQUIP_PARAM_PROTECTOR_ST {
@@ -16711,6 +17873,7 @@ pub struct EQUIP_PARAM_WEAPON_ST {
 
 impl ParamDef for EQUIP_PARAM_WEAPON_ST {
     const NAME: &str = "EQUIP_PARAM_WEAPON_ST";
+    const INDEX: usize = 66;
 }
 
 impl EQUIP_PARAM_WEAPON_ST {
@@ -18944,6 +20107,7 @@ pub struct ESTUS_FLASK_RECOVERY_PARAM_ST {
 
 impl ParamDef for ESTUS_FLASK_RECOVERY_PARAM_ST {
     const NAME: &str = "ESTUS_FLASK_RECOVERY_PARAM_ST";
+    const INDEX: usize = 67;
 }
 
 impl ESTUS_FLASK_RECOVERY_PARAM_ST {
@@ -19111,6 +20275,41 @@ impl ESTUS_FLASK_RECOVERY_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
+    bits_0: u8,
+    disable_param_reserve2: [u8; 3],
+    param_str: [u8; 32],
+    unknown_1: i32,
+}
+
+impl ParamDef for EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
+    const NAME: &str = "EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST";
+    const INDEX: usize = 68;
+}
+
+impl EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
+    #[allow(clippy::identity_op)]
+    pub fn disable_param_nt(&self) -> u8 {
+        (self.bits_0 >> 0) & 0b00000001
+    }
+
+    #[allow(clippy::identity_op)]
+    pub fn set_disable_param_nt(&mut self, value: u8) {
+        self.bits_0 = (self.bits_0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    }
+
+    pub fn param_str(&self) -> &[u8; 32] {
+        &self.param_str
+    }
+
+    pub fn set_param_str(&mut self, value: [u8; 32]) {
+        self.param_str = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct EVENT_FLAG_USAGE_PARAM_ST {
     usage_type: u8,
     playlog_category: u8,
@@ -19121,6 +20320,7 @@ pub struct EVENT_FLAG_USAGE_PARAM_ST {
 
 impl ParamDef for EVENT_FLAG_USAGE_PARAM_ST {
     const NAME: &str = "EVENT_FLAG_USAGE_PARAM_ST";
+    const INDEX: usize = 69;
 }
 
 impl EVENT_FLAG_USAGE_PARAM_ST {
@@ -19393,6 +20593,7 @@ pub struct FACE_PARAM_ST {
 
 impl ParamDef for FACE_PARAM_ST {
     const NAME: &str = "FACE_PARAM_ST";
+    const INDEX: usize = 70;
 }
 
 impl FACE_PARAM_ST {
@@ -21543,6 +22744,7 @@ pub struct FACE_RANGE_PARAM_ST {
 
 impl ParamDef for FACE_RANGE_PARAM_ST {
     const NAME: &str = "FACE_RANGE_PARAM_ST";
+    const INDEX: usize = 71;
 }
 
 impl FACE_RANGE_PARAM_ST {
@@ -23207,6 +24409,7 @@ pub struct FALL_CONTROL_PARAM_ST {
 
 impl ParamDef for FALL_CONTROL_PARAM_ST {
     const NAME: &str = "FALL_CONTROL_PARAM_ST";
+    const INDEX: usize = 72;
 }
 
 impl FALL_CONTROL_PARAM_ST {}
@@ -23225,6 +24428,7 @@ pub struct FE_TEXT_EFFECT_PARAM_ST {
 
 impl ParamDef for FE_TEXT_EFFECT_PARAM_ST {
     const NAME: &str = "FE_TEXT_EFFECT_PARAM_ST";
+    const INDEX: usize = 73;
 }
 
 impl FE_TEXT_EFFECT_PARAM_ST {
@@ -23471,6 +24675,7 @@ pub struct FOOT_SFX_PARAM_ST {
 
 impl ParamDef for FOOT_SFX_PARAM_ST {
     const NAME: &str = "FOOT_SFX_PARAM_ST";
+    const INDEX: usize = 74;
 }
 
 impl FOOT_SFX_PARAM_ST {
@@ -25479,6 +26684,7 @@ pub struct GAME_SYSTEM_COMMON_PARAM_ST {
 
 impl ParamDef for GAME_SYSTEM_COMMON_PARAM_ST {
     const NAME: &str = "GAME_SYSTEM_COMMON_PARAM_ST";
+    const INDEX: usize = 75;
 }
 
 impl GAME_SYSTEM_COMMON_PARAM_ST {
@@ -27888,868 +29094,6 @@ impl GAME_SYSTEM_COMMON_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct CS_AA_QUALITY_DETAIL {
-    enabled: u8,
-    force_fxaa2: u8,
-    dmy: [u8; 2],
-}
-
-impl ParamDef for CS_AA_QUALITY_DETAIL {
-    const NAME: &str = "CS_AA_QUALITY_DETAIL";
-}
-
-impl CS_AA_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-
-    pub fn force_fxaa2(&self) -> u8 {
-        self.force_fxaa2
-    }
-
-    pub fn set_force_fxaa2(&mut self, value: u8) {
-        self.force_fxaa2 = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_DECAL_QUALITY_DETAIL {
-    enabled: u8,
-    dmy: [u8; 3],
-}
-
-impl ParamDef for CS_DECAL_QUALITY_DETAIL {
-    const NAME: &str = "CS_DECAL_QUALITY_DETAIL";
-}
-
-impl CS_DECAL_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_DOF_QUALITY_DETAIL {
-    enabled: u8,
-    dmy: [u8; 3],
-    force_hi_reso_blur: i32,
-    max_blur_level: i32,
-}
-
-impl ParamDef for CS_DOF_QUALITY_DETAIL {
-    const NAME: &str = "CS_DOF_QUALITY_DETAIL";
-}
-
-impl CS_DOF_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-
-    pub fn force_hi_reso_blur(&self) -> i32 {
-        self.force_hi_reso_blur
-    }
-
-    pub fn set_force_hi_reso_blur(&mut self, value: i32) {
-        self.force_hi_reso_blur = value;
-    }
-
-    pub fn max_blur_level(&self) -> i32 {
-        self.max_blur_level
-    }
-
-    pub fn set_max_blur_level(&mut self, value: i32) {
-        self.max_blur_level = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_EFFECT_QUALITY_DETAIL {
-    soft_particle_enabled: u8,
-    glow_enabled: u8,
-    distortion_enable: u8,
-    cs_up_scale_enabled_type: u8,
-    f_num_once_emits_scale: f32,
-    f_emit_span_scale: f32,
-    f_lod_distance1_scale: f32,
-    f_lod_distance2_scale: f32,
-    f_lod_distance3_scale: f32,
-    f_lod_distance4_scale: f32,
-    f_scale_render_distance_scale: f32,
-    dmy: [u8; 4],
-}
-
-impl ParamDef for CS_EFFECT_QUALITY_DETAIL {
-    const NAME: &str = "CS_EFFECT_QUALITY_DETAIL";
-}
-
-impl CS_EFFECT_QUALITY_DETAIL {
-    pub fn soft_particle_enabled(&self) -> u8 {
-        self.soft_particle_enabled
-    }
-
-    pub fn set_soft_particle_enabled(&mut self, value: u8) {
-        self.soft_particle_enabled = value;
-    }
-
-    pub fn glow_enabled(&self) -> u8 {
-        self.glow_enabled
-    }
-
-    pub fn set_glow_enabled(&mut self, value: u8) {
-        self.glow_enabled = value;
-    }
-
-    pub fn distortion_enable(&self) -> u8 {
-        self.distortion_enable
-    }
-
-    pub fn set_distortion_enable(&mut self, value: u8) {
-        self.distortion_enable = value;
-    }
-
-    pub fn cs_up_scale_enabled_type(&self) -> u8 {
-        self.cs_up_scale_enabled_type
-    }
-
-    pub fn set_cs_up_scale_enabled_type(&mut self, value: u8) {
-        self.cs_up_scale_enabled_type = value;
-    }
-
-    pub fn f_num_once_emits_scale(&self) -> f32 {
-        self.f_num_once_emits_scale
-    }
-
-    pub fn set_f_num_once_emits_scale(&mut self, value: f32) {
-        self.f_num_once_emits_scale = value;
-    }
-
-    pub fn f_emit_span_scale(&self) -> f32 {
-        self.f_emit_span_scale
-    }
-
-    pub fn set_f_emit_span_scale(&mut self, value: f32) {
-        self.f_emit_span_scale = value;
-    }
-
-    pub fn f_lod_distance1_scale(&self) -> f32 {
-        self.f_lod_distance1_scale
-    }
-
-    pub fn set_f_lod_distance1_scale(&mut self, value: f32) {
-        self.f_lod_distance1_scale = value;
-    }
-
-    pub fn f_lod_distance2_scale(&self) -> f32 {
-        self.f_lod_distance2_scale
-    }
-
-    pub fn set_f_lod_distance2_scale(&mut self, value: f32) {
-        self.f_lod_distance2_scale = value;
-    }
-
-    pub fn f_lod_distance3_scale(&self) -> f32 {
-        self.f_lod_distance3_scale
-    }
-
-    pub fn set_f_lod_distance3_scale(&mut self, value: f32) {
-        self.f_lod_distance3_scale = value;
-    }
-
-    pub fn f_lod_distance4_scale(&self) -> f32 {
-        self.f_lod_distance4_scale
-    }
-
-    pub fn set_f_lod_distance4_scale(&mut self, value: f32) {
-        self.f_lod_distance4_scale = value;
-    }
-
-    pub fn f_scale_render_distance_scale(&self) -> f32 {
-        self.f_scale_render_distance_scale
-    }
-
-    pub fn set_f_scale_render_distance_scale(&mut self, value: f32) {
-        self.f_scale_render_distance_scale = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_LIGHTING_QUALITY_DETAIL {
-    local_light_dist_factor: f32,
-    local_light_shadow_enabled: u8,
-    forward_pass_lighting_enabled: u8,
-    local_light_shadow_spec_level_max: u8,
-    dmy: [u8; 1],
-}
-
-impl ParamDef for CS_LIGHTING_QUALITY_DETAIL {
-    const NAME: &str = "CS_LIGHTING_QUALITY_DETAIL";
-}
-
-impl CS_LIGHTING_QUALITY_DETAIL {
-    pub fn local_light_dist_factor(&self) -> f32 {
-        self.local_light_dist_factor
-    }
-
-    pub fn set_local_light_dist_factor(&mut self, value: f32) {
-        self.local_light_dist_factor = value;
-    }
-
-    pub fn local_light_shadow_enabled(&self) -> u8 {
-        self.local_light_shadow_enabled
-    }
-
-    pub fn set_local_light_shadow_enabled(&mut self, value: u8) {
-        self.local_light_shadow_enabled = value;
-    }
-
-    pub fn forward_pass_lighting_enabled(&self) -> u8 {
-        self.forward_pass_lighting_enabled
-    }
-
-    pub fn set_forward_pass_lighting_enabled(&mut self, value: u8) {
-        self.forward_pass_lighting_enabled = value;
-    }
-
-    pub fn local_light_shadow_spec_level_max(&self) -> u8 {
-        self.local_light_shadow_spec_level_max
-    }
-
-    pub fn set_local_light_shadow_spec_level_max(&mut self, value: u8) {
-        self.local_light_shadow_spec_level_max = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_MOTION_BLUR_QUALITY_DETAIL {
-    enabled: u8,
-    omb_enabled: u8,
-    force_scale_velocity_buffer: u8,
-    cheap_filter_mode: u8,
-    sample_count_bias: i32,
-    recurrence_count_bias: i32,
-    blur_max_length_scale: f32,
-}
-
-impl ParamDef for CS_MOTION_BLUR_QUALITY_DETAIL {
-    const NAME: &str = "CS_MOTION_BLUR_QUALITY_DETAIL";
-}
-
-impl CS_MOTION_BLUR_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-
-    pub fn omb_enabled(&self) -> u8 {
-        self.omb_enabled
-    }
-
-    pub fn set_omb_enabled(&mut self, value: u8) {
-        self.omb_enabled = value;
-    }
-
-    pub fn force_scale_velocity_buffer(&self) -> u8 {
-        self.force_scale_velocity_buffer
-    }
-
-    pub fn set_force_scale_velocity_buffer(&mut self, value: u8) {
-        self.force_scale_velocity_buffer = value;
-    }
-
-    pub fn cheap_filter_mode(&self) -> u8 {
-        self.cheap_filter_mode
-    }
-
-    pub fn set_cheap_filter_mode(&mut self, value: u8) {
-        self.cheap_filter_mode = value;
-    }
-
-    pub fn sample_count_bias(&self) -> i32 {
-        self.sample_count_bias
-    }
-
-    pub fn set_sample_count_bias(&mut self, value: i32) {
-        self.sample_count_bias = value;
-    }
-
-    pub fn recurrence_count_bias(&self) -> i32 {
-        self.recurrence_count_bias
-    }
-
-    pub fn set_recurrence_count_bias(&mut self, value: i32) {
-        self.recurrence_count_bias = value;
-    }
-
-    pub fn blur_max_length_scale(&self) -> f32 {
-        self.blur_max_length_scale
-    }
-
-    pub fn set_blur_max_length_scale(&mut self, value: f32) {
-        self.blur_max_length_scale = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_RAYTRACING_QUALITY_DETAIL {
-    enable_raytrace_ao: u8,
-    enable_raytrace_shadows: u8,
-    unk0x02: u8,
-    unk0x03: u8,
-    unk_float0x04: f32,
-    unk0x08: i32,
-    unk_float0x0_c: f32,
-    unk0x10: i32,
-    penumbra_size: f32,
-    render_distance: f32,
-}
-
-impl ParamDef for CS_RAYTRACING_QUALITY_DETAIL {
-    const NAME: &str = "CS_RAYTRACING_QUALITY_DETAIL";
-}
-
-impl CS_RAYTRACING_QUALITY_DETAIL {
-    pub fn enable_raytrace_ao(&self) -> u8 {
-        self.enable_raytrace_ao
-    }
-
-    pub fn set_enable_raytrace_ao(&mut self, value: u8) {
-        self.enable_raytrace_ao = value;
-    }
-
-    pub fn enable_raytrace_shadows(&self) -> u8 {
-        self.enable_raytrace_shadows
-    }
-
-    pub fn set_enable_raytrace_shadows(&mut self, value: u8) {
-        self.enable_raytrace_shadows = value;
-    }
-
-    pub fn penumbra_size(&self) -> f32 {
-        self.penumbra_size
-    }
-
-    pub fn set_penumbra_size(&mut self, value: f32) {
-        self.penumbra_size = value;
-    }
-
-    pub fn render_distance(&self) -> f32 {
-        self.render_distance
-    }
-
-    pub fn set_render_distance(&mut self, value: f32) {
-        self.render_distance = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_REFLECTION_QUALITY_DETAIL {
-    enabled: u8,
-    local_light_enabled: u8,
-    local_light_force_enabled: u8,
-    dmy: [u8; 1],
-    resolution_divider: u32,
-    ssr_enabled: u8,
-    ssr_gaussian_blur_enabled: u8,
-    dmy2: [u8; 2],
-    ssr_depth_reject_threshold_scale: f32,
-    ssr_ray_trace_step_scale: f32,
-    ssr_fade_to_viewer_bias: f32,
-    ssr_fresnel_reject_bias: f32,
-}
-
-impl ParamDef for CS_REFLECTION_QUALITY_DETAIL {
-    const NAME: &str = "CS_REFLECTION_QUALITY_DETAIL";
-}
-
-impl CS_REFLECTION_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-
-    pub fn local_light_enabled(&self) -> u8 {
-        self.local_light_enabled
-    }
-
-    pub fn set_local_light_enabled(&mut self, value: u8) {
-        self.local_light_enabled = value;
-    }
-
-    pub fn local_light_force_enabled(&self) -> u8 {
-        self.local_light_force_enabled
-    }
-
-    pub fn set_local_light_force_enabled(&mut self, value: u8) {
-        self.local_light_force_enabled = value;
-    }
-
-    pub fn resolution_divider(&self) -> u32 {
-        self.resolution_divider
-    }
-
-    pub fn set_resolution_divider(&mut self, value: u32) {
-        self.resolution_divider = value;
-    }
-
-    pub fn ssr_enabled(&self) -> u8 {
-        self.ssr_enabled
-    }
-
-    pub fn set_ssr_enabled(&mut self, value: u8) {
-        self.ssr_enabled = value;
-    }
-
-    pub fn ssr_gaussian_blur_enabled(&self) -> u8 {
-        self.ssr_gaussian_blur_enabled
-    }
-
-    pub fn set_ssr_gaussian_blur_enabled(&mut self, value: u8) {
-        self.ssr_gaussian_blur_enabled = value;
-    }
-
-    pub fn ssr_depth_reject_threshold_scale(&self) -> f32 {
-        self.ssr_depth_reject_threshold_scale
-    }
-
-    pub fn set_ssr_depth_reject_threshold_scale(&mut self, value: f32) {
-        self.ssr_depth_reject_threshold_scale = value;
-    }
-
-    pub fn ssr_ray_trace_step_scale(&self) -> f32 {
-        self.ssr_ray_trace_step_scale
-    }
-
-    pub fn set_ssr_ray_trace_step_scale(&mut self, value: f32) {
-        self.ssr_ray_trace_step_scale = value;
-    }
-
-    pub fn ssr_fade_to_viewer_bias(&self) -> f32 {
-        self.ssr_fade_to_viewer_bias
-    }
-
-    pub fn set_ssr_fade_to_viewer_bias(&mut self, value: f32) {
-        self.ssr_fade_to_viewer_bias = value;
-    }
-
-    pub fn ssr_fresnel_reject_bias(&self) -> f32 {
-        self.ssr_fresnel_reject_bias
-    }
-
-    pub fn set_ssr_fresnel_reject_bias(&mut self, value: f32) {
-        self.ssr_fresnel_reject_bias = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_SHADER_QUALITY_DETAIL {
-    sss_enabled: u8,
-    tessellation_enabled: u8,
-    high_precision_normal_enabled: u8,
-    dmy: [u8; 1],
-}
-
-impl ParamDef for CS_SHADER_QUALITY_DETAIL {
-    const NAME: &str = "CS_SHADER_QUALITY_DETAIL";
-}
-
-impl CS_SHADER_QUALITY_DETAIL {
-    pub fn sss_enabled(&self) -> u8 {
-        self.sss_enabled
-    }
-
-    pub fn set_sss_enabled(&mut self, value: u8) {
-        self.sss_enabled = value;
-    }
-
-    pub fn tessellation_enabled(&self) -> u8 {
-        self.tessellation_enabled
-    }
-
-    pub fn set_tessellation_enabled(&mut self, value: u8) {
-        self.tessellation_enabled = value;
-    }
-
-    pub fn high_precision_normal_enabled(&self) -> u8 {
-        self.high_precision_normal_enabled
-    }
-
-    pub fn set_high_precision_normal_enabled(&mut self, value: u8) {
-        self.high_precision_normal_enabled = value;
-    }
-
-    pub fn dmy(&self) -> &[u8; 1] {
-        &self.dmy
-    }
-
-    pub fn set_dmy(&mut self, value: [u8; 1]) {
-        self.dmy = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_SHADOW_QUALITY_DETAIL {
-    enabled: u8,
-    max_filter_level: u8,
-    dmy: [u8; 2],
-    texture_size_scaler: u32,
-    texture_size_divider: u32,
-    texture_min_size: u32,
-    texture_max_size: u32,
-    blur_count_bias: i32,
-}
-
-impl ParamDef for CS_SHADOW_QUALITY_DETAIL {
-    const NAME: &str = "CS_SHADOW_QUALITY_DETAIL";
-}
-
-impl CS_SHADOW_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-
-    pub fn max_filter_level(&self) -> u8 {
-        self.max_filter_level
-    }
-
-    pub fn set_max_filter_level(&mut self, value: u8) {
-        self.max_filter_level = value;
-    }
-
-    pub fn texture_size_scaler(&self) -> u32 {
-        self.texture_size_scaler
-    }
-
-    pub fn set_texture_size_scaler(&mut self, value: u32) {
-        self.texture_size_scaler = value;
-    }
-
-    pub fn texture_size_divider(&self) -> u32 {
-        self.texture_size_divider
-    }
-
-    pub fn set_texture_size_divider(&mut self, value: u32) {
-        self.texture_size_divider = value;
-    }
-
-    pub fn texture_min_size(&self) -> u32 {
-        self.texture_min_size
-    }
-
-    pub fn set_texture_min_size(&mut self, value: u32) {
-        self.texture_min_size = value;
-    }
-
-    pub fn texture_max_size(&self) -> u32 {
-        self.texture_max_size
-    }
-
-    pub fn set_texture_max_size(&mut self, value: u32) {
-        self.texture_max_size = value;
-    }
-
-    pub fn blur_count_bias(&self) -> i32 {
-        self.blur_count_bias
-    }
-
-    pub fn set_blur_count_bias(&mut self, value: i32) {
-        self.blur_count_bias = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_SSAO_QUALITY_DETAIL {
-    enabled: u8,
-    cs_reproj_enabled_type: u8,
-    cs_up_scale_enabled_type: u8,
-    cs_use_normal_enabled_type: u8,
-    dmy: [u8; 1],
-}
-
-impl ParamDef for CS_SSAO_QUALITY_DETAIL {
-    const NAME: &str = "CS_SSAO_QUALITY_DETAIL";
-}
-
-impl CS_SSAO_QUALITY_DETAIL {
-    pub fn enabled(&self) -> u8 {
-        self.enabled
-    }
-
-    pub fn set_enabled(&mut self, value: u8) {
-        self.enabled = value;
-    }
-
-    pub fn cs_reproj_enabled_type(&self) -> u8 {
-        self.cs_reproj_enabled_type
-    }
-
-    pub fn set_cs_reproj_enabled_type(&mut self, value: u8) {
-        self.cs_reproj_enabled_type = value;
-    }
-
-    pub fn cs_up_scale_enabled_type(&self) -> u8 {
-        self.cs_up_scale_enabled_type
-    }
-
-    pub fn set_cs_up_scale_enabled_type(&mut self, value: u8) {
-        self.cs_up_scale_enabled_type = value;
-    }
-
-    pub fn cs_use_normal_enabled_type(&self) -> u8 {
-        self.cs_use_normal_enabled_type
-    }
-
-    pub fn set_cs_use_normal_enabled_type(&mut self, value: u8) {
-        self.cs_use_normal_enabled_type = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_TEXTURE_FILTER_QUALITY_DETAIL {
-    filter: u8,
-    dmy: [u8; 3],
-    max_aniso_level: u32,
-}
-
-impl ParamDef for CS_TEXTURE_FILTER_QUALITY_DETAIL {
-    const NAME: &str = "CS_TEXTURE_FILTER_QUALITY_DETAIL";
-}
-
-impl CS_TEXTURE_FILTER_QUALITY_DETAIL {
-    pub fn filter(&self) -> u8 {
-        self.filter
-    }
-
-    pub fn set_filter(&mut self, value: u8) {
-        self.filter = value;
-    }
-
-    pub fn max_aniso_level(&self) -> u32 {
-        self.max_aniso_level
-    }
-
-    pub fn set_max_aniso_level(&mut self, value: u32) {
-        self.max_aniso_level = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
-    fog_enabled: u8,
-    fog_shadow_enabled: u8,
-    dmy: [u8; 2],
-    fog_shadow_sample_count_bias: i32,
-    fog_local_light_dist_scale: f32,
-    fog_volue_size_scaler: u32,
-    fog_volue_size_divider: u32,
-    fog_volume_depth_scaler: u32,
-    fog_volume_depth_divider: u32,
-    fog_volume_enabled: u8,
-    fog_volume_up_scale_type: u8,
-    fog_volume_edge_correction_level: u8,
-    fog_volume_ray_marcing_sample_count_offset: i8,
-    fog_volume_shadow_enabled: u8,
-    fog_volume_force_shadowing: u8,
-    fog_volume_resolution: u8,
-    pad2: [u8; 1],
-}
-
-impl ParamDef for CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
-    const NAME: &str = "CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL";
-}
-
-impl CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
-    pub fn fog_enabled(&self) -> u8 {
-        self.fog_enabled
-    }
-
-    pub fn set_fog_enabled(&mut self, value: u8) {
-        self.fog_enabled = value;
-    }
-
-    pub fn fog_shadow_enabled(&self) -> u8 {
-        self.fog_shadow_enabled
-    }
-
-    pub fn set_fog_shadow_enabled(&mut self, value: u8) {
-        self.fog_shadow_enabled = value;
-    }
-
-    pub fn fog_shadow_sample_count_bias(&self) -> i32 {
-        self.fog_shadow_sample_count_bias
-    }
-
-    pub fn set_fog_shadow_sample_count_bias(&mut self, value: i32) {
-        self.fog_shadow_sample_count_bias = value;
-    }
-
-    pub fn fog_local_light_dist_scale(&self) -> f32 {
-        self.fog_local_light_dist_scale
-    }
-
-    pub fn set_fog_local_light_dist_scale(&mut self, value: f32) {
-        self.fog_local_light_dist_scale = value;
-    }
-
-    pub fn fog_volue_size_scaler(&self) -> u32 {
-        self.fog_volue_size_scaler
-    }
-
-    pub fn set_fog_volue_size_scaler(&mut self, value: u32) {
-        self.fog_volue_size_scaler = value;
-    }
-
-    pub fn fog_volue_size_divider(&self) -> u32 {
-        self.fog_volue_size_divider
-    }
-
-    pub fn set_fog_volue_size_divider(&mut self, value: u32) {
-        self.fog_volue_size_divider = value;
-    }
-
-    pub fn fog_volume_depth_scaler(&self) -> u32 {
-        self.fog_volume_depth_scaler
-    }
-
-    pub fn set_fog_volume_depth_scaler(&mut self, value: u32) {
-        self.fog_volume_depth_scaler = value;
-    }
-
-    pub fn fog_volume_depth_divider(&self) -> u32 {
-        self.fog_volume_depth_divider
-    }
-
-    pub fn set_fog_volume_depth_divider(&mut self, value: u32) {
-        self.fog_volume_depth_divider = value;
-    }
-
-    pub fn fog_volume_enabled(&self) -> u8 {
-        self.fog_volume_enabled
-    }
-
-    pub fn set_fog_volume_enabled(&mut self, value: u8) {
-        self.fog_volume_enabled = value;
-    }
-
-    pub fn fog_volume_up_scale_type(&self) -> u8 {
-        self.fog_volume_up_scale_type
-    }
-
-    pub fn set_fog_volume_up_scale_type(&mut self, value: u8) {
-        self.fog_volume_up_scale_type = value;
-    }
-
-    pub fn fog_volume_edge_correction_level(&self) -> u8 {
-        self.fog_volume_edge_correction_level
-    }
-
-    pub fn set_fog_volume_edge_correction_level(&mut self, value: u8) {
-        self.fog_volume_edge_correction_level = value;
-    }
-
-    pub fn fog_volume_ray_marcing_sample_count_offset(&self) -> i8 {
-        self.fog_volume_ray_marcing_sample_count_offset
-    }
-
-    pub fn set_fog_volume_ray_marcing_sample_count_offset(&mut self, value: i8) {
-        self.fog_volume_ray_marcing_sample_count_offset = value;
-    }
-
-    pub fn fog_volume_shadow_enabled(&self) -> u8 {
-        self.fog_volume_shadow_enabled
-    }
-
-    pub fn set_fog_volume_shadow_enabled(&mut self, value: u8) {
-        self.fog_volume_shadow_enabled = value;
-    }
-
-    pub fn fog_volume_force_shadowing(&self) -> u8 {
-        self.fog_volume_force_shadowing
-    }
-
-    pub fn set_fog_volume_force_shadowing(&mut self, value: u8) {
-        self.fog_volume_force_shadowing = value;
-    }
-
-    pub fn fog_volume_resolution(&self) -> u8 {
-        self.fog_volume_resolution
-    }
-
-    pub fn set_fog_volume_resolution(&mut self, value: u8) {
-        self.fog_volume_resolution = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CS_WATER_QUALITY_DETAIL {
-    interaction_enabled: u8,
-    dmy: [u8; 3],
-}
-
-impl ParamDef for CS_WATER_QUALITY_DETAIL {
-    const NAME: &str = "CS_WATER_QUALITY_DETAIL";
-}
-
-impl CS_WATER_QUALITY_DETAIL {
-    pub fn interaction_enabled(&self) -> u8 {
-        self.interaction_enabled
-    }
-
-    pub fn set_interaction_enabled(&mut self, value: u8) {
-        self.interaction_enabled = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct GESTURE_PARAM_ST {
     bits_0: u8,
     disable_param_reserve2: [u8; 3],
@@ -28761,6 +29105,7 @@ pub struct GESTURE_PARAM_ST {
 
 impl ParamDef for GESTURE_PARAM_ST {
     const NAME: &str = "GESTURE_PARAM_ST";
+    const INDEX: usize = 76;
 }
 
 impl GESTURE_PARAM_ST {
@@ -28813,6 +29158,7 @@ pub struct GPARAM_REF_SETTINGS_PARAM_ST {
 
 impl ParamDef for GPARAM_REF_SETTINGS_PARAM_ST {
     const NAME: &str = "GPARAM_REF_SETTINGS_PARAM_ST";
+    const INDEX: usize = 77;
 }
 
 impl GPARAM_REF_SETTINGS_PARAM_ST {
@@ -28847,6 +29193,7 @@ pub struct GRAPHICS_COMMON_PARAM_ST {
 
 impl ParamDef for GRAPHICS_COMMON_PARAM_ST {
     const NAME: &str = "GRAPHICS_COMMON_PARAM_ST";
+    const INDEX: usize = 78;
 }
 
 impl GRAPHICS_COMMON_PARAM_ST {
@@ -28870,145 +29217,6 @@ impl GRAPHICS_COMMON_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct CS_GRAPHICS_CONFIG_PARAM_ST {
-    m_texture_filter_quality: u8,
-    m_aa_quality: u8,
-    m_ssao_quality: u8,
-    m_dof_quality: u8,
-    m_motion_blur_quality: u8,
-    m_shadow_quality: u8,
-    m_lighting_quality: u8,
-    m_effect_quality: u8,
-    m_decal_quality: u8,
-    m_reflection_quality: u8,
-    m_water_quality: u8,
-    m_shader_quality: u8,
-    m_volumetric_effect_quality: u8,
-    m_ray_tracing_quality: u8,
-    m_dummy: [u8; 2],
-}
-
-impl ParamDef for CS_GRAPHICS_CONFIG_PARAM_ST {
-    const NAME: &str = "CS_GRAPHICS_CONFIG_PARAM_ST";
-}
-
-impl CS_GRAPHICS_CONFIG_PARAM_ST {
-    pub fn m_texture_filter_quality(&self) -> u8 {
-        self.m_texture_filter_quality
-    }
-
-    pub fn set_m_texture_filter_quality(&mut self, value: u8) {
-        self.m_texture_filter_quality = value;
-    }
-
-    pub fn m_aa_quality(&self) -> u8 {
-        self.m_aa_quality
-    }
-
-    pub fn set_m_aa_quality(&mut self, value: u8) {
-        self.m_aa_quality = value;
-    }
-
-    pub fn m_ssao_quality(&self) -> u8 {
-        self.m_ssao_quality
-    }
-
-    pub fn set_m_ssao_quality(&mut self, value: u8) {
-        self.m_ssao_quality = value;
-    }
-
-    pub fn m_dof_quality(&self) -> u8 {
-        self.m_dof_quality
-    }
-
-    pub fn set_m_dof_quality(&mut self, value: u8) {
-        self.m_dof_quality = value;
-    }
-
-    pub fn m_motion_blur_quality(&self) -> u8 {
-        self.m_motion_blur_quality
-    }
-
-    pub fn set_m_motion_blur_quality(&mut self, value: u8) {
-        self.m_motion_blur_quality = value;
-    }
-
-    pub fn m_shadow_quality(&self) -> u8 {
-        self.m_shadow_quality
-    }
-
-    pub fn set_m_shadow_quality(&mut self, value: u8) {
-        self.m_shadow_quality = value;
-    }
-
-    pub fn m_lighting_quality(&self) -> u8 {
-        self.m_lighting_quality
-    }
-
-    pub fn set_m_lighting_quality(&mut self, value: u8) {
-        self.m_lighting_quality = value;
-    }
-
-    pub fn m_effect_quality(&self) -> u8 {
-        self.m_effect_quality
-    }
-
-    pub fn set_m_effect_quality(&mut self, value: u8) {
-        self.m_effect_quality = value;
-    }
-
-    pub fn m_decal_quality(&self) -> u8 {
-        self.m_decal_quality
-    }
-
-    pub fn set_m_decal_quality(&mut self, value: u8) {
-        self.m_decal_quality = value;
-    }
-
-    pub fn m_reflection_quality(&self) -> u8 {
-        self.m_reflection_quality
-    }
-
-    pub fn set_m_reflection_quality(&mut self, value: u8) {
-        self.m_reflection_quality = value;
-    }
-
-    pub fn m_water_quality(&self) -> u8 {
-        self.m_water_quality
-    }
-
-    pub fn set_m_water_quality(&mut self, value: u8) {
-        self.m_water_quality = value;
-    }
-
-    pub fn m_shader_quality(&self) -> u8 {
-        self.m_shader_quality
-    }
-
-    pub fn set_m_shader_quality(&mut self, value: u8) {
-        self.m_shader_quality = value;
-    }
-
-    pub fn m_volumetric_effect_quality(&self) -> u8 {
-        self.m_volumetric_effect_quality
-    }
-
-    pub fn set_m_volumetric_effect_quality(&mut self, value: u8) {
-        self.m_volumetric_effect_quality = value;
-    }
-
-    pub fn m_ray_tracing_quality(&self) -> u8 {
-        self.m_ray_tracing_quality
-    }
-
-    pub fn set_m_ray_tracing_quality(&mut self, value: u8) {
-        self.m_ray_tracing_quality = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct GRASS_LOD_RANGE_PARAM_ST {
     lod0_range: f32,
     lod0_play: f32,
@@ -29020,6 +29228,7 @@ pub struct GRASS_LOD_RANGE_PARAM_ST {
 
 impl ParamDef for GRASS_LOD_RANGE_PARAM_ST {
     const NAME: &str = "GRASS_LOD_RANGE_PARAM_ST";
+    const INDEX: usize = 79;
 }
 
 impl GRASS_LOD_RANGE_PARAM_ST {
@@ -29118,6 +29327,7 @@ pub struct GRASS_TYPE_PARAM_ST {
 
 impl ParamDef for GRASS_TYPE_PARAM_ST {
     const NAME: &str = "GRASS_TYPE_PARAM_ST";
+    const INDEX: usize = 80;
 }
 
 impl GRASS_TYPE_PARAM_ST {
@@ -29422,6 +29632,7 @@ pub struct HERO_MENU_CAMERA_PARAM_ST {
 
 impl ParamDef for HERO_MENU_CAMERA_PARAM_ST {
     const NAME: &str = "HERO_MENU_CAMERA_PARAM_ST";
+    const INDEX: usize = 81;
 }
 
 impl HERO_MENU_CAMERA_PARAM_ST {}
@@ -29443,6 +29654,7 @@ pub struct HERO_MENU_PARAM_ST {
 
 impl ParamDef for HERO_MENU_PARAM_ST {
     const NAME: &str = "HERO_MENU_PARAM_ST";
+    const INDEX: usize = 82;
 }
 
 impl HERO_MENU_PARAM_ST {
@@ -29489,6 +29701,7 @@ pub struct HERO_OPERATION_EXPLANATION_PARAM_ST {
 
 impl ParamDef for HERO_OPERATION_EXPLANATION_PARAM_ST {
     const NAME: &str = "HERO_OPERATION_EXPLANATION_PARAM_ST";
+    const INDEX: usize = 83;
 }
 
 impl HERO_OPERATION_EXPLANATION_PARAM_ST {
@@ -29583,6 +29796,7 @@ pub struct HERO_PARAM_ST {
 
 impl ParamDef for HERO_PARAM_ST {
     const NAME: &str = "HERO_PARAM_ST";
+    const INDEX: usize = 84;
 }
 
 impl HERO_PARAM_ST {
@@ -29789,6 +30003,7 @@ pub struct HERO_STATUS_PARAM {
 
 impl ParamDef for HERO_STATUS_PARAM {
     const NAME: &str = "HERO_STATUS_PARAM";
+    const INDEX: usize = 85;
 }
 
 impl HERO_STATUS_PARAM {
@@ -29897,6 +30112,7 @@ pub struct HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
 
 impl ParamDef for HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
     const NAME: &str = "HIT_EFFECT_SFX_CONCEPT_PARAM_ST";
+    const INDEX: usize = 86;
 }
 
 impl HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
@@ -30025,6 +30241,7 @@ pub struct HIT_EFFECT_SFX_PARAM_ST {
 
 impl ParamDef for HIT_EFFECT_SFX_PARAM_ST {
     const NAME: &str = "HIT_EFFECT_SFX_PARAM_ST";
+    const INDEX: usize = 87;
 }
 
 impl HIT_EFFECT_SFX_PARAM_ST {
@@ -30224,6 +30441,7 @@ pub struct HIT_MTRL_PARAM_ST {
 
 impl ParamDef for HIT_MTRL_PARAM_ST {
     const NAME: &str = "HIT_MTRL_PARAM_ST";
+    const INDEX: usize = 88;
 }
 
 impl HIT_MTRL_PARAM_ST {
@@ -30535,6 +30753,7 @@ pub struct ITEMLOT_PARAM_ST {
 
 impl ParamDef for ITEMLOT_PARAM_ST {
     const NAME: &str = "ITEMLOT_PARAM_ST";
+    const INDEX: usize = 89;
 }
 
 impl ITEMLOT_PARAM_ST {
@@ -31162,6 +31381,7 @@ pub struct ITEMTABLE_PARAM_ST {
 
 impl ParamDef for ITEMTABLE_PARAM_ST {
     const NAME: &str = "ITEMTABLE_PARAM_ST";
+    const INDEX: usize = 90;
 }
 
 impl ITEMTABLE_PARAM_ST {
@@ -31211,100 +31431,6 @@ impl ITEMTABLE_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct CS_KEY_ASSIGN_MENUITEM_PARAM {
-    text_id: i32,
-    key: i32,
-    enable_unassign: u8,
-    enable_pad_config: u8,
-    enable_mouse_config: u8,
-    group: u8,
-    mapping_text_id: i32,
-    view_pad: u8,
-    view_keyboard_mouse: u8,
-    padding: [u8; 6],
-}
-
-impl ParamDef for CS_KEY_ASSIGN_MENUITEM_PARAM {
-    const NAME: &str = "CS_KEY_ASSIGN_MENUITEM_PARAM";
-}
-
-impl CS_KEY_ASSIGN_MENUITEM_PARAM {
-    pub fn text_id(&self) -> i32 {
-        self.text_id
-    }
-
-    pub fn set_text_id(&mut self, value: i32) {
-        self.text_id = value;
-    }
-
-    pub fn key(&self) -> i32 {
-        self.key
-    }
-
-    pub fn set_key(&mut self, value: i32) {
-        self.key = value;
-    }
-
-    pub fn enable_unassign(&self) -> u8 {
-        self.enable_unassign
-    }
-
-    pub fn set_enable_unassign(&mut self, value: u8) {
-        self.enable_unassign = value;
-    }
-
-    pub fn enable_pad_config(&self) -> u8 {
-        self.enable_pad_config
-    }
-
-    pub fn set_enable_pad_config(&mut self, value: u8) {
-        self.enable_pad_config = value;
-    }
-
-    pub fn enable_mouse_config(&self) -> u8 {
-        self.enable_mouse_config
-    }
-
-    pub fn set_enable_mouse_config(&mut self, value: u8) {
-        self.enable_mouse_config = value;
-    }
-
-    pub fn group(&self) -> u8 {
-        self.group
-    }
-
-    pub fn set_group(&mut self, value: u8) {
-        self.group = value;
-    }
-
-    pub fn mapping_text_id(&self) -> i32 {
-        self.mapping_text_id
-    }
-
-    pub fn set_mapping_text_id(&mut self, value: i32) {
-        self.mapping_text_id = value;
-    }
-
-    pub fn view_pad(&self) -> u8 {
-        self.view_pad
-    }
-
-    pub fn set_view_pad(&mut self, value: u8) {
-        self.view_pad = value;
-    }
-
-    pub fn view_keyboard_mouse(&self) -> u8 {
-        self.view_keyboard_mouse
-    }
-
-    pub fn set_view_keyboard_mouse(&mut self, value: u8) {
-        self.view_keyboard_mouse = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct KEY_ASSIGN_PARAM_ST {
     pad_key_id: i32,
     keyboard_modify_key: i32,
@@ -31321,6 +31447,7 @@ pub struct KEY_ASSIGN_PARAM_ST {
 
 impl ParamDef for KEY_ASSIGN_PARAM_ST {
     const NAME: &str = "KEY_ASSIGN_PARAM_ST";
+    const INDEX: usize = 91;
 }
 
 impl KEY_ASSIGN_PARAM_ST {
@@ -31412,6 +31539,7 @@ pub struct KNOCKBACK_PARAM_ST {
 
 impl ParamDef for KNOCKBACK_PARAM_ST {
     const NAME: &str = "KNOCKBACK_PARAM_ST";
+    const INDEX: usize = 92;
 }
 
 impl KNOCKBACK_PARAM_ST {
@@ -31669,6 +31797,7 @@ pub struct KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
 
 impl ParamDef for KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
     const NAME: &str = "KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST";
+    const INDEX: usize = 93;
 }
 
 impl KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
@@ -31734,6 +31863,7 @@ pub struct LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM {
 
 impl ParamDef for LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM {
     const NAME: &str = "LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM";
+    const INDEX: usize = 94;
 }
 
 impl LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM {
@@ -31906,6 +32036,7 @@ pub struct LIMITED_DAY_ASSET_PARAM_ST {
 
 impl ParamDef for LIMITED_DAY_ASSET_PARAM_ST {
     const NAME: &str = "LIMITED_DAY_ASSET_PARAM_ST";
+    const INDEX: usize = 95;
 }
 
 impl LIMITED_DAY_ASSET_PARAM_ST {}
@@ -31940,6 +32071,7 @@ pub struct LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
 
 impl ParamDef for LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
     const NAME: &str = "LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST";
+    const INDEX: usize = 96;
 }
 
 impl LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
@@ -32131,6 +32263,7 @@ pub struct LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST {
 
 impl ParamDef for LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST {
     const NAME: &str = "LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST";
+    const INDEX: usize = 97;
 }
 
 impl LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST {
@@ -32240,6 +32373,7 @@ pub struct LOAD_BALANCER_PARAM_ST {
 
 impl ParamDef for LOAD_BALANCER_PARAM_ST {
     const NAME: &str = "LOAD_BALANCER_PARAM_ST";
+    const INDEX: usize = 98;
 }
 
 impl LOAD_BALANCER_PARAM_ST {
@@ -32505,6 +32639,7 @@ pub struct LOBBY_MENU_NPC_PARAM_ST {
 
 impl ParamDef for LOBBY_MENU_NPC_PARAM_ST {
     const NAME: &str = "LOBBY_MENU_NPC_PARAM_ST";
+    const INDEX: usize = 99;
 }
 
 impl LOBBY_MENU_NPC_PARAM_ST {
@@ -32550,6 +32685,7 @@ pub struct LOBBY_MENU_PARAM_ST {
 
 impl ParamDef for LOBBY_MENU_PARAM_ST {
     const NAME: &str = "LOBBY_MENU_PARAM_ST";
+    const INDEX: usize = 100;
 }
 
 impl LOBBY_MENU_PARAM_ST {
@@ -32591,6 +32727,7 @@ pub struct LOCK_CAM_PARAM_ST {
 
 impl ParamDef for LOCK_CAM_PARAM_ST {
     const NAME: &str = "LOCK_CAM_PARAM_ST";
+    const INDEX: usize = 101;
 }
 
 impl LOCK_CAM_PARAM_ST {
@@ -32772,6 +32909,7 @@ pub struct LOT_BASE_MAP_PATTERN_FLAG_ST {
 
 impl ParamDef for LOT_BASE_MAP_PATTERN_FLAG_ST {
     const NAME: &str = "LOT_BASE_MAP_PATTERN_FLAG_ST";
+    const INDEX: usize = 102;
 }
 
 impl LOT_BASE_MAP_PATTERN_FLAG_ST {
@@ -32798,6 +32936,7 @@ pub struct LOT_BASE_SMALBASE_AND_SPOT_ST {
 
 impl ParamDef for LOT_BASE_SMALBASE_AND_SPOT_ST {
     const NAME: &str = "LOT_BASE_SMALBASE_AND_SPOT_ST";
+    const INDEX: usize = 103;
 }
 
 impl LOT_BASE_SMALBASE_AND_SPOT_ST {
@@ -32836,6 +32975,7 @@ pub struct LOT_RESULT_MAP_PATTERN_FLAG_ST {
 
 impl ParamDef for LOT_RESULT_MAP_PATTERN_FLAG_ST {
     const NAME: &str = "LOT_RESULT_MAP_PATTERN_FLAG_ST";
+    const INDEX: usize = 104;
 }
 
 impl LOT_RESULT_MAP_PATTERN_FLAG_ST {
@@ -32868,6 +33008,7 @@ pub struct LOT_RESULT_PLAYAREA_PARAM_ST {
 
 impl ParamDef for LOT_RESULT_PLAYAREA_PARAM_ST {
     const NAME: &str = "LOT_RESULT_PLAYAREA_PARAM_ST";
+    const INDEX: usize = 105;
 }
 
 impl LOT_RESULT_PLAYAREA_PARAM_ST {
@@ -32894,6 +33035,7 @@ pub struct LOT_RESULT_SMALLBASE_AND_SPOT_ST {
 
 impl ParamDef for LOT_RESULT_SMALLBASE_AND_SPOT_ST {
     const NAME: &str = "LOT_RESULT_SMALLBASE_AND_SPOT_ST";
+    const INDEX: usize = 106;
 }
 
 impl LOT_RESULT_SMALLBASE_AND_SPOT_ST {
@@ -33015,6 +33157,7 @@ pub struct MAGIC_PARAM_ST {
 
 impl ParamDef for MAGIC_PARAM_ST {
     const NAME: &str = "MAGIC_PARAM_ST";
+    const INDEX: usize = 107;
 }
 
 impl MAGIC_PARAM_ST {
@@ -33959,6 +34102,7 @@ pub struct MAGIC_TABLE_PARAM_ST {
 
 impl ParamDef for MAGIC_TABLE_PARAM_ST {
     const NAME: &str = "MAGIC_TABLE_PARAM_ST";
+    const INDEX: usize = 108;
 }
 
 impl MAGIC_TABLE_PARAM_ST {
@@ -34000,6 +34144,7 @@ pub struct MAIN_SCENARIO_MENU_PARAM_ST {
 
 impl ParamDef for MAIN_SCENARIO_MENU_PARAM_ST {
     const NAME: &str = "MAIN_SCENARIO_MENU_PARAM_ST";
+    const INDEX: usize = 109;
 }
 
 impl MAIN_SCENARIO_MENU_PARAM_ST {}
@@ -34039,6 +34184,7 @@ pub struct MANUAL_MAP_PATTERN_INFO_ST {
 
 impl ParamDef for MANUAL_MAP_PATTERN_INFO_ST {
     const NAME: &str = "MANUAL_MAP_PATTERN_INFO_ST";
+    const INDEX: usize = 110;
 }
 
 impl MANUAL_MAP_PATTERN_INFO_ST {}
@@ -34079,6 +34225,7 @@ pub struct MAP_DEFAULT_INFO_PARAM_ST {
 
 impl ParamDef for MAP_DEFAULT_INFO_PARAM_ST {
     const NAME: &str = "MAP_DEFAULT_INFO_PARAM_ST";
+    const INDEX: usize = 111;
 }
 
 impl MAP_DEFAULT_INFO_PARAM_ST {
@@ -34280,6 +34427,7 @@ pub struct MAP_GD_REGION_DRAW_PARAM {
 
 impl ParamDef for MAP_GD_REGION_DRAW_PARAM {
     const NAME: &str = "MAP_GD_REGION_DRAW_PARAM";
+    const INDEX: usize = 112;
 }
 
 impl MAP_GD_REGION_DRAW_PARAM {
@@ -34314,6 +34462,7 @@ pub struct MAP_GD_REGION_ID_PARAM_ST {
 
 impl ParamDef for MAP_GD_REGION_ID_PARAM_ST {
     const NAME: &str = "MAP_GD_REGION_ID_PARAM_ST";
+    const INDEX: usize = 113;
 }
 
 impl MAP_GD_REGION_ID_PARAM_ST {
@@ -34347,6 +34496,7 @@ pub struct MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST {
 
 impl ParamDef for MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST {
     const NAME: &str = "MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST";
+    const INDEX: usize = 114;
 }
 
 impl MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST {
@@ -34388,6 +34538,7 @@ pub struct MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
 
 impl ParamDef for MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
     const NAME: &str = "MAP_MIMICRY_ESTABLISHMENT_PARAM_ST";
+    const INDEX: usize = 115;
 }
 
 impl MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
@@ -34504,6 +34655,7 @@ pub struct MAP_NAME_TEX_PARAM_ST {
 
 impl ParamDef for MAP_NAME_TEX_PARAM_ST {
     const NAME: &str = "MAP_NAME_TEX_PARAM_ST";
+    const INDEX: usize = 116;
 }
 
 impl MAP_NAME_TEX_PARAM_ST {
@@ -34565,6 +34717,7 @@ pub struct MAP_PATTERN_COMMON_ST {
 
 impl ParamDef for MAP_PATTERN_COMMON_ST {
     const NAME: &str = "MAP_PATTERN_COMMON_ST";
+    const INDEX: usize = 117;
 }
 
 impl MAP_PATTERN_COMMON_ST {}
@@ -34585,6 +34738,7 @@ pub struct MAP_PATTERN_MAP_LOT_CONDITION_ST {
 
 impl ParamDef for MAP_PATTERN_MAP_LOT_CONDITION_ST {
     const NAME: &str = "MAP_PATTERN_MAP_LOT_CONDITION_ST";
+    const INDEX: usize = 118;
 }
 
 impl MAP_PATTERN_MAP_LOT_CONDITION_ST {}
@@ -34679,6 +34833,7 @@ pub struct MAP_PATTERN_SET_PARAM_ST {
 
 impl ParamDef for MAP_PATTERN_SET_PARAM_ST {
     const NAME: &str = "MAP_PATTERN_SET_PARAM_ST";
+    const INDEX: usize = 119;
 }
 
 impl MAP_PATTERN_SET_PARAM_ST {}
@@ -34699,6 +34854,7 @@ pub struct MAP_PIECE_TEX_PARAM_ST {
 
 impl ParamDef for MAP_PIECE_TEX_PARAM_ST {
     const NAME: &str = "MAP_PIECE_TEX_PARAM_ST";
+    const INDEX: usize = 120;
 }
 
 impl MAP_PIECE_TEX_PARAM_ST {
@@ -34769,6 +34925,7 @@ pub struct MATERIAL_EX_PARAM_ST {
 
 impl ParamDef for MATERIAL_EX_PARAM_ST {
     const NAME: &str = "MATERIAL_EX_PARAM_ST";
+    const INDEX: usize = 121;
 }
 
 impl MATERIAL_EX_PARAM_ST {
@@ -34832,86 +34989,120 @@ impl MATERIAL_EX_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct MENU_PARAM_COLOR_TABLE_ST {
-    lerp_mode: u8,
-    pad1: [u8; 3],
-    h: u16,
-    pad2: [u8; 2],
-    s1: f32,
-    v1: f32,
-    s2: f32,
-    v2: f32,
-    s3: f32,
-    v3: f32,
+pub struct MENUPROPERTY_LAYOUT {
+    layout_path: [u8; 16],
+    property_id: i32,
+    caption_text_id: i32,
+    help_text_id: i32,
+    icon_id: i32,
 }
 
-impl ParamDef for MENU_PARAM_COLOR_TABLE_ST {
-    const NAME: &str = "MENU_PARAM_COLOR_TABLE_ST";
+impl ParamDef for MENUPROPERTY_LAYOUT {
+    const NAME: &str = "MENUPROPERTY_LAYOUT";
+    const INDEX: usize = 122;
 }
 
-impl MENU_PARAM_COLOR_TABLE_ST {
-    pub fn lerp_mode(&self) -> u8 {
-        self.lerp_mode
+impl MENUPROPERTY_LAYOUT {
+    pub fn layout_path(&self) -> &[u8; 16] {
+        &self.layout_path
     }
 
-    pub fn set_lerp_mode(&mut self, value: u8) {
-        self.lerp_mode = value;
+    pub fn set_layout_path(&mut self, value: [u8; 16]) {
+        self.layout_path = value;
     }
 
-    pub fn h(&self) -> u16 {
-        self.h
+    pub fn property_id(&self) -> i32 {
+        self.property_id
     }
 
-    pub fn set_h(&mut self, value: u16) {
-        self.h = value;
+    pub fn set_property_id(&mut self, value: i32) {
+        self.property_id = value;
     }
 
-    pub fn s1(&self) -> f32 {
-        self.s1
+    pub fn caption_text_id(&self) -> i32 {
+        self.caption_text_id
     }
 
-    pub fn set_s1(&mut self, value: f32) {
-        self.s1 = value;
+    pub fn set_caption_text_id(&mut self, value: i32) {
+        self.caption_text_id = value;
     }
 
-    pub fn v1(&self) -> f32 {
-        self.v1
+    pub fn help_text_id(&self) -> i32 {
+        self.help_text_id
     }
 
-    pub fn set_v1(&mut self, value: f32) {
-        self.v1 = value;
+    pub fn set_help_text_id(&mut self, value: i32) {
+        self.help_text_id = value;
     }
 
-    pub fn s2(&self) -> f32 {
-        self.s2
+    pub fn icon_id(&self) -> i32 {
+        self.icon_id
     }
 
-    pub fn set_s2(&mut self, value: f32) {
-        self.s2 = value;
+    pub fn set_icon_id(&mut self, value: i32) {
+        self.icon_id = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct MENUPROPERTY_SPEC {
+    caption_text_id: i32,
+    icon_id: i32,
+    required_property_id: u32,
+    compare_type: i8,
+    pad2: [u8; 1],
+    format_type: u16,
+    unknown_1: [u8; 4],
+    unknown_2: f32,
+    pad: [u8; 8],
+}
+
+impl ParamDef for MENUPROPERTY_SPEC {
+    const NAME: &str = "MENUPROPERTY_SPEC";
+    const INDEX: usize = 123;
+}
+
+impl MENUPROPERTY_SPEC {
+    pub fn caption_text_id(&self) -> i32 {
+        self.caption_text_id
     }
 
-    pub fn v2(&self) -> f32 {
-        self.v2
+    pub fn set_caption_text_id(&mut self, value: i32) {
+        self.caption_text_id = value;
     }
 
-    pub fn set_v2(&mut self, value: f32) {
-        self.v2 = value;
+    pub fn icon_id(&self) -> i32 {
+        self.icon_id
     }
 
-    pub fn s3(&self) -> f32 {
-        self.s3
+    pub fn set_icon_id(&mut self, value: i32) {
+        self.icon_id = value;
     }
 
-    pub fn set_s3(&mut self, value: f32) {
-        self.s3 = value;
+    pub fn required_property_id(&self) -> u32 {
+        self.required_property_id
     }
 
-    pub fn v3(&self) -> f32 {
-        self.v3
+    pub fn set_required_property_id(&mut self, value: u32) {
+        self.required_property_id = value;
     }
 
-    pub fn set_v3(&mut self, value: f32) {
-        self.v3 = value;
+    pub fn compare_type(&self) -> i8 {
+        self.compare_type
+    }
+
+    pub fn set_compare_type(&mut self, value: i8) {
+        self.compare_type = value;
+    }
+
+    pub fn format_type(&self) -> u16 {
+        self.format_type
+    }
+
+    pub fn set_format_type(&mut self, value: u16) {
+        self.format_type = value;
     }
 }
 
@@ -34997,6 +35188,7 @@ pub struct MENU_COMMON_PARAM_ST {
 
 impl ParamDef for MENU_COMMON_PARAM_ST {
     const NAME: &str = "MENU_COMMON_PARAM_ST";
+    const INDEX: usize = 124;
 }
 
 impl MENU_COMMON_PARAM_ST {
@@ -35481,6 +35673,7 @@ pub struct MENU_OFFSCR_REND_PARAM_ST {
 
 impl ParamDef for MENU_OFFSCR_REND_PARAM_ST {
     const NAME: &str = "MENU_OFFSCR_REND_PARAM_ST";
+    const INDEX: usize = 125;
 }
 
 impl MENU_OFFSCR_REND_PARAM_ST {
@@ -35608,118 +35801,87 @@ impl MENU_OFFSCR_REND_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct MENUPROPERTY_LAYOUT {
-    layout_path: [u8; 16],
-    property_id: i32,
-    caption_text_id: i32,
-    help_text_id: i32,
-    icon_id: i32,
+pub struct MENU_PARAM_COLOR_TABLE_ST {
+    lerp_mode: u8,
+    pad1: [u8; 3],
+    h: u16,
+    pad2: [u8; 2],
+    s1: f32,
+    v1: f32,
+    s2: f32,
+    v2: f32,
+    s3: f32,
+    v3: f32,
 }
 
-impl ParamDef for MENUPROPERTY_LAYOUT {
-    const NAME: &str = "MENUPROPERTY_LAYOUT";
+impl ParamDef for MENU_PARAM_COLOR_TABLE_ST {
+    const NAME: &str = "MENU_PARAM_COLOR_TABLE_ST";
+    const INDEX: usize = 126;
 }
 
-impl MENUPROPERTY_LAYOUT {
-    pub fn layout_path(&self) -> &[u8; 16] {
-        &self.layout_path
+impl MENU_PARAM_COLOR_TABLE_ST {
+    pub fn lerp_mode(&self) -> u8 {
+        self.lerp_mode
     }
 
-    pub fn set_layout_path(&mut self, value: [u8; 16]) {
-        self.layout_path = value;
+    pub fn set_lerp_mode(&mut self, value: u8) {
+        self.lerp_mode = value;
     }
 
-    pub fn property_id(&self) -> i32 {
-        self.property_id
+    pub fn h(&self) -> u16 {
+        self.h
     }
 
-    pub fn set_property_id(&mut self, value: i32) {
-        self.property_id = value;
+    pub fn set_h(&mut self, value: u16) {
+        self.h = value;
     }
 
-    pub fn caption_text_id(&self) -> i32 {
-        self.caption_text_id
+    pub fn s1(&self) -> f32 {
+        self.s1
     }
 
-    pub fn set_caption_text_id(&mut self, value: i32) {
-        self.caption_text_id = value;
+    pub fn set_s1(&mut self, value: f32) {
+        self.s1 = value;
     }
 
-    pub fn help_text_id(&self) -> i32 {
-        self.help_text_id
+    pub fn v1(&self) -> f32 {
+        self.v1
     }
 
-    pub fn set_help_text_id(&mut self, value: i32) {
-        self.help_text_id = value;
+    pub fn set_v1(&mut self, value: f32) {
+        self.v1 = value;
     }
 
-    pub fn icon_id(&self) -> i32 {
-        self.icon_id
+    pub fn s2(&self) -> f32 {
+        self.s2
     }
 
-    pub fn set_icon_id(&mut self, value: i32) {
-        self.icon_id = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct MENUPROPERTY_SPEC {
-    caption_text_id: i32,
-    icon_id: i32,
-    required_property_id: u32,
-    compare_type: i8,
-    pad2: [u8; 1],
-    format_type: u16,
-    unknown_1: [u8; 4],
-    unknown_2: f32,
-    pad: [u8; 8],
-}
-
-impl ParamDef for MENUPROPERTY_SPEC {
-    const NAME: &str = "MENUPROPERTY_SPEC";
-}
-
-impl MENUPROPERTY_SPEC {
-    pub fn caption_text_id(&self) -> i32 {
-        self.caption_text_id
+    pub fn set_s2(&mut self, value: f32) {
+        self.s2 = value;
     }
 
-    pub fn set_caption_text_id(&mut self, value: i32) {
-        self.caption_text_id = value;
+    pub fn v2(&self) -> f32 {
+        self.v2
     }
 
-    pub fn icon_id(&self) -> i32 {
-        self.icon_id
+    pub fn set_v2(&mut self, value: f32) {
+        self.v2 = value;
     }
 
-    pub fn set_icon_id(&mut self, value: i32) {
-        self.icon_id = value;
+    pub fn s3(&self) -> f32 {
+        self.s3
     }
 
-    pub fn required_property_id(&self) -> u32 {
-        self.required_property_id
+    pub fn set_s3(&mut self, value: f32) {
+        self.s3 = value;
     }
 
-    pub fn set_required_property_id(&mut self, value: u32) {
-        self.required_property_id = value;
+    pub fn v3(&self) -> f32 {
+        self.v3
     }
 
-    pub fn compare_type(&self) -> i8 {
-        self.compare_type
-    }
-
-    pub fn set_compare_type(&mut self, value: i8) {
-        self.compare_type = value;
-    }
-
-    pub fn format_type(&self) -> u16 {
-        self.format_type
-    }
-
-    pub fn set_format_type(&mut self, value: u16) {
-        self.format_type = value;
+    pub fn set_v3(&mut self, value: f32) {
+        self.v3 = value;
     }
 }
 
@@ -35735,6 +35897,7 @@ pub struct MENU_VALUE_TABLE_SPEC {
 
 impl ParamDef for MENU_VALUE_TABLE_SPEC {
     const NAME: &str = "MENU_VALUE_TABLE_SPEC";
+    const INDEX: usize = 127;
 }
 
 impl MENU_VALUE_TABLE_SPEC {
@@ -35785,6 +35948,7 @@ pub struct MENU_WINDOW_PARAM_ST {
 
 impl ParamDef for MENU_WINDOW_PARAM_ST {
     const NAME: &str = "MENU_WINDOW_PARAM_ST";
+    const INDEX: usize = 128;
 }
 
 impl MENU_WINDOW_PARAM_ST {
@@ -35806,6 +35970,7 @@ pub struct MESSAGEBOX_PARAM_ST {
 
 impl ParamDef for MESSAGEBOX_PARAM_ST {
     const NAME: &str = "MESSAGEBOX_PARAM_ST";
+    const INDEX: usize = 129;
 }
 
 impl MESSAGEBOX_PARAM_ST {}
@@ -35826,6 +35991,7 @@ pub struct MIMICRY_ESTABLISHMENT_TEX_PARAM_ST {
 
 impl ParamDef for MIMICRY_ESTABLISHMENT_TEX_PARAM_ST {
     const NAME: &str = "MIMICRY_ESTABLISHMENT_TEX_PARAM_ST";
+    const INDEX: usize = 130;
 }
 
 impl MIMICRY_ESTABLISHMENT_TEX_PARAM_ST {
@@ -35884,6 +36050,7 @@ pub struct MISSION_MANAGEMENT_PARAM_ST {
 
 impl ParamDef for MISSION_MANAGEMENT_PARAM_ST {
     const NAME: &str = "MISSION_MANAGEMENT_PARAM_ST";
+    const INDEX: usize = 131;
 }
 
 impl MISSION_MANAGEMENT_PARAM_ST {}
@@ -35902,6 +36069,7 @@ pub struct MIXCRAFT_MAGIC_PARAM_ST {
 
 impl ParamDef for MIXCRAFT_MAGIC_PARAM_ST {
     const NAME: &str = "MIXCRAFT_MAGIC_PARAM_ST";
+    const INDEX: usize = 132;
 }
 
 impl MIXCRAFT_MAGIC_PARAM_ST {
@@ -35985,6 +36153,7 @@ pub struct MOVE_PARAM_ST {
 
 impl ParamDef for MOVE_PARAM_ST {
     const NAME: &str = "MOVE_PARAM_ST";
+    const INDEX: usize = 133;
 }
 
 impl MOVE_PARAM_ST {
@@ -36326,6 +36495,7 @@ pub struct MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
 
 impl ParamDef for MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
     const NAME: &str = "MULTI_ESTUS_FLASK_BONUS_PARAM_ST";
+    const INDEX: usize = 134;
 }
 
 impl MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
@@ -36473,6 +36643,7 @@ pub struct MULTI_PLAY_CORRECTION_PARAM_ST {
 
 impl ParamDef for MULTI_PLAY_CORRECTION_PARAM_ST {
     const NAME: &str = "MULTI_PLAY_CORRECTION_PARAM_ST";
+    const INDEX: usize = 135;
 }
 
 impl MULTI_PLAY_CORRECTION_PARAM_ST {
@@ -36544,6 +36715,7 @@ pub struct MULTI_SOUL_BONUS_RATE_PARAM_ST {
 
 impl ParamDef for MULTI_SOUL_BONUS_RATE_PARAM_ST {
     const NAME: &str = "MULTI_SOUL_BONUS_RATE_PARAM_ST";
+    const INDEX: usize = 136;
 }
 
 impl MULTI_SOUL_BONUS_RATE_PARAM_ST {
@@ -36733,6 +36905,7 @@ pub struct NETWORK_MSG_PARAM_ST {
 
 impl ParamDef for NETWORK_MSG_PARAM_ST {
     const NAME: &str = "NETWORK_MSG_PARAM_ST";
+    const INDEX: usize = 137;
 }
 
 impl NETWORK_MSG_PARAM_ST {
@@ -37254,6 +37427,7 @@ pub struct NETWORK_PARAM_ST {
 
 impl ParamDef for NETWORK_PARAM_ST {
     const NAME: &str = "NETWORK_PARAM_ST";
+    const INDEX: usize = 138;
 }
 
 impl NETWORK_PARAM_ST {
@@ -38434,6 +38608,7 @@ pub struct NIGHT_BOSS_MENU_PARAM_ST {
 
 impl ParamDef for NIGHT_BOSS_MENU_PARAM_ST {
     const NAME: &str = "NIGHT_BOSS_MENU_PARAM_ST";
+    const INDEX: usize = 139;
 }
 
 impl NIGHT_BOSS_MENU_PARAM_ST {
@@ -38521,6 +38696,47 @@ impl NIGHT_BOSS_MENU_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct NPCBOT_TABLE_PARAM_ST {
+    npc_param_id: i32,
+    npc_think_id: i32,
+    chara_init_param_id: i32,
+    unknown_3: i32,
+}
+
+impl ParamDef for NPCBOT_TABLE_PARAM_ST {
+    const NAME: &str = "NPCBOT_TABLE_PARAM_ST";
+    const INDEX: usize = 140;
+}
+
+impl NPCBOT_TABLE_PARAM_ST {
+    pub fn npc_param_id(&self) -> i32 {
+        self.npc_param_id
+    }
+
+    pub fn set_npc_param_id(&mut self, value: i32) {
+        self.npc_param_id = value;
+    }
+
+    pub fn npc_think_id(&self) -> i32 {
+        self.npc_think_id
+    }
+
+    pub fn set_npc_think_id(&mut self, value: i32) {
+        self.npc_think_id = value;
+    }
+
+    pub fn chara_init_param_id(&self) -> i32 {
+        self.chara_init_param_id
+    }
+
+    pub fn set_chara_init_param_id(&mut self, value: i32) {
+        self.chara_init_param_id = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct NPC_AI_ACTION_PARAM_ST {
     move_dir: u8,
     key1: u8,
@@ -38537,6 +38753,7 @@ pub struct NPC_AI_ACTION_PARAM_ST {
 
 impl ParamDef for NPC_AI_ACTION_PARAM_ST {
     const NAME: &str = "NPC_AI_ACTION_PARAM_ST";
+    const INDEX: usize = 141;
 }
 
 impl NPC_AI_ACTION_PARAM_ST {
@@ -38829,6 +39046,7 @@ pub struct NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST {
 
 impl ParamDef for NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST {
     const NAME: &str = "NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST";
+    const INDEX: usize = 142;
 }
 
 impl NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST {
@@ -40436,46 +40654,6 @@ impl NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct NPCBOT_TABLE_PARAM_ST {
-    npc_param_id: i32,
-    npc_think_id: i32,
-    chara_init_param_id: i32,
-    unknown_3: i32,
-}
-
-impl ParamDef for NPCBOT_TABLE_PARAM_ST {
-    const NAME: &str = "NPCBOT_TABLE_PARAM_ST";
-}
-
-impl NPCBOT_TABLE_PARAM_ST {
-    pub fn npc_param_id(&self) -> i32 {
-        self.npc_param_id
-    }
-
-    pub fn set_npc_param_id(&mut self, value: i32) {
-        self.npc_param_id = value;
-    }
-
-    pub fn npc_think_id(&self) -> i32 {
-        self.npc_think_id
-    }
-
-    pub fn set_npc_think_id(&mut self, value: i32) {
-        self.npc_think_id = value;
-    }
-
-    pub fn chara_init_param_id(&self) -> i32 {
-        self.chara_init_param_id
-    }
-
-    pub fn set_chara_init_param_id(&mut self, value: i32) {
-        self.chara_init_param_id = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct NPC_PARAM_ST {
     bits_0: u8,
     disable_param_reserve2: [u8; 3],
@@ -40759,6 +40937,7 @@ pub struct NPC_PARAM_ST {
 
 impl ParamDef for NPC_PARAM_ST {
     const NAME: &str = "NPC_PARAM_ST";
+    const INDEX: usize = 143;
 }
 
 impl NPC_PARAM_ST {
@@ -43517,6 +43696,7 @@ pub struct NPC_THINK_PARAM_ST {
 
 impl ParamDef for NPC_THINK_PARAM_ST {
     const NAME: &str = "NPC_THINK_PARAM_ST";
+    const INDEX: usize = 144;
 }
 
 impl NPC_THINK_PARAM_ST {
@@ -44352,6 +44532,7 @@ pub struct OBJ_ACT_PARAM_ST {
 
 impl ParamDef for OBJ_ACT_PARAM_ST {
     const NAME: &str = "OBJ_ACT_PARAM_ST";
+    const INDEX: usize = 145;
 }
 
 impl OBJ_ACT_PARAM_ST {
@@ -44540,6 +44721,7 @@ pub struct OPERATION_GUIDE_PARAM_ST {
 
 impl ParamDef for OPERATION_GUIDE_PARAM_ST {
     const NAME: &str = "OPERATION_GUIDE_PARAM_ST";
+    const INDEX: usize = 146;
 }
 
 impl OPERATION_GUIDE_PARAM_ST {
@@ -44565,6 +44747,7 @@ pub struct OVERLAY_MATERIAL_PARAM_ST {
 
 impl ParamDef for OVERLAY_MATERIAL_PARAM_ST {
     const NAME: &str = "OVERLAY_MATERIAL_PARAM_ST";
+    const INDEX: usize = 147;
 }
 
 impl OVERLAY_MATERIAL_PARAM_ST {
@@ -44648,6 +44831,7 @@ pub struct PARTS_DRAW_PARAM_ST {
 
 impl ParamDef for PARTS_DRAW_PARAM_ST {
     const NAME: &str = "PARTS_DRAW_PARAM_ST";
+    const INDEX: usize = 148;
 }
 
 impl PARTS_DRAW_PARAM_ST {
@@ -44973,6 +45157,7 @@ pub struct PERMANENT_BUFF_PARAM_ST {
 
 impl ParamDef for PERMANENT_BUFF_PARAM_ST {
     const NAME: &str = "PERMANENT_BUFF_PARAM_ST";
+    const INDEX: usize = 149;
 }
 
 impl PERMANENT_BUFF_PARAM_ST {
@@ -45056,6 +45241,7 @@ pub struct PERSONAL_SCENARIO_PARAM_ST {
 
 impl ParamDef for PERSONAL_SCENARIO_PARAM_ST {
     const NAME: &str = "PERSONAL_SCENARIO_PARAM_ST";
+    const INDEX: usize = 150;
 }
 
 impl PERSONAL_SCENARIO_PARAM_ST {
@@ -45129,6 +45315,7 @@ pub struct PHANTOM_PARAM_ST {
 
 impl ParamDef for PHANTOM_PARAM_ST {
     const NAME: &str = "PHANTOM_PARAM_ST";
+    const INDEX: usize = 151;
 }
 
 impl PHANTOM_PARAM_ST {
@@ -45377,258 +45564,10 @@ pub struct PIN_TYPE_PARAM_ST {
 
 impl ParamDef for PIN_TYPE_PARAM_ST {
     const NAME: &str = "PIN_TYPE_PARAM_ST";
+    const INDEX: usize = 152;
 }
 
 impl PIN_TYPE_PARAM_ST {}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct PLAY_AREA_CREATE_COMMON_PARAM_ST {
-    unknown_0: i32,
-    second_circle_radius: f32,
-    unknown_2: f32,
-    unknown_3: f32,
-    unknown_4: f32,
-    unknown_5: i32,
-    first_circle_start_hour: u8,
-    first_circle_start_minute: u8,
-    first_circle_end_hour: u8,
-    first_circle_end_minute: u8,
-    second_circle_start_hour: u8,
-    second_circle_start_minute: u8,
-    second_circle_end_hour: u8,
-    second_circle_end_minute: u8,
-    unknown_8: i32,
-    unknown_9: i32,
-    sp_effect_first_day: i32,
-    sp_effect_second_day: i32,
-    unknown_12: i32,
-    unknown_13: i32,
-    initial_circle_radius: f32,
-    initial_circle_area_no: u8,
-    initial_circle_grid_x_no: u8,
-    initial_circle_grid_z_no: u8,
-    pad1: [u8; 1],
-    initial_circle_pos_x: f32,
-    initial_circle_pos_z: f32,
-    unknown_18: i32,
-    unknown_19: f32,
-    unknown_20: f32,
-    unknown_21: f32,
-    unknown_22: i32,
-    unknown_23: i32,
-    unknown_24: i32,
-    unknown_25: i32,
-    end_padding: [u8; 32],
-}
-
-impl ParamDef for PLAY_AREA_CREATE_COMMON_PARAM_ST {
-    const NAME: &str = "PLAY_AREA_CREATE_COMMON_PARAM_ST";
-}
-
-impl PLAY_AREA_CREATE_COMMON_PARAM_ST {
-    pub fn second_circle_radius(&self) -> f32 {
-        self.second_circle_radius
-    }
-
-    pub fn set_second_circle_radius(&mut self, value: f32) {
-        self.second_circle_radius = value;
-    }
-
-    pub fn first_circle_start_hour(&self) -> u8 {
-        self.first_circle_start_hour
-    }
-
-    pub fn set_first_circle_start_hour(&mut self, value: u8) {
-        self.first_circle_start_hour = value;
-    }
-
-    pub fn first_circle_start_minute(&self) -> u8 {
-        self.first_circle_start_minute
-    }
-
-    pub fn set_first_circle_start_minute(&mut self, value: u8) {
-        self.first_circle_start_minute = value;
-    }
-
-    pub fn first_circle_end_hour(&self) -> u8 {
-        self.first_circle_end_hour
-    }
-
-    pub fn set_first_circle_end_hour(&mut self, value: u8) {
-        self.first_circle_end_hour = value;
-    }
-
-    pub fn first_circle_end_minute(&self) -> u8 {
-        self.first_circle_end_minute
-    }
-
-    pub fn set_first_circle_end_minute(&mut self, value: u8) {
-        self.first_circle_end_minute = value;
-    }
-
-    pub fn second_circle_start_hour(&self) -> u8 {
-        self.second_circle_start_hour
-    }
-
-    pub fn set_second_circle_start_hour(&mut self, value: u8) {
-        self.second_circle_start_hour = value;
-    }
-
-    pub fn second_circle_start_minute(&self) -> u8 {
-        self.second_circle_start_minute
-    }
-
-    pub fn set_second_circle_start_minute(&mut self, value: u8) {
-        self.second_circle_start_minute = value;
-    }
-
-    pub fn second_circle_end_hour(&self) -> u8 {
-        self.second_circle_end_hour
-    }
-
-    pub fn set_second_circle_end_hour(&mut self, value: u8) {
-        self.second_circle_end_hour = value;
-    }
-
-    pub fn second_circle_end_minute(&self) -> u8 {
-        self.second_circle_end_minute
-    }
-
-    pub fn set_second_circle_end_minute(&mut self, value: u8) {
-        self.second_circle_end_minute = value;
-    }
-
-    pub fn sp_effect_first_day(&self) -> i32 {
-        self.sp_effect_first_day
-    }
-
-    pub fn set_sp_effect_first_day(&mut self, value: i32) {
-        self.sp_effect_first_day = value;
-    }
-
-    pub fn sp_effect_second_day(&self) -> i32 {
-        self.sp_effect_second_day
-    }
-
-    pub fn set_sp_effect_second_day(&mut self, value: i32) {
-        self.sp_effect_second_day = value;
-    }
-
-    pub fn initial_circle_radius(&self) -> f32 {
-        self.initial_circle_radius
-    }
-
-    pub fn set_initial_circle_radius(&mut self, value: f32) {
-        self.initial_circle_radius = value;
-    }
-
-    pub fn initial_circle_area_no(&self) -> u8 {
-        self.initial_circle_area_no
-    }
-
-    pub fn set_initial_circle_area_no(&mut self, value: u8) {
-        self.initial_circle_area_no = value;
-    }
-
-    pub fn initial_circle_grid_x_no(&self) -> u8 {
-        self.initial_circle_grid_x_no
-    }
-
-    pub fn set_initial_circle_grid_x_no(&mut self, value: u8) {
-        self.initial_circle_grid_x_no = value;
-    }
-
-    pub fn initial_circle_grid_z_no(&self) -> u8 {
-        self.initial_circle_grid_z_no
-    }
-
-    pub fn set_initial_circle_grid_z_no(&mut self, value: u8) {
-        self.initial_circle_grid_z_no = value;
-    }
-
-    pub fn initial_circle_pos_x(&self) -> f32 {
-        self.initial_circle_pos_x
-    }
-
-    pub fn set_initial_circle_pos_x(&mut self, value: f32) {
-        self.initial_circle_pos_x = value;
-    }
-
-    pub fn initial_circle_pos_z(&self) -> f32 {
-        self.initial_circle_pos_z
-    }
-
-    pub fn set_initial_circle_pos_z(&mut self, value: f32) {
-        self.initial_circle_pos_z = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct PLAY_AREA_CREATE_DEFAULT_PARAM_ST {
-    unknown_0: i32,
-    unknown_1: f32,
-    unknown_2: i32,
-    unknown_3: f32,
-    unknown_4: f32,
-    unknown_5: i32,
-    unknown_6: i32,
-    unknown_7: i32,
-    unknown_8: i32,
-}
-
-impl ParamDef for PLAY_AREA_CREATE_DEFAULT_PARAM_ST {
-    const NAME: &str = "PLAY_AREA_CREATE_DEFAULT_PARAM_ST";
-}
-
-impl PLAY_AREA_CREATE_DEFAULT_PARAM_ST {}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct PLAY_AREA_CREATE_PARAM_ST {
-    unknown_0: i32,
-    unknown_1: i32,
-    unknown_2: f32,
-    unknown_3: f32,
-    unknown_event_flag1: i32,
-    unknown_event_flag2: i32,
-    unknown_6: i32,
-    unknown_7: i32,
-    unknown_8: i32,
-    world_map_point_id_1: i32,
-    unknown_10: f32,
-    unknown_11: i32,
-    unknown_12: i32,
-    unknown_13: i32,
-    unknown_14: i32,
-    world_map_point_id_2: i32,
-}
-
-impl ParamDef for PLAY_AREA_CREATE_PARAM_ST {
-    const NAME: &str = "PLAY_AREA_CREATE_PARAM_ST";
-}
-
-impl PLAY_AREA_CREATE_PARAM_ST {
-    pub fn world_map_point_id_1(&self) -> i32 {
-        self.world_map_point_id_1
-    }
-
-    pub fn set_world_map_point_id_1(&mut self, value: i32) {
-        self.world_map_point_id_1 = value;
-    }
-
-    pub fn world_map_point_id_2(&self) -> i32 {
-        self.world_map_point_id_2
-    }
-
-    pub fn set_world_map_point_id_2(&mut self, value: i32) {
-        self.world_map_point_id_2 = value;
-    }
-}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -45654,6 +45593,7 @@ pub struct PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST {
 
 impl ParamDef for PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST {
     const NAME: &str = "PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST";
+    const INDEX: usize = 153;
 }
 
 impl PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST {}
@@ -45778,6 +45718,7 @@ pub struct PLAYER_COMMON_PARAM_ST {
 
 impl ParamDef for PLAYER_COMMON_PARAM_ST {
     const NAME: &str = "PLAYER_COMMON_PARAM_ST";
+    const INDEX: usize = 154;
 }
 
 impl PLAYER_COMMON_PARAM_ST {
@@ -46249,6 +46190,258 @@ impl PLAYER_COMMON_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct PLAY_AREA_CREATE_COMMON_PARAM_ST {
+    unknown_0: i32,
+    second_circle_radius: f32,
+    unknown_2: f32,
+    unknown_3: f32,
+    unknown_4: f32,
+    unknown_5: i32,
+    first_circle_start_hour: u8,
+    first_circle_start_minute: u8,
+    first_circle_end_hour: u8,
+    first_circle_end_minute: u8,
+    second_circle_start_hour: u8,
+    second_circle_start_minute: u8,
+    second_circle_end_hour: u8,
+    second_circle_end_minute: u8,
+    unknown_8: i32,
+    unknown_9: i32,
+    sp_effect_first_day: i32,
+    sp_effect_second_day: i32,
+    unknown_12: i32,
+    unknown_13: i32,
+    initial_circle_radius: f32,
+    initial_circle_area_no: u8,
+    initial_circle_grid_x_no: u8,
+    initial_circle_grid_z_no: u8,
+    pad1: [u8; 1],
+    initial_circle_pos_x: f32,
+    initial_circle_pos_z: f32,
+    unknown_18: i32,
+    unknown_19: f32,
+    unknown_20: f32,
+    unknown_21: f32,
+    unknown_22: i32,
+    unknown_23: i32,
+    unknown_24: i32,
+    unknown_25: i32,
+    end_padding: [u8; 32],
+}
+
+impl ParamDef for PLAY_AREA_CREATE_COMMON_PARAM_ST {
+    const NAME: &str = "PLAY_AREA_CREATE_COMMON_PARAM_ST";
+    const INDEX: usize = 155;
+}
+
+impl PLAY_AREA_CREATE_COMMON_PARAM_ST {
+    pub fn second_circle_radius(&self) -> f32 {
+        self.second_circle_radius
+    }
+
+    pub fn set_second_circle_radius(&mut self, value: f32) {
+        self.second_circle_radius = value;
+    }
+
+    pub fn first_circle_start_hour(&self) -> u8 {
+        self.first_circle_start_hour
+    }
+
+    pub fn set_first_circle_start_hour(&mut self, value: u8) {
+        self.first_circle_start_hour = value;
+    }
+
+    pub fn first_circle_start_minute(&self) -> u8 {
+        self.first_circle_start_minute
+    }
+
+    pub fn set_first_circle_start_minute(&mut self, value: u8) {
+        self.first_circle_start_minute = value;
+    }
+
+    pub fn first_circle_end_hour(&self) -> u8 {
+        self.first_circle_end_hour
+    }
+
+    pub fn set_first_circle_end_hour(&mut self, value: u8) {
+        self.first_circle_end_hour = value;
+    }
+
+    pub fn first_circle_end_minute(&self) -> u8 {
+        self.first_circle_end_minute
+    }
+
+    pub fn set_first_circle_end_minute(&mut self, value: u8) {
+        self.first_circle_end_minute = value;
+    }
+
+    pub fn second_circle_start_hour(&self) -> u8 {
+        self.second_circle_start_hour
+    }
+
+    pub fn set_second_circle_start_hour(&mut self, value: u8) {
+        self.second_circle_start_hour = value;
+    }
+
+    pub fn second_circle_start_minute(&self) -> u8 {
+        self.second_circle_start_minute
+    }
+
+    pub fn set_second_circle_start_minute(&mut self, value: u8) {
+        self.second_circle_start_minute = value;
+    }
+
+    pub fn second_circle_end_hour(&self) -> u8 {
+        self.second_circle_end_hour
+    }
+
+    pub fn set_second_circle_end_hour(&mut self, value: u8) {
+        self.second_circle_end_hour = value;
+    }
+
+    pub fn second_circle_end_minute(&self) -> u8 {
+        self.second_circle_end_minute
+    }
+
+    pub fn set_second_circle_end_minute(&mut self, value: u8) {
+        self.second_circle_end_minute = value;
+    }
+
+    pub fn sp_effect_first_day(&self) -> i32 {
+        self.sp_effect_first_day
+    }
+
+    pub fn set_sp_effect_first_day(&mut self, value: i32) {
+        self.sp_effect_first_day = value;
+    }
+
+    pub fn sp_effect_second_day(&self) -> i32 {
+        self.sp_effect_second_day
+    }
+
+    pub fn set_sp_effect_second_day(&mut self, value: i32) {
+        self.sp_effect_second_day = value;
+    }
+
+    pub fn initial_circle_radius(&self) -> f32 {
+        self.initial_circle_radius
+    }
+
+    pub fn set_initial_circle_radius(&mut self, value: f32) {
+        self.initial_circle_radius = value;
+    }
+
+    pub fn initial_circle_area_no(&self) -> u8 {
+        self.initial_circle_area_no
+    }
+
+    pub fn set_initial_circle_area_no(&mut self, value: u8) {
+        self.initial_circle_area_no = value;
+    }
+
+    pub fn initial_circle_grid_x_no(&self) -> u8 {
+        self.initial_circle_grid_x_no
+    }
+
+    pub fn set_initial_circle_grid_x_no(&mut self, value: u8) {
+        self.initial_circle_grid_x_no = value;
+    }
+
+    pub fn initial_circle_grid_z_no(&self) -> u8 {
+        self.initial_circle_grid_z_no
+    }
+
+    pub fn set_initial_circle_grid_z_no(&mut self, value: u8) {
+        self.initial_circle_grid_z_no = value;
+    }
+
+    pub fn initial_circle_pos_x(&self) -> f32 {
+        self.initial_circle_pos_x
+    }
+
+    pub fn set_initial_circle_pos_x(&mut self, value: f32) {
+        self.initial_circle_pos_x = value;
+    }
+
+    pub fn initial_circle_pos_z(&self) -> f32 {
+        self.initial_circle_pos_z
+    }
+
+    pub fn set_initial_circle_pos_z(&mut self, value: f32) {
+        self.initial_circle_pos_z = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct PLAY_AREA_CREATE_DEFAULT_PARAM_ST {
+    unknown_0: i32,
+    unknown_1: f32,
+    unknown_2: i32,
+    unknown_3: f32,
+    unknown_4: f32,
+    unknown_5: i32,
+    unknown_6: i32,
+    unknown_7: i32,
+    unknown_8: i32,
+}
+
+impl ParamDef for PLAY_AREA_CREATE_DEFAULT_PARAM_ST {
+    const NAME: &str = "PLAY_AREA_CREATE_DEFAULT_PARAM_ST";
+    const INDEX: usize = 156;
+}
+
+impl PLAY_AREA_CREATE_DEFAULT_PARAM_ST {}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct PLAY_AREA_CREATE_PARAM_ST {
+    unknown_0: i32,
+    unknown_1: i32,
+    unknown_2: f32,
+    unknown_3: f32,
+    unknown_event_flag1: i32,
+    unknown_event_flag2: i32,
+    unknown_6: i32,
+    unknown_7: i32,
+    unknown_8: i32,
+    world_map_point_id_1: i32,
+    unknown_10: f32,
+    unknown_11: i32,
+    unknown_12: i32,
+    unknown_13: i32,
+    unknown_14: i32,
+    world_map_point_id_2: i32,
+}
+
+impl ParamDef for PLAY_AREA_CREATE_PARAM_ST {
+    const NAME: &str = "PLAY_AREA_CREATE_PARAM_ST";
+    const INDEX: usize = 157;
+}
+
+impl PLAY_AREA_CREATE_PARAM_ST {
+    pub fn world_map_point_id_1(&self) -> i32 {
+        self.world_map_point_id_1
+    }
+
+    pub fn set_world_map_point_id_1(&mut self, value: i32) {
+        self.world_map_point_id_1 = value;
+    }
+
+    pub fn world_map_point_id_2(&self) -> i32 {
+        self.world_map_point_id_2
+    }
+
+    pub fn set_world_map_point_id_2(&mut self, value: i32) {
+        self.world_map_point_id_2 = value;
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct PLAY_REGION_PARAM_ST {
     bits_0: u8,
     disable_param_reserve2: [u8; 3],
@@ -46323,6 +46516,7 @@ pub struct PLAY_REGION_PARAM_ST {
 
 impl ParamDef for PLAY_REGION_PARAM_ST {
     const NAME: &str = "PLAY_REGION_PARAM_ST";
+    const INDEX: usize = 158;
 }
 
 impl PLAY_REGION_PARAM_ST {
@@ -47035,6 +47229,7 @@ pub struct POSTURE_CONTROL_PARAM_PRO_ST {
 
 impl ParamDef for POSTURE_CONTROL_PARAM_PRO_ST {
     const NAME: &str = "POSTURE_CONTROL_PARAM_PRO_ST";
+    const INDEX: usize = 159;
 }
 
 impl POSTURE_CONTROL_PARAM_PRO_ST {
@@ -47318,6 +47513,7 @@ pub struct POSTURE_CONTROL_PARAM_WEP_LEFT_ST {
 
 impl ParamDef for POSTURE_CONTROL_PARAM_WEP_LEFT_ST {
     const NAME: &str = "POSTURE_CONTROL_PARAM_WEP_LEFT_ST";
+    const INDEX: usize = 160;
 }
 
 impl POSTURE_CONTROL_PARAM_WEP_LEFT_ST {
@@ -47459,6 +47655,7 @@ pub struct POSTURE_CONTROL_PARAM_WEP_RIGHT_ST {
 
 impl ParamDef for POSTURE_CONTROL_PARAM_WEP_RIGHT_ST {
     const NAME: &str = "POSTURE_CONTROL_PARAM_WEP_RIGHT_ST";
+    const INDEX: usize = 161;
 }
 
 impl POSTURE_CONTROL_PARAM_WEP_RIGHT_ST {
@@ -47932,6 +48129,7 @@ pub struct RANDOM_APPEAR_PARAM_ST {
 
 impl ParamDef for RANDOM_APPEAR_PARAM_ST {
     const NAME: &str = "RANDOM_APPEAR_PARAM_ST";
+    const INDEX: usize = 162;
 }
 
 impl RANDOM_APPEAR_PARAM_ST {
@@ -48947,6 +49145,7 @@ pub struct RARE_MAP_INFO_MENU_PARAM_ST {
 
 impl ParamDef for RARE_MAP_INFO_MENU_PARAM_ST {
     const NAME: &str = "RARE_MAP_INFO_MENU_PARAM_ST";
+    const INDEX: usize = 163;
 }
 
 impl RARE_MAP_INFO_MENU_PARAM_ST {
@@ -48994,6 +49193,7 @@ pub struct REINFORCE_PARAM_PROTECTOR_ST {
 
 impl ParamDef for REINFORCE_PARAM_PROTECTOR_ST {
     const NAME: &str = "REINFORCE_PARAM_PROTECTOR_ST";
+    const INDEX: usize = 164;
 }
 
 impl REINFORCE_PARAM_PROTECTOR_ST {
@@ -49198,6 +49398,7 @@ pub struct REINFORCE_PARAM_WEAPON_ST {
 
 impl ParamDef for REINFORCE_PARAM_WEAPON_ST {
     const NAME: &str = "REINFORCE_PARAM_WEAPON_ST";
+    const INDEX: usize = 165;
 }
 
 impl REINFORCE_PARAM_WEAPON_ST {
@@ -49524,6 +49725,7 @@ pub struct RESIST_CORRECT_PARAM_ST {
 
 impl ParamDef for RESIST_CORRECT_PARAM_ST {
     const NAME: &str = "RESIST_CORRECT_PARAM_ST";
+    const INDEX: usize = 166;
 }
 
 impl RESIST_CORRECT_PARAM_ST {
@@ -49619,6 +49821,7 @@ pub struct RESULT_MENU_PLAY_SPEED_PARAM_ST {
 
 impl ParamDef for RESULT_MENU_PLAY_SPEED_PARAM_ST {
     const NAME: &str = "RESULT_MENU_PLAY_SPEED_PARAM_ST";
+    const INDEX: usize = 167;
 }
 
 impl RESULT_MENU_PLAY_SPEED_PARAM_ST {
@@ -49648,6 +49851,7 @@ pub struct REVERB_AUX_SEND_BUS_PARAM_ST {
 
 impl ParamDef for REVERB_AUX_SEND_BUS_PARAM_ST {
     const NAME: &str = "REVERB_AUX_SEND_BUS_PARAM_ST";
+    const INDEX: usize = 168;
 }
 
 impl REVERB_AUX_SEND_BUS_PARAM_ST {
@@ -49682,6 +49886,7 @@ pub struct RIDE_PARAM_ST {
 
 impl ParamDef for RIDE_PARAM_ST {
     const NAME: &str = "RIDE_PARAM_ST";
+    const INDEX: usize = 169;
 }
 
 impl RIDE_PARAM_ST {
@@ -49817,6 +50022,7 @@ pub struct ROLLING_OBJ_LOT_PARAM_ST {
 
 impl ParamDef for ROLLING_OBJ_LOT_PARAM_ST {
     const NAME: &str = "ROLLING_OBJ_LOT_PARAM_ST";
+    const INDEX: usize = 170;
 }
 
 impl ROLLING_OBJ_LOT_PARAM_ST {
@@ -49973,6 +50179,7 @@ pub struct RUNTIME_BONE_CONTROL_PARAM_ST {
 
 impl ParamDef for RUNTIME_BONE_CONTROL_PARAM_ST {
     const NAME: &str = "RUNTIME_BONE_CONTROL_PARAM_ST";
+    const INDEX: usize = 171;
 }
 
 impl RUNTIME_BONE_CONTROL_PARAM_ST {
@@ -50037,6 +50244,7 @@ pub struct SCENARIO_PLACEMENT_PARAM_ST {
 
 impl ParamDef for SCENARIO_PLACEMENT_PARAM_ST {
     const NAME: &str = "SCENARIO_PLACEMENT_PARAM_ST";
+    const INDEX: usize = 172;
 }
 
 impl SCENARIO_PLACEMENT_PARAM_ST {
@@ -50079,6 +50287,7 @@ pub struct SCRATCHED_PARTS_PARAM_ST {
 
 impl ParamDef for SCRATCHED_PARTS_PARAM_ST {
     const NAME: &str = "SCRATCHED_PARTS_PARAM_ST";
+    const INDEX: usize = 173;
 }
 
 impl SCRATCHED_PARTS_PARAM_ST {
@@ -50094,12 +50303,36 @@ impl SCRATCHED_PARTS_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {
+    unknown_0: i32,
+    unknown_1: i32,
+    unknown_2: i32,
+    unknown_3: i32,
+    unknown_4: i32,
+    unknown_5: i32,
+    unknown_6: i32,
+    unknown_7: i32,
+    unknown_8: i32,
+    padding: [u8; 164],
+}
+
+impl ParamDef for SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {
+    const NAME: &str = "SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST";
+    const INDEX: usize = 174;
+}
+
+impl SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct SE_ACTIVATION_RANGE_PARAM_ST {
     activate_range: f32,
 }
 
 impl ParamDef for SE_ACTIVATION_RANGE_PARAM_ST {
     const NAME: &str = "SE_ACTIVATION_RANGE_PARAM_ST";
+    const INDEX: usize = 175;
 }
 
 impl SE_ACTIVATION_RANGE_PARAM_ST {
@@ -50122,6 +50355,7 @@ pub struct SE_MATERIAL_CONVERT_PARAM_ST {
 
 impl ParamDef for SE_MATERIAL_CONVERT_PARAM_ST {
     const NAME: &str = "SE_MATERIAL_CONVERT_PARAM_ST";
+    const INDEX: usize = 176;
 }
 
 impl SE_MATERIAL_CONVERT_PARAM_ST {
@@ -50137,34 +50371,13 @@ impl SE_MATERIAL_CONVERT_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {
-    unknown_0: i32,
-    unknown_1: i32,
-    unknown_2: i32,
-    unknown_3: i32,
-    unknown_4: i32,
-    unknown_5: i32,
-    unknown_6: i32,
-    unknown_7: i32,
-    unknown_8: i32,
-    padding: [u8; 164],
-}
-
-impl ParamDef for SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {
-    const NAME: &str = "SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST";
-}
-
-impl SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct SFX_BLOCK_RES_SHARE_PARAM {
     unknown_0: i32,
 }
 
 impl ParamDef for SFX_BLOCK_RES_SHARE_PARAM {
     const NAME: &str = "SFX_BLOCK_RES_SHARE_PARAM";
+    const INDEX: usize = 177;
 }
 
 impl SFX_BLOCK_RES_SHARE_PARAM {}
@@ -50201,6 +50414,7 @@ pub struct SHOP_LINEUP_PARAM {
 
 impl ParamDef for SHOP_LINEUP_PARAM {
     const NAME: &str = "SHOP_LINEUP_PARAM";
+    const INDEX: usize = 178;
 }
 
 impl SHOP_LINEUP_PARAM {
@@ -50347,6 +50561,7 @@ pub struct SIGN_PUDDLE_PARAM_ST {
 
 impl ParamDef for SIGN_PUDDLE_PARAM_ST {
     const NAME: &str = "SIGN_PUDDLE_PARAM_ST";
+    const INDEX: usize = 179;
 }
 
 impl SIGN_PUDDLE_PARAM_ST {
@@ -50368,6 +50583,20 @@ impl SIGN_PUDDLE_PARAM_ST {
         self.match_area_id = value;
     }
 }
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {
+    unknown_0: i32,
+}
+
+impl ParamDef for SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {
+    const NAME: &str = "SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST";
+    const INDEX: usize = 180;
+}
+
+impl SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -50405,6 +50634,7 @@ pub struct SMALLBASE_AND_SPOT_ATTACH_POINT_ST {
 
 impl ParamDef for SMALLBASE_AND_SPOT_ATTACH_POINT_ST {
     const NAME: &str = "SMALLBASE_AND_SPOT_ATTACH_POINT_ST";
+    const INDEX: usize = 181;
 }
 
 impl SMALLBASE_AND_SPOT_ATTACH_POINT_ST {
@@ -50497,27 +50727,10 @@ pub struct SMALLBASE_AND_SPOT_DEFINE_ST {
 
 impl ParamDef for SMALLBASE_AND_SPOT_DEFINE_ST {
     const NAME: &str = "SMALLBASE_AND_SPOT_DEFINE_ST";
+    const INDEX: usize = 182;
 }
 
 impl SMALLBASE_AND_SPOT_DEFINE_ST {}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {
-    unknown_0: i32,
-    unknown_1: i32,
-    unknown_2: i32,
-    unknown_3: i32,
-    unknown_4: i32,
-    unknown_5: i32,
-}
-
-impl ParamDef for SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {
-    const NAME: &str = "SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST";
-}
-
-impl SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -50532,6 +50745,7 @@ pub struct SMALLBASE_INVATION_NPC_PARAM_ST {
 
 impl ParamDef for SMALLBASE_INVATION_NPC_PARAM_ST {
     const NAME: &str = "SMALLBASE_INVATION_NPC_PARAM_ST";
+    const INDEX: usize = 183;
 }
 
 impl SMALLBASE_INVATION_NPC_PARAM_ST {
@@ -50563,6 +50777,25 @@ impl SMALLBASE_INVATION_NPC_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
+pub struct SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {
+    unknown_0: i32,
+    unknown_1: i32,
+    unknown_2: i32,
+    unknown_3: i32,
+    unknown_4: i32,
+    unknown_5: i32,
+}
+
+impl ParamDef for SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {
+    const NAME: &str = "SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST";
+    const INDEX: usize = 184;
+}
+
+impl SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
 pub struct SMALLBASE_MAP_VARIATION_PARAM_ST {
     unknown_0: i32,
     unknown_1: i32,
@@ -50584,22 +50817,10 @@ pub struct SMALLBASE_MAP_VARIATION_PARAM_ST {
 
 impl ParamDef for SMALLBASE_MAP_VARIATION_PARAM_ST {
     const NAME: &str = "SMALLBASE_MAP_VARIATION_PARAM_ST";
+    const INDEX: usize = 185;
 }
 
 impl SMALLBASE_MAP_VARIATION_PARAM_ST {}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {
-    unknown_0: i32,
-}
-
-impl ParamDef for SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {
-    const NAME: &str = "SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST";
-}
-
-impl SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -50620,6 +50841,7 @@ pub struct SORTIE_STARTING_POINT_ST {
 
 impl ParamDef for SORTIE_STARTING_POINT_ST {
     const NAME: &str = "SORTIE_STARTING_POINT_ST";
+    const INDEX: usize = 186;
 }
 
 impl SORTIE_STARTING_POINT_ST {}
@@ -50633,6 +50855,7 @@ pub struct SOUND_ASSET_SOUND_OBJ_ENABLE_DIST_PARAM_ST {
 
 impl ParamDef for SOUND_ASSET_SOUND_OBJ_ENABLE_DIST_PARAM_ST {
     const NAME: &str = "SOUND_ASSET_SOUND_OBJ_ENABLE_DIST_PARAM_ST";
+    const INDEX: usize = 187;
 }
 
 impl SOUND_ASSET_SOUND_OBJ_ENABLE_DIST_PARAM_ST {
@@ -50657,6 +50880,7 @@ pub struct SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST {
 
 impl ParamDef for SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST {
     const NAME: &str = "SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST";
+    const INDEX: usize = 188;
 }
 
 impl SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST {
@@ -50709,6 +50933,7 @@ pub struct SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST {
 
 impl ParamDef for SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST {
     const NAME: &str = "SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST";
+    const INDEX: usize = 189;
 }
 
 impl SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST {
@@ -50796,6 +51021,7 @@ pub struct SOUND_AUTO_REVERB_SELECT_PARAM_ST {
 
 impl ParamDef for SOUND_AUTO_REVERB_SELECT_PARAM_ST {
     const NAME: &str = "SOUND_AUTO_REVERB_SELECT_PARAM_ST";
+    const INDEX: usize = 190;
 }
 
 impl SOUND_AUTO_REVERB_SELECT_PARAM_ST {
@@ -50916,6 +51142,7 @@ pub struct SOUND_CHR_PHYSICS_SE_PARAM_ST {
 
 impl ParamDef for SOUND_CHR_PHYSICS_SE_PARAM_ST {
     const NAME: &str = "SOUND_CHR_PHYSICS_SE_PARAM_ST";
+    const INDEX: usize = 191;
 }
 
 impl SOUND_CHR_PHYSICS_SE_PARAM_ST {
@@ -51140,6 +51367,7 @@ pub struct SOUND_COMMON_INGAME_PARAM_ST {
 
 impl ParamDef for SOUND_COMMON_INGAME_PARAM_ST {
     const NAME: &str = "SOUND_COMMON_INGAME_PARAM_ST";
+    const INDEX: usize = 192;
 }
 
 impl SOUND_COMMON_INGAME_PARAM_ST {
@@ -51170,6 +51398,7 @@ pub struct SOUND_COMMON_SYSTEM_PARAM_ST {
 
 impl ParamDef for SOUND_COMMON_SYSTEM_PARAM_ST {
     const NAME: &str = "SOUND_COMMON_SYSTEM_PARAM_ST";
+    const INDEX: usize = 193;
 }
 
 impl SOUND_COMMON_SYSTEM_PARAM_ST {
@@ -51209,6 +51438,7 @@ pub struct SOUND_CUTSCENE_PARAM_ST {
 
 impl ParamDef for SOUND_CUTSCENE_PARAM_ST {
     const NAME: &str = "SOUND_CUTSCENE_PARAM_ST";
+    const INDEX: usize = 194;
 }
 
 impl SOUND_CUTSCENE_PARAM_ST {
@@ -51289,6 +51519,7 @@ pub struct SPEEDTREE_MODEL_PARAM_ST {
 
 impl ParamDef for SPEEDTREE_MODEL_PARAM_ST {
     const NAME: &str = "SPEEDTREE_MODEL_PARAM_ST";
+    const INDEX: usize = 195;
 }
 
 impl SPEEDTREE_MODEL_PARAM_ST {
@@ -51692,6 +51923,7 @@ pub struct SP_EFFECT_PARAM_ST {
 
 impl ParamDef for SP_EFFECT_PARAM_ST {
     const NAME: &str = "SP_EFFECT_PARAM_ST";
+    const INDEX: usize = 196;
 }
 
 impl SP_EFFECT_PARAM_ST {
@@ -54802,6 +55034,7 @@ pub struct SP_EFFECT_SET_PARAM_ST {
 
 impl ParamDef for SP_EFFECT_SET_PARAM_ST {
     const NAME: &str = "SP_EFFECT_SET_PARAM_ST";
+    const INDEX: usize = 197;
 }
 
 impl SP_EFFECT_SET_PARAM_ST {
@@ -54899,6 +55132,7 @@ pub struct SP_EFFECT_VFX_PARAM_ST {
 
 impl ParamDef for SP_EFFECT_VFX_PARAM_ST {
     const NAME: &str = "SP_EFFECT_VFX_PARAM_ST";
+    const INDEX: usize = 198;
 }
 
 impl SP_EFFECT_VFX_PARAM_ST {
@@ -55447,9 +55681,42 @@ pub struct SUBSTORY_LINK_PARAM_ST {
 
 impl ParamDef for SUBSTORY_LINK_PARAM_ST {
     const NAME: &str = "SUBSTORY_LINK_PARAM_ST";
+    const INDEX: usize = 199;
 }
 
 impl SUBSTORY_LINK_PARAM_ST {}
+
+#[derive(Debug, Clone)]
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct SWORDARTS_TABLE_PARAM_ST {
+    unknown_0: i32,
+    sword_arts_id: i32,
+    chance_weight: i32,
+}
+
+impl ParamDef for SWORDARTS_TABLE_PARAM_ST {
+    const NAME: &str = "SWORDARTS_TABLE_PARAM_ST";
+    const INDEX: usize = 200;
+}
+
+impl SWORDARTS_TABLE_PARAM_ST {
+    pub fn sword_arts_id(&self) -> i32 {
+        self.sword_arts_id
+    }
+
+    pub fn set_sword_arts_id(&mut self, value: i32) {
+        self.sword_arts_id = value;
+    }
+
+    pub fn chance_weight(&self) -> i32 {
+        self.chance_weight
+    }
+
+    pub fn set_chance_weight(&mut self, value: i32) {
+        self.chance_weight = value;
+    }
+}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -55475,6 +55742,7 @@ pub struct SWORD_ARTS_PARAM_ST {
 
 impl ParamDef for SWORD_ARTS_PARAM_ST {
     const NAME: &str = "SWORD_ARTS_PARAM_ST";
+    const INDEX: usize = 201;
 }
 
 impl SWORD_ARTS_PARAM_ST {
@@ -55562,37 +55830,6 @@ impl SWORD_ARTS_PARAM_ST {
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
 #[repr(C)]
-pub struct SWORDARTS_TABLE_PARAM_ST {
-    unknown_0: i32,
-    sword_arts_id: i32,
-    chance_weight: i32,
-}
-
-impl ParamDef for SWORDARTS_TABLE_PARAM_ST {
-    const NAME: &str = "SWORDARTS_TABLE_PARAM_ST";
-}
-
-impl SWORDARTS_TABLE_PARAM_ST {
-    pub fn sword_arts_id(&self) -> i32 {
-        self.sword_arts_id
-    }
-
-    pub fn set_sword_arts_id(&mut self, value: i32) {
-        self.sword_arts_id = value;
-    }
-
-    pub fn chance_weight(&self) -> i32 {
-        self.chance_weight
-    }
-
-    pub fn set_chance_weight(&mut self, value: i32) {
-        self.chance_weight = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
 pub struct TALK_PARAM_ST {
     bits_0: u8,
     disable_param_reserve2: [u8; 3],
@@ -55651,6 +55888,7 @@ pub struct TALK_PARAM_ST {
 
 impl ParamDef for TALK_PARAM_ST {
     const NAME: &str = "TALK_PARAM_ST";
+    const INDEX: usize = 202;
 }
 
 impl TALK_PARAM_ST {
@@ -55765,6 +56003,7 @@ pub struct TEXT_EMBED_IMAGE_PARAM_ST {
 
 impl ParamDef for TEXT_EMBED_IMAGE_PARAM_ST {
     const NAME: &str = "TEXT_EMBED_IMAGE_PARAM_ST";
+    const INDEX: usize = 203;
 }
 
 impl TEXT_EMBED_IMAGE_PARAM_ST {}
@@ -55781,6 +56020,7 @@ pub struct THROW_COUNTER_PARAM_ST {
 
 impl ParamDef for THROW_COUNTER_PARAM_ST {
     const NAME: &str = "THROW_COUNTER_PARAM_ST";
+    const INDEX: usize = 204;
 }
 
 impl THROW_COUNTER_PARAM_ST {
@@ -55833,6 +56073,7 @@ pub struct THROW_DIRECTION_SFX_PARAM_ST {
 
 impl ParamDef for THROW_DIRECTION_SFX_PARAM_ST {
     const NAME: &str = "THROW_DIRECTION_SFX_PARAM_ST";
+    const INDEX: usize = 205;
 }
 
 impl THROW_DIRECTION_SFX_PARAM_ST {
@@ -56129,6 +56370,7 @@ pub struct THROW_PARAM_ST {
 
 impl ParamDef for THROW_PARAM_ST {
     const NAME: &str = "THROW_PARAM_ST";
+    const INDEX: usize = 206;
 }
 
 impl THROW_PARAM_ST {
@@ -56464,6 +56706,7 @@ pub struct TOUGHNESS_PARAM_ST {
 
 impl ParamDef for TOUGHNESS_PARAM_ST {
     const NAME: &str = "TOUGHNESS_PARAM_ST";
+    const INDEX: usize = 207;
 }
 
 impl TOUGHNESS_PARAM_ST {
@@ -56519,6 +56762,7 @@ pub struct TUTORIAL_CATEGORY_PARAM_ST {
 
 impl ParamDef for TUTORIAL_CATEGORY_PARAM_ST {
     const NAME: &str = "TUTORIAL_CATEGORY_PARAM_ST";
+    const INDEX: usize = 208;
 }
 
 impl TUTORIAL_CATEGORY_PARAM_ST {
@@ -56557,6 +56801,7 @@ pub struct TUTORIAL_PARAM_ST {
 
 impl ParamDef for TUTORIAL_PARAM_ST {
     const NAME: &str = "TUTORIAL_PARAM_ST";
+    const INDEX: usize = 209;
 }
 
 impl TUTORIAL_PARAM_ST {
@@ -56660,6 +56905,7 @@ pub struct USER_DISP_LOG_PARAM_ST {
 
 impl ParamDef for USER_DISP_LOG_PARAM_ST {
     const NAME: &str = "USER_DISP_LOG_PARAM_ST";
+    const INDEX: usize = 210;
 }
 
 impl USER_DISP_LOG_PARAM_ST {
@@ -56693,6 +56939,7 @@ pub struct WAYPOINT_PARAM_ST {
 
 impl ParamDef for WAYPOINT_PARAM_ST {
     const NAME: &str = "WAYPOINT_PARAM_ST";
+    const INDEX: usize = 211;
 }
 
 impl WAYPOINT_PARAM_ST {
@@ -56761,6 +57008,7 @@ pub struct WEATHER_ASSET_CREATE_PARAM_ST {
 
 impl ParamDef for WEATHER_ASSET_CREATE_PARAM_ST {
     const NAME: &str = "WEATHER_ASSET_CREATE_PARAM_ST";
+    const INDEX: usize = 212;
 }
 
 impl WEATHER_ASSET_CREATE_PARAM_ST {
@@ -56961,6 +57209,7 @@ pub struct WEATHER_ASSET_REPLACE_PARAM_ST {
 
 impl ParamDef for WEATHER_ASSET_REPLACE_PARAM_ST {
     const NAME: &str = "WEATHER_ASSET_REPLACE_PARAM_ST";
+    const INDEX: usize = 213;
 }
 
 impl WEATHER_ASSET_REPLACE_PARAM_ST {
@@ -57133,6 +57382,7 @@ pub struct WEATHER_LOT_PARAM_ST {
 
 impl ParamDef for WEATHER_LOT_PARAM_ST {
     const NAME: &str = "WEATHER_LOT_PARAM_ST";
+    const INDEX: usize = 214;
 }
 
 impl WEATHER_LOT_PARAM_ST {
@@ -57459,6 +57709,7 @@ pub struct WEATHER_LOT_TEX_PARAM_ST {
 
 impl ParamDef for WEATHER_LOT_TEX_PARAM_ST {
     const NAME: &str = "WEATHER_LOT_TEX_PARAM_ST";
+    const INDEX: usize = 215;
 }
 
 impl WEATHER_LOT_TEX_PARAM_ST {
@@ -57531,6 +57782,7 @@ pub struct WEATHER_PARAM_ST {
 
 impl ParamDef for WEATHER_PARAM_ST {
     const NAME: &str = "WEATHER_PARAM_ST";
+    const INDEX: usize = 216;
 }
 
 impl WEATHER_PARAM_ST {
@@ -57737,6 +57989,7 @@ pub struct WEP_ABSORP_POS_PARAM_ST {
 
 impl ParamDef for WEP_ABSORP_POS_PARAM_ST {
     const NAME: &str = "WEP_ABSORP_POS_PARAM_ST";
+    const INDEX: usize = 217;
 }
 
 impl WEP_ABSORP_POS_PARAM_ST {
@@ -58204,6 +58457,7 @@ pub struct WET_ASPECT_PARAM_ST {
 
 impl ParamDef for WET_ASPECT_PARAM_ST {
     const NAME: &str = "WET_ASPECT_PARAM_ST";
+    const INDEX: usize = 218;
 }
 
 impl WET_ASPECT_PARAM_ST {
@@ -58284,6 +58538,7 @@ pub struct WHITE_SIGN_COOL_TIME_PARAM_ST {
 
 impl ParamDef for WHITE_SIGN_COOL_TIME_PARAM_ST {
     const NAME: &str = "WHITE_SIGN_COOL_TIME_PARAM_ST";
+    const INDEX: usize = 219;
 }
 
 impl WHITE_SIGN_COOL_TIME_PARAM_ST {
@@ -58346,6 +58601,7 @@ pub struct WORLD_MAP_LEGACY_CONV_PARAM_ST {
 
 impl ParamDef for WORLD_MAP_LEGACY_CONV_PARAM_ST {
     const NAME: &str = "WORLD_MAP_LEGACY_CONV_PARAM_ST";
+    const INDEX: usize = 220;
 }
 
 impl WORLD_MAP_LEGACY_CONV_PARAM_ST {
@@ -58489,6 +58745,7 @@ pub struct WORLD_MAP_PIECE_PARAM_ST {
 
 impl ParamDef for WORLD_MAP_PIECE_PARAM_ST {
     const NAME: &str = "WORLD_MAP_PIECE_PARAM_ST";
+    const INDEX: usize = 221;
 }
 
 impl WORLD_MAP_PIECE_PARAM_ST {
@@ -58619,6 +58876,7 @@ pub struct WORLD_MAP_PLACE_NAME_PARAM_ST {
 
 impl ParamDef for WORLD_MAP_PLACE_NAME_PARAM_ST {
     const NAME: &str = "WORLD_MAP_PLACE_NAME_PARAM_ST";
+    const INDEX: usize = 222;
 }
 
 impl WORLD_MAP_PLACE_NAME_PARAM_ST {
@@ -58706,6 +58964,7 @@ pub struct WORLD_MAP_POINT_ICON_PARAM_ST {
 
 impl ParamDef for WORLD_MAP_POINT_ICON_PARAM_ST {
     const NAME: &str = "WORLD_MAP_POINT_ICON_PARAM_ST";
+    const INDEX: usize = 223;
 }
 
 impl WORLD_MAP_POINT_ICON_PARAM_ST {
@@ -58762,6 +59021,7 @@ pub struct WORLD_MAP_POINT_PARAM_ST {
 
 impl ParamDef for WORLD_MAP_POINT_PARAM_ST {
     const NAME: &str = "WORLD_MAP_POINT_PARAM_ST";
+    const INDEX: usize = 224;
 }
 
 impl WORLD_MAP_POINT_PARAM_ST {
@@ -58965,43 +59225,10 @@ pub struct WWISE_VALUE_TO_STR_CONVERT_PARAM_ST {
 
 impl ParamDef for WWISE_VALUE_TO_STR_CONVERT_PARAM_ST {
     const NAME: &str = "WWISE_VALUE_TO_STR_CONVERT_PARAM_ST";
+    const INDEX: usize = 225;
 }
 
 impl WWISE_VALUE_TO_STR_CONVERT_PARAM_ST {
-    #[allow(clippy::identity_op)]
-    pub fn disable_param_nt(&self) -> u8 {
-        (self.bits_0 >> 0) & 0b00000001
-    }
-
-    #[allow(clippy::identity_op)]
-    pub fn set_disable_param_nt(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
-    }
-
-    pub fn param_str(&self) -> &[u8; 32] {
-        &self.param_str
-    }
-
-    pub fn set_param_str(&mut self, value: [u8; 32]) {
-        self.param_str = value;
-    }
-}
-
-#[derive(Debug, Clone)]
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
-    bits_0: u8,
-    disable_param_reserve2: [u8; 3],
-    param_str: [u8; 32],
-    unknown_1: i32,
-}
-
-impl ParamDef for EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
-    const NAME: &str = "EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST";
-}
-
-impl EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
     #[allow(clippy::identity_op)]
     pub fn disable_param_nt(&self) -> u8 {
         (self.bits_0 >> 0) & 0b00000001
