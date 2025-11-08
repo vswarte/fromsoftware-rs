@@ -1,5 +1,4 @@
-use std::cell::UnsafeCell;
-use std::ffi;
+use std::{cell::UnsafeCell, ffi};
 
 use vtable_rs::VPtr;
 use windows::Win32::System::Threading::{
@@ -17,19 +16,7 @@ pub trait DLPlainLightMutexVmt {
 pub struct DLPlainLightMutex {
     pub vftable: VPtr<dyn DLPlainLightMutexVmt, Self>,
     pub critical_section: UnsafeCell<CRITICAL_SECTION>,
-}
-
-impl Default for DLPlainLightMutex {
-    fn default() -> Self {
-        let mut ins = Self {
-            vftable: Default::default(),
-            critical_section: Default::default(),
-        };
-
-        unsafe { InitializeCriticalSection(ins.critical_section.get()) }
-
-        ins
-    }
+    _unk30: [u8; 0x8],
 }
 
 impl Drop for DLPlainLightMutex {
@@ -45,11 +32,5 @@ impl DLPlainLightMutex {
 
     pub fn unlock(&self) {
         unsafe { LeaveCriticalSection(self.critical_section.get()) }
-    }
-}
-
-impl DLPlainLightMutexVmt for DLPlainLightMutex {
-    extern "C" fn destructor(&mut self, param_2: bool) {
-        unimplemented!();
     }
 }
