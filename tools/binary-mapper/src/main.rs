@@ -1,10 +1,14 @@
-use std::{fs::File, path::PathBuf};
+use std::{collections::HashMap, fs::File, path::PathBuf};
 
 use clap::{Parser, ValueEnum};
 use memmap::MmapOptions;
-use pelite::{pattern, PeFile};
+use pelite::{
+    pattern,
+    pe64::{Pe, PeFile},
+};
 use rayon::prelude::*;
 use serde::Deserialize;
+use shared::{find_rtti_classes, Class};
 
 #[derive(ValueEnum, Clone)]
 enum OutputFormat {
@@ -33,6 +37,9 @@ fn main() {
         unsafe { MmapOptions::new().map(&exe_file) }.expect("Could not mmap game binary");
     let program =
         PeFile::from_bytes(&exe_mmap[0..]).expect("Could not create PE view for game binary");
+    let rtti_map = find_rtti_classes(&program)
+        .map(|class| (class.name.clone(), class))
+        .collect::<HashMap<_, _>>();
 
     let contents = std::fs::read_to_string(args.profile).expect("Could not read profile file");
     let profile: MapperProfile = toml::from_str(&contents).expect("Could not parse profile TOML");
@@ -40,40 +47,13 @@ fn main() {
     let result = profile
         .patterns
         .into_par_iter()
-        .flat_map(|entry| {
-            let scanner_pattern = pattern::parse(&entry.pattern).unwrap_or_else(|_| {
-                panic!("Could not parse provided pattern \"{}\"", &entry.pattern)
-            });
-
-            let captures = entry
-                .captures
-                .iter()
-                .enumerate()
-                .filter(|(_, e)| !e.is_empty());
-
-            let mut matches = vec![0u32; entry.captures.len()];
-            if !program
-                .scanner()
-                .matches_code(&scanner_pattern)
-                .next(&mut matches)
-            {
-                captures
-                    .map(|(_, e)| MapperEntryResult {
-                        name: e.clone(),
-                        found: false,
-                        rva: 0x0,
-                    })
-                    .collect::<Vec<_>>()
-            } else {
-                captures
-                    .map(|(i, e)| MapperEntryResult {
-                        name: e.clone(),
-                        found: true,
-                        rva: matches[i],
-                    })
-                    .collect::<Vec<_>>()
-            }
-        })
+        .flat_map(|entry| entry.find(&program))
+        .chain(
+            profile
+                .vmts
+                .into_par_iter()
+                .flat_map(|entry| entry.find(&program, &rtti_map)),
+        )
         .collect::<Vec<_>>();
 
     match args.output {
@@ -90,26 +70,108 @@ fn main() {
 
 /// Profile describing what offsets to extract from a game binary.
 #[derive(Debug, Deserialize)]
-pub struct MapperProfile {
+struct MapperProfile {
     pub patterns: Vec<MapperProfilePattern>,
+    pub vmts: Vec<MapperProfileVmt>,
 }
 
-/// Profile describing what offsets to extract from a game binary.
+/// A Pelite pattern which matches one or more offsets.
 #[derive(Debug, Deserialize)]
-pub struct MapperProfilePattern {
+struct MapperProfilePattern {
     /// Pattern used for matching. Under the hood this uses pelite's parser.
-    /// As such, the same pattern syntax is used.
-    /// More: https://docs.rs/pelite/latest/pelite/pattern/fn.parse.html
-    pub pattern: String,
-    /// Names for the captures. These names can be referenced from the generated
-    /// definition file.
-    pub captures: Vec<String>,
+    /// As such, the same pattern syntax is used. More:
+    /// https://docs.rs/pelite/latest/pelite/pattern/fn.parse.html
+    pattern: String,
+
+    /// Names for the captures. These names can be referenced from the
+    /// generated definition file.
+    captures: Vec<String>,
+}
+
+impl MapperProfilePattern {
+    /// Consumes self and looks up the pattern in [program].
+    fn find<'a>(self, program: &impl Pe<'a>) -> Vec<MapperEntryResult> {
+        let Ok(scanner_pattern) = pattern::parse(&self.pattern) else {
+            panic!("Could not parse provided pattern \"{}\"", &self.pattern)
+        };
+
+        let mut matches = vec![0u32; self.captures.len()];
+        let captures = self
+            .captures
+            .into_iter()
+            .enumerate()
+            .filter(|(_, e)| !e.is_empty());
+
+        if !program
+            .scanner()
+            .matches_code(&scanner_pattern)
+            .next(&mut matches)
+        {
+            captures
+                .map(|(_, e)| MapperEntryResult::not_found(e))
+                .collect::<Vec<_>>()
+        } else {
+            captures
+                .map(|(i, e)| MapperEntryResult {
+                    name: e,
+                    rva: matches[i],
+                })
+                .collect::<Vec<_>>()
+        }
+    }
+}
+
+/// An RTTI class that provides access to its virtual method table.
+#[derive(Debug, Deserialize)]
+struct MapperProfileVmt {
+    /// The class name, according to the RTTI data in the executable.
+    class: String,
+
+    /// A map from names for the captures to indexes in the VMT whose values are
+    /// be used as VMTs.
+    captures: HashMap<String, u32>,
+}
+
+impl MapperProfileVmt {
+    /// Consumes self and looks up the VMT in [rtti_map].
+    fn find<'a, T: Pe<'a>>(
+        self,
+        program: &T,
+        rtti_map: &HashMap<String, Class<'a, T>>,
+    ) -> Vec<MapperEntryResult> {
+        let Some(class) = rtti_map.get(self.class.as_str()) else {
+            panic!("No RTTI class named {}", self.class);
+        };
+
+        self.captures
+            .into_iter()
+            .map(|(name, index)| {
+                // Safety: We're not actually dereferencing the VA.
+                if let Some(va) = unsafe { class.vmt_fn(index) } {
+                    if let Ok(rva) = program.va_to_rva(va) {
+                        return MapperEntryResult { name, rva };
+                    }
+                }
+
+                MapperEntryResult::not_found(name)
+            })
+            .collect::<Vec<_>>()
+    }
 }
 
 /// Result of one of the entry items.
 #[derive(Debug, Deserialize)]
-pub struct MapperEntryResult {
+struct MapperEntryResult {
     pub name: String,
-    pub found: bool,
     pub rva: u32,
+}
+
+impl MapperEntryResult {
+    /// Returns a result indicating that the capture named [name] wasn't found.
+    fn not_found(name: impl AsRef<str>) -> Self {
+        MapperEntryResult {
+            name: name.as_ref().to_string(),
+            rva: 0x0,
+        }
+    }
 }

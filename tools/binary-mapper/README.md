@@ -31,3 +31,15 @@ For example, the mapper config below will expose only the JMP target as `CS_WORL
 pattern = "83 cb 02 89 5c 24 20 48 8d 54 24 38 e8 $ { ' }"
 captures = ["", "CS_WORLD_GEOM_MAN_BLOCK_DATA_BY_MAP_ID"]
 ```
+
+### RTTI Virtual Methods
+
+Patterns can also be located using RTTI information embedded in the executable to find the addresses of virtual methods. For example:
+
+```toml
+[[vmts]]
+class = "DLUID::MouseDevice<DLKR::DLMultiThreadingPolicy>"
+captures = { "MOUSE_DEVICE_SHOULD_BLOCK_INPUT" = 27 }
+```
+
+The `class` field is the (unmangled) RTTI name of the class whose table to check, and `captures` is a map from capture names to the 0-based index of the virtual method being captured. Note that the resulting RVA points to the function itself, *not* its entry in the VMT.

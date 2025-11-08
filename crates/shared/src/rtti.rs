@@ -10,7 +10,7 @@ const VA_SIZE: u32 = size_of::<Va>() as u32;
 
 /// Builds an iterator that walks over the entire .rdata section looking for
 /// recoverable classes.
-pub fn find_rtti_classes<'a>(program: &'a Program) -> impl Iterator<Item = Class<'a>> + 'a {
+pub fn find_rtti_classes<'a, T: Pe<'a>>(program: &'a T) -> impl Iterator<Item = Class<'a, T>> + 'a {
     let text = program
         .section_headers()
         .by_name(".text")
@@ -120,13 +120,13 @@ struct RttiCandidate {
     vftable_rva: Rva,
 }
 
-pub struct Class<'a> {
-    program: &'a Program<'a>,
+pub struct Class<'a, T: Pe<'a>> {
+    program: &'a T,
     pub name: String,
     pub vftable: Rva,
 }
 
-impl Class<'_> {
+impl<'a, T: Pe<'a>> Class<'a, T> {
     /// Retrieves the function pointer from the VMT.
     ///
     /// # Safety
