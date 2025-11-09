@@ -15,4 +15,4 @@ pub use r#static::*;
 pub use rtti::*;
 pub use task::*;
 
-pub use shared_macros::singleton;
+pub use shared_macros::*;
