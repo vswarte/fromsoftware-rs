@@ -66,7 +66,6 @@ name = "apply-speffect"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "eldenring-util",
  "fromsoftware-shared",
 ]
 
@@ -281,7 +280,6 @@ name = "debug"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "eldenring-util",
  "from-singleton",
  "fromsoftware-shared",
  "hudhook",
@@ -298,7 +296,6 @@ name = "debug-line"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "eldenring-util",
  "fromsoftware-shared",
  "nalgebra-glm",
 ]
@@ -339,19 +336,6 @@ dependencies = [
  "regex",
  "serde",
  "serde_derive",
- "thiserror",
- "tracing",
- "vtable-rs",
- "windows",
-]
-
-[[package]]
-name = "eldenring-util"
-version = "0.11.0"
-dependencies = [
- "eldenring",
- "fromsoftware-shared",
- "pelite",
  "steamworks",
  "steamworks-sys",
  "thiserror",
@@ -781,7 +765,6 @@ name = "present-action-button"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "eldenring-util",
  "fromsoftware-shared",
 ]
 
@@ -975,7 +958,6 @@ name = "spawn-asset"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "eldenring-util",
  "fromsoftware-shared",
  "nalgebra-glm",
 ]
