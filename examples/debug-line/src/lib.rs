@@ -6,7 +6,7 @@ use eldenring::{
     position::PositionDelta,
     util::system::wait_for_system_init,
 };
-use shared::{program::Program, singleton::get_instance, task::*};
+use shared::{program::Program, singleton::FromStatic, task::*};
 
 use shared::F32Vector4;
 
@@ -31,7 +31,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             .expect("Could not await system init.");
 
         // Retrieve games task runner.
-        let cs_task = get_instance::<CSTaskImp>().unwrap();
+        let cs_task = CSTaskImp::instance().unwrap();
 
         // Register a new task with the game to happen every frame during the gameloops
         // ChrIns_PostPhysics phase because all the physics calculations have ran at this
@@ -40,15 +40,13 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             // The registered task will be our closure.
             |_: &FD4TaskData| {
                 // Grab the debug ez draw from RendMan if it's available. Bail otherwise.
-                let Some(ez_draw) = get_instance::<RendMan>()
-                    .ok()
-                    .map(|r| r.debug_ez_draw.as_mut())
+                let Some(ez_draw) = RendMan::instance().ok().map(|r| r.debug_ez_draw.as_mut())
                 else {
                     return;
                 };
 
                 // Grab the main player from WorldChrMan if it's available. Bail otherwise.
-                let Some(player) = get_instance::<WorldChrMan>()
+                let Some(player) = WorldChrMan::instance()
                     .ok()
                     .and_then(|w| w.main_player.as_ref())
                 else {

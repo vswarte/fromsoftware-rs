@@ -1,4 +1,4 @@
-use ::shared::singleton;
+use ::shared::singleton::FromStatic;
 use from_singleton::FromSingleton;
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
@@ -28,8 +28,8 @@ pub trait DebugDisplay {
     fn render_debug(&self, ui: &&mut Ui);
 }
 
-pub fn render_debug_singleton<T: FromSingleton + Sized + DebugDisplay + 'static>(ui: &&mut Ui) {
-    let singleton = unsafe { singleton::get_instance::<T>() };
+pub fn render_debug_singleton<T: FromSingleton + DebugDisplay + 'static>(ui: &&mut Ui) {
+    let singleton = unsafe { T::instance() };
 
     match singleton {
         Ok(instance) => {
