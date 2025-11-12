@@ -9,7 +9,7 @@ use crate::{
     fd4::FD4Time,
     DoublyLinkedList, Vector,
 };
-use shared::{F32Vector3, F32Vector4, OwnedPtr};
+use fromsoftware_shared::{F32Vector3, F32Vector4, OwnedPtr};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
@@ -60,7 +60,7 @@ impl ProtocolState {
 }
 
 #[repr(C)]
-#[shared::singleton("CSSessionManager")]
+#[fromsoftware_shared::singleton("CSSessionManager")]
 pub struct CSSessionManager {
     vftable: usize,
     unk8: u32,

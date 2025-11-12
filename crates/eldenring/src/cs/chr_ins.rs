@@ -9,6 +9,15 @@ use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
+use crate::cs::BlockId;
+use crate::dltx::DLString;
+use crate::fd4::FD4Time;
+use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
+use crate::position::{BlockPosition, HavokPosition};
+use crate::rotation::Quaternion;
+use crate::Vector;
+use fromsoftware_shared::{Aabb, F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
+
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
 use crate::cs::gaitem::GaitemHandle;
 use crate::cs::network_session::PlayerNetworkSession;

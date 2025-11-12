@@ -13,7 +13,7 @@ use super::{BlockId, FieldInsHandle, NetChrSync, PlayerIns, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[shared::singleton("WorldSfxMan")]
+#[fromsoftware_shared::singleton("WorldSfxMan")]
 pub struct WorldSfxMan {
     vftable: usize,
     unk8: usize,

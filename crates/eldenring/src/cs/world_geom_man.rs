@@ -6,11 +6,11 @@ use windows::core::PCWSTR;
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 use crate::position::BlockPosition;
 use crate::{param::ASSET_GEOMETORY_PARAM_ST, rva, Tree, Vector};
-use shared::{program::Program, OwnedPtr};
+use fromsoftware_shared::{program::Program, OwnedPtr};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[shared::singleton("CSWorldGeomMan")]
+#[fromsoftware_shared::singleton("CSWorldGeomMan")]
 pub struct CSWorldGeomMan {
     vftable: usize,
     unk8: usize,

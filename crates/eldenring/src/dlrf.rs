@@ -1,6 +1,6 @@
 use std::ffi;
 
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 #[repr(C)]
 /// Part of the DLRF namespace, describes some aspects of a tracked class.

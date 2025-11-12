@@ -5,7 +5,7 @@ use crate::cs::task::{CSEzTask, CSEzUpdateTask};
 /// Source of name: RTTI
 ///
 /// Responsible for managing the loading screens timing and contents.
-#[shared::singleton("CSNowLoadingHelper")]
+#[fromsoftware_shared::singleton("CSNowLoadingHelper")]
 pub struct CSNowLoadingHelper {
     vftable: u64,
     rand_xorshift: u64,

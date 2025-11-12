@@ -1,7 +1,7 @@
 use std::{fmt::Display, ptr::NonNull};
 
 use crate::{dltx::DLString, CSFixedList};
-use shared::{F32Vector4, OwnedPtr};
+use fromsoftware_shared::{F32Vector4, OwnedPtr};
 
 use super::{CSMenuManImp, FieldInsHandle};
 
@@ -21,7 +21,7 @@ pub enum CSFeManHudState {
 
 #[repr(C)]
 /// Source of name: RTTI
-#[shared::singleton("CSFeMan")]
+#[fromsoftware_shared::singleton("CSFeMan")]
 pub struct CSFeManImp {
     vftable: usize,
     unk8: usize,

@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
+use fromsoftware_shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use crate::position::{HavokPosition, PositionDelta};
 
@@ -8,7 +8,7 @@ use super::ChrIns;
 
 #[repr(C)]
 /// Source of name: RTTI
-#[shared::singleton("CSCamera")]
+#[fromsoftware_shared::singleton("CSCamera")]
 pub struct CSCamera {
     vftable: usize,
     pub pers_cam_1: OwnedPtr<CSPersCam>,

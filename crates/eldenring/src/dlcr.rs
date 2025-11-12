@@ -1,6 +1,6 @@
 use std::slice::from_raw_parts;
 
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 #[repr(C)]
 pub struct DLSerialCipherKey {

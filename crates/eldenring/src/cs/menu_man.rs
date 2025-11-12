@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::{program::Program, OwnedPtr};
+use fromsoftware_shared::{program::Program, OwnedPtr};
 
 use super::{CSEzTask, CSEzUpdateTask, ItemId};
 use crate::rva;
@@ -40,7 +40,7 @@ pub const STATUS_MESSAGE_HEART_STOLEN: i32 = 40;
 pub const STATUS_MESSAGE_MENU_TEXT: i32 = 41;
 
 #[repr(C)]
-#[shared::singleton("CSMenuMan")]
+#[fromsoftware_shared::singleton("CSMenuMan")]
 pub struct CSMenuManImp {
     vftable: usize,
     menu_data: usize,

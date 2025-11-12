@@ -5,7 +5,7 @@ use crate::{
     position::{BlockPosition, HavokPosition},
     Tree,
 };
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 use super::BlockId;
 

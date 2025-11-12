@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::dlkr::DLAllocatorBase;
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 #[repr(C)]
 pub struct DoublyLinkedListNode<T> {

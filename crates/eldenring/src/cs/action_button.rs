@@ -5,7 +5,7 @@ use crate::dlkr::DLPlainLightMutex;
 use crate::rva;
 
 #[repr(C)]
-#[shared::singleton("CSActionButtonMan")]
+#[fromsoftware_shared::singleton("CSActionButtonMan")]
 pub struct CSActionButtonManImp {
     vftable: usize,
     unk8: [u8; 0x88],

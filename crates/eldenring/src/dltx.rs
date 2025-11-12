@@ -16,7 +16,7 @@ use cxx_stl::string::{
     CxxNarrowString, CxxUtf16String, CxxUtf32String, CxxUtf8String, CxxWideString,
 };
 
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]

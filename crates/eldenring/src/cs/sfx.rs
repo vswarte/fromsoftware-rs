@@ -1,10 +1,10 @@
 use crate::gxffx::GXFfxSceneCtrl;
 use crate::{Tree, Vector};
-use shared::{F32Matrix4x4, OwnedPtr};
+use fromsoftware_shared::{F32Matrix4x4, OwnedPtr};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[shared::singleton("CSSfx")]
+#[fromsoftware_shared::singleton("CSSfx")]
 pub struct CSSfxImp {
     vftable: usize,
     unk8: usize,

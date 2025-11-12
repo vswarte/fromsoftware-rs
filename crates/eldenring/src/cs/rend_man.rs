@@ -2,15 +2,15 @@ use std::ptr::NonNull;
 
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::program::Program;
-use shared::{F32Vector4, OwnedPtr, Triangle};
+use fromsoftware_shared::program::Program;
+use fromsoftware_shared::{F32Vector4, OwnedPtr, Triangle};
 
 use crate::dlkr::{DLAllocatorBase, DLPlainLightMutex};
 use crate::position::{HavokPosition, PositionDelta};
 use crate::rva;
 
 #[repr(C)]
-#[shared::singleton("RendMan")]
+#[fromsoftware_shared::singleton("RendMan")]
 pub struct RendMan {
     vftable: usize,
     allocator: usize,

@@ -2,7 +2,7 @@ use crate::{
     cs::{ChrType, PlayerGameData},
     fd4::FD4Time,
 };
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 use std::ptr::NonNull;
 
 #[repr(u8)]
