@@ -1,9 +1,9 @@
 use std::ptr::NonNull;
 
 use bitfield::bitfield;
-use pelite::pe64::Pe;
 use fromsoftware_shared::program::Program;
 use fromsoftware_shared::{F32Vector4, OwnedPtr, Triangle};
+use pelite::pe64::Pe;
 
 use crate::dlkr::{DLAllocatorBase, DLPlainLightMutex};
 use crate::position::{HavokPosition, PositionDelta};

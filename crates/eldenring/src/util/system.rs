@@ -4,8 +4,8 @@
 use std::sync::atomic::{AtomicPtr, Ordering};
 use std::time::{Duration, Instant};
 
-use pelite::pe64::Pe;
 use fromsoftware_shared::Program;
+use pelite::pe64::Pe;
 use thiserror::Error;
 
 use crate::rva;

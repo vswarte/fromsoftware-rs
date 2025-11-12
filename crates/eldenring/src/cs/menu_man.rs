@@ -1,8 +1,8 @@
 use std::ptr::NonNull;
 
 use bitfield::bitfield;
-use pelite::pe64::Pe;
 use fromsoftware_shared::{program::Program, OwnedPtr};
+use pelite::pe64::Pe;
 
 use super::{CSEzTask, CSEzUpdateTask, ItemId};
 use crate::rva;

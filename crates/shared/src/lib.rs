@@ -16,4 +16,4 @@ pub use task::*;
 
 pub use fromsoftware_shared_macros::singleton;
 
-extern crate self as fromsoftware_shared; 
+extern crate self as fromsoftware_shared;
