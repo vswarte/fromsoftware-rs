@@ -1,5 +1,5 @@
 use pelite::pe64::Pe;
-use shared::program::Program;
+use fromsoftware_shared::program::Program;
 
 use crate::dlkr::DLPlainLightMutex;
 use crate::rva;

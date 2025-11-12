@@ -9,9 +9,7 @@ use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
-use crate::cs::BlockId;
 use crate::dltx::DLString;
-use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
 use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
@@ -28,15 +26,9 @@ use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
 use crate::cs::world_geom_man::{CSMsbParts, CSMsbPartsEne};
 use crate::cs::{BlockId, CSPlayerMenuCtrl, ItemId};
-use crate::dltx::DLString;
 use crate::fd4::FD4Time;
-use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
-use crate::position::{BlockPosition, HavokPosition};
-use crate::rotation::Quaternion;
 use crate::rva;
-use crate::Vector;
-use shared::program::Program;
-use shared::{Aabb, F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
+use fromsoftware_shared::program::Program;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
