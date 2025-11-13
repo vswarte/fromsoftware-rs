@@ -71,7 +71,9 @@ fn main() {
 /// Profile describing what offsets to extract from a game binary.
 #[derive(Debug, Deserialize)]
 struct MapperProfile {
+    #[serde(default)]
     pub patterns: Vec<MapperProfilePattern>,
+    #[serde(default)]
     pub vmts: Vec<MapperProfileVmt>,
 }
 
