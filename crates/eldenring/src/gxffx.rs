@@ -1,7 +1,7 @@
 use std::ptr::NonNull;
 
 use crate::DoublyLinkedList;
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 #[repr(C)]
 pub struct FxrWrapper {

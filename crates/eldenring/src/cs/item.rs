@@ -1,4 +1,4 @@
-#[fromsoftware_shared::singleton("MapItemMan")]
+#[shared::singleton("MapItemMan")]
 pub struct MapItemMan {
     // TODO: actual data
 }

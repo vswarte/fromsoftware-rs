@@ -4,7 +4,7 @@ use std::ptr::NonNull;
 use thiserror::Error;
 
 use crate::Vector;
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};
 

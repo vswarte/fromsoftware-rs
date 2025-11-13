@@ -18,7 +18,7 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
     TokenStream::from(quote! {
         #input_struct
 
-        impl fromsoftware_shared::FromSingleton for #input_struct_ident {
+        impl ::from_singleton::FromSingleton for #input_struct_ident {
             fn name() -> ::std::borrow::Cow<'static, str> {
                 ::std::borrow::Cow::Borrowed(#dlrf_name)
             }

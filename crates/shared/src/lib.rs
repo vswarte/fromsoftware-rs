@@ -14,6 +14,4 @@ pub use rtti::*;
 pub use singleton::*;
 pub use task::*;
 
-pub use fromsoftware_shared_macros::singleton;
-
-extern crate self as fromsoftware_shared;
+pub use shared_macros::singleton;

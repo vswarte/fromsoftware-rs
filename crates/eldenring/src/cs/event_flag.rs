@@ -1,7 +1,7 @@
 use std::mem::ManuallyDrop;
 
 use crate::Tree;
-use fromsoftware_shared::{F32Vector4, OwnedPtr};
+use shared::{F32Vector4, OwnedPtr};
 
 pub struct EventFlag(u32);
 
@@ -29,7 +29,7 @@ impl EventFlag {
 /// Manages the event flags for the game.
 ///
 /// Source of name: DLRF RuntimeClass metadata
-#[fromsoftware_shared::singleton("CSEventFlagMan")]
+#[shared::singleton("CSEventFlagMan")]
 pub struct CSEventFlagMan {
     pub virtual_memory_flag: CSFD4VirtualMemoryFlag,
     pub world_type: u32,

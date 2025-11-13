@@ -1,12 +1,12 @@
 use std::ptr::NonNull;
 
-use fromsoftware_shared::{get_instance, OwnedPtr};
+use shared::{get_instance, OwnedPtr};
 
 use crate::cs::WorldAreaTime;
 
 use super::CSSosSignMan;
 
-#[fromsoftware_shared::singleton("CSEventMan")]
+#[shared::singleton("CSEventMan")]
 #[repr(C)]
 pub struct CSEventManImp {
     vftable: usize,

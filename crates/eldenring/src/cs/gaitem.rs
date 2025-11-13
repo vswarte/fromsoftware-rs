@@ -3,10 +3,10 @@ use std::{fmt::Display, mem::transmute};
 use thiserror::Error;
 
 use crate::cs::ItemId;
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 #[repr(C)]
-#[fromsoftware_shared::singleton("CSGaitem")]
+#[shared::singleton("CSGaitem")]
 pub struct CSGaitemImp {
     vftable: usize,
     pub gaitems: [Option<OwnedPtr<CSGaitemIns>>; 5120],

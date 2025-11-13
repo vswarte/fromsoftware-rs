@@ -13,7 +13,7 @@ use crate::{
     dlut::DLDateTime,
     Vector,
 };
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 use super::{DLFileSeekDirection, OpenFileMode};
 

@@ -1,4 +1,4 @@
-pub use from_singleton::*;
+use from_singleton::*;
 
 /// Looks up instances of singleton instances by their name.
 /// Some singletons aren't necessarily always instanciated and available.
