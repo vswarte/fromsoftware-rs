@@ -2,7 +2,7 @@ use crate::fd4::{FD4FileCap, FD4ResCap, FD4ResRep};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[shared::singleton("MsbRepository")]
+#[fromsoftware_shared::singleton("MsbRepository")]
 pub struct MsbRepository {
     pub res_rep: FD4ResRep<MsbFileCap>,
 }

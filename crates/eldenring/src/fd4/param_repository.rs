@@ -3,13 +3,13 @@ use std::ptr::NonNull;
 use windows::core::PCSTR;
 
 use crate::param::ParamDef;
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 use super::resource::FD4ResCap;
 use super::FD4ResRep;
 
 #[repr(C)]
-#[shared::singleton("FD4ParamRepository")]
+#[fromsoftware_shared::singleton("FD4ParamRepository")]
 pub struct FD4ParamRepository {
     /// Resource repository holding the actual param data.
     pub res_rep: FD4ResRep<FD4ParamResCap>,

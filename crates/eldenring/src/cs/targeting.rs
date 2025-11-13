@@ -3,7 +3,7 @@ use vtable_rs::VPtr;
 
 use crate::position::HavokPosition;
 use crate::rotation::Quaternion;
-use shared::F32Vector4;
+use fromsoftware_shared::F32Vector4;
 
 use super::{CSBulletIns, ChrIns, FieldInsHandle, SpecialEffect};
 

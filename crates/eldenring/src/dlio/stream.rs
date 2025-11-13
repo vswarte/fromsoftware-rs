@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
 use crate::dlkr::DLAllocatorBase;
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 use super::{DLFileOperatorContainer, DLFileSeekDirection, DLIOResult};
 

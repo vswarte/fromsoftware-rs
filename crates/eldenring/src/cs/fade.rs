@@ -1,11 +1,11 @@
 use crate::fd4::FD4Time;
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 #[repr(C)]
 /// Controls fades in the game. Used for cutscene transitions and such.
 ///
 /// Source of name: RTTI
-#[shared::singleton("CSFade")]
+#[fromsoftware_shared::singleton("CSFade")]
 pub struct CSFade {
     vftable: usize,
     pub fade_system: OwnedPtr<CSFD4FadeSystem>,

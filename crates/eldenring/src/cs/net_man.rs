@@ -7,12 +7,12 @@ use crate::{
     fd4::{FD4StepBaseInterface, FD4Time},
     stl::DoublyLinkedList,
 };
-use shared::OwnedPtr;
+use fromsoftware_shared::OwnedPtr;
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask, PlayerIns};
 
 #[repr(C)]
-#[shared::singleton("CSNetMan")]
+#[fromsoftware_shared::singleton("CSNetMan")]
 pub struct CSNetMan {
     vftable: usize,
     unk8: u32,

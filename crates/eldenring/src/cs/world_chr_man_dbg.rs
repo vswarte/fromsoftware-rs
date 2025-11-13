@@ -4,7 +4,7 @@ use std::ptr::NonNull;
 use super::PlayerSessionHolder;
 
 #[repr(C)]
-#[shared::singleton("WorldChrManDbg")]
+#[fromsoftware_shared::singleton("WorldChrManDbg")]
 pub struct WorldChrManDbg {
     vftable: usize,
     unk8: u8,

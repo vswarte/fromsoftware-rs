@@ -1,14 +1,14 @@
 use pelite::pe64::Pe;
 use std::ptr::NonNull;
 
-use shared::program::Program;
-use shared::{F32Vector4, OwnedPtr};
+use fromsoftware_shared::program::Program;
+use fromsoftware_shared::{F32Vector4, OwnedPtr};
 
 use super::{CSBulletIns, ChrCam, FieldInsHandle};
 use crate::rva;
 
 #[repr(C)]
-#[shared::singleton("CSBulletManager")]
+#[fromsoftware_shared::singleton("CSBulletManager")]
 /// Manages bullets...
 ///
 /// Source of name: DLRF RuntimeClass metadata

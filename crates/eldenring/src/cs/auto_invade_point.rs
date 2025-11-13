@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
+use fromsoftware_shared::{F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
 
 use crate::{cs::BlockId, Tree};
 
@@ -28,7 +28,7 @@ impl AutoInvadePointBlockEntry {
 /// Holds the list of automatically generated (by fromsoftware)
 /// invasion points, when current region param has isAutoIntrudePoint set to true, game will use one of these
 /// instead of looking for the point on msb
-#[shared::singleton("CSAutoInvadePoint")]
+#[fromsoftware_shared::singleton("CSAutoInvadePoint")]
 pub struct CSAutoInvadePoint {
     pub entries: Tree<AutoInvadePointBlockEntry>,
     unk18: [u8; 0x28],
