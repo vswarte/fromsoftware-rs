@@ -191,6 +191,10 @@ impl EzStateExpression {
         self.0.as_slice()
     }
 
+    /// # Safety
+    ///
+    /// Caller must ensure that v argument is pointing to a valid EzState expression and that the
+    /// length is exactly the length of the expression in bytes.
     pub unsafe fn from_raw_parts(v: *const u8, length: usize) -> Self {
         Self(DynamicSizeSpan::from_raw_parts(v, length))
     }
