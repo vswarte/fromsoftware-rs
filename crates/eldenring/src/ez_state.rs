@@ -1,4 +1,8 @@
+use std::ptr::NonNull;
+
 use vtable_rs::{vtable, VPtr};
+
+use crate::DynamicSizeSpan;
 
 #[vtable]
 pub trait EzStateEventVmt {
@@ -118,5 +122,86 @@ impl From<EzStateExternalFuncArgSafe> for EzStateExternalFuncArg {
                 value_type: 3,
             },
         }
+    }
+}
+
+/// Source of name: RTTI
+#[repr(C)]
+pub struct EzStateMachineImpl {
+    vfptr: usize,
+    unk8: [u8; 0x18],
+    pub current_state: NonNull<EzStateMachineState>,
+    pub state_group: NonNull<EzStateMachineStateGroup>,
+}
+
+#[repr(C)]
+pub struct EzStateMachineStateGroup {
+    pub id: i32,
+    pub states: DynamicSizeSpan<EzStateMachineState>,
+    pub initial_state: NonNull<EzStateMachineState>,
+}
+
+#[repr(C)]
+pub struct EzStateMachineState {
+    pub id: i32,
+    /// Possible transitions from this state into others.
+    pub transitions: DynamicSizeSpan<NonNull<EzStateMachineTransition>>,
+    /// Events to run while entering this state.
+    pub entry_events: DynamicSizeSpan<EzStateEvent>,
+    /// Events to run while exiting this state.
+    pub exit_events: DynamicSizeSpan<EzStateEvent>,
+    /// Events to run while being in this state.
+    pub while_events: DynamicSizeSpan<EzStateEvent>,
+}
+
+#[repr(C)]
+pub struct EzStateMachineTransition {
+    /// Target state to transition into
+    pub target_state: Option<NonNull<EzStateMachineState>>,
+    /// Events to run while passing through this transition
+    pub pass_events: DynamicSizeSpan<EzStateEvent>,
+    pub sub_transitions: DynamicSizeSpan<NonNull<EzStateMachineTransition>>,
+    /// Check that runs to check if we should be applying this transition.
+    pub evaluator: EzStateExpression,
+}
+
+#[repr(C)]
+#[derive(PartialEq)]
+pub struct EzStateMachineEventCommand {
+    pub bank: i32,
+    pub id: i32,
+}
+
+#[repr(C)]
+pub struct EzStateMachineEvent {
+    pub command: EzStateMachineEventCommand,
+    pub arguments: DynamicSizeSpan<EzStateExpression>,
+}
+
+#[repr(C)]
+#[derive(PartialEq, Debug)]
+pub struct EzStateExpression(pub DynamicSizeSpan<u8>);
+
+impl EzStateExpression {
+    pub const fn from_static_slice(v: &'static [u8]) -> Self {
+        Self(DynamicSizeSpan::from_static_slice(v))
+    }
+
+    pub fn as_slice(&self) -> &[u8] {
+        self.0.as_slice()
+    }
+
+    pub unsafe fn from_raw_parts(v: *const u8, length: usize) -> Self {
+        Self(DynamicSizeSpan::from_raw_parts(v, length))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_size_of() {
+        assert_eq!(std::mem::size_of::<EzStateMachineImpl>(), 0x140);
     }
 }
