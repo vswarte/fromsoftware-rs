@@ -5,7 +5,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
-use shared::{program::Program, singleton::FromStatic, task::*};
+use shared::{program::Program, task::*, FromStatic};
 
 #[unsafe(no_mangle)]
 /// # Safety

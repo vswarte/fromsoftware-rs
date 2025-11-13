@@ -1,6 +1,6 @@
 use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
-use shared::singleton::FromStatic;
+use shared::FromStatic;
 
 use super::DebugDisplay;
 

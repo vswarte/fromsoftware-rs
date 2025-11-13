@@ -6,7 +6,7 @@ use eldenring::{
     position::PositionDelta,
     util::system::wait_for_system_init,
 };
-use shared::{program::Program, singleton::FromStatic, task::*};
+use shared::{program::Program, task::*, FromStatic};
 
 use shared::F32Vector4;
 

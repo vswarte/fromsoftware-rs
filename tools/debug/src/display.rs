@@ -1,4 +1,4 @@
-use ::shared::singleton::FromStatic;
+use ::shared::FromStatic;
 use from_singleton::FromSingleton;
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
