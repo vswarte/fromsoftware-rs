@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 use super::{ChrIns, ChrSet};
 

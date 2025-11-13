@@ -9,13 +9,13 @@ use vtable_rs::VPtr;
 use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::Tree;
 use crate::{cs::ChrIns, Vector};
-use fromsoftware_shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
+use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
 #[repr(C)]
 /// Source of name: RTTI
-#[fromsoftware_shared::singleton("WorldChrMan")]
+#[shared::singleton("WorldChrMan")]
 pub struct WorldChrMan {
     vftable: usize,
     unk8: usize,

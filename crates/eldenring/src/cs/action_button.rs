@@ -1,11 +1,11 @@
-use fromsoftware_shared::program::Program;
 use pelite::pe64::Pe;
+use shared::program::Program;
 
 use crate::dlkr::DLPlainLightMutex;
 use crate::rva;
 
 #[repr(C)]
-#[fromsoftware_shared::singleton("CSActionButtonMan")]
+#[shared::singleton("CSActionButtonMan")]
 pub struct CSActionButtonManImp {
     vftable: usize,
     unk8: [u8; 0x88],

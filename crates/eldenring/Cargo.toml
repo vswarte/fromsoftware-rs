@@ -11,7 +11,7 @@ description = "Structures, bindings, and utilities for From Software's title Eld
 unused = "allow"
 
 [dependencies]
-fromsoftware-shared.workspace = true
+shared.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
 nalgebra-glm.workspace = true

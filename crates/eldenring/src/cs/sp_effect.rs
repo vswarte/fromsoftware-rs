@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 use crate::param::SP_EFFECT_PARAM_ST;
 

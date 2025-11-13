@@ -1,7 +1,6 @@
 use std::{collections::HashMap, fs::File, path::PathBuf};
 
 use clap::{Parser, ValueEnum};
-use fromsoftware_shared::{find_rtti_classes, Class};
 use memmap::MmapOptions;
 use pelite::{
     pattern,
@@ -9,6 +8,7 @@ use pelite::{
 };
 use rayon::prelude::*;
 use serde::Deserialize;
+use shared::{find_rtti_classes, Class};
 
 #[derive(ValueEnum, Clone)]
 enum OutputFormat {

@@ -5,10 +5,10 @@ use crate::{
     position::{HavokPosition, PositionDelta},
     rva,
 };
-use fromsoftware_shared::{program::Program, OwnedPtr};
+use shared::{program::Program, OwnedPtr};
 
 // Source of name: RTTI
-#[fromsoftware_shared::singleton("CSHavokMan")]
+#[shared::singleton("CSHavokMan")]
 #[repr(C)]
 pub struct CSHavokMan {
     vftable: usize,

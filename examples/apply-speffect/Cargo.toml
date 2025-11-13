@@ -6,7 +6,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-fromsoftware-shared.workspace = true
+shared.workspace = true
 eldenring.workspace = true
 
 [lib]

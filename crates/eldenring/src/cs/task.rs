@@ -12,7 +12,7 @@ use crate::{
     fd4::{FD4BasicHashString, FD4Time},
     rva, Tree, Vector,
 };
-use fromsoftware_shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
+use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
 
 #[vtable_rs::vtable]
 pub trait CSEzTaskVmt: FD4TaskBaseVmt {
@@ -88,7 +88,7 @@ pub struct CSEzTaskProxy {
 }
 
 #[repr(C)]
-#[fromsoftware_shared::singleton("CSTaskGroup")]
+#[shared::singleton("CSTaskGroup")]
 pub struct CSTaskGroup {
     vftable: usize,
     pub task_groups: [OwnedPtr<CSTimeLineTaskGroupIns>; 168],
@@ -109,7 +109,7 @@ pub struct CSTimeLineTaskGroupIns {
 }
 
 #[repr(C)]
-#[fromsoftware_shared::singleton("CSTask")]
+#[shared::singleton("CSTask")]
 pub struct CSTaskImp {
     vftable: usize,
     pub inner: OwnedPtr<CSTask>,

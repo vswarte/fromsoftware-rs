@@ -6,7 +6,9 @@ use eldenring::{
     position::PositionDelta,
     util::system::wait_for_system_init,
 };
-use fromsoftware_shared::{program::Program, singleton::get_instance, task::*, F32Vector4};
+use shared::{program::Program, singleton::get_instance, task::*};
+
+use shared::F32Vector4;
 
 use nalgebra_glm as glm;
 

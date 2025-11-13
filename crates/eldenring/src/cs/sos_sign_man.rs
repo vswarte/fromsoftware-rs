@@ -6,9 +6,9 @@ use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::{stl::DoublyLinkedList, Tree, Vector};
 
-use fromsoftware_shared::F32Vector3;
+use shared::F32Vector3;
 
-use fromsoftware_shared::OwnedPtr;
+use shared::OwnedPtr;
 
 #[repr(C)]
 /// Source of name: RTTI
