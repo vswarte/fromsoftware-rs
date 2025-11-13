@@ -8,7 +8,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::system::wait_for_system_init,
 };
-use shared::{program::Program, singleton::get_instance, task::*};
+use shared::{program::Program, task::*, FromStatic};
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
@@ -27,24 +27,26 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             .expect("Could not await system init.");
 
         let mut last_pressed = Instant::now();
-        let cs_task = get_instance::<CSTaskImp>().unwrap();
+        let cs_task = CSTaskImp::instance().unwrap();
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
                 if Instant::now() - last_pressed < DEBOUNCE_DELAY {
                     return;
                 }
 
-                let Some(action_button_man) = get_instance::<CSActionButtonManImp>() else {
+                let Ok(action_button_man) = CSActionButtonManImp::instance() else {
                     return;
                 };
 
-                let Some(player) =
-                    get_instance::<WorldChrMan>().and_then(|w| w.main_player.as_ref())
+                let Some(player) = WorldChrMan::instance()
+                    .ok()
+                    .and_then(|w| w.main_player.as_ref())
                 else {
                     return;
                 };
 
-                let Some(block_geom_data) = unsafe { get_instance::<CSWorldGeomMan>() }
+                let Some(block_geom_data) = unsafe { CSWorldGeomMan::instance() }
+                    .ok()
                     .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id_1))
                 else {
                     return;

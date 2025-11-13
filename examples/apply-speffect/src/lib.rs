@@ -5,7 +5,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
-use shared::{program::Program, singleton::get_instance, task::*};
+use shared::{program::Program, task::*, FromStatic};
 
 const SP_EFFECT: i32 = 4330;
 
@@ -23,11 +23,11 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
             .expect("Timeout waiting for system init");
 
         // Retrieve games task runner and register a task at frame begin.
-        let cs_task = get_instance::<CSTaskImp>().unwrap();
+        let cs_task = CSTaskImp::instance().unwrap();
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 // Retrieve WorldChrMan
-                let Some(world_chr_man) = (unsafe { get_instance::<WorldChrMan>() }) else {
+                let Ok(world_chr_man) = (unsafe { WorldChrMan::instance() }) else {
                     return;
                 };
 

@@ -1,6 +1,6 @@
 use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
-use shared::singleton::get_instance;
+use shared::FromStatic;
 
 use super::DebugDisplay;
 
@@ -65,7 +65,7 @@ impl DebugDisplay for CSFD4VirtualMemoryFlag {
             ui.unindent();
         }
 
-        let virtual_memory_flag = &mut unsafe { get_instance::<CSEventFlagMan>() }
+        let virtual_memory_flag = &mut unsafe { CSEventFlagMan::instance() }
             .unwrap()
             .virtual_memory_flag;
 

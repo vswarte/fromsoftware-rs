@@ -5,7 +5,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
-use shared::{program::Program, singleton::get_instance, task::*};
+use shared::{program::Program, task::*, FromStatic};
 
 #[unsafe(no_mangle)]
 /// # Safety
@@ -21,20 +21,22 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
         wait_for_system_init(&Program::current(), Duration::MAX)
             .expect("Could not await system init.");
 
-        let cs_task = get_instance::<CSTaskImp>().unwrap();
+        let cs_task = CSTaskImp::instance().unwrap();
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 if !input::is_key_pressed(0x48) {
                     return;
                 }
 
-                let Some(player) =
-                    get_instance::<WorldChrMan>().and_then(|w| w.main_player.as_ref())
+                let Some(player) = WorldChrMan::instance()
+                    .ok()
+                    .and_then(|w| w.main_player.as_ref())
                 else {
                     return;
                 };
 
-                let Some(block_geom_data) = unsafe { get_instance::<CSWorldGeomMan>() }
+                let Some(block_geom_data) = unsafe { CSWorldGeomMan::instance() }
+                    .ok()
                     .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id_1))
                 else {
                     return;

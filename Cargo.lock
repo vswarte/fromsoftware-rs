@@ -380,6 +380,7 @@ dependencies = [
  "nalgebra",
  "nalgebra-glm",
  "pelite",
+ "thiserror",
  "undname",
  "vtable-rs",
  "windows",

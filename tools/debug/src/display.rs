@@ -1,4 +1,4 @@
-use ::shared::singleton;
+use ::shared::FromStatic;
 use from_singleton::FromSingleton;
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
@@ -28,11 +28,11 @@ pub trait DebugDisplay {
     fn render_debug(&self, ui: &&mut Ui);
 }
 
-pub fn render_debug_singleton<T: FromSingleton + Sized + DebugDisplay + 'static>(ui: &&mut Ui) {
-    let singleton = unsafe { singleton::get_instance::<T>() };
+pub fn render_debug_singleton<T: FromSingleton + DebugDisplay + 'static>(ui: &&mut Ui) {
+    let singleton = unsafe { T::instance() };
 
     match singleton {
-        Some(instance) => {
+        Ok(instance) => {
             if ui.collapsing_header(T::name(), TreeNodeFlags::empty()) {
                 ui.indent();
                 let pointer = instance as *const T;
@@ -47,6 +47,6 @@ pub fn render_debug_singleton<T: FromSingleton + Sized + DebugDisplay + 'static>
                 ui.separator();
             }
         }
-        None => ui.text(format!("No instance of {} found", T::name())),
+        Err(err) => ui.text(format!("Couldn't load {}: {:?}", T::name(), err)),
     }
 }
