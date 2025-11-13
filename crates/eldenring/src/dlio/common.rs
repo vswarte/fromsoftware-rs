@@ -31,7 +31,7 @@ pub enum DLIOResult {
 
 impl DLIOResult {
     /// Converts this into an equivalent [io::Result].
-    pub fn as_io_result(&self) -> io::Result<()> {
+    pub fn to_io_result(&self) -> io::Result<()> {
         use io::ErrorKind::*;
         let kind = match self {
             DLIOResult::DirNotEmpty => DirectoryNotEmpty,
