@@ -3,9 +3,6 @@ use std::ops::{Deref, DerefMut};
 use bitfield::bitfield;
 use vtable_rs::VPtr;
 
-use windows::Win32::Foundation::{FILETIME, SYSTEMTIME};
-use windows::Win32::System::Time::FileTimeToSystemTime;
-
 #[vtable_rs::vtable]
 pub trait DLReferenceCountObjectVmt {
     /// Ran when the ref count hits 0?
@@ -45,8 +42,9 @@ bitfield! {
 /// Source of name: dantelion2 leak
 /// https://archive.org/details/dantelion2
 pub struct DLDateTime {
-    /// Set to FILETIME on creation.
-    pub time64: FILETIME,
+    /// Uses FILETIME on windows
+    /// (100-nanosecond intervals since January 1, 1601 UTC)
+    pub time64: u64,
     /// Packed datetime value.
     pub date: PackedDate,
 }
@@ -73,21 +71,10 @@ impl DLDateTime {
         date.set_millisecond(milliseconds);
         date.set_is_utc(is_utc);
 
-        let mut system_time = SYSTEMTIME {
-            wYear: year,
-            wMonth: month as u16,
-            wDayOfWeek: 0,
-            wDay: day as u16,
-            wHour: hours as u16,
-            wMinute: minutes as u16,
-            wSecond: seconds as u16,
-            wMilliseconds: milliseconds,
-        };
+        let time64 =
+            Self::calculate_time64(year, month, day, hours, minutes, seconds, milliseconds);
 
-        Self {
-            time64: FILETIME::default(),
-            date,
-        }
+        Self { time64, date }
     }
 
     pub fn year(&self) -> u16 {
@@ -116,5 +103,44 @@ impl DLDateTime {
 
     pub fn is_utc(&self) -> bool {
         self.date.is_utc()
+    }
+
+    const fn calculate_time64(
+        year: u16,
+        month: u8,
+        day: u8,
+        hours: u8,
+        minutes: u8,
+        seconds: u8,
+        milliseconds: u16,
+    ) -> u64 {
+        const fn is_leap_year(year: u16) -> bool {
+            (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
+        }
+        const fn days_since_1601(year: u16, month: u8, day: u8) -> i64 {
+            const DAYS_BEFORE_MONTH: [i64; 13] =
+                [0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            let mut days = (year as i64 - 1601) * 365;
+            days +=
+                (year as i64 - 1601) / 4 - (year as i64 - 1601) / 100 + (year as i64 - 1601) / 400;
+            days += DAYS_BEFORE_MONTH[month as usize];
+            days += day as i64 - 1;
+            if is_leap_year(year) && month > 2 {
+                days += 1;
+            }
+            days
+        }
+
+        // Convert to FILETIME format (100-nanosecond intervals since January 1, 1601)
+        const INTERVALS_PER_SECOND: u64 = 10_000_000;
+        const INTERVALS_PER_MILLISECOND: u64 = 10_000;
+
+        let days_since_1601 = days_since_1601(year, month, day);
+        let total_seconds = (days_since_1601 as u64 * 86400)
+            + (hours as u64 * 3600)
+            + (minutes as u64 * 60)
+            + (seconds as u64);
+
+        total_seconds * INTERVALS_PER_SECOND + (milliseconds as u64 * INTERVALS_PER_MILLISECOND)
     }
 }
