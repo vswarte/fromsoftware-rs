@@ -267,6 +267,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "darksouls3"
+version = "0.11.0"
+dependencies = [
+ "bitfield",
+ "cxx-stl",
+ "encoding_rs",
+ "from-singleton",
+ "fromsoftware-shared",
+ "nalgebra",
+ "nalgebra-glm",
+ "pelite",
+ "regex",
+ "serde",
+ "serde_derive",
+ "thiserror",
+ "tracing",
+ "vtable-rs",
+ "windows",
+]
+
+[[package]]
 name = "dataview"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
