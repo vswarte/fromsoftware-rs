@@ -90,8 +90,8 @@ mod test {
     #[test]
     fn write_and_read_large_bytes() {
         let mut data = [0; 0x5000];
-        for i in 0..0x5000 {
-            data[i] = (i % 255).try_into().unwrap();
+        for (i, byte) in data.iter_mut().enumerate() {
+            *byte = (i % 255).try_into().unwrap();
         }
 
         let mut writer = Vec::new();
