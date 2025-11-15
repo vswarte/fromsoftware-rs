@@ -4,6 +4,7 @@ members = [
     "crates/shared",
     "crates/darksouls3",
     "crates/eldenring",
+    "crates/darksouls3",
     "crates/nightreign",
     "tools/debug",
     "tools/binary-mapper",
