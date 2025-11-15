@@ -9,13 +9,13 @@
     <Field Def="s32 sortId = 950000" />
     <Field Def="s32 wanderingEquipId = 171000" />
     <Field Def="s32 vagrantItemLotId = -1" />
-    <Field Def="s32 vagrantBonuseneDropItemLotId = -1" />
+    <Field Def="s32 vagrantBonusEneDropItemLotId = -1" />
     <Field Def="s32 vagrantItemEneDropItemLotId = -1" />
     <Field Def="s32 fixPrice" />
     <Field Def="s32 basicPrice = 200" />
     <Field Def="s32 sellValue = 100" />
     <Field Def="f32 weight" />
-    <Field Def="s32 residentSpEffectId" />
+    <Field Def="s32 residentSpEffectId1" />
     <Field Def="s32 residentSpEffectId2" />
     <Field Def="s32 residentSpEffectId3 = -1" />
     <Field Def="s32 materialSetId = 7000" />

@@ -1,8 +1,14 @@
+use std::iter::{IntoIterator, Iterator};
+
 use proc_macro::TokenStream;
+use proc_macro2::Span;
 use quote::*;
 use syn::*;
-
-mod multi_param;
+use syn::{
+    parse::{ParseBuffer, Parser},
+    punctuated::Punctuated,
+    spanned::Spanned,
+};
 
 /// Annotates a struct as a Dantelion2 singleton to be looked up using a single
 /// string argument.
@@ -26,23 +32,4 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
             }
         }
     })
-}
-
-/// Annotates a trait to automatically generate getters and setters that forward
-/// to methods of the same name in various structs.
-///
-/// This is used to create traits that encapsulate state that's shared across
-/// multiple parameter definitions.
-///
-/// This trait takes as arguments the names of various structs for which it
-/// should automatically generate an implementation. It should annotate a trait
-/// that contains a `fields!` macro, using the same named field syntax that a
-/// struct uses. For each field, a getter and setter is generated both in the
-/// trait and in its implementation for each struct.
-#[proc_macro_attribute]
-pub fn multi_param(args: TokenStream, input: TokenStream) -> TokenStream {
-    match multi_param::multi_param_helper(args, input) {
-        Ok(stream) => stream,
-        Err(err) => err.into_compile_error().into(),
-    }
 }

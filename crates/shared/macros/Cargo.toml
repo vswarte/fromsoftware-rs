@@ -11,5 +11,6 @@ description = "Macro helpers for dealing with pointers and other common stuff ac
 proc-macro = true
 
 [dependencies]
+proc-macro2 = "1.0.103"
 quote = "1"
 syn = { version= "2", features = ["full"] }
