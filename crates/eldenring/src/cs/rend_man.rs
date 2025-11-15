@@ -281,6 +281,7 @@ pub enum EzDrawFillMode {
 }
 
 #[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EzDrawTextCoordMode {
     /// Coordinates are in screen space
     /// will be scaled by text_pos_width_scale and text_pos_height_scale
