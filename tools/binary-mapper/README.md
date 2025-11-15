@@ -2,12 +2,29 @@
 
 Tool to retrieve RVAs for functions and structures from the games binary.
 
-To rebuild the `crates/game`'s rva.rs, invoke the following from the repo's root (make sure to replace`<game exe path>` with the appropriate path to your games exe):
-`$ cargo run --bin binary-mapper -- --profile crates/util/mapper-profile.toml --exe <game exe path> --output rust > crates/util/src/rva.rs`
+In most cases, you can run the shortcut mode for whichever game needs its RVAs updated. For Elden Ring:
+
+```
+$ cargo run --bin binary-mapper -- er --ww-exe "<game exe path>" --jp-exe "<game exe path>"
+```
 
 For steam on linux `<game exe path>` will probably be `~/.steam/steam/steamapps/common/ELDEN\ RING/Game/eldenring.exe`.
 
-You can also pass `print` to the `--output` option to print the results to the CLI, this is useful when verifying if you it found the right RVA.
+You can also set environment variables for the executable paths rather than passing them by flag every time. These take the form `MAPPER_{GAME}_{REGION}_EXE`. For example, instead of `er --ww-exe`, you can set `MAPPER_ER_WW_EXE`.
+
+## Manual Mapping and Debugging
+
+You can also print individual files directly to standard output. This can be useful for debugging, or for generating custom RVAs for one particular mod. To do this, use the `map` command:
+
+```
+$ cargo run --bin binary-mapper -- map --profile crates/util/mapper-profile.toml --exe <game exe path> --output rust > path/to/src/rva/rvas.rs
+```
+
+There are three different `--output` options:
+
+* `rust` emits the contents of a Rust file that instantiates an `RvaBundle` struct, passing the given RVAs as initializers.
+* `rust-struct` emits the definition of the `RvaBundle` struct. You can omit the `--exe` parameter for this output, since it doesn't actually locate the RVAs themselves.
+* `print` prints the results in debug format, which can be useful when verifying that you've found the right RVA.
 
 ## Profile
 The profile defines what the mapper is looking for and defines what RVAs to expose as a constant.
