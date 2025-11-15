@@ -1,6 +1,9 @@
-use std::{collections::HashMap, fs::File, path::PathBuf};
+use std::fmt::Write;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
+use std::{collections::HashMap, fs, fs::File};
 
-use clap::{Parser, ValueEnum};
+use clap::{command, Args, Parser, ValueEnum};
 use memmap::MmapOptions;
 use pelite::{
     pattern,
@@ -13,26 +16,113 @@ use shared::{find_rtti_classes, Class};
 #[derive(ValueEnum, Clone)]
 enum OutputFormat {
     Print,
+    RustStruct,
     Rust,
 }
 
-/// Run a mapper profile against a binary to produce
+/// Finds RVAs within a binary and emits them as code.
 #[derive(Parser)]
-struct Args {
+enum BinaryMapper {
+    Map(MapArgs),
+    #[command(name = "er")]
+    EldenRing(EldenRingArgs),
+}
+
+/// Maps a single EXE to a single output and prints it to stdout.
+#[derive(Args)]
+struct MapArgs {
     #[arg(long, env("MAPPER_PROFILE"))]
     profile: PathBuf,
 
     #[arg(long, env("MAPPER_GAME_EXE"))]
-    exe: PathBuf,
+    exe: Option<PathBuf>,
 
     #[arg(long, env("MAPPER_OUTPUT_FORMAT"))]
     output: OutputFormat,
 }
 
-fn main() {
-    let args = Args::parse();
+/// Shortcut to map all files for Elden Ring.
+#[derive(Args)]
+struct EldenRingArgs {
+    /// The worldwide EXE for patch 2.6.1.
+    #[arg(long, env("MAPPER_ER_WW_EXE"))]
+    ww_exe: PathBuf,
 
-    let exe_file = File::open(&args.exe).expect("Could not open game binary");
+    /// The Japanese EXE for patch 2.6.1.1.
+    #[arg(long, env("MAPPER_ER_JP_EXE"))]
+    jp_exe: PathBuf,
+}
+
+fn main() {
+    match BinaryMapper::parse() {
+        BinaryMapper::Map(args) => {
+            let contents = fs::read_to_string(args.profile).expect("Could not read profile file");
+            let profile: MapperProfile =
+                toml::from_str(&contents).expect("Could not parse profile TOML");
+
+            if let OutputFormat::RustStruct = args.output {
+                print!("{}", generate_rust_struct(&profile));
+                return;
+            }
+
+            let results = map_results(
+                &profile,
+                &args.exe.unwrap_or_else(|| {
+                    panic!(
+                        "exe must be passed with --output {}",
+                        args.output.to_possible_value().unwrap().get_name()
+                    )
+                }),
+            );
+
+            match args.output {
+                OutputFormat::Print => println!("Results: {results:#x?}"),
+                OutputFormat::Rust => println!("{}", generate_rust_instance(&results)),
+                OutputFormat::RustStruct => { /* handled above */ }
+            }
+        }
+        BinaryMapper::EldenRing(args) => {
+            let mut er = PathBuf::from(file!());
+            er.pop();
+            er.push("../../../crates/eldenring");
+
+            if !er.is_dir() {
+                panic!(
+                    "{} doesn't exist, er command must be run within the fromsoftware-rs repo",
+                    er.display()
+                );
+            }
+
+            let contents = fs::read_to_string(er.join("mapper-profile.toml"))
+                .expect("Could not read profile file");
+            let profile: MapperProfile =
+                toml::from_str(&contents).expect("Could not parse profile TOML");
+
+            fs::write(er.join("src/rva/bundle.rs"), generate_rust_struct(&profile)).unwrap();
+            fs::write(
+                er.join("src/rva/rva_ww.rs"),
+                generate_rust_instance(&map_results(&profile, &args.ww_exe)),
+            )
+            .unwrap();
+            fs::write(
+                er.join("src/rva/rva_jp.rs"),
+                generate_rust_instance(&map_results(&profile, &args.jp_exe)),
+            )
+            .unwrap();
+            Command::new("cargo")
+                .arg("fmt")
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .current_dir(&er)
+                .status()
+                .unwrap();
+        }
+    }
+}
+
+/// Loads the results for [profile] from the binary at [exe].
+fn map_results(profile: &MapperProfile, exe: &Path) -> Vec<MapperEntryResult> {
+    let exe_file = File::open(exe).expect("Could not open game binary");
     let exe_mmap =
         unsafe { MmapOptions::new().map(&exe_file) }.expect("Could not mmap game binary");
     let program =
@@ -41,31 +131,75 @@ fn main() {
         .map(|class| (class.name.clone(), class))
         .collect::<HashMap<_, _>>();
 
-    let contents = std::fs::read_to_string(args.profile).expect("Could not read profile file");
-    let profile: MapperProfile = toml::from_str(&contents).expect("Could not parse profile TOML");
-
-    let result = profile
+    let mut results = profile
         .patterns
-        .into_par_iter()
+        .par_iter()
         .flat_map(|entry| entry.find(&program))
         .chain(
             profile
                 .vmts
-                .into_par_iter()
+                .par_iter()
                 .flat_map(|entry| entry.find(&program, &rtti_map)),
         )
         .collect::<Vec<_>>();
+    results.sort_by(|r1, r2| r1.name.cmp(&r2.name));
+    results
+}
 
-    match args.output {
-        OutputFormat::Print => println!("Results: {result:#x?}"),
-        OutputFormat::Rust => {
-            let lines = result
-                .iter()
-                .map(|r| format!("pub const RVA_{}: u32 = {:#x};", r.name, r.rva))
-                .collect::<Vec<_>>();
-            println!("{}", lines.join("\n"));
-        }
+/// Generates a Rust struct with fields for each RVA lsited in the given
+/// [profile].
+fn generate_rust_struct(profile: &MapperProfile) -> String {
+    let mut output = String::from(
+        "//! A generated RVA struct.\n\
+        \n\
+        // DO NOT EDIT THIS FILE DIRECTLY.\n\
+        \n\
+        /// A struct containing offsets (relative to the beginning of the executable) of\n\
+        /// various addresses of structures and functions. They can be converted to a\n\
+        /// usable address using the [Pe::rva_to_va] trait function of [Program].\n\
+        ///\n\
+        /// These are populated from `mapper-profile.toml` in the root of this package\n\
+        /// using `tools/binary-generator`.\n\
+        pub struct RvaBundle {\n",
+    );
+
+    let mut fields = profile
+        .patterns
+        .iter()
+        .flat_map(|entry| &entry.captures)
+        .filter(|name| !name.is_empty())
+        .chain(profile.vmts.iter().flat_map(|entry| entry.captures.keys()))
+        .collect::<Vec<_>>();
+    fields.sort();
+    for field in fields {
+        writeln!(output, "pub {}: u32,", field).unwrap();
     }
+
+    output.push('}');
+    output
+}
+
+/// Generates a file that declares an instance of `RvaBundle` with the given
+/// [results].
+fn generate_rust_instance(results: &[MapperEntryResult]) -> String {
+    let mut output = String::from(
+        "//! Generated RVA mappings for a single executable.\n\
+                 \n\
+                 // DO NOT EDIT THIS FILE DIRECTLY.\n\
+                 \n\
+                 use super::RvaBundle;\n\
+                 \n\
+                 /// The RVAs for this executable.\n\
+                 ///\n\
+                 /// These are populated from `mapper-profile.toml` in the root of this package\n\
+                 /// using `tools/binary-generator`.\n\
+                 pub const RVAS: RvaBundle = RvaBundle {\n",
+    );
+    for result in results {
+        writeln!(output, "{}: {:#x},", result.name, result.rva).unwrap();
+    }
+    output.push_str("};");
+    output
 }
 
 /// Profile describing what offsets to extract from a game binary.
@@ -92,7 +226,7 @@ struct MapperProfilePattern {
 
 impl MapperProfilePattern {
     /// Consumes self and looks up the pattern in [program].
-    fn find<'a>(self, program: &impl Pe<'a>) -> Vec<MapperEntryResult> {
+    fn find<'a>(&self, program: &impl Pe<'a>) -> Vec<MapperEntryResult> {
         let Ok(scanner_pattern) = pattern::parse(&self.pattern) else {
             panic!("Could not parse provided pattern \"{}\"", &self.pattern)
         };
@@ -100,7 +234,7 @@ impl MapperProfilePattern {
         let mut matches = vec![0u32; self.captures.len()];
         let captures = self
             .captures
-            .into_iter()
+            .iter()
             .enumerate()
             .filter(|(_, e)| !e.is_empty());
 
@@ -115,7 +249,7 @@ impl MapperProfilePattern {
         } else {
             captures
                 .map(|(i, e)| MapperEntryResult {
-                    name: e,
+                    name: e.clone(),
                     rva: matches[i],
                 })
                 .collect::<Vec<_>>()
@@ -137,7 +271,7 @@ struct MapperProfileVmt {
 impl MapperProfileVmt {
     /// Consumes self and looks up the VMT in [rtti_map].
     fn find<'a, T: Pe<'a>>(
-        self,
+        &self,
         program: &T,
         rtti_map: &HashMap<String, Class<'a, T>>,
     ) -> Vec<MapperEntryResult> {
@@ -146,12 +280,15 @@ impl MapperProfileVmt {
         };
 
         self.captures
-            .into_iter()
+            .iter()
             .map(|(name, index)| {
                 // Safety: We're not actually dereferencing the VA.
-                if let Some(va) = unsafe { class.vmt_fn(index) } {
+                if let Some(va) = unsafe { class.vmt_fn(*index) } {
                     if let Ok(rva) = program.va_to_rva(va) {
-                        return MapperEntryResult { name, rva };
+                        return MapperEntryResult {
+                            name: name.clone(),
+                            rva,
+                        };
                     }
                 }
 
