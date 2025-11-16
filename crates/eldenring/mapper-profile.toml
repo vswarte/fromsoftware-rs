@@ -1,63 +1,63 @@
 [[patterns]]
 pattern = "40 57 48 83 ec 40 48 c7 44 24 20 fe ff ff ff 48 89 5c 24 50 48 89 6c 24 58 48 89 74 24 60 49 8b f0 48 8b fa 48 8b d9 48 8d 69 28"
-captures = ["CS_EZ_DRAW_DRAW_LINE"]
+captures = ["cs_ez_draw_draw_line"]
 
 [[patterns]]
 pattern = "48 8b c4 55 48 8d 68 88 48 81 ec 70 01 00 00 0f 29 70 e8 0f 28 35 $ {} 0f 29 78 d8"
-captures = ["CS_EZ_DRAW_DRAW_CAPSULE"]
+captures = ["cs_ez_draw_draw_capsule"]
 
 [[patterns]]
 pattern = "48 8b c4 55 48 8d 68 a1 48 81 ec b0 00 00 00 0f 28 2d $ {} 0f 28 25 $ {} 0f 28 1d $ {}"
-captures = ["CS_EZ_DRAW_DRAW_SPHERE"]
+captures = ["cs_ez_draw_draw_sphere"]
 
 [[patterns]]
 pattern = "f3 44 0f 11 6c 24 20 41 0f 28 df 4c 8d 45 e0 48 8d 55 90 48 8b cb e8 $ { ' }"
-captures = ["", "CS_EZ_DRAW_DRAW_WEDGE"]
+captures = ["", "cs_ez_draw_draw_wedge"]
 
 [[patterns]]
 pattern = "0f c6 c4 e8 0f c6 d0 d4 0f 29 55 20 ? 8d 55 00 ? 8b ce e8 $ { ' }"
-captures = ["", "CS_EZ_DRAW_DRAW_TRIANGLE"]
+captures = ["", "cs_ez_draw_draw_triangle"]
 
 [[patterns]]
 pattern = "0f 28 df ? 8d 45 07 ? 8d 55 f7 ? 8b cb e8 $ { ' }"
-captures = ["", "CS_EZ_DRAW_DRAW_DODECADRON"]
+captures = ["", "cs_ez_draw_draw_dodecadron"]
 
 [[patterns]]
 pattern = "b2 08 48 8d 4d 00 e8 $ { ' }"
-captures = ["", "INITIALIZE_SPAWN_GEOMETRY_REQUEST"]
+captures = ["", "initialize_spawn_geometry_request"]
 
 [[patterns]]
 pattern = "8b 01 89 85 d8 00 00 00 48 8d 55 00 49 8b ce e8 $ { ' }"
-captures = ["", "SPAWN_GEOMETRY"]
+captures = ["", "spawn_geometry"]
 
 [[patterns]]
 pattern = "ba 58 00 00 02 e8 $ { ' }"
-captures = ["", "CS_PHYS_WORLD_CAST_RAY"]
+captures = ["", "cs_phys_world_cast_ray"]
 
 [[patterns]]
 pattern = "40 53 55 56 57 48 81 ec 98 07 00 00 48 c7 44 24 50 fe ff ff ff"
-captures = ["CS_BULLET_MANAGER_SPAWN_BULLET"]
+captures = ["cs_bullet_manager_spawn_bullet"]
 
 [[patterns]]
 pattern = "48 8b c8 45 33 c0 ba 7f 14 00 00 e8 $ { ' }"
-captures = ["", "CHR_INS_APPLY_SPEFFECT"]
+captures = ["", "chr_ins_apply_speffect"]
 
 [[patterns]]
 pattern = "ba 1c 00 00 00 48 8b ce 84 c0 74 ? e8 $ { ' } eb ?"
-captures = ["", "CHR_INS_REMOVE_SPEFFECT"]
+captures = ["", "chr_ins_remove_speffect"]
 
 [[patterns]]
 pattern = "88 44 24 28 0f b6 84 24 c0 00 00 00 88 44 24 20 e8 $ { ' }"
-captures = ["", "CS_ACTION_BUTTON_MAN_EXECUTE_ACTION_BUTTON"]
+captures = ["", "cs_action_button_man_execute_action_button"]
 
 [[patterns]]
 pattern = "ba d0 07 00 00 48 83 c4 28 e9 $ { ' }"
-captures = ["", "CS_MENU_MAN_DISPLAY_STATUS_MESSAGE"]
+captures = ["", "cs_menu_man_imp_display_status_message"]
 
 [[patterns]]
-captures = ["", "GLOBAL_HINSTANCE"]
+captures = ["", "global_hinstance"]
 pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 
 [[patterns]]
-captures = ["", "REGISTER_TASK"]
+captures = ["", "register_task"]
 pattern = "e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }"
