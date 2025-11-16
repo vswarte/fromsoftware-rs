@@ -21,7 +21,6 @@ pub enum DLCharacterSet {
     Iso8859_1 = 2,
     ShiftJis = 3,
     EucJp = 4,
-    UTF32 = 5,
 }
 
 #[derive(Error, Debug)]
@@ -119,20 +118,6 @@ impl DLStringKind for DLUTF16StringKind {
     fn decode(s: &[u16]) -> Result<Cow<'_, str>, DLStringEncodingError> {
         char::decode_utf16(s.iter().cloned())
             .map(|r| r.map_err(|_| DLStringEncodingError::DecodeError))
-            .collect::<Result<String, _>>()
-            .map(Cow::Owned)
-    }
-}
-
-pub struct DLUTF32StringKind;
-impl DLStringKindSeal for DLUTF32StringKind {}
-impl DLStringKind for DLUTF32StringKind {
-    type CharType = u32;
-    type InlineType = [u32; 16 / size_of::<u32>()];
-
-    fn decode(s: &[u32]) -> Result<Cow<'_, str>, DLStringEncodingError> {
-        s.iter()
-            .map(|&c| std::char::from_u32(c).ok_or(DLStringEncodingError::DecodeError))
             .collect::<Result<String, _>>()
             .map(Cow::Owned)
     }
