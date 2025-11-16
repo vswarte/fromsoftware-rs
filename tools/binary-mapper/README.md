@@ -10,7 +10,13 @@ $ cargo run --bin binary-mapper -- er --ww-exe "<game exe path>" --jp-exe "<game
 
 For steam on linux `<game exe path>` will probably be `~/.steam/steam/steamapps/common/ELDEN\ RING/Game/eldenring.exe`.
 
-You can also set environment variables for the executable paths rather than passing them by flag every time. These take the form `MAPPER_{GAME}_{REGION}_EXE`. For example, instead of `er --ww-exe`, you can set `MAPPER_ER_WW_EXE`.
+For Dark Souls III:
+
+```
+$ cargo run --bin binary-mapper -- ds3 --exe "<game exe path>"
+```
+
+You can also set environment variables for the executable paths rather than passing them by flag every time. These take the form `MAPPER_{GAME}_{REGION}_EXE`. For example, instead of `er --ww-exe`, you can set `MAPPER_ER_WW_EXE`. Because Dark Souls III has the same mappings for all regions, it just takes `MAPPER_DS3_EXE`.
 
 ## Manual Mapping and Debugging
 

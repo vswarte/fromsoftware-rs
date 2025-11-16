@@ -3,7 +3,10 @@ use std::sync::LazyLock;
 use windows::core::PCSTR;
 use windows::Win32::System::LibraryLoader::GetModuleHandleA;
 
+mod bundle;
 mod rva_data;
+
+pub use bundle::*;
 
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
@@ -69,29 +72,11 @@ fn detect_version_and_get_rvas(module: &PeView) -> Option<RvaBundle> {
     Some(RvaBundle::for_version(version))
 }
 
-/// A struct containing offsets (relative to the beginning of the executable) of
-/// various addresses of structures and functions. They can be converted to a
-/// usable address using the [Pe::rva_to_va] trait function of [Program].
-///
-/// These are populated from `mapper-profile.toml` in the root of this package
-/// using `tools/binary-generator`.
-pub struct RvaBundle {
-    pub register_task: u32,
-}
-
-macro_rules! rva_bundle {
-    ($module:ident) => {
-        Self {
-            register_task: $module::RVA_REGISTER_TASK,
-        }
-    };
-}
-
 impl RvaBundle {
     fn for_version(version: GameVersion) -> Self {
         match version {
-            GameVersion::Ww1152 => rva_bundle!(rva_data),
-            GameVersion::Jp11521 => rva_bundle!(rva_data),
+            GameVersion::Ww1152 => rva_data::RVAS,
+            GameVersion::Jp11521 => rva_data::RVAS,
         }
     }
 }
