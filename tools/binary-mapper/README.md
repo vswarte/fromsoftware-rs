@@ -63,6 +63,7 @@ Patterns can also be located using RTTI information embedded in the executable t
 [[vmts]]
 class = "DLUID::MouseDevice<DLKR::DLMultiThreadingPolicy>"
 captures = { "MOUSE_DEVICE_SHOULD_BLOCK_INPUT" = 27 }
+vftable = "MOUSE_DEVICE_VFTABLE"
 ```
 
-The `class` field is the (unmangled) RTTI name of the class whose table to check, and `captures` is a map from capture names to the 0-based index of the virtual method being captured. Note that the resulting RVA points to the function itself, *not* its entry in the VMT.
+The `class` field is the (unmangled) RTTI name of the class whose table to check, and `captures` is a map from capture names to the 0-based index of the virtual method being captured. Note that the resulting RVA points to the function itself, *not* its entry in the VMT. The optional `vftable` field is the capture name for the virtual method table itself.
