@@ -1,0 +1,3 @@
+[[patterns]]
+pattern = "45 33 c0 41 8d ? ? 48 83 c4 ? 5b e9 $ { ' }"
+captures = ["", "register_task"]

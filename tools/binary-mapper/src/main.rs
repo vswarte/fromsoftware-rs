@@ -26,6 +26,8 @@ enum BinaryMapper {
     Map(MapArgs),
     #[command(name = "er")]
     EldenRing(EldenRingArgs),
+    #[command(name = "ds3")]
+    DarkSoulsIII(DarkSoulsIIIArgs),
 }
 
 /// Maps a single EXE to a single output and prints it to stdout.
@@ -53,13 +55,18 @@ struct EldenRingArgs {
     jp_exe: PathBuf,
 }
 
+/// Shortcut to map all files for DarkSouls III.
+#[derive(Args)]
+struct DarkSoulsIIIArgs {
+    /// The EXE for patch 1.15.2 (Japenese or worldwide, either workds).
+    #[arg(long, env("MAPPER_DS3_EXE"))]
+    exe: PathBuf,
+}
+
 fn main() {
     match BinaryMapper::parse() {
         BinaryMapper::Map(args) => {
-            let contents = fs::read_to_string(args.profile).expect("Could not read profile file");
-            let profile: MapperProfile =
-                toml::from_str(&contents).expect("Could not parse profile TOML");
-
+            let profile = read_profile(args.profile);
             if let OutputFormat::RustStruct = args.output {
                 print!("{}", generate_rust_struct(&profile));
                 return;
@@ -82,22 +89,8 @@ fn main() {
             }
         }
         BinaryMapper::EldenRing(args) => {
-            let mut er = PathBuf::from(file!());
-            er.pop();
-            er.push("../../../crates/eldenring");
-
-            if !er.is_dir() {
-                panic!(
-                    "{} doesn't exist, er command must be run within the fromsoftware-rs repo",
-                    er.display()
-                );
-            }
-
-            let contents = fs::read_to_string(er.join("mapper-profile.toml"))
-                .expect("Could not read profile file");
-            let profile: MapperProfile =
-                toml::from_str(&contents).expect("Could not parse profile TOML");
-
+            let er = game_crate_path("eldenring");
+            let profile = read_profile(er.join("mapper-profile.toml"));
             fs::write(er.join("src/rva/bundle.rs"), generate_rust_struct(&profile)).unwrap();
             fs::write(
                 er.join("src/rva/rva_ww.rs"),
@@ -109,15 +102,60 @@ fn main() {
                 generate_rust_instance(&map_results(&profile, &args.jp_exe)),
             )
             .unwrap();
-            Command::new("cargo")
-                .arg("fmt")
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit())
-                .current_dir(&er)
-                .status()
-                .unwrap();
+            cargo_fmt(&er);
+        }
+        BinaryMapper::DarkSoulsIII(args) => {
+            let ds3 = game_crate_path("darksouls3");
+            let profile = read_profile(ds3.join("mapper-profile.toml"));
+            fs::write(
+                ds3.join("src/rva/bundle.rs"),
+                generate_rust_struct(&profile),
+            )
+            .unwrap();
+            fs::write(
+                ds3.join("src/rva/rva_data.rs"),
+                generate_rust_instance(&map_results(&profile, &args.exe)),
+            )
+            .unwrap();
+            cargo_fmt(&ds3);
         }
     }
+}
+
+/// Reads a mapper profile from disk at [path].
+fn read_profile<P: AsRef<Path>>(path: P) -> MapperProfile {
+    let contents = fs::read_to_string(path).expect("Could not read profile file");
+    toml::from_str(&contents).expect("Could not parse profile TOML")
+}
+
+/// Returns the path to the game crate named [basename] in this repo.
+///
+/// Panics if this isn't being run from within the fromsoftware-rs repo.
+fn game_crate_path<P: AsRef<Path>>(basename: P) -> PathBuf {
+    let mut path = PathBuf::from(file!());
+    path.pop();
+    path.push("../../../crates");
+    path.push(basename);
+
+    if !path.is_dir() {
+        panic!(
+            "{} doesn't exist, shortcut commands must be run within the fromsoftware-rs repo",
+            path.display()
+        );
+    }
+
+    path
+}
+
+/// Runs `cargo fmt` in [path].
+fn cargo_fmt<P: AsRef<Path>>(path: P) {
+    Command::new("cargo")
+        .arg("fmt")
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .current_dir(path)
+        .status()
+        .unwrap();
 }
 
 /// Loads the results for [profile] from the binary at [exe].
