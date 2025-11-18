@@ -73,3 +73,19 @@ pattern = "48 8d 0c 80 48 8d 05 $ { ' } 0f b6 04 88"
 [[patterns]]
 captures = ["", "game_man"]
 pattern = "48 8b 05 $ { ' } 48 8b 80 90 0d 00 00 c3"
+
+[[vmts]]
+class = "CS::CSEzStateTalkEvent"
+vftable = "cs_ez_state_talk_event_vmt"
+
+[[vmts]]
+class = "CS::CSEzStateTalkEnv"
+vftable = "cs_ez_state_talk_env_vmt"
+
+[[vmts]]
+class = "EzState::detail::EzStateExternalEventTemp"
+vftable = "ez_state_detail_external_event_temp_vmt"
+
+[[vmts]]
+class = "EzState::EzStateEnvironmentQueryImpl"
+vftable = "ez_state_environment_query_impl_vmt"

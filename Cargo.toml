@@ -11,6 +11,7 @@ members = [
     "tools/param-generator",
     "examples/apply-speffect",
     "examples/debug-line",
+    "examples/invoke-esd",
     "examples/spawn-asset",
     "examples/present-action-button",
 ]
