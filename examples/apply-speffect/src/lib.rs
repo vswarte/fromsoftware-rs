@@ -5,7 +5,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
-use shared::{program::Program, task::*, FromStatic};
+use fromsoftware_shared::{program::Program, task::*, FromStatic};
 
 const SP_EFFECT: i32 = 4330;
 

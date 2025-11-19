@@ -273,7 +273,6 @@ dependencies = [
  "bitfield",
  "cxx-stl",
  "encoding_rs",
- "from-singleton",
  "fromsoftware-shared",
  "nalgebra",
  "nalgebra-glm",
@@ -301,7 +300,6 @@ name = "debug"
 version = "0.11.0"
 dependencies = [
  "eldenring",
- "from-singleton",
  "fromsoftware-shared",
  "hudhook",
  "pelite",
@@ -349,7 +347,6 @@ dependencies = [
  "bitfield",
  "cxx-stl",
  "encoding_rs",
- "from-singleton",
  "fromsoftware-shared",
  "nalgebra",
  "nalgebra-glm",

@@ -22,12 +22,11 @@ repository = "https://github.com/vswarte/eldenring-rs"
 license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
-shared = { path = "crates/shared", version = "0.11.0", package = "fromsoftware-shared" }
-shared-macros = { path = "crates/shared/macros", version = "0.11.0", package = "fromsoftware-shared-macros" }
+fromsoftware-shared = { path = "crates/shared", version = "0.11.0", package = "fromsoftware-shared" }
+fromsoftware-shared-macros = { path = "crates/shared/macros", version = "0.11.0", package = "fromsoftware-shared-macros" }
 eldenring = { path = "crates/eldenring", version = "0.11.0", package = "eldenring" }
 nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightreign" }
 binary_mapper = { path = "crates/binary-mapper" }
-from-singleton = { version = "2" }
 thiserror = "1"
 tracing = "0.1"
 nalgebra-glm = "0.19"

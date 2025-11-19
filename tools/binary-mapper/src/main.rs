@@ -11,7 +11,7 @@ use pelite::{
 };
 use rayon::prelude::*;
 use serde::Deserialize;
-use shared::{find_rtti_classes, Class};
+use fromsoftware_shared::{find_rtti_classes, Class};
 
 #[derive(ValueEnum, Clone)]
 enum OutputFormat {

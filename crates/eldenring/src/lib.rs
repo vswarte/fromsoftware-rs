@@ -1,3 +1,5 @@
+extern crate fromsoftware_shared as shared;
+
 mod stl;
 pub use stl::*;
 
@@ -18,3 +20,4 @@ pub mod param;
 pub mod position;
 pub mod rotation;
 pub mod util;
+
