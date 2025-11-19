@@ -1,5 +1,4 @@
-use ::shared::FromStatic;
-use from_singleton::FromSingleton;
+use fromsoftware_shared::{FromStatic, FromSingleton};
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
 pub(crate) mod area_time;

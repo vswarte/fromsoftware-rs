@@ -13,11 +13,10 @@ unused = "allow"
 [dependencies]
 bitfield.workspace = true
 encoding_rs.workspace = true
-from-singleton.workspace = true
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
 pelite.workspace = true
-shared.workspace = true
+fromsoftware-shared.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 vtable-rs.workspace = true
