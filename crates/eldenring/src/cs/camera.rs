@@ -90,6 +90,7 @@ pub struct ChrCam {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrCamType {
     Unk0 = 0,
     Unk1 = 1,

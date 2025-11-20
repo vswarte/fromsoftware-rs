@@ -54,6 +54,7 @@ pub struct CSWindowScreenConfig {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum CSWindowType {
     Windowed = 0,
     Fullscreen = 1,
@@ -61,6 +62,7 @@ pub enum CSWindowType {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum QualityLevelSetting {
     Low = 0,
     Medium = 1,
@@ -69,6 +71,7 @@ pub enum QualityLevelSetting {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ToggleableGraphicsQuality {
     Off = 0,
     Low = 1,
@@ -78,12 +81,14 @@ pub enum ToggleableGraphicsQuality {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum OnOffSetting {
     Off = 0,
     On = 1,
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum FpsTarget {
     FPS30 = 0,
     FPS60 = 1,
@@ -92,6 +97,7 @@ pub enum FpsTarget {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum QualitySetting {
     Low = 1,
     Medium = 2,
@@ -101,6 +107,7 @@ pub enum QualitySetting {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum GrassQuality {
     Medium = 2,
     High = 3,

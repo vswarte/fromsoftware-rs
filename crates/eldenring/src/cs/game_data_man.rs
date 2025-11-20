@@ -6,7 +6,7 @@ use shared::OwnedPtr;
 use std::ptr::NonNull;
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum RemotePlayerDataSlotState {
     /// Player data slot is free / unoccupied
     Free = 0,
@@ -23,7 +23,7 @@ pub enum RemotePlayerDataSlotState {
 }
 
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 /// Source of name: global_event.lua from DS3
 pub enum DeathState {
     Normal = 0,
@@ -89,7 +89,7 @@ pub struct GameDataMan {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum DisplayBlood {
     Off = 0,
     On = 1,
@@ -97,14 +97,14 @@ pub enum DisplayBlood {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PerformanceSetting {
     PrioritizeQuality = 0,
     PrioritizeFramerate = 1,
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum HudType {
     Off = 0,
     On = 1,

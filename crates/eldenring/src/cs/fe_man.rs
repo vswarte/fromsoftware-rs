@@ -6,7 +6,7 @@ use shared::{F32Vector4, OwnedPtr};
 use super::{CSMenuManImp, FieldInsHandle};
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum CSFeManHudState {
     /// Fully hide hp, fp, stamina
     HideAll = 0,

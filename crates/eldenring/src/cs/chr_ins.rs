@@ -737,7 +737,7 @@ pub struct CSChrActionFlagModule {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum SpEffectWetConditionDepth {
     Default = 0,
     LowerBody = 1,
@@ -1282,6 +1282,7 @@ pub struct CSPairAnimNode {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ThrowNodeState {
     Unk1 = 1,
     Unk2 = 2,
@@ -1501,6 +1502,7 @@ pub struct ChrCtrlModifierData {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrMovementLimit {
     NoLimit = 0,
     /// Set by TAE Event 0 ChrActionFlag (action 91 LIMIT_MOVE_SPEED_TO_DASH)
