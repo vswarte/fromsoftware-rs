@@ -173,7 +173,7 @@ pub enum PhantomJoinState {
 }
 
 #[repr(i32)]
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum SummonJobErrorCode {
     /// Default no error state
     Default = -70,

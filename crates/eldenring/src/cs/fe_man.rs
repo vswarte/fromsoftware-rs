@@ -213,7 +213,7 @@ pub struct FrontEndViewValues {
 }
 
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum FullScreenMessage {
     None = -1,
     DemigodFelled = 1,

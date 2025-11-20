@@ -61,7 +61,7 @@ pub trait ChrInsVmt: FieldInsBaseVmt {
 }
 
 #[repr(i32)]
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum OmissionMode {
     NoUpdate = -2,
     Normal = 0,
@@ -745,7 +745,7 @@ pub enum SpEffectWetConditionDepth {
 }
 
 #[repr(i8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum WeaponModelChangeType {
     MoveToDefaultLocation = -1,
     MoveTo1HRightWeaponLocation = 0,
