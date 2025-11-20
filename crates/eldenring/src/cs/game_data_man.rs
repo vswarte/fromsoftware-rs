@@ -79,7 +79,11 @@ pub struct GameDataMan {
     /// Leave request status for each player slot
     /// Used by lua script imitation to track on leave events
     pub leave_requests: [bool; 5],
-    unkdf: [u8; 0x41],
+    unkdf: [u8; 0x39],
+    pub net_penalty_forgive_item_cooldown_active: bool,
+    pub net_penalty_requested: bool,
+    pub net_penalty_points: u16,
+    pub net_penalty_forgive_item_limit_time: f32,
     pub ng_lvl: u32,
     unk124: [u8; 0x34],
 }
