@@ -10,8 +10,8 @@ bitfield! {
 
     i32;
     /// The raw item ID value, without the category.
-    pub item_id_raw, _: 27, 0;
-    _, set_item_id_raw: 27, 0;
+    pub param_id_raw, _: 27, 0;
+    _, set_param_id_raw: 27, 0;
 
     u8;
     /// The raw category value.
@@ -51,18 +51,18 @@ impl ItemCategory {
 }
 
 impl ItemId {
-    pub fn from_parts(item_id: i32, category: ItemCategory) -> Self {
+    pub fn from_parts(param_id: i32, category: ItemCategory) -> Self {
         let mut id = ItemId(0);
-        id.set_item_id_raw(item_id);
+        id.set_param_id_raw(param_id);
         id.set_category_raw(category as u8);
         id
     }
 
-    pub fn item_id(&self) -> i32 {
+    pub fn param_id(&self) -> i32 {
         if self.0 == -1 {
             return -1;
         }
-        self.item_id_raw()
+        self.param_id_raw()
     }
 
     pub fn category(&self) -> Result<ItemCategory, ItemIdError> {
@@ -80,7 +80,7 @@ impl Display for ItemId {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.category() {
             Ok(category) => {
-                write!(f, "ItemId({},{:?})", self.item_id(), category)
+                write!(f, "ItemId({},{:?})", self.param_id(), category)
             }
             Err(err) => write!(f, "ItemId(0x{:x},{:?})", self.0, err),
         }
@@ -96,11 +96,15 @@ mod tests {
     #[test]
     fn test_bitfield() {
         let mut item = ItemId(0);
-        item.set_item_id_raw(123);
+        item.set_param_id_raw(123);
         item.set_category_raw(ItemCategory::Gem as u8);
 
-        assert_eq!(item.item_id(), 123);
+        assert_eq!(item.param_id(), 123);
         assert_eq!(item.category(), Ok(ItemCategory::Gem));
         assert_eq!(item.0, 123 | (ItemCategory::Gem as i32) << 28);
+
+        item = ItemId(-1);
+        assert_eq!(item.param_id(), -1);
+        assert_eq!(item.category(), Ok(ItemCategory::None));
     }
 }
