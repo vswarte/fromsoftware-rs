@@ -25,6 +25,7 @@ impl WorldAreaTime {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum AiSightTimeOfDay {
     Morning = 0x0,
     Noon = 0x1,

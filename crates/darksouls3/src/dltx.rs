@@ -13,7 +13,7 @@ use shared::OwnedPtr;
 use thiserror::Error;
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
 pub enum DLCharacterSet {
     UTF8 = 0,
     #[default]

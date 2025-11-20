@@ -377,7 +377,7 @@ pub struct ChrSetEntry<T> {
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrLoadStatus {
     Unloaded = 0,
     Initializing = 1,
@@ -388,7 +388,7 @@ pub enum ChrLoadStatus {
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrUpdateType {
     Local = 0,
     Unknown1 = 1,
