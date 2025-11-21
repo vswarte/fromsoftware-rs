@@ -23,6 +23,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     cs_phys_world_cast_ray: 0xc707b0,
     global_hinstance: 0x3d85688,
     initialize_spawn_geometry_request: 0x1db670,
+    multiplay_properties: 0x3b11230,
     register_task: 0xeb2000,
     spawn_geometry: 0x6a5150,
 };

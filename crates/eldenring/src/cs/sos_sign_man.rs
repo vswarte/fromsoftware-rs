@@ -1,6 +1,8 @@
 use std::{num::ParseIntError, ptr::NonNull};
 
-use crate::cs::{BlockId, ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer};
+use crate::cs::{
+    BlockId, ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType,
+};
 use crate::dlkr::DLAllocatorBase;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
@@ -21,8 +23,8 @@ pub struct CSSosSignMan {
     /// List of signs that were requested to be summoned
     /// Inserting values here will not do anything unless you also have data in `join_data`
     pub summon_requests: DoublyLinkedList<i32>,
-    /// Similar to MultiplayType, but negative
-    pub summon_param_type: i32,
+    /// Type of multiplayer for summoning
+    pub summon_param_type: SummonParamType,
     unk54: [u8; 4],
     /// List of data for join push notifications
     pub join_data: DoublyLinkedList<NonNull<PhantomJoinData>>,
@@ -197,7 +199,7 @@ pub struct PhantomJoinData {
     /// if exceeds 55 seconds in `Waiting` state or 180 in `Joining` state,
     /// the join request will be cancelled
     pub join_time: f32,
-    /// Multiplay type
+    /// Type of multiplayer player is joining as
     pub multiplay_type: MultiplayType,
     /// Whether the sign is in the sign pool
     /// IMPORTANT: can be anything if multiplay_type is not a sign type
@@ -253,41 +255,4 @@ impl From<SteamIdStr> for u64 {
     fn from(val: SteamIdStr) -> Self {
         val.to_u64().unwrap_or_default()
     }
-}
-
-#[repr(u8)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum MultiplayType {
-    WhiteSign = 0,
-    Invasion = 1,
-    RedSign = 2,
-    Unk3 = 3,
-    Unk4 = 4,
-    BerserkerWhite = 5,
-    SinnerHero = 6,
-    SinnerHunterInvasion = 7,
-    BlueHunterSummon = 8,
-    RosariaGuardian = 9,
-    Unk10 = 10,
-    Unk11 = 11,
-    Unk12 = 12,
-    QuickMatch = 13,
-    CultWhiteSummon = 14,
-    Unk15 = 15,
-    Unk16 = 16,
-    Unk17 = 17,
-    Unk18 = 18,
-    Unk19 = 19,
-    NpcWhiteSign = 20,
-    Unk21 = 21,
-    Unk22 = 22,
-    NpcInvasion1 = 23,
-    Unk24 = 24,
-    Unk25 = 25,
-    Unk26 = 26,
-    AlwaysAllow = 27,
-    Unk28 = 28,
-    NpcInvasion2 = 29,
-    Unk30 = 30,
-    None = 31,
 }

@@ -17,10 +17,14 @@ pub struct CharacterTypePropertiesEntry {
     pub can_receive_message_rate_buff: bool,
     /// Controls whether the character type count toward the
     /// number of friendly phantoms.
-    pub is_white_phantom: bool,
+    ///
+    /// See [`crate::cs::PartyMemberInfo::friendly_phantom_count`]
+    pub is_friendly_phantom: bool,
     /// Controls whether the character type count toward the
     /// number of hostile phantoms.
-    pub is_black_phantom: bool,
+    ///
+    /// See [`crate::cs::PartyMemberInfo::hostile_phantom_count`]
+    pub is_hostile_phantom: bool,
     unkb: u8,
     unkc: i32,
     unk10: i32,
