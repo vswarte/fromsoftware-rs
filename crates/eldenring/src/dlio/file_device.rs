@@ -18,6 +18,7 @@ use shared::OwnedPtr;
 use super::{DLFileSeekDirection, OpenFileMode};
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum DLFileDeviceDriveType {
     Unknown = 0x0,
     CdRom = 0x1,

@@ -519,7 +519,7 @@ pub struct EquipDataItem {
 }
 
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrAsmSlot {
     WeaponLeft1 = 0,
     WeaponRight1 = 1,
@@ -611,7 +611,7 @@ pub struct ChrAsmEquipmentSlots {
     pub right_bolt_slot: u32,
 }
 #[repr(u32)]
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrAsmArmStyle {
     EmptyHanded = 0,
     OneHanded = 1,

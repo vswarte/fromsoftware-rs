@@ -217,6 +217,7 @@ where
 
 /// Represents file load state for this FD4FileCap.
 #[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum FD4FileCapState {
     Initial = 0x0,
     Queued = 0x1,

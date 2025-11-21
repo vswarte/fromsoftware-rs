@@ -160,10 +160,11 @@ pub struct SosSignData {
     unk2c4: [u8; 4],
 }
 
-#[derive(PartialEq, Eq, Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct ObjectIdentifier(pub i64);
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PhantomJoinState {
     /// Push notification sent to other player, awaiting for response
     Waiting = 0,
@@ -172,7 +173,7 @@ pub enum PhantomJoinState {
 }
 
 #[repr(i32)]
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum SummonJobErrorCode {
     /// Default no error state
     Default = -70,
@@ -255,7 +256,7 @@ impl From<SteamIdStr> for u64 {
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum MultiplayType {
     WhiteSign = 0,
     Invasion = 1,

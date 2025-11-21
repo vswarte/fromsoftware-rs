@@ -14,7 +14,7 @@ use shared::{F32Vector3, F32Vector4, OwnedPtr};
 use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
 #[repr(u32)]
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 /// Various states for an online lobby to be in.
 ///
 /// Source of name: Sekiro Debug Menu
@@ -31,7 +31,7 @@ pub enum LobbyState {
 }
 
 #[repr(u32)]
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ProtocolState {
     Inactive = 0x0,
     Unk1 = 0x1,

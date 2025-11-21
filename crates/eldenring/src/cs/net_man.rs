@@ -113,7 +113,7 @@ pub struct QuickmatchManager {
 }
 
 #[repr(u32)]
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum CSQuickMatchingCtrlState {
     None = 0x0,
     SearchRegister = 0x1,

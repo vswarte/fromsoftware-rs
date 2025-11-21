@@ -272,7 +272,7 @@ impl DlColor32 {
 }
 
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum EzDrawFillMode {
     /// Filled polygons
     Fill = 0,
@@ -281,7 +281,7 @@ pub enum EzDrawFillMode {
 }
 
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum EzDrawTextCoordMode {
     /// Coordinates are in screen space
     /// will be scaled by text_pos_width_scale and text_pos_height_scale

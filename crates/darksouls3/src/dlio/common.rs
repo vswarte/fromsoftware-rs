@@ -2,7 +2,7 @@ use std::fmt::Debug;
 use std::io;
 
 #[repr(i32)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum DLIOResult {
     DirNotEmpty = -17,
     OutOfMemory = -13,
