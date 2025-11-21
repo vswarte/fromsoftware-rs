@@ -1699,9 +1699,9 @@ pub struct PlayerIns {
     unk706: u8,
     unk707: u8,
     pub opacity_keyframes_timer: FD4Time,
-    /// When false, chr team type is 14 (Neutral) and chr is an NPC
+    /// When false, chr role is 14 (BattleRoyale) and chr is not an NPC
     /// Will decrease `opacity_keyframes_timer` and set `ChrIns.opacity_keyframes_multiplier` to 0
-    pub enable_neutral_npc_rendering: bool,
+    pub enable_arena_chr_rendering: bool,
     unk718: [u8; 0x27],
 }
 
@@ -1764,8 +1764,10 @@ pub struct PlayerSessionHolder {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-/// Role of character in PvP/PvE.
+/// Type of character in PvP/PvE.
 /// Changes a lot of things, like appearance, what items you can use, etc.
+///
+/// Related to [crate::cs::CharacterTypePropertiesTable] and [crate::cs::MultiplayType].
 pub enum ChrType {
     None = -1,
     Local = 0,

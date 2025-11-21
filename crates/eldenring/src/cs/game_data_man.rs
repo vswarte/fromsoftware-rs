@@ -54,7 +54,14 @@ pub struct GameDataMan {
     pc_option_data: usize,
     unk88: [u8; 0x4],
     pub request_full_recovery: bool,
-    unk90: u32,
+    unk8d: [u8; 0x2],
+    /// Whether game should give the player the phantom great rune
+    /// Will be true for some time during loading when Mogh's great rune is active and
+    /// the player is invading someone else's world
+    pub award_phantom_great_rune_requested: bool,
+    /// Whether game should give the player the rebreak in item
+    /// Will be true for some time during loading when the player is invading someone else's world
+    pub award_rebreak_in_item_requested: bool,
     pub death_count: u32,
     pub chr_type: ChrType,
     unk9c: [u8; 0x4],
@@ -62,8 +69,10 @@ pub struct GameDataMan {
     /// will be maxed out at 999:59:59.999
     pub play_time: u32,
     unka4: [u8; 0xC],
-    unkb0: FD4Time,
-    unkc0: bool,
+    /// Timer for tracking boss fight duration
+    pub boss_fight_timer: FD4Time,
+    /// Whether a boss fight is currently active
+    pub boss_fight_active: bool,
     /// Count of white phantoms currently summoned
     /// Used to apply enemy level scaling
     pub white_phantom_count: u32,

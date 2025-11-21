@@ -61,3 +61,7 @@ pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 [[patterns]]
 captures = ["", "register_task"]
 pattern = "e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }"
+
+[[patterns]]
+captures = ["", "multiplay_properties"]
+pattern = "c7 44 ? ? 01 00 00 00 e9 ? ? ? ? ? 8b cc e8 $ { 48 0f be 01 48 8d 0d $ { ' } }"
