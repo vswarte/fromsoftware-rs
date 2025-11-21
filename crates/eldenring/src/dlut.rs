@@ -139,10 +139,14 @@ impl<T, const C: usize> DLFixedVector<T, C> {
         self.as_slice().is_empty()
     }
 
+    pub const fn capacity(&self) -> usize {
+        C
+    }
+
     pub fn as_slice(&self) -> &'_ [T] {
         unsafe {
             // Safety: enforced by `push()` and `truncate()`
-            assert_unchecked(self.checked_len <= C);
+            assert_unchecked(self.checked_len <= self.capacity());
 
             // Safety: elements up to `self.checked_len` are initialized
             slice::from_raw_parts(self.elements[0].as_ptr(), self.checked_len)
@@ -152,7 +156,7 @@ impl<T, const C: usize> DLFixedVector<T, C> {
     pub fn as_mut_slice(&mut self) -> &'_ mut [T] {
         unsafe {
             // Safety: enforced by `push()` and `truncate()`
-            assert_unchecked(self.checked_len <= C);
+            assert_unchecked(self.checked_len <= self.capacity());
 
             // Safety: elements up to `self.checked_len` are initialized
             slice::from_raw_parts_mut(self.elements[0].as_mut_ptr(), self.checked_len)
@@ -171,7 +175,7 @@ impl<T, const C: usize> DLFixedVector<T, C> {
     // with the element.
     pub fn push(&mut self, value: T) -> Result<(), T> {
         let prev_len = self.len();
-        if prev_len + 1 > C {
+        if prev_len + 1 > self.capacity() {
             return Err(value);
         }
 
@@ -198,7 +202,7 @@ impl<T: Clone, const C: usize> DLFixedVector<T, C> {
     // Grows or shrinks the vector to the given length, initializing new elements with `value`,
     // or return an error with the value if there is insufficient capacity.
     pub fn resize(&mut self, new_len: usize, value: T) -> Result<(), T> {
-        if new_len > C {
+        if new_len > self.capacity() {
             return Err(value);
         }
 
