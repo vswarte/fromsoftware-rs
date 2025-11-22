@@ -1,3 +1,4 @@
+use std::collections::{hash_map::Entry, HashMap};
 use std::iter::{IntoIterator, Iterator};
 
 use proc_macro::TokenStream;
@@ -5,6 +6,7 @@ use proc_macro2::Span;
 use quote::*;
 use syn::*;
 use syn::{
+    meta::ParseNestedMeta,
     parse::{ParseBuffer, Parser},
     punctuated::Punctuated,
     spanned::Spanned,
@@ -13,8 +15,11 @@ use syn::{
 /// A helper for [multi_param] that returns a [syn::Result].
 pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<TokenStream> {
     let mut input_trait: ItemTrait = syn::parse(input)?;
-    let structs = Punctuated::<TypePath, Token![,]>::parse_terminated.parse(args)?;
-    let fields = extract_fields(&mut input_trait)?;
+    let structs = Punctuated::<TypePath, Token![,]>::parse_terminated
+        .parse(args)?
+        .into_iter()
+        .collect::<Vec<_>>();
+    let fields = extract_fields(&mut input_trait, &structs)?;
 
     for field in &fields {
         let ident = &field.ident;
@@ -40,14 +45,24 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
     }))
 }
 
+/// A field declared in the `fields!` macro that should be dispatched to each
+/// parameter struct.
 struct MultiParamField {
+    /// The default field name.
     ident: Ident,
+
+    /// The field's type.
     ty: Type,
+
+    /// The span at which the field was declared.
     span: Span,
+
+    /// Specialized field names to use for particular structs.
+    renames: HashMap<TypePath, Ident>,
 }
 
 /// Returns all fields in [trait_] declared with [multi_param_fields].
-fn extract_fields(trait_: &mut ItemTrait) -> Result<Vec<MultiParamField>> {
+fn extract_fields(trait_: &mut ItemTrait, structs: &[TypePath]) -> Result<Vec<MultiParamField>> {
     trait_
         .items
         .extract_if(.., |item| match item {
@@ -69,16 +84,38 @@ fn extract_fields(trait_: &mut ItemTrait) -> Result<Vec<MultiParamField>> {
 
             fields
                 .into_iter()
-                .map(|field| {
+                .map(|mut field| {
+                    let attributes = extract_field_attributes(&mut field)?;
+                    let mut renames = HashMap::new();
+                    for attr in attributes {
+                        match attr {
+                            FieldAttribute::Rename(param, name) => {
+                                if !structs.contains(&param) {
+                                    return Err(Error::new(
+                                        param.span(),
+                                        "this isn't one of the multi_param() arguments",
+                                    ));
+                                }
+
+                                match renames.entry(param) {
+                                    Entry::Occupied(o) => {
+                                        return Err(Error::new(o.key().span(), "duplicate param"));
+                                    }
+                                    Entry::Vacant(v) => v.insert(name),
+                                }
+                            }
+                        };
+                    }
+
                     if !field.attrs.is_empty() {
                         Err(Error::new(
                             field.attrs[0].span(),
-                            "multi_param fields may not have attributes",
+                            "multi_param fields may only have #[multi_param(...)] attributes",
                         ))
                     } else if field.vis != Visibility::Inherited {
                         Err(Error::new(
                             field.span(),
-                            "multi_param fields may not have attributes",
+                            "multi_param fields must have default visibility",
                         ))
                     } else {
                         let span = field.span();
@@ -86,12 +123,66 @@ fn extract_fields(trait_: &mut ItemTrait) -> Result<Vec<MultiParamField>> {
                             ident: field.ident.unwrap(),
                             ty: field.ty,
                             span,
+                            renames,
                         })
                     }
                 })
                 .collect()
         })
         .collect()
+}
+
+/// A `multi_param()` attribute on a field.
+enum FieldAttribute {
+    /// `rename(struct = ..., name = ...)`
+    Rename(TypePath, Ident),
+}
+
+/// Removes all `#[multi_param(...)]` attributes from [field] and returns them
+/// as [FieldAttribute]s.
+fn extract_field_attributes(field: &mut Field) -> Result<Vec<FieldAttribute>> {
+    field
+        .attrs
+        .extract_if(.., |attr| attr.path().is_ident("multi_param"))
+        .flat_map(|attr| {
+            let mut attributes = Vec::new();
+            if let Err(err) = attr.parse_nested_meta(|meta| {
+                attributes.push(Ok(parse_field_attribute(meta)?));
+                Ok(())
+            }) {
+                return vec![Err(err)];
+            }
+            attributes
+        })
+        .collect()
+}
+
+/// Parses a single nested meta item inside a `#[multi_param(...)]` attribute on
+/// a field in `fields!`.
+fn parse_field_attribute(meta: ParseNestedMeta<'_>) -> Result<FieldAttribute> {
+    if !meta.path.is_ident("rename") {
+        return Err(meta.error("unrecognized attribute"));
+    }
+
+    let mut param: Option<TypePath> = None;
+    let mut name: Option<Ident> = None;
+    meta.parse_nested_meta(|arg| {
+        if arg.path.is_ident("param") {
+            param = Some(arg.value()?.parse()?);
+            Ok(())
+        } else if arg.path.is_ident("name") {
+            name = Some(arg.value()?.parse::<LitStr>()?.parse()?);
+            Ok(())
+        } else {
+            Err(arg.error("unrecognized argument"))
+        }
+    })?;
+
+    match (param, name) {
+        (Some(param), Some(name)) => Ok(FieldAttribute::Rename(param, name)),
+        (None, _) => Err(meta.error("missing argument \"param\"")),
+        (_, None) => Err(meta.error("missing argument \"name\"")),
+    }
 }
 
 /// Generates an implementation of [trait_] for [target] which forwards getters
@@ -105,17 +196,26 @@ fn generate_impl<'a>(
         impl #trait_ for #target {}
     })?;
 
-    for MultiParamField { ident, ty, span } in fields {
+    for MultiParamField {
+        ident,
+        ty,
+        span,
+        renames,
+    } in fields
+    {
+        let target_ident = renames.get(&target).unwrap_or(ident);
+
         result.items.push(syn::parse2(quote_spanned! { *span =>
             fn #ident(&self) -> #ty {
-                #target::#ident(self)
+                #target::#target_ident(self)
             }
         })?);
 
         let set_ident = format_ident!("set_{}", ident);
+        let set_target_ident = format_ident!("set_{}", target_ident);
         result.items.push(syn::parse2(quote_spanned! { *span =>
             fn #set_ident(&mut self, value: #ty) {
-                #target::#set_ident(self, value)
+                #target::#set_target_ident(self, value)
             }
         })?);
     }

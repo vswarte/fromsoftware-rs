@@ -19,6 +19,10 @@ pub trait EquipParam {
         sell_value: i32,
         sort_id: i32,
         vagrant_item_lot_id: i32,
+        #[multi_param(
+            rename(param = EQUIP_PARAM_PROTECTOR_ST, name = "vagrant_bonusene_drop_item_lot_id"),
+            rename(param = EQUIP_PARAM_WEAPON_ST, name = "vagrant_bonusene_drop_item_lot_id"),
+        )]
         vagrant_bonus_ene_drop_item_lot_id: i32,
         vagrant_item_ene_drop_item_lot_id: i32,
     }
@@ -37,8 +41,14 @@ pub trait EquipParamWearable: EquipParam {
         equip_model_category: u8,
         equip_model_gender: u8,
         sale_value: i32,
+        #[multi_param(
+            rename(param = EQUIP_PARAM_PROTECTOR_ST, name = "resident_sp_effect_id"),
+            rename(param = EQUIP_PARAM_WEAPON_ST, name = "resident_sp_effect_id0"),
+        )]
         resident_sp_effect_id1: i32,
+        #[multi_param(rename(param = EQUIP_PARAM_WEAPON_ST, name = "resident_sp_effect_id1"))]
         resident_sp_effect_id2: i32,
+        #[multi_param(rename(param = EQUIP_PARAM_WEAPON_ST, name = "resident_sp_effect_id2"))]
         resident_sp_effect_id3: i32,
     }
 }
