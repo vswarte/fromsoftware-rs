@@ -8,7 +8,6 @@ readme = false
 description = "Raw structures and bindings for From Software's title Elden Ring: Nightreign"
 
 [dependencies]
-shared.workspace = true
+fromsoftware-shared.workspace = true
 pelite.workspace = true
 windows.workspace = true
-from-singleton.workspace = true
