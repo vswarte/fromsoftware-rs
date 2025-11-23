@@ -95,12 +95,12 @@ name = "binary-mapper"
 version = "0.11.0"
 dependencies = [
  "clap",
- "fromsoftware-shared",
  "memmap",
  "pelite",
  "rayon",
  "serde",
  "toml",
+ "undname",
 ]
 
 [[package]]
@@ -358,7 +358,6 @@ dependencies = [
  "steamworks-sys",
  "thiserror",
  "tracing",
- "undname",
  "vtable-rs",
  "windows",
 ]
@@ -399,7 +398,6 @@ dependencies = [
  "nalgebra-glm",
  "pelite",
  "thiserror",
- "undname",
  "vtable-rs",
  "windows",
 ]

@@ -8,11 +8,11 @@ license.workspace = true
 
 [dependencies]
 pelite.workspace = true
-fromsoftware-shared.workspace = true
 clap = { version = "4.5.4", features = ["derive", "env"] }
 toml = "0.8"
 memmap = "0.7"
 rayon = "1"
+undname = "2"
 
 [dependencies.serde]
 version = "1"

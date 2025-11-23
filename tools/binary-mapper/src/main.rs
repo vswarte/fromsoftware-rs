@@ -1,16 +1,18 @@
+mod rtti;
+
 use std::fmt::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::{collections::HashMap, fs, fs::File};
 
 use clap::{command, Args, Parser, ValueEnum};
-use fromsoftware_shared::{find_rtti_classes, Class};
 use memmap::MmapOptions;
 use pelite::{
     pattern,
     pe64::{Pe, PeFile},
 };
 use rayon::prelude::*;
+use rtti::{find_rtti_classes, Class};
 use serde::Deserialize;
 
 #[derive(ValueEnum, Clone)]

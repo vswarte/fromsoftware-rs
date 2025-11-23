@@ -15,5 +15,4 @@ pelite.workspace = true
 fromsoftware-shared-macros.workspace = true
 thiserror.workspace = true
 vtable-rs.workspace = true
-undname = "2"
 from-singleton = { version = "2" }
