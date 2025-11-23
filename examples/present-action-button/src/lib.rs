@@ -8,7 +8,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::system::wait_for_system_init,
 };
-use shared::{program::Program, task::*, FromStatic};
+use fromsoftware_shared::{program::Program, task::*, FromStatic};
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
