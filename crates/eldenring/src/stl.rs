@@ -1,8 +1,4 @@
-use std::{
-    collections::VecDeque,
-    marker::PhantomData,
-    ptr::{copy_nonoverlapping, NonNull},
-};
+use std::ptr::NonNull;
 
 use crate::dlkr::DLAllocatorBase;
 use shared::OwnedPtr;
@@ -180,25 +176,6 @@ pub struct TreeNode<T> {
     black_red: u8,
     is_nil: u8,
     value: T,
-}
-
-pub struct DLFixedVector<T, const N: usize>
-where
-    T: Sized,
-{
-    elements: [T; N],
-    // TODO: fact-check this
-    unk1: usize,
-    count: usize,
-}
-
-impl<T, const N: usize> DLFixedVector<T, N>
-where
-    T: Sized,
-{
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
-        self.elements[0..self.count].iter()
-    }
 }
 
 #[repr(C)]
