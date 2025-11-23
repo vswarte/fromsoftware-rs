@@ -17,3 +17,7 @@ thiserror.workspace = true
 vtable-rs.workspace = true
 undname = "2"
 from-singleton = { version = "2" }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]
