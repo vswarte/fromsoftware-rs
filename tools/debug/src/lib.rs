@@ -88,7 +88,8 @@ impl EldenRingDebugGui {
 
 impl ImguiRenderLoop for EldenRingDebugGui {
     fn initialize(&mut self, ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
-        if let Ok(window) = unsafe { <CSWindowImp as fromsoftware_shared::FromStatic>::instance() } {
+        if let Ok(window) = unsafe { <CSWindowImp as fromsoftware_shared::FromStatic>::instance() }
+        {
             if window.screen_width > 1920 {
                 self.scale = window.screen_width as f32 / 1920.0;
                 self.size[0] *= self.scale;
