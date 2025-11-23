@@ -28,6 +28,8 @@ enum BinaryMapper {
     EldenRing(EldenRingArgs),
     #[command(name = "ds3")]
     DarkSoulsIII(DarkSoulsIIIArgs),
+    #[command(name = "nr")]
+    Nightreign(NightreignArgs),
 }
 
 /// Maps a single EXE to a single output and prints it to stdout.
@@ -60,6 +62,14 @@ struct EldenRingArgs {
 struct DarkSoulsIIIArgs {
     /// The EXE for patch 1.15.2 (Japenese or worldwide, either workds).
     #[arg(long, env("MAPPER_DS3_EXE"))]
+    exe: PathBuf,
+}
+
+/// Shortcut to map all files for Nightreign.
+#[derive(Args)]
+struct NightreignArgs {
+    /// The EXE for patch 1.2.4.0
+    #[arg(long, env("MAPPER_NR_EXE"))]
     exe: PathBuf,
 }
 
@@ -118,6 +128,17 @@ fn main() {
             )
             .unwrap();
             cargo_fmt(&ds3);
+        }
+        BinaryMapper::Nightreign(args) => {
+            let nr = game_crate_path("nightreign");
+            let profile = read_profile(nr.join("mapper-profile.toml"));
+            fs::write(nr.join("src/rva/bundle.rs"), generate_rust_struct(&profile)).unwrap();
+            fs::write(
+                nr.join("src/rva/rva_data.rs"),
+                generate_rust_instance(&map_results(&profile, &args.exe)),
+            )
+            .unwrap();
+            cargo_fmt(&nr);
         }
     }
 }
