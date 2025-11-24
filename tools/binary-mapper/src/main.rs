@@ -53,6 +53,10 @@ struct EldenRingArgs {
     /// The Japanese EXE for patch 2.6.1.1.
     #[arg(long, env("MAPPER_ER_JP_EXE"))]
     jp_exe: PathBuf,
+
+    /// Root for the project folder.
+    #[arg(long, env("MAPPER_ER_PROJECT_ROOT"))]
+    project_root: Option<PathBuf>,
 }
 
 /// Shortcut to map all files for DarkSouls III.
@@ -61,6 +65,10 @@ struct DarkSoulsIIIArgs {
     /// The EXE for patch 1.15.2 (Japenese or worldwide, either workds).
     #[arg(long, env("MAPPER_DS3_EXE"))]
     exe: PathBuf,
+
+    /// Root for the project folder.
+    #[arg(long, env("MAPPER_DS3_PROJECT_ROOT"))]
+    project_root: Option<PathBuf>,
 }
 
 fn main() {
@@ -89,7 +97,12 @@ fn main() {
             }
         }
         BinaryMapper::EldenRing(args) => {
-            let er = game_crate_path("eldenring");
+            let er = args
+                .project_root
+                .inspect(|r| {
+                    assert!(r.exists(), "Project root does not exist: {}", r.display());
+                })
+                .unwrap_or_else(|| game_crate_path("eldenring"));
             let profile = read_profile(er.join("mapper-profile.toml"));
             fs::write(er.join("src/rva/bundle.rs"), generate_rust_struct(&profile)).unwrap();
             fs::write(
@@ -105,7 +118,12 @@ fn main() {
             cargo_fmt(&er);
         }
         BinaryMapper::DarkSoulsIII(args) => {
-            let ds3 = game_crate_path("darksouls3");
+            let ds3 = args
+                .project_root
+                .inspect(|r| {
+                    assert!(r.exists(), "Project root does not exist: {}", r.display());
+                })
+                .unwrap_or_else(|| game_crate_path("darksouls3"));
             let profile = read_profile(ds3.join("mapper-profile.toml"));
             fs::write(
                 ds3.join("src/rva/bundle.rs"),
