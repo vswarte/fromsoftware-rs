@@ -105,20 +105,22 @@ pub struct PartyMemberInfo {
     pub pseudo_mp_event_text_for_map_id: i32,
     /// Summon param type of current player in multiplayer session
     pub summon_param_type: SummonParamType,
-    unk18c: u8,
-    unk18d: u8,
-    unk18e: u8,
-    unk18f: u8,
-    unk190: BlockId,
-    unk194: i32,
-    unk198: i32,
+    /// ID of a NPC (1-21) to use when reading field from [crate::param::NETWORK_MSG_PARAM_ST]
+    pub pseudo_mp_network_msg_npc_id: i8,
+    /// Default ceremony role param override in ceremony based on
+    /// PseudoMultiplayer event point in MSB
+    pub pseudo_mp_role_param_override: i32,
+    /// Host ceremony role param when in a multiplayer ceremony
+    pub pseudo_mp_role_param_override_host: i32,
+    /// Guest ceremony role param when in a multiplayer ceremony
+    pub pseudo_mp_role_param_override_guest: i32,
     /// Multiplay role that will be assigned to the host in a ceremony
-    pub ceremony_role_host: MultiplayRole,
+    pub pseudo_mp_role_host: MultiplayRole,
     /// Multiplay role that will be assigned to the guest in a ceremony
-    pub ceremony_role_guest: MultiplayRole,
+    pub pseudo_mp_role_guest: MultiplayRole,
     unk19e: u8,
     unk19f: u8,
-    pub needs_update: u8,
+    pub needs_update: bool,
     unk1a1: u8,
     unk1a2: u8,
     unk1a3: u8,
