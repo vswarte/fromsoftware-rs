@@ -9,6 +9,7 @@
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
+    pub character_type_properties: u32,
     pub chr_ins_apply_speffect: u32,
     pub chr_ins_remove_speffect: u32,
     pub cs_action_button_man_execute_action_button: u32,

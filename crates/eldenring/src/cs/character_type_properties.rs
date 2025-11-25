@@ -1,6 +1,12 @@
+use shared::FromStatic;
+
+use crate::cs::ChrType;
+
 #[repr(C)]
 pub struct CharacterTypePropertiesEntry {
-    unk0: u8,
+    /// Controls whether the character type needs to be included in AI target searches.
+    /// For example, will be disabled for ghosts.
+    pub include_in_ai_target_search: bool,
     /// Controls whether the character type can execute some TAE or HKS.
     pub disable_behavior: bool,
     /// Controls whether the character type can pick up items.
@@ -10,8 +16,9 @@ pub struct CharacterTypePropertiesEntry {
     unk4: u8,
     unk5: u8,
     unk6: u8,
-    /// Controls whether the character type can use the rune arc.
-    pub can_use_rune_arcs: bool,
+    /// Controls whether the character type considered to be a host-like player.
+    /// For example, allows using rune arcs and interacting with NPC signs.
+    pub is_host_like: bool,
     /// Controls whether the character type can receive buffs when
     /// their message is rated.
     pub can_receive_message_rate_buff: bool,
@@ -26,7 +33,9 @@ pub struct CharacterTypePropertiesEntry {
     /// See [`crate::cs::PartyMemberInfo::hostile_phantom_count`]
     pub is_hostile_phantom: bool,
     unkb: u8,
-    unkc: i32,
+    /// [DS3] Controls the character type assigned to the character after revival logic.
+    /// Doesn't do anything in Elden Ring.
+    pub post_revival_character_type: ChrType,
     unk10: i32,
 }
 
@@ -34,4 +43,20 @@ pub struct CharacterTypePropertiesEntry {
 pub struct CharacterTypePropertiesTable {
     pub entries: [CharacterTypePropertiesEntry; 22],
     pub default: CharacterTypePropertiesEntry,
+}
+
+impl FromStatic for CharacterTypePropertiesTable {
+    unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
+        use crate::rva;
+        use pelite::pe64::Pe;
+        use shared::Program;
+
+        let target = unsafe {
+            Program::current()
+                .rva_to_va(rva::get().character_type_properties)
+                .map_err(|e| shared::InstanceError::NotFound)?
+        } as *mut CharacterTypePropertiesTable;
+
+        Ok(&mut *target)
+    }
 }

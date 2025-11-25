@@ -9,6 +9,7 @@ use super::RvaBundle;
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub const RVAS: RvaBundle = RvaBundle {
+    character_type_properties: 0x3b17c00,
     chr_ins_apply_speffect: 0x3e8be0,
     chr_ins_remove_speffect: 0x3ee0b0,
     cs_action_button_man_execute_action_button: 0xa62ee0,
