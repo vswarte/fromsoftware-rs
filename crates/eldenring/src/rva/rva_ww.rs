@@ -9,6 +9,7 @@ use super::RvaBundle;
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub const RVAS: RvaBundle = RvaBundle {
+    character_type_properties: 0x3b17c00,
     chr_ins_apply_speffect: 0x3e8cf0,
     chr_ins_remove_speffect: 0x3ee1b0,
     cs_action_button_man_execute_action_button: 0xa62ff0,
@@ -23,6 +24,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     cs_phys_world_cast_ray: 0xc707b0,
     global_hinstance: 0x3d85688,
     initialize_spawn_geometry_request: 0x1db670,
+    multiplay_properties: 0x3b11230,
     register_task: 0xeb2000,
     spawn_geometry: 0x6a5150,
 };

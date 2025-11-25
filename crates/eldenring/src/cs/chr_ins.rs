@@ -1699,9 +1699,9 @@ pub struct PlayerIns {
     unk706: u8,
     unk707: u8,
     pub opacity_keyframes_timer: FD4Time,
-    /// When false, chr team type is 14 (Neutral) and chr is an NPC
+    /// When false, chr role is 14 (BattleRoyale) and chr is not an NPC
     /// Will decrease `opacity_keyframes_timer` and set `ChrIns.opacity_keyframes_multiplier` to 0
-    pub enable_neutral_npc_rendering: bool,
+    pub enable_arena_chr_rendering: bool,
     unk718: [u8; 0x27],
 }
 
@@ -1764,23 +1764,33 @@ pub struct PlayerSessionHolder {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-/// Role of character in PvP/PvE.
+/// Type of character in PvP/PvE.
 /// Changes a lot of things, like appearance, what items you can use, etc.
+///
+/// Related to [crate::cs::CharacterTypePropertiesTable] and [crate::cs::MultiplayType].
 pub enum ChrType {
     None = -1,
     Local = 0,
     WhitePhantom = 1,
-    BlackPhantom = 2,
+    Duelist = 2,
     Ghost = 3,
     Ghost1 = 4,
     Npc = 5,
+    Unk6 = 6,
+    Unk7 = 7,
     GrayPhantom = 8,
+    Unk9 = 9,
     BloodstainGhost = 10,
     BonfireGhost = 11,
+    Unk12 = 12,
     Arena = 13,
     MessageGhost = 14,
-    Invader = 15,
-    Invader2 = 16,
+    BloodyFinger = 15,
+    Recusant = 16,
     BluePhantom = 17,
-    Invader3 = 18,
+    FesteringBloodyFinger = 18,
+    WhiteSummonNpc = 19,
+    BloodyFingerNpc = 20,
+    RecusantNpc = 21,
+    Unk22 = 22,
 }

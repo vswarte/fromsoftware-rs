@@ -42101,11 +42101,11 @@ pub struct NETWORK_MSG_PARAM_ST {
     force_join_black_npc: i32,
     force_join_black_b_npc: i32,
     force_join_black_c_npc: i32,
-    unknown_0xa4: i32,
-    unknown_0xa8: i32,
-    unknown_0xac: i32,
-    unknown_0xb0: i32,
-    unknown_0xb4: i32,
+    npc17: i32,
+    npc18: i32,
+    npc19: i32,
+    npc20: i32,
+    npc21: i32,
     pad2_new: [u8; 8],
 }
 
@@ -42449,6 +42449,46 @@ impl NETWORK_MSG_PARAM_ST {
 
     pub fn set_force_join_black_c_npc(&mut self, value: i32) {
         self.force_join_black_c_npc = value;
+    }
+
+    pub fn npc17(&self) -> i32 {
+        self.npc17
+    }
+
+    pub fn set_npc17(&mut self, value: i32) {
+        self.npc17 = value;
+    }
+
+    pub fn npc18(&self) -> i32 {
+        self.npc18
+    }
+
+    pub fn set_npc18(&mut self, value: i32) {
+        self.npc18 = value;
+    }
+
+    pub fn npc19(&self) -> i32 {
+        self.npc19
+    }
+
+    pub fn set_npc19(&mut self, value: i32) {
+        self.npc19 = value;
+    }
+
+    pub fn npc20(&self) -> i32 {
+        self.npc20
+    }
+
+    pub fn set_npc20(&mut self, value: i32) {
+        self.npc20 = value;
+    }
+
+    pub fn npc21(&self) -> i32 {
+        self.npc21
+    }
+
+    pub fn set_npc21(&mut self, value: i32) {
+        self.npc21 = value;
     }
 }
 
