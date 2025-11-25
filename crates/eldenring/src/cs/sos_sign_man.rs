@@ -33,14 +33,14 @@ pub struct CSSosSignMan {
     unk88: [u8; 0x8],
     display_ghost: usize,
     timer: FD4Time,
-    /// Param ID for WhiteSignCoolTimeParam, incremented with each level and capped at 10
+    /// Param ID for [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST], incremented with each level and capped at 10
     pub white_sign_cool_time_param_id: u8,
     // _pada9: [u8; 3],
     unkac: u32,
-    /// Vector of sign cooldowns from WhiteSignCoolTimeParam
+    /// Vector of sign cooldowns from [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST]
     /// Each time your coop player dies and you have someone in your world
-    /// you will get a cooldown depending on WhiteSignCoolTimeParam.
-    /// All this cooldowns are stored in this vector.
+    /// you will get a cooldown depending on [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST].
+    /// All this cooldown timers are stored in this vector.
     pub signs_cooldown: Vector<f32>,
     /// Leftover from Dark Souls 3, never set to true or changed
     /// Source of names: Sekiro debug menu
