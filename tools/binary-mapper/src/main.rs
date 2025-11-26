@@ -4,6 +4,7 @@ use std::process::{Command, Stdio};
 use std::{collections::HashMap, fs, fs::File};
 
 use clap::{command, Args, Parser, ValueEnum};
+use fromsoftware_shared::{find_rtti_classes, Class};
 use memmap::MmapOptions;
 use pelite::{
     pattern,
@@ -11,7 +12,6 @@ use pelite::{
 };
 use rayon::prelude::*;
 use serde::Deserialize;
-use shared::{find_rtti_classes, Class};
 
 #[derive(ValueEnum, Clone)]
 enum OutputFormat {
@@ -206,7 +206,12 @@ fn generate_rust_struct(profile: &MapperProfile) -> String {
         .iter()
         .flat_map(|entry| &entry.captures)
         .filter(|name| !name.is_empty())
-        .chain(profile.vmts.iter().flat_map(|entry| entry.captures.keys()))
+        .chain(
+            profile
+                .vmts
+                .iter()
+                .flat_map(|entry| entry.captures.keys().chain(entry.vftable.iter())),
+        )
         .collect::<Vec<_>>();
     fields.sort();
     for field in fields {
@@ -303,7 +308,11 @@ struct MapperProfileVmt {
 
     /// A map from names for the captures to indexes in the VMT whose values are
     /// be used as VMTs.
+    #[serde(default)]
     captures: HashMap<String, u32>,
+
+    // A name for the capture of the virtual method table itself.
+    vftable: Option<String>,
 }
 
 impl MapperProfileVmt {
@@ -332,6 +341,10 @@ impl MapperProfileVmt {
 
                 MapperEntryResult::not_found(name)
             })
+            .chain(self.vftable.iter().map(|name| MapperEntryResult {
+                name: name.clone(),
+                rva: class.vftable,
+            }))
             .collect::<Vec<_>>()
     }
 }

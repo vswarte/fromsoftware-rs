@@ -1,8 +1,8 @@
-use hudhook::imgui::Ui;
-use shared::{
+use fromsoftware_shared::{
     F32Matrix2x2, F32Matrix2x3, F32Matrix2x4, F32Matrix3x2, F32Matrix3x3, F32Matrix3x4,
     F32Matrix4x2, F32Matrix4x3, F32Matrix4x4, F32Vector2, F32Vector3, F32Vector4,
 };
+use hudhook::imgui::Ui;
 
 use super::DebugDisplay;
 

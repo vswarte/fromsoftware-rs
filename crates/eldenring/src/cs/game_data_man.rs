@@ -6,7 +6,7 @@ use shared::OwnedPtr;
 use std::ptr::NonNull;
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum RemotePlayerDataSlotState {
     /// Player data slot is free / unoccupied
     Free = 0,
@@ -23,7 +23,7 @@ pub enum RemotePlayerDataSlotState {
 }
 
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 /// Source of name: global_event.lua from DS3
 pub enum DeathState {
     Normal = 0,
@@ -79,13 +79,17 @@ pub struct GameDataMan {
     /// Leave request status for each player slot
     /// Used by lua script imitation to track on leave events
     pub leave_requests: [bool; 5],
-    unkdf: [u8; 0x41],
+    unkdf: [u8; 0x39],
+    pub net_penalty_forgive_item_cooldown_active: bool,
+    pub net_penalty_requested: bool,
+    pub net_penalty_points: u16,
+    pub net_penalty_forgive_item_limit_time: f32,
     pub ng_lvl: u32,
     unk124: [u8; 0x34],
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum DisplayBlood {
     Off = 0,
     On = 1,
@@ -93,14 +97,14 @@ pub enum DisplayBlood {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PerformanceSetting {
     PrioritizeQuality = 0,
     PrioritizeFramerate = 1,
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum HudType {
     Off = 0,
     On = 1,

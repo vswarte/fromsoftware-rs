@@ -8,3 +8,7 @@ readme = false
 description = "Raw structures and bindings for From Software's title Elden Ring: Nightreign"
 
 [dependencies]
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]

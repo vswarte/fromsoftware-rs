@@ -9,11 +9,15 @@ description = "Helpers for dealing with pointers and other common stuff across g
 
 [dependencies]
 windows.workspace = true
-from-singleton.workspace = true
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
 pelite.workspace = true
-shared-macros.workspace = true
+fromsoftware-shared-macros.workspace = true
 thiserror.workspace = true
 vtable-rs.workspace = true
 undname = "2"
+from-singleton = { version = "2" }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]

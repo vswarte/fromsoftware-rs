@@ -3,6 +3,7 @@ use crate::cs::BlockId;
 use super::FieldInsHandle;
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum MemberType {
     Host = 0,
     RemotePlayer = 1,
@@ -10,6 +11,7 @@ pub enum MemberType {
 }
 
 #[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PartyMemberEntryState {
     HostDefault = 0,
     Unk1 = 1,
