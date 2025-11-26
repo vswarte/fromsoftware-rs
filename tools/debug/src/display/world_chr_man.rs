@@ -83,15 +83,10 @@ impl DebugDisplay for WorldChrMan {
             None => ui.text("No Main player instance"),
         }
 
-        match self.summon_buddy_manager.as_ref() {
-            Some(s) => {
-                if ui.collapsing_header("SummonBuddyManager", TreeNodeFlags::empty()) {
-                    ui.indent();
-                    s.render_debug(ui);
-                    ui.unindent();
-                }
-            }
-            None => ui.text("No SummonBuddyManager instance"),
+        if ui.collapsing_header("SummonBuddyManager", TreeNodeFlags::empty()) {
+            ui.indent();
+            self.summon_buddy_manager.render_debug(ui);
+            ui.unindent();
         }
 
         if ui.collapsing_header("NetChrSync", TreeNodeFlags::empty()) {
