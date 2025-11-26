@@ -45,8 +45,7 @@ pub struct CSFlipper {
     unk2dc: [u8; 4]
 }
 
-// Source of name: Shared FS Ghidra repository
-// Source of values: Shared FS Ghidra repository.
+// Source of name and values: Shared FS Ghidra repository
 // Flipped the FPS mode and the setting description, because enums shouldn't start with numbers.
 // A.e "30FPS_VSYNC_ON" -> "VsyncOn30Fps" or "60FPS" -> "Default60Fps".
 #[repr(u32)]
