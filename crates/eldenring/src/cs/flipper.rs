@@ -45,7 +45,6 @@ pub struct CSFlipper {
     unk2dc: [u8; 4]
 }
 
-// Source of name and values: Shared FS Ghidra repository
 // Flipped the FPS mode and the setting description, because enums shouldn't start with numbers.
 // A.e "30FPS_VSYNC_ON" -> "VsyncOn30Fps" or "60FPS" -> "Default60Fps".
 #[repr(u32)]
@@ -66,13 +65,9 @@ pub enum FlipMode {
     PlatformDefault = 0xd
 }
 
-// Source of name: Shared FS Ghidra repository
 #[repr(C)]
 pub struct CSFlipperVsyncHistoryEntry {
-    frame_delta_ticks: usize,
+    pub frame_delta_ticks: u64,
     /// Technically a BOOL (u32).
-    /// Hence padding for alignment.
     pub vsync_state: bool,
-    padding: [u8; 3],
-    unkc: [u8; 4],
 }
