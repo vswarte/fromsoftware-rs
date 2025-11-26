@@ -42,7 +42,7 @@ pub struct CSFlipper {
     unk2d1: [u8; 3],
     unk2d4: f32,
     pub countdown_timer: f32,
-    unk2dc: [u8; 4]
+    unk2dc: [u8; 4],
 }
 
 // Flipped the FPS mode and the setting description, because enums shouldn't start with numbers.
@@ -62,7 +62,7 @@ pub enum FlipMode {
     NoSync85Fps = 0xa,
     Default120Fps = 0xb,
     NoSync120Fps = 0xc,
-    PlatformDefault = 0xd
+    PlatformDefault = 0xd,
 }
 
 #[repr(C)]
