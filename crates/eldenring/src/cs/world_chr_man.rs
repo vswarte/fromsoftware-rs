@@ -72,7 +72,7 @@ pub struct WorldChrMan {
 
     unk1e520: [u8; 0x18],
     /// Manages spirit summons (excluding Torrent).
-    pub summon_buddy_manager: Option<OwnedPtr<SummonBuddyManager>>,
+    pub summon_buddy_manager: OwnedPtr<SummonBuddyManager>,
     unk1e540: usize,
     unk1e548: usize,
     unk1e550: usize,
