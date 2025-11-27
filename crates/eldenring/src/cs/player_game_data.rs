@@ -7,7 +7,7 @@ use thiserror::Error;
 use crate::Vector;
 use shared::OwnedPtr;
 
-use crate::cs::{FieldInsHandle, GaitemHandle, MaybeInvalidItemId};
+use crate::cs::{FieldInsHandle, GaitemHandle, ItemId, MaybeInvalidItemId};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -270,22 +270,22 @@ pub struct QMItemBackupVectorItem {
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct ChrAsmEquipEntries {
-    pub weapon_primary_left: MaybeInvalidItemId,
-    pub weapon_primary_right: MaybeInvalidItemId,
-    pub weapon_secondary_left: MaybeInvalidItemId,
-    pub weapon_secondary_right: MaybeInvalidItemId,
-    pub weapon_tertiary_left: MaybeInvalidItemId,
-    pub weapon_tertiary_right: MaybeInvalidItemId,
+    pub weapon_primary_left: ItemId,
+    pub weapon_primary_right: ItemId,
+    pub weapon_secondary_left: ItemId,
+    pub weapon_secondary_right: ItemId,
+    pub weapon_tertiary_left: ItemId,
+    pub weapon_tertiary_right: ItemId,
     pub arrow_primary: MaybeInvalidItemId,
     pub bolt_primary: MaybeInvalidItemId,
     pub arrow_secondary: MaybeInvalidItemId,
     pub bolt_secondary: MaybeInvalidItemId,
     pub arrow_tertiary: MaybeInvalidItemId,
     pub bolt_tertiary: MaybeInvalidItemId,
-    pub protector_head: MaybeInvalidItemId,
-    pub protector_chest: MaybeInvalidItemId,
-    pub protector_hands: MaybeInvalidItemId,
-    pub protector_legs: MaybeInvalidItemId,
+    pub protector_head: ItemId,
+    pub protector_chest: ItemId,
+    pub protector_hands: ItemId,
+    pub protector_legs: ItemId,
     pub unused40: MaybeInvalidItemId,
     pub accessories: [MaybeInvalidItemId; 4],
     pub covenant: MaybeInvalidItemId,
