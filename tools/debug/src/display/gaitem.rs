@@ -32,7 +32,7 @@ impl DebugDisplay for CSGaitemImp {
                     ui.text(gaitem.gaitem_handle.to_string());
 
                     ui.table_next_column();
-                    ui.text(gaitem.item_id.to_string());
+                    ui.text(format!("{:?}", gaitem.item_id));
 
                     ui.table_next_column();
                     ui.text(format!("{:?}", gaitem.gaitem_handle.category()));

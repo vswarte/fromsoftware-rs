@@ -3,7 +3,7 @@ use std::{fmt::Display, mem::transmute};
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::cs::ItemId;
+use crate::cs::MaybeInvalidItemId;
 use shared::OwnedPtr;
 
 #[repr(C)]
@@ -57,7 +57,7 @@ impl CSGaitemImp {
 pub struct CSGaitemIns {
     vftable: usize,
     pub gaitem_handle: GaitemHandle,
-    pub item_id: ItemId,
+    pub item_id: MaybeInvalidItemId,
 }
 
 impl CSGaitemIns {

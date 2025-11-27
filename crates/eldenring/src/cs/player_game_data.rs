@@ -7,7 +7,7 @@ use thiserror::Error;
 use crate::Vector;
 use shared::OwnedPtr;
 
-use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};
+use crate::cs::{FieldInsHandle, GaitemHandle, MaybeInvalidItemId};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -231,13 +231,13 @@ pub struct PlayerGameDataSpEffect {
 
 #[repr(C)]
 pub struct ItemReplenishStateEntry {
-    pub item_id: ItemId,
+    pub item_id: MaybeInvalidItemId,
     pub auto_replenish: bool,
 }
 
 #[repr(C)]
 pub struct ItemReplenishStateEntryUnk {
-    pub item_id: ItemId,
+    pub item_id: MaybeInvalidItemId,
     pub auto_replenish: bool,
 }
 
@@ -263,34 +263,34 @@ impl ItemReplenishStateTracker {
 
 #[repr(C)]
 pub struct QMItemBackupVectorItem {
-    pub item_id: ItemId,
+    pub item_id: MaybeInvalidItemId,
     pub quantity: u32,
 }
 
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct ChrAsmEquipEntries {
-    pub weapon_primary_left: ItemId,
-    pub weapon_primary_right: ItemId,
-    pub weapon_secondary_left: ItemId,
-    pub weapon_secondary_right: ItemId,
-    pub weapon_tertiary_left: ItemId,
-    pub weapon_tertiary_right: ItemId,
-    pub arrow_primary: ItemId,
-    pub bolt_primary: ItemId,
-    pub arrow_secondary: ItemId,
-    pub bolt_secondary: ItemId,
-    pub arrow_tertiary: ItemId,
-    pub bolt_tertiary: ItemId,
-    pub protector_head: ItemId,
-    pub protector_chest: ItemId,
-    pub protector_hands: ItemId,
-    pub protector_legs: ItemId,
-    pub unused40: ItemId,
-    pub accessories: [ItemId; 4],
-    pub covenant: ItemId,
-    pub quick_tems: [ItemId; 10],
-    pub pouch: [ItemId; 6],
+    pub weapon_primary_left: MaybeInvalidItemId,
+    pub weapon_primary_right: MaybeInvalidItemId,
+    pub weapon_secondary_left: MaybeInvalidItemId,
+    pub weapon_secondary_right: MaybeInvalidItemId,
+    pub weapon_tertiary_left: MaybeInvalidItemId,
+    pub weapon_tertiary_right: MaybeInvalidItemId,
+    pub arrow_primary: MaybeInvalidItemId,
+    pub bolt_primary: MaybeInvalidItemId,
+    pub arrow_secondary: MaybeInvalidItemId,
+    pub bolt_secondary: MaybeInvalidItemId,
+    pub arrow_tertiary: MaybeInvalidItemId,
+    pub bolt_tertiary: MaybeInvalidItemId,
+    pub protector_head: MaybeInvalidItemId,
+    pub protector_chest: MaybeInvalidItemId,
+    pub protector_hands: MaybeInvalidItemId,
+    pub protector_legs: MaybeInvalidItemId,
+    pub unused40: MaybeInvalidItemId,
+    pub accessories: [MaybeInvalidItemId; 4],
+    pub covenant: MaybeInvalidItemId,
+    pub quick_tems: [MaybeInvalidItemId; 10],
+    pub pouch: [MaybeInvalidItemId; 6],
 }
 
 #[repr(C)]
@@ -464,7 +464,7 @@ bitfield! {
 
 #[repr(C)]
 pub struct ItemIdMapping {
-    pub item_id: ItemId,
+    pub item_id: MaybeInvalidItemId,
     bits4: ItemIdMappingBits,
 }
 
@@ -487,7 +487,7 @@ pub struct EquipInventoryDataListEntry {
     /// Handle to the gaitem instance which describes additional properties to the inventory item,
     /// like durability and gems in the case of weapons.
     pub gaitem_handle: GaitemHandle,
-    pub item_id: ItemId,
+    pub item_id: MaybeInvalidItemId,
     /// Quantity of the item we have.
     pub quantity: u32,
     pub display_id: u32,
@@ -662,10 +662,10 @@ mod tests {
     #[test]
     fn test_item_id_mapping() {
         let mapping = ItemIdMapping {
-            item_id: ItemId::from(0x40002760),
+            item_id: MaybeInvalidItemId::from(0x40002760),
             bits4: ItemIdMappingBits(0x003B8000),
         };
-        assert_eq!(mapping.item_id, ItemId::from(0x40002760));
+        assert_eq!(mapping.item_id, MaybeInvalidItemId::from(0x40002760));
         assert_eq!(
             mapping.next_mapping_item(),
             ((mapping.bits4.0 >> 12) & 0xFFF) - 1

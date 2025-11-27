@@ -146,39 +146,72 @@ impl DebugDisplay for ChrAsmEquipment {
 
 impl DebugDisplay for ChrAsmEquipEntries {
     fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!("Primary Left weapon: {}", self.weapon_primary_left));
         ui.text(format!(
-            "Primary Right weapon: {}",
-            self.weapon_primary_right
+            "Primary Left weapon: {:?}",
+            self.weapon_primary_left.param_id()
         ));
         ui.text(format!(
-            "Secondary Left weapon: {}",
-            self.weapon_secondary_left
+            "Primary Right weapon: {:?}",
+            self.weapon_primary_right.param_id()
         ));
         ui.text(format!(
-            "Secondary Right weapon: {}",
-            self.weapon_secondary_right
+            "Secondary Left weapon: {:?}",
+            self.weapon_secondary_left.param_id()
         ));
         ui.text(format!(
-            "Tertiary Left weapon: {}",
-            self.weapon_tertiary_left
+            "Secondary Right weapon: {:?}",
+            self.weapon_secondary_right.param_id()
         ));
         ui.text(format!(
-            "Tertiary Right weapon: {}",
-            self.weapon_tertiary_right
+            "Tertiary Left weapon: {:?}",
+            self.weapon_tertiary_left.param_id()
+        ));
+        ui.text(format!(
+            "Tertiary Right weapon: {:?}",
+            self.weapon_tertiary_right.param_id()
         ));
 
-        ui.text(format!("Primary Left arrow: {}", self.arrow_primary));
-        ui.text(format!("Primary Left bolt: {}", self.bolt_primary));
-        ui.text(format!("Secondary Left arrow: {}", self.arrow_secondary));
-        ui.text(format!("Secondary Left bolt: {}", self.bolt_secondary));
-        ui.text(format!("Tertiary Left arrow: {}", self.arrow_tertiary));
-        ui.text(format!("Tertiary Left bolt: {}", self.bolt_tertiary));
+        ui.text(format!(
+            "Primary Left arrow: {:?}",
+            self.arrow_primary.param_id()
+        ));
+        ui.text(format!(
+            "Primary Left bolt: {:?}",
+            self.bolt_primary.param_id()
+        ));
+        ui.text(format!(
+            "Secondary Left arrow: {:?}",
+            self.arrow_secondary.param_id()
+        ));
+        ui.text(format!(
+            "Secondary Left bolt: {:?}",
+            self.bolt_secondary.param_id()
+        ));
+        ui.text(format!(
+            "Tertiary Left arrow: {:?}",
+            self.arrow_tertiary.param_id()
+        ));
+        ui.text(format!(
+            "Tertiary Left bolt: {:?}",
+            self.bolt_tertiary.param_id()
+        ));
 
-        ui.text(format!("Protector Head: {}", self.protector_head));
-        ui.text(format!("Protector Chest: {}", self.protector_chest));
-        ui.text(format!("Protector Hands: {}", self.protector_hands));
-        ui.text(format!("Protector Legs: {}", self.protector_legs));
+        ui.text(format!(
+            "Protector Head: {:?}",
+            self.protector_head.param_id()
+        ));
+        ui.text(format!(
+            "Protector Chest: {:?}",
+            self.protector_chest.param_id()
+        ));
+        ui.text(format!(
+            "Protector Hands: {:?}",
+            self.protector_hands.param_id()
+        ));
+        ui.text(format!(
+            "Protector Legs: {:?}",
+            self.protector_legs.param_id()
+        ));
 
         if ui.collapsing_header("Accessories", TreeNodeFlags::empty()) {
             ui.indent();
@@ -200,13 +233,13 @@ impl DebugDisplay for ChrAsmEquipEntries {
                         ui.table_next_column();
                         ui.text(index.to_string());
                         ui.table_next_column();
-                        ui.text(item.to_string());
+                        ui.text(format!("{:?}", item.param_id()));
                     });
             }
             ui.unindent();
         }
 
-        ui.text(format!("Covenant: {}", self.covenant));
+        ui.text(format!("Covenant: {:?}", self.covenant.param_id()));
 
         if ui.collapsing_header("Quick Items", TreeNodeFlags::empty()) {
             ui.indent();
@@ -228,7 +261,7 @@ impl DebugDisplay for ChrAsmEquipEntries {
                         ui.table_next_column();
                         ui.text(index.to_string());
                         ui.table_next_column();
-                        ui.text(item.to_string());
+                        ui.text(format!("{:?}", item.param_id()));
                     });
             }
             ui.unindent();
@@ -252,7 +285,7 @@ impl DebugDisplay for ChrAsmEquipEntries {
                     ui.text(index.to_string());
 
                     ui.table_next_column();
-                    ui.text(item.to_string());
+                    ui.text(format!("{:?}", item.param_id()));
                 });
             }
             ui.unindent();
@@ -329,7 +362,7 @@ impl DebugDisplay for EquipGameData {
                         ui.text(index.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.item_id.to_string());
+                        ui.text(format!("{:?}", item.item_id));
 
                         ui.table_next_column();
                         ui.text(item.quantity.to_string());
@@ -362,7 +395,7 @@ impl DebugDisplay for ItemReplenishStateTracker {
                     ui.text(index.to_string());
 
                     ui.table_next_column();
-                    ui.text(item.item_id.to_string());
+                    ui.text(format!("{:?}", item.item_id));
 
                     ui.table_next_column();
                     ui.text(item.auto_replenish.to_string());
@@ -526,7 +559,7 @@ impl DebugDisplay for EquipInventoryData {
                         ui.text(item.gaitem_handle.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.item_id.to_string());
+                        ui.text(format!("{:?}", item.item_id));
 
                         ui.table_next_column();
                         ui.text(item.quantity.to_string());
@@ -567,7 +600,7 @@ impl DebugDisplay for EquipInventoryData {
                         ui.text(item.gaitem_handle.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.item_id.to_string());
+                        ui.text(format!("{:?}", item.item_id));
 
                         ui.table_next_column();
                         ui.text(item.quantity.to_string());
@@ -608,7 +641,7 @@ impl DebugDisplay for EquipInventoryData {
                         ui.text(item.gaitem_handle.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.item_id.to_string());
+                        ui.text(format!("{:?}", item.item_id));
 
                         ui.table_next_column();
                         ui.text(item.quantity.to_string());
