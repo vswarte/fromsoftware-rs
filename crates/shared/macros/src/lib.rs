@@ -167,7 +167,7 @@ pub fn derive_superclass(input: TokenStream) -> TokenStream {
 /// ```rs
 /// #[for_all_subclasses]
 /// pub impl ChrInsExt for Subclass<ChrIns> {
-///     pub fn apply_speffect(&mut self, sp_effect: i32, dont_sync: bool) {
+///     fn apply_speffect(&mut self, sp_effect: i32, dont_sync: bool) {
 ///         let rva = Program::current()
 ///             .rva_to_va(rva::get().chr_ins_apply_speffect)
 ///             .unwrap();
@@ -176,7 +176,7 @@ pub fn derive_superclass(input: TokenStream) -> TokenStream {
 ///         call(self, sp_effect, dont_sync);
 ///     }
 ///
-///     pub fn remove_speffect(&mut self, sp_effect: i32) {
+///     fn remove_speffect(&mut self, sp_effect: i32) {
 ///         let rva = Program::current()
 ///             .rva_to_va(rva::get().chr_ins_remove_speffect)
 ///             .unwrap();

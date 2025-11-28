@@ -1,11 +1,11 @@
 use std::ops::{Index, IndexMut};
-use std::{iter, num::NonZero, ptr::NonNull, slice};
+use std::{borrow::Cow, iter, num::NonZero, ptr::NonNull, slice};
 
 use bitfield::bitfield;
-use shared::{OwnedPtr, empty::*};
+use shared::{FromStatic, InstanceResult, OwnedPtr, empty::*};
 
 use crate::CxxVec;
-use crate::sprj::{ItemId, OptionalItemId};
+use crate::sprj::{ItemId, OptionalItemId, PlayerIns};
 
 mod gesture;
 
@@ -35,6 +35,23 @@ pub struct PlayerGameData {
     _menu_ref_special_effect_1: usize,
     _menu_ref_special_effect_2: usize,
     _unk930: [u8; 0x20],
+}
+
+impl FromStatic for PlayerGameData {
+    fn name() -> Cow<'static, str> {
+        "PlayerGameData".into()
+    }
+
+    /// Returns the singleton instance of `PlayerGameData` for the main player
+    /// character, if it exists.
+    ///
+    /// This always returns
+    /// [InstanceError::NotFound](shared::InstanceError::NotFound) on the main
+    /// menu.
+    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+        // Go through PlayerIns because it doesn't exist on the main menu.
+        unsafe { PlayerIns::instance().map(|ins| ins.player_game_data.as_mut()) }
+    }
 }
 
 #[repr(C)]
