@@ -93,7 +93,12 @@ pub struct ChrIns {
     unk48: usize,
     pub chr_model_ins: OwnedPtr<CSChrModelIns>,
     pub chr_ctrl: OwnedPtr<ChrCtrl>,
-    pub think_param_id: i32,
+    /// NPC param ID for this character.
+    /// See [NPC_PARAM_ST]
+    pub npc_param_id: i32,
+    /// 4 number identifier for this npc.
+    /// eg. 8000 for Torrent
+    /// Same as [Self::character_id]
     pub npc_id: i32,
     pub chr_type: ChrType,
     pub team_type: u8,
@@ -136,6 +141,9 @@ pub struct ChrIns {
     pub special_effect: OwnedPtr<SpecialEffect>,
     /// Refers to what field ins you were last hit by.
     pub last_hit_by: FieldInsHandle,
+    /// 4 number identifier for this character.
+    /// eg. 8000 for Torrent
+    /// Same as [Self::npc_id]
     pub character_id: u32,
     unk18c: u32,
     pub module_container: OwnedPtr<ChrInsModuleContainer>,
