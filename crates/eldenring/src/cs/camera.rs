@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
+use shared::{F32ViewMatrix, F32Vector4, OwnedPtr};
 
 use crate::position::{HavokPosition, PositionDelta};
 
@@ -34,7 +34,7 @@ pub struct CSCam {
     vftable: usize,
     unk8: u32,
     unkc: u32,
-    pub matrix: F32Matrix4x4,
+    pub matrix: F32ViewMatrix,
     pub fov: f32,
     pub aspect_ratio: f32,
     pub near_plane: f32,

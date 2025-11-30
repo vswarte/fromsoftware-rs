@@ -23,7 +23,7 @@ use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
 use crate::rva;
 use shared::program::Program;
-use shared::{Aabb, F32Matrix4x4, F32Vector3, F32Vector4, OwnedPtr};
+use shared::{Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPtr};
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -997,8 +997,8 @@ bitfield! {
 
 #[repr(C)]
 pub struct ChrPhysicsMaterialInfo {
-    /// Local orientation matrix (rightm, up, forward, 1)
-    pub orientation_matrix: F32Matrix4x4,
+    /// Local orientation matrix (right, up, forward, 1)
+    pub orientation_matrix: F32ModelMatrix,
     /// Normal vector of the hit surface
     pub normal_vector: F32Vector4,
     unk50: [u8; 8],
@@ -1391,7 +1391,7 @@ pub struct ChrCtrl {
     pub lock_on_chr_tag_dmypoly_offset: F32Vector4,
     /// Stores the model matrix derived from `CSChrPhysicsModule::ConstructModelMatrix`.
     /// Constructed from `CSChrPhysicsModule::position` and `CSChrPhysicsModule::orientation`.
-    pub physics_model_matrix: F32Matrix4x4,
+    pub physics_model_matrix: F32ModelMatrix,
     /// Stores the `raw_physics_model_matrix` multiplied by itself.
     pub physics_transform_matrix_squared: F32Matrix4x4,
     /// The primary model matrix for the character.
@@ -1403,7 +1403,7 @@ pub struct ChrCtrl {
     /// This matrix is then processed by ChrEasingModule,
     /// and the eased result is stored back into this field. It's the final matrix
     /// propagated to components like `locationMtx44ChrEntity`.
-    pub model_matrix: F32Matrix4x4,
+    pub model_matrix: F32ModelMatrix,
     /// Stores the `model_matrix` multiplied by itself after all modifications.chr_ins
     pub model_matrix_squared: F32Matrix4x4,
     unk2b0: F32Vector4,

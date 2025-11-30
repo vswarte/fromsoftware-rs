@@ -354,6 +354,7 @@ dependencies = [
  "cxx-stl",
  "encoding_rs",
  "fromsoftware-shared",
+ "glam",
  "nalgebra",
  "nalgebra-glm",
  "pelite",
@@ -403,6 +404,7 @@ version = "0.11.0"
 dependencies = [
  "from-singleton",
  "fromsoftware-shared-macros",
+ "glam",
  "nalgebra",
  "nalgebra-glm",
  "pelite",
@@ -439,6 +441,12 @@ dependencies = [
  "log",
  "xml-rs",
 ]
+
+[[package]]
+name = "glam"
+version = "0.30.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd47b05dddf0005d850e5644cae7f2b14ac3df487979dbfff3b56f20b1a6ae46"
 
 [[package]]
 name = "hashbrown"
