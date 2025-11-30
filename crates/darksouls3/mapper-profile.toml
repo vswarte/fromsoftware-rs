@@ -1,3 +1,11 @@
 [[patterns]]
+pattern = "[16] 48 8d 6c 24 d9 48 81 ec 00 01 00 00 48 c7 45 cf fe ff ff ff"
+captures = ["map_item_man_grant_item"]
+
+[[patterns]]
+pattern = "48 8b 0d $ { ' } bb [4] 41 bc"
+captures = ["", "map_item_man_ptr"]
+
+[[patterns]]
 pattern = "45 33 c0 41 8d ? ? 48 83 c4 ? 5b e9 $ { ' }"
 captures = ["", "register_task"]
