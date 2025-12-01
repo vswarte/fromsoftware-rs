@@ -73,7 +73,6 @@ impl DebugDisplay for CSSosSignMan {
         if ui.collapsing_header("Signs Cooldown", TreeNodeFlags::empty()) {
             ui.indent();
             self.signs_cooldown
-                .items()
                 .iter()
                 .enumerate()
                 .for_each(|(i, t)| {
