@@ -191,7 +191,10 @@ impl DLAllocatorVmt for DLAllocatorBase {
         todo!()
     }
 
-    extern "C" fn allocation_belongs_to_second_allocator(&mut self, _allocation: *const u8) -> bool {
+    extern "C" fn allocation_belongs_to_second_allocator(
+        &mut self,
+        _allocation: *const u8,
+    ) -> bool {
         todo!()
     }
 
