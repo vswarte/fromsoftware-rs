@@ -183,6 +183,7 @@ pub struct CSTargetSearchSys {
     unk95: [u8; 0xB],
 }
 
+#[allow(unused)]
 enum SearchSlotIndex {
     Enemy = 0,
     Friend = 1,

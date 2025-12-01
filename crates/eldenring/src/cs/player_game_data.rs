@@ -507,7 +507,7 @@ pub struct ItemIdMapping {
 impl ItemIdMapping {
     /// Returns the offset of the next item ID mapping with the same modulo result.
     pub fn next_mapping_item(&self) -> u32 {
-        (self.bits4.mapping_index() - 1)
+        self.bits4.mapping_index() - 1
     }
 
     /// Returns the index of the item slot. This index is first checked against the key items

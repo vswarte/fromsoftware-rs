@@ -1,8 +1,4 @@
-use std::{
-    cell::UnsafeCell,
-    ptr::NonNull,
-    sync::{atomic::AtomicBool, Arc},
-};
+use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
@@ -43,7 +39,7 @@ impl FD4TaskBaseVmt for FD4TaskBase {
         unimplemented!()
     }
 
-    extern "C" fn execute(&mut self, data: &FD4TaskData) {
+    extern "C" fn execute(&mut self, _data: &FD4TaskData) {
         unimplemented!()
     }
 }

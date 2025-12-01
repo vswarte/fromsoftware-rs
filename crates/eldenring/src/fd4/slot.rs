@@ -21,6 +21,7 @@ pub trait FD4SlotInsBaseVmt {
     fn unk20(&mut self) -> u32;
 }
 
+#[repr(C)]
 pub struct FD4SlotSysBase {
     pub vftable: VPtr<dyn FD4SlotInsBaseVmt, Self>,
     pub allocator: NonNull<DLAllocatorBase>,

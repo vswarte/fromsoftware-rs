@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use bitfield::{bitfield, BitRange};
+use bitfield::bitfield;
 use thiserror::Error;
 
 bitfield! {
@@ -89,8 +89,6 @@ impl Display for ItemId {
 
 #[cfg(test)]
 mod tests {
-    use bitfield::bitfield;
-
     use crate::cs::{ItemCategory, ItemId};
 
     #[test]

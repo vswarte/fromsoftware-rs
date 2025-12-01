@@ -240,11 +240,10 @@ impl FromStatic for MultiplayProperties {
         use pelite::pe64::Pe;
         use shared::Program;
 
-        let target = unsafe {
-            Program::current()
-                .rva_to_va(rva::get().multiplay_properties)
-                .map_err(|e| shared::InstanceError::NotFound)?
-        } as *mut MultiplayProperties;
+        let target = Program::current()
+            .rva_to_va(rva::get().multiplay_properties)
+            .map_err(|_| shared::InstanceError::NotFound)?
+            as *mut MultiplayProperties;
 
         Ok(&mut *target)
     }

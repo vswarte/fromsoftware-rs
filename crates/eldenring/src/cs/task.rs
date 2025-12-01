@@ -1,16 +1,15 @@
-use pelite::{pattern, pattern::Atom, pe64::Pe};
+use pelite::pe64::Pe;
 use std::ptr::NonNull;
-use std::{ffi, marker::PhantomData, sync::LazyLock};
+use std::sync::LazyLock;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
 use crate::dlkr::DLPlainConditionSignal;
-use crate::dlrf::DLRuntimeClass;
-use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
+use crate::fd4::{FD4TaskBaseVmt, FD4TaskData};
 use crate::{
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
-    rva, Tree, Vector,
+    rva, Vector,
 };
 use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
 

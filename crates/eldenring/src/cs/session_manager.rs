@@ -5,11 +5,11 @@ use windows::Win32::Foundation::FILETIME;
 use crate::{
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
-    dltx::{DLCodedString, DLInplaceStr, DLUTF16StringKind},
+    dltx::{DLInplaceStr, DLUTF16StringKind},
     fd4::FD4Time,
     DoublyLinkedList, Vector,
 };
-use shared::{F32Vector3, F32Vector4, OwnedPtr};
+use shared::{F32Vector3, OwnedPtr};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
@@ -45,6 +45,7 @@ pub enum ProtocolState {
 
 impl ProtocolState {
     /// Seems to be checked for packet 39,
+    #[allow(unused)]
     fn should_handle_some_packets(&self) -> bool {
         match self {
             ProtocolState::Inactive => false,

@@ -18,9 +18,10 @@ pub enum FieldInsType {
     HitGeom = 8,
 }
 
-/// Used to reference a specific FieldIns managed by its respective (external) domain.
 bitfield! {
+    #[repr(C)]
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    /// Used to reference a specific FieldIns managed by its respective (external) domain.
     pub struct FieldInsSelector(u32);
     impl Debug;
 

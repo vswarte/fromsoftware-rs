@@ -1,15 +1,9 @@
-use std::alloc::Layout;
 use std::borrow::Cow;
 use std::fmt::Display;
-use std::mem::ManuallyDrop;
-use std::ops::{Deref, DerefMut};
-use std::ptr::NonNull;
-use std::{alloc::GlobalAlloc, error::Error};
 
 use crate::dlkr::DLAllocatorRef;
 
 use encoding_rs;
-use shared::OwnedPtr;
 use thiserror::Error;
 
 #[repr(u8)]

@@ -1,4 +1,3 @@
-use core::ffi;
 use std::ptr::NonNull;
 
 use bitfield::bitfield;

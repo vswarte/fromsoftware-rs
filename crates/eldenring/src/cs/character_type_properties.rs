@@ -51,11 +51,10 @@ impl FromStatic for CharacterTypePropertiesTable {
         use pelite::pe64::Pe;
         use shared::Program;
 
-        let target = unsafe {
-            Program::current()
-                .rva_to_va(rva::get().character_type_properties)
-                .map_err(|e| shared::InstanceError::NotFound)?
-        } as *mut CharacterTypePropertiesTable;
+        let target = Program::current()
+            .rva_to_va(rva::get().character_type_properties)
+            .map_err(|_| shared::InstanceError::NotFound)?
+            as *mut CharacterTypePropertiesTable;
 
         Ok(&mut *target)
     }

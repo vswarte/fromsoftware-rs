@@ -20,8 +20,6 @@ use std::{
     ops::{Add, Sub},
 };
 
-use nalgebra::{Vector, Vector3};
-
 /// Represents a position relative to some block center and character's yaw.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -1,20 +1,12 @@
-use std::collections::LinkedList;
-use std::ffi;
-use std::fmt::Display;
-use std::marker::PhantomData;
-use std::mem::transmute;
 use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
 use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::position::HavokPosition;
-use crate::{
-    cs::{ChrIns, EnemyIns},
-    Vector,
-};
+use crate::{cs::ChrIns, Vector};
 use crate::{ChainingTree, DoublyLinkedList, Tree};
-use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
+use shared::{F32Vector4, OwnedPtr};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
@@ -358,7 +350,7 @@ impl<T> ChrSet<T> {
 
         std::iter::from_fn(move || {
             while current != end {
-                let mut chr_ins = unsafe { current.as_mut().chr_ins };
+                let chr_ins = unsafe { current.as_mut().chr_ins };
                 current = unsafe { current.add(1) };
                 let Some(mut chr_ins) = chr_ins else {
                     continue;

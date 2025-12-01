@@ -1,6 +1,5 @@
-use pelite::{pattern, pattern::Atom, pe64::Pe};
-use std::{ffi, marker::PhantomData, sync::LazyLock};
-use vtable_rs::VPtr;
+use pelite::pe64::Pe;
+use std::sync::LazyLock;
 
 use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
 

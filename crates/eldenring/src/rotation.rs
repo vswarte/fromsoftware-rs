@@ -1,8 +1,6 @@
 use nalgebra_glm as glm;
 use std::fmt::Display;
 
-use shared::F32Vector4;
-
 #[repr(C, align(16))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Quaternion(pub f32, pub f32, pub f32, pub f32);

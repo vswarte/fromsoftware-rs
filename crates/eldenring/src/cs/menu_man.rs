@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::{program::Program, OwnedPtr};
+use shared::program::Program;
 
 use super::{CSEzTask, CSEzUpdateTask, ItemId};
 use crate::rva;

@@ -1,6 +1,4 @@
-use std::ops::Mul;
-
-use crate::cs::{BlockId, ChrType, MultiplayRole, SummonParamType};
+use crate::cs::{ChrType, MultiplayRole, SummonParamType};
 
 use super::FieldInsHandle;
 

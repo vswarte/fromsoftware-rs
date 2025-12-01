@@ -22,7 +22,7 @@ impl From<NonNull<DLAllocatorBase>> for DLAllocatorRef {
 }
 
 impl DLAllocatorVmt for DLAllocatorBase {
-    extern "C" fn destructor(&mut self, param_2: bool) {
+    extern "C" fn destructor(&mut self, _param_2: bool) {
         todo!()
     }
 }

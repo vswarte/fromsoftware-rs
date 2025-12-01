@@ -51,7 +51,7 @@ pub trait DLFileDeviceVmt {
 
     fn file_enumerator(&self) -> *const u8;
 
-    fn get_drive_type(&self, path: *const u16) -> DLFileDeviceDriveType {
+    fn get_drive_type(&self, _path: *const u16) -> DLFileDeviceDriveType {
         DLFileDeviceDriveType::Default
     }
 
@@ -272,7 +272,7 @@ where
         operator_container: &DLFileOperatorContainer,
         file_device: &DLFileDeviceBase,
     ) -> Self {
-        let allocator = unsafe { NonNull::from(allocator) };
+        let allocator = NonNull::from(allocator);
         Self {
             vftable,
             allocator,
@@ -409,7 +409,7 @@ where
         tracing::debug!("{self}::destructor()");
     }
 
-    extern "C" fn copy_from(&mut self, source: &DLFileOperatorBase) -> bool {
+    extern "C" fn copy_from(&mut self, _source: &DLFileOperatorBase) -> bool {
         tracing::debug!("{self}::copy_from()");
         unimplemented!()
     }
@@ -423,7 +423,7 @@ where
         );
 
         self.base.io_state.0 &= 0xfffffff9;
-        self.base.io_state.0 |= ((((param_4 as u32 & 1) * 2) | (param_3 as u32 & 1)) * 2);
+        self.base.io_state.0 |= (((param_4 as u32 & 1) * 2) | (param_3 as u32 & 1)) * 2;
 
         self.base.path =
             DLString::copy(self.base.allocator.into(), path).expect("Failed to copy DLString");
@@ -465,7 +465,7 @@ where
         tracing::debug!("{self}::set_state({}, {})", param_2, param_3);
 
         self.base.io_state.0 &= 0xfffffff9;
-        self.base.io_state.0 |= ((((param_3 as u32 & 1) * 2) | (param_2 as u32 & 1)) * 2);
+        self.base.io_state.0 |= (((param_3 as u32 & 1) * 2) | (param_2 as u32 & 1)) * 2;
 
         true
     }
@@ -482,7 +482,7 @@ where
 
     extern "C" fn bind_device_image(
         &mut self,
-        image_spi: &DLFileDeviceImageSPIBase,
+        _image_spi: &DLFileDeviceImageSPIBase,
     ) -> *const DLFileDeviceImageSPIBase {
         tracing::debug!("{self}::bind_device_image()");
         unimplemented!()
@@ -497,12 +497,12 @@ where
         unimplemented!()
     }
 
-    extern "C" fn last_access_time(&self, ptr: *const DLDateTime) -> *const DLDateTime {
+    extern "C" fn last_access_time(&self, _ptr: *const DLDateTime) -> *const DLDateTime {
         tracing::debug!("{self}::last_access_time()");
         unimplemented!()
     }
 
-    extern "C" fn last_modify_time(&self, ptr: *const DLDateTime) -> *const DLDateTime {
+    extern "C" fn last_modify_time(&self, _ptr: *const DLDateTime) -> *const DLDateTime {
         tracing::debug!("{self}::last_modify_time()");
         unimplemented!()
     }
@@ -510,7 +510,7 @@ where
     extern "C" fn file_size(&mut self) -> usize {
         let current = self.buffer.stream_position().unwrap();
         let end = self.buffer.seek(SeekFrom::End(0)).unwrap() as usize;
-        self.buffer.seek(SeekFrom::Start(current));
+        let _ = self.buffer.seek(SeekFrom::Start(current));
         tracing::debug!("{self}::file_size() -> {end}");
         end
     }
@@ -609,8 +609,8 @@ where
     }
     extern "C" fn query_async_status(
         &mut self,
-        bytes_remaining: &mut usize,
-        bytes_transferred: Option<&mut usize>,
+        _bytes_remaining: &mut usize,
+        _bytes_transferred: Option<&mut usize>,
     ) -> bool {
         tracing::debug!("{self}::query_async_status()");
         unimplemented!()

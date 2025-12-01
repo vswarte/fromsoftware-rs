@@ -1,23 +1,19 @@
 use bitfield::bitfield;
-use std::ffi;
 use std::mem::transmute;
-use std::ops::Index;
 use std::ptr::NonNull;
-use std::slice::SliceIndex;
 
 use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
-use crate::cs::gaitem::GaitemHandle;
 use crate::cs::network_session::PlayerNetworkSession;
 use crate::cs::player_game_data::{ChrAsm, PlayerGameData};
-use crate::cs::session_manager::{SessionManagerPlayerEntry, SessionManagerPlayerEntryBase};
+use crate::cs::session_manager::SessionManagerPlayerEntryBase;
 use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
-use crate::cs::world_geom_man::{CSMsbParts, CSMsbPartsEne};
+use crate::cs::world_geom_man::CSMsbPartsEne;
 use crate::cs::{BlockId, CSPlayerMenuCtrl, ItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;

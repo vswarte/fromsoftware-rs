@@ -1,4 +1,3 @@
-use std::ffi;
 use std::ptr::NonNull;
 
 use vtable_rs::VPtr;

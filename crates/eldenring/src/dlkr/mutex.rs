@@ -1,5 +1,3 @@
-use std::ffi;
-
 use vtable_rs::VPtr;
 use windows::Win32::System::Threading::{
     DeleteCriticalSection, EnterCriticalSection, InitializeCriticalSection, LeaveCriticalSection,
@@ -48,7 +46,7 @@ impl DLPlainLightMutex {
 }
 
 impl DLPlainLightMutexVmt for DLPlainLightMutex {
-    extern "C" fn destructor(&mut self, param_2: bool) {
+    extern "C" fn destructor(&mut self, _param_2: bool) {
         unimplemented!();
     }
 }
