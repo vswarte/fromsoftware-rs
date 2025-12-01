@@ -22,6 +22,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     cs_ez_draw_draw_wedge: 0x264f6b0,
     cs_menu_man_imp_display_status_message: 0x766460,
     cs_phys_world_cast_ray: 0xc707b0,
+    game_man: 0x3d69918,
     global_hinstance: 0x3d85688,
     initialize_spawn_geometry_request: 0x1db670,
     multiplay_properties: 0x3b11230,

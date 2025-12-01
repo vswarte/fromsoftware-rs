@@ -697,10 +697,12 @@ pub struct CSChrActionFlagModule {
     pub unused_parry_window_arg: u8,
     unk1d1: [u8; 0xf],
     /// Angle for a cone to disable lock-on when character is inside it.
-    /// Read from npc param NPC_PARAM_ST::disableLockOnAngle
+    /// Read from npc param [crate::param::NPC_PARAM_ST::disable_lock_on_ang]
     /// Only set for the Fire Giant in the second phase of the fight.
     pub disable_lock_on_angle: f32,
-    unk1e4: f32,
+    /// Set by TAE Event 155 SetLockCamParamTarget \
+    /// See [crate::param::LOCK_CAM_PARAM_ST]
+    pub camera_lock_on_param_id: i32,
     unk1e8: [u8; 0x10],
     /// Set by TAE Event 800 SetMovementMultiplier
     pub mov_dist_multiplier: f32,

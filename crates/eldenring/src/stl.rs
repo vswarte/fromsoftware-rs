@@ -43,17 +43,16 @@ impl<T> DoublyLinkedList<T> {
 }
 
 #[repr(C)]
-pub struct Vector<T>
+pub struct BasicVector<T>
 where
     T: Sized,
 {
-    allocator: NonNull<DLAllocatorBase>,
     pub begin: Option<NonNull<T>>,
     pub end: Option<NonNull<T>>,
     pub capacity: Option<NonNull<T>>,
 }
 
-impl<T> Vector<T>
+impl<T> BasicVector<T>
 where
     T: Sized,
 {
@@ -93,6 +92,33 @@ where
 
     pub fn is_empty(&self) -> bool {
         self.len() == 0
+    }
+}
+
+#[repr(C)]
+pub struct Vector<T>
+where
+    T: Sized,
+{
+    allocator: NonNull<DLAllocatorBase>,
+    pub base: BasicVector<T>,
+}
+
+impl<T> Vector<T> {
+    pub fn items(&self) -> &[T] {
+        self.base.items()
+    }
+
+    pub fn items_mut(&mut self) -> &mut [T] {
+        self.base.items_mut()
+    }
+
+    pub fn len(&self) -> usize {
+        self.base.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.base.is_empty()
     }
 }
 

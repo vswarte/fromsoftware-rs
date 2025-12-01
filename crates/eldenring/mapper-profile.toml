@@ -69,3 +69,7 @@ pattern = "c7 44 ? ? 01 00 00 00 e9 ? ? ? ? ? 8b cc e8 $ { 48 0f be 01 48 8d 0d 
 [[patterns]]
 captures = ["", "character_type_properties"]
 pattern = "48 8d 0c 80 48 8d 05 $ { ' } 0f b6 04 88"
+
+[[patterns]]
+captures = ["", "game_man"]
+pattern = "48 8b 05 $ { ' } 48 8b 80 90 0d 00 00 c3"

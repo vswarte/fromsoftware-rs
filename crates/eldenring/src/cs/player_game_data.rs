@@ -4,7 +4,10 @@ use std::ptr::NonNull;
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::{Vector, cs::ChrType};
+use crate::{
+    BasicVector, Vector,
+    cs::{ChrType, MultiplayRole},
+};
 use shared::OwnedPtr;
 
 use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};
@@ -51,9 +54,7 @@ pub struct PlayerGameData {
     pub madness_resist: u32,
     pub pending_block_clear_bonus: f32,
     pub chr_type: ChrType,
-    character_name: [u16; 16],
-    unkbc: u8,
-    unkbd: u8,
+    character_name: [u16; 17],
     pub gender: u8,
     pub archetype: u8,
     pub vow_type: u8,
@@ -66,6 +67,7 @@ pub struct PlayerGameData {
     pub matchmaking_spirit_ashes_level: u8,
     pub total_summon_count: u32,
     pub coop_success_count: u32,
+    /// Index into [crate::cs::GameDataMan]'s player game data array
     pub game_data_man_index: u32,
     unkd4: [u8; 0xb],
     pub furlcalling_finger_remedy_active: bool,
@@ -74,7 +76,8 @@ pub struct PlayerGameData {
     pub matching_weapon_level: u8,
     pub white_ring_active: u8,
     pub blue_ring_active: u8,
-    pub team_type: u8,
+    /// [MultiplayRole] of the player this game data belongs to
+    pub multiplay_role: MultiplayRole,
     unke6: u8,
     /// True if the player is in their own world.
     pub is_my_world: bool,
@@ -135,6 +138,7 @@ pub struct PlayerGameData {
     gesture_game_data: usize,
     ride_game_data: usize,
     unk8e8: usize,
+    /// True when this game data belongs to the main (local) player.
     pub is_main_player: bool,
     /// Did this player agreed to voice chat?
     pub is_voice_chat_enabled: bool,
@@ -148,7 +152,8 @@ pub struct PlayerGameData {
     pub fp_estus_additional: u8,
     _pad931: [u8; 3],
     unk934: u32,
-    visited_areas: [u8; 0x18],
+    /// Vector of all visited play area IDs
+    pub visited_areas: BasicVector<u32>,
     pub mount_handle: FieldInsHandle,
     unk958: [u8; 0x8],
     pub damage_negation_physical: i32,
@@ -181,7 +186,7 @@ pub struct PlayerGameData {
     menu_ref_special_effect_2: usize,
     menu_ref_special_effect_3: usize,
     pub is_using_festering_bloody_finger: bool,
-    pub used_invasion_item_type: u8,
+    pub used_invasion_item_type: PlayerDataInvasionItemType,
     unka92: [u8; 2],
     pub packed_time_stamp: u32,
     pub quick_match_team: u8,
@@ -228,6 +233,14 @@ bitfield! {
     bool;
     pub disable_status_effect_bars, set_disable_status_effect_bars: 0;
     pub rune_arc_active, set_rune_arc_active: 1;
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum PlayerDataInvasionItemType {
+    BloodyFinger = 0,
+    FesteringBloodyFinger = 1,
+    RecusantFinger = 2,
 }
 
 #[repr(C)]
