@@ -81,12 +81,14 @@ pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
 unsafe impl GlobalAlloc for DLAllocatorRef {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let allocator = self.0.as_ptr();
-        ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8
+        unsafe { ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8 }
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         let allocator = self.0.as_ptr();
-        ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
+        unsafe {
+            ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
+        }
     }
 }
 

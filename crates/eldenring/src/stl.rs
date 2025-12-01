@@ -117,11 +117,7 @@ impl<T> Tree<T> {
             let head = self.head;
             let root = head.as_ref().parent;
             let min = Self::min_node(root);
-            if min == head {
-                None
-            } else {
-                Some(min)
-            }
+            if min == head { None } else { Some(min) }
         };
 
         std::iter::from_fn(move || {
@@ -140,8 +136,10 @@ impl<T> Tree<T> {
 
     /// Finds the minimum (leftmost) node in a subtree.
     unsafe fn min_node(mut node: NonNull<TreeNode<T>>) -> NonNull<TreeNode<T>> {
-        while node.as_ref().is_nil == 0 && node.as_ref().left.as_ref().is_nil == 0 {
-            node = node.as_ref().left;
+        unsafe {
+            while node.as_ref().is_nil == 0 && node.as_ref().left.as_ref().is_nil == 0 {
+                node = node.as_ref().left;
+            }
         }
         node
     }
@@ -152,17 +150,19 @@ impl<T> Tree<T> {
         mut node: NonNull<TreeNode<T>>,
         head: NonNull<TreeNode<T>>,
     ) -> Option<NonNull<TreeNode<T>>> {
-        if node.as_ref().right.as_ref().is_nil == 0 {
-            // Go to the leftmost node in the right subtree
-            Some(Self::min_node(node.as_ref().right))
-        } else {
-            // Walk up the tree until we find a node that is a left child
-            loop {
-                let parent = node.as_ref().parent;
-                if parent == head || node != parent.as_ref().right {
-                    return if parent == head { None } else { Some(parent) };
+        unsafe {
+            if node.as_ref().right.as_ref().is_nil == 0 {
+                // Go to the leftmost node in the right subtree
+                Some(Self::min_node(node.as_ref().right))
+            } else {
+                // Walk up the tree until we find a node that is a left child
+                loop {
+                    let parent = node.as_ref().parent;
+                    if parent == head || node != parent.as_ref().right {
+                        return if parent == head { None } else { Some(parent) };
+                    }
+                    node = parent;
                 }
-                node = parent;
             }
         }
     }
@@ -307,7 +307,7 @@ impl<T> ArrayWithHeader<T> {
     ///
     /// The pointer must point to a valid array with a properly initialized header.
     pub unsafe fn as_slice(&self) -> &[T] {
-        std::slice::from_raw_parts(&self.first_item as *const T, self.len())
+        unsafe { std::slice::from_raw_parts(&self.first_item as *const T, self.len()) }
     }
 
     /// Returns a mutable slice of all items in the array.
@@ -316,7 +316,7 @@ impl<T> ArrayWithHeader<T> {
     ///
     /// The pointer must point to a valid array with a properly initialized header.
     pub unsafe fn as_mut_slice(&mut self) -> &mut [T] {
-        std::slice::from_raw_parts_mut(&mut self.first_item as *mut T, self.len())
+        unsafe { std::slice::from_raw_parts_mut(&mut self.first_item as *mut T, self.len()) }
     }
 
     /// Returns the allocation header stored before this array.
@@ -325,10 +325,12 @@ impl<T> ArrayWithHeader<T> {
     ///
     /// The array must have a valid header at negative offset.
     pub unsafe fn header(&self) -> &AllocationHeader {
-        let header_ptr = (self as *const Self as *const u8)
-            .sub(std::mem::size_of::<AllocationHeader>())
-            as *const AllocationHeader;
-        &*header_ptr
+        unsafe {
+            let header_ptr = (self as *const Self as *const u8)
+                .sub(std::mem::size_of::<AllocationHeader>())
+                as *const AllocationHeader;
+            &*header_ptr
+        }
     }
 
     /// Validates that the header's self-pointer matches its location.
@@ -338,7 +340,7 @@ impl<T> ArrayWithHeader<T> {
     ///
     /// The array must have a valid header at negative offset.
     pub unsafe fn is_valid(&self) -> bool {
-        self.header().is_valid()
+        unsafe { self.header().is_valid() }
     }
 
     /// Returns the number of items in the array.
@@ -347,7 +349,7 @@ impl<T> ArrayWithHeader<T> {
     ///
     /// The array must have a valid header at negative offset.
     pub unsafe fn len(&self) -> usize {
-        self.header().count
+        unsafe { self.header().count }
     }
 
     /// Returns true if the array is empty.
@@ -356,7 +358,7 @@ impl<T> ArrayWithHeader<T> {
     ///
     /// The array must have a valid header at negative offset.
     pub unsafe fn is_empty(&self) -> bool {
-        self.len() == 0
+        unsafe { self.len() == 0 }
     }
 }
 

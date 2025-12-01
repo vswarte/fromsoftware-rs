@@ -42,7 +42,9 @@ pub unsafe fn disable_code_restoration_at(
 ) -> Result<(), Box<dyn Error>> {
     let jb_ptr = program.rva_to_va(rva)? as *mut u8;
 
-    std::ptr::write(jb_ptr, 0xEB);
+    unsafe {
+        std::ptr::write(jb_ptr, 0xEB);
+    }
 
     Ok(())
 }
@@ -61,7 +63,9 @@ pub unsafe fn disable_code_restoration_at(
 pub unsafe fn disable_code_restoration(program: &Program) -> Result<(), Box<dyn Error>> {
     let rvas = get_arxan_code_restoration_rvas(program);
     for rva in rvas {
-        disable_code_restoration_at(program, rva)?;
+        unsafe {
+            disable_code_restoration_at(program, rva)?;
+        }
     }
     Ok(())
 }

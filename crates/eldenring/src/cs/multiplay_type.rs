@@ -245,6 +245,6 @@ impl FromStatic for MultiplayProperties {
             .map_err(|_| shared::InstanceError::NotFound)?
             as *mut MultiplayProperties;
 
-        Ok(&mut *target)
+        unsafe { Ok(&mut *target) }
     }
 }

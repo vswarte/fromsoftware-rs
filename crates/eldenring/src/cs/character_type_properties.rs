@@ -56,6 +56,6 @@ impl FromStatic for CharacterTypePropertiesTable {
             .map_err(|_| shared::InstanceError::NotFound)?
             as *mut CharacterTypePropertiesTable;
 
-        Ok(&mut *target)
+        unsafe { Ok(&mut *target) }
     }
 }
