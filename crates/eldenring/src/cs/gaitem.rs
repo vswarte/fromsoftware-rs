@@ -3,7 +3,7 @@ use std::{fmt::Display, mem::transmute};
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::cs::ItemId;
+use crate::cs::{CSRandXorshift, ItemId};
 use shared::OwnedPtr;
 
 #[repr(C)]
@@ -16,7 +16,7 @@ pub struct CSGaitemImp {
     indexes: [u32; 5120],
     write_index: u32,
     read_index: u32,
-    rand_xorshift: [u8; 0x18],
+    pub rand_xorshift: CSRandXorshift,
     unk23028: [u8; 8],
     /// Becomes true if the CSGaitemImp is being serialized for saving to the save file.
     pub is_being_serialized: bool,

@@ -4,6 +4,7 @@ use windows::Win32::Foundation::FILETIME;
 
 use crate::{
     DoublyLinkedList, Vector,
+    cs::CSRandXorshift,
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
     dltx::{DLInplaceStr, DLUTF16StringKind},
@@ -255,7 +256,8 @@ pub struct CSStayInMultiplayAreaWarpData {
 pub struct CSSessionManagerP2PSendQueue {
     pub queue: Vector<CSSessionManagerP2PSendQueueEntry>,
     unk20: CSSessionManager0x20,
-    rand_xor_shift: usize,
+    /// [crate::cs::GameMan::rand_xorshift]
+    pub rand_xor_shift: NonNull<CSRandXorshift>,
     unk38: u32,
     unk3c: u32,
 }
