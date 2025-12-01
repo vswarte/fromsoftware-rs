@@ -1,10 +1,9 @@
-use shared::OwnedPtr;
-
 /// Used by the game to determine what background image to display during a loading screen.
 use crate::cs::{
     CSRandXorshift,
     task::{CSEzTask, CSEzUpdateTask},
 };
+use shared::OwnedPtr;
 
 #[repr(C)]
 /// Source of name: RTTI

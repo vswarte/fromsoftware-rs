@@ -8,6 +8,7 @@ pub trait CSRandVmt {
     fn next_long(&mut self) -> u64;
 }
 
+#[repr(C)]
 pub struct CSRand<T: CSRandVmt> {
     pub vftable: VPtr<dyn CSRandVmt, T>,
 }
@@ -15,10 +16,10 @@ pub struct CSRand<T: CSRandVmt> {
 impl<T: CSRandVmt> CSRandVmt for CSRand<T> {
     extern "C" fn destructor(&mut self, _should_free: bool) {}
     extern "C" fn next_uint(&mut self) -> u32 {
-        0
+        unimplemented!()
     }
     extern "C" fn next_long(&mut self) -> u64 {
-        0
+        unimplemented!()
     }
 }
 
@@ -200,9 +201,9 @@ pub struct DLRandomGeneratorSFMT {
 impl CSRandVmt for CSRandSFMT {
     extern "C" fn destructor(&mut self, _should_free: bool) {}
     extern "C" fn next_uint(&mut self) -> u32 {
-        0
+        unimplemented!()
     }
     extern "C" fn next_long(&mut self) -> u64 {
-        0
+        unimplemented!()
     }
 }

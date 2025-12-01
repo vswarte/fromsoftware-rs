@@ -98,8 +98,8 @@ pub struct GameMan {
     unkb54: u32,
     unkb58: bool,
     unkb59: u8,
-    /// Whether or not item replenishment from chests is requested.
-    /// Usually set when sitting at a Site of Grace.
+    /// Whether or not item replenishment from chest is requested.
+    /// Will trigger refill of all the items in inventory from item storage during MoveMapStep::STEP_CreateDrawPlan
     pub item_replanish_from_chest_requested: bool,
     /// Whether or not item restoration after quickmatch is requested. \
     /// See [crate::cs::EquipGameData::qm_item_backup_vector]
@@ -186,7 +186,9 @@ impl FromStatic for GameMan {
             .map_err(|_| fromsoftware_shared::InstanceError::NotFound)?
             as *mut GameMan;
 
-        Ok(unsafe { &mut *target })
+        target
+            .as_mut()
+            .ok_or(fromsoftware_shared::InstanceError::Null)
     }
 }
 
