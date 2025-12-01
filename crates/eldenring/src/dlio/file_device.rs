@@ -7,11 +7,11 @@ use std::{
 use vtable_rs::VPtr;
 
 use crate::{
+    Vector,
     dlio::DLIOResult,
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
     dltx::DLString,
     dlut::DLDateTime,
-    Vector,
 };
 use shared::OwnedPtr;
 

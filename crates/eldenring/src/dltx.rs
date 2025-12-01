@@ -9,7 +9,7 @@ use encoding_rs;
 
 use thiserror::Error;
 
-use cxx_stl::string::{CxxNarrowString, CxxUtf16String, CxxUtf32String, CxxUtf8String};
+use cxx_stl::string::{CxxNarrowString, CxxUtf8String, CxxUtf16String, CxxUtf32String};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]

@@ -26,13 +26,13 @@ use eldenring::util::system::wait_for_system_init;
 
 use fromsoftware_shared::program::Program;
 
+use hudhook::Hudhook;
+use hudhook::ImguiRenderLoop;
 use hudhook::eject;
 use hudhook::hooks::dx12::ImguiDx12Hooks;
 use hudhook::imgui::Condition;
 use hudhook::imgui::*;
 use hudhook::windows::Win32::Foundation::HINSTANCE;
-use hudhook::Hudhook;
-use hudhook::ImguiRenderLoop;
 
 use pelite::pe64::Pe;
 

@@ -2,7 +2,7 @@ use std::{num::ParseIntError, ptr::NonNull};
 
 use crate::cs::{BlockId, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType};
 use crate::fd4::FD4Time;
-use crate::{stl::DoublyLinkedList, Tree, Vector};
+use crate::{Tree, Vector, stl::DoublyLinkedList};
 
 use shared::F32Vector3;
 

@@ -7,11 +7,12 @@ use windows::core::PCWSTR;
 use crate::dlkr::DLPlainConditionSignal;
 use crate::fd4::{FD4TaskBaseVmt, FD4TaskData};
 use crate::{
+    Vector,
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
-    rva, Vector,
+    rva,
 };
-use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
+use shared::{OwnedPtr, RecurringTask, SharedTaskImp, program::Program};
 
 #[vtable_rs::vtable]
 pub trait CSEzTaskVmt: FD4TaskBaseVmt {

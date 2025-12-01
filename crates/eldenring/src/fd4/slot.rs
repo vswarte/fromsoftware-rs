@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::{dlkr::DLAllocatorBase, Vector};
+use crate::{Vector, dlkr::DLAllocatorBase};
 
 pub struct FD4SlotInsBase {
     pub vftable: VPtr<dyn FD4SlotInsBaseVmt, Self>,

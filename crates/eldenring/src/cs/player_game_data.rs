@@ -4,7 +4,7 @@ use std::ptr::NonNull;
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::{cs::ChrType, Vector};
+use crate::{Vector, cs::ChrType};
 use shared::OwnedPtr;
 
 use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};

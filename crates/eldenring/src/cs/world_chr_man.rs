@@ -4,8 +4,8 @@ use vtable_rs::VPtr;
 
 use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::position::HavokPosition;
-use crate::{cs::ChrIns, Vector};
 use crate::{ChainingTree, DoublyLinkedList, Tree};
+use crate::{Vector, cs::ChrIns};
 use shared::{F32Vector4, OwnedPtr};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};

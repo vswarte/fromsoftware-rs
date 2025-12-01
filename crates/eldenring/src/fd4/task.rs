@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::{dlrf::DLRuntimeClass, Tree, Vector};
+use crate::{Tree, Vector, dlrf::DLRuntimeClass};
 
 use super::FD4Time;
 

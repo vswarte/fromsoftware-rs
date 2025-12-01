@@ -2,8 +2,8 @@ use std::{
     cell::UnsafeCell,
     ffi::c_void,
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc,
+        atomic::{AtomicBool, Ordering},
     },
 };
 
