@@ -266,7 +266,7 @@ impl ChrIns {
             .rva_to_va(rva::get().chr_ins_apply_speffect)
             .unwrap();
 
-        let call = unsafe { transmute::<u64, fn(&mut ChrIns, i32, bool) -> u64>(rva) };
+        let call = unsafe { transmute::<u64, extern "C" fn(&mut ChrIns, i32, bool) -> u64>(rva) };
         call(self, sp_effect, dont_sync);
     }
 
@@ -275,7 +275,7 @@ impl ChrIns {
             .rva_to_va(rva::get().chr_ins_remove_speffect)
             .unwrap();
 
-        let call = unsafe { transmute::<u64, fn(&mut ChrIns, i32) -> u64>(rva) };
+        let call = unsafe { transmute::<u64, extern "C" fn(&mut ChrIns, i32) -> u64>(rva) };
         call(self, sp_effect);
     }
 }

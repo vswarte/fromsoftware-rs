@@ -12,7 +12,7 @@ use std::{
 ///
 /// User must ensure that it's safe for this pointer to be turned into a (potentially mutable)
 /// reference if a reference to its embedding structure is obtained.
-#[repr(C)]
+#[repr(transparent)]
 pub struct OwnedPtr<T>(NonNull<T>);
 
 impl<T> OwnedPtr<T> {
