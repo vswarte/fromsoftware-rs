@@ -70,25 +70,25 @@ impl F32PackedModelMatrix {
     /// Extract the x axis.
     #[inline]
     pub fn x_axis(&self) -> F32Vector4 {
-        F32Vector4(self.0 .0, self.1 .0, self.2 .0, 0.0)
+        F32Vector4(self.0.0, self.1.0, self.2.0, 0.0)
     }
 
     /// Extract the y axis.
     #[inline]
     pub fn y_axis(&self) -> F32Vector4 {
-        F32Vector4(self.0 .1, self.1 .1, self.2 .1, 0.0)
+        F32Vector4(self.0.1, self.1.1, self.2.1, 0.0)
     }
 
     /// Extract the z axis.
     #[inline]
     pub fn z_axis(&self) -> F32Vector4 {
-        F32Vector4(self.0 .2, self.1 .2, self.2 .2, 0.0)
+        F32Vector4(self.0.2, self.1.2, self.2.2, 0.0)
     }
 
     /// Extract the w axis.
     #[inline]
     pub fn w_axis(&self) -> F32Vector4 {
-        F32Vector4(self.0 .3, self.1 .3, self.2 .3, 1.0)
+        F32Vector4(self.0.3, self.1.3, self.2.3, 1.0)
     }
 }
 

@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{F32ViewMatrix, F32Vector4, OwnedPtr};
+use shared::{F32Vector4, F32ViewMatrix, OwnedPtr};
 
 use crate::position::{HavokPosition, PositionDelta};
 
