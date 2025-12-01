@@ -7,9 +7,6 @@ license.workspace = true
 readme = false
 description = "Structures, bindings, and utilities for From Software's title Elden Ring"
 
-[lints.rust]
-unused = "allow"
-
 [dependencies]
 fromsoftware-shared.workspace = true
 tracing.workspace = true
