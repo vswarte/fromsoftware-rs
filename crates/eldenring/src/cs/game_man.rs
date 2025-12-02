@@ -186,9 +186,11 @@ impl FromStatic for GameMan {
             .map_err(|_| fromsoftware_shared::InstanceError::NotFound)?
             as *mut GameMan;
 
-        target
-            .as_mut()
-            .ok_or(fromsoftware_shared::InstanceError::Null)
+        unsafe {
+            target
+                .as_mut()
+                .ok_or(fromsoftware_shared::InstanceError::Null)
+        }
     }
 }
 
