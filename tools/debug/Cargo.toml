@@ -14,6 +14,7 @@ tracing.workspace = true
 tracing-subscriber = "0.3.20"
 tracing-appender = "0.2.3"
 tracing-panic = "0.1"
+libhotpatch = "1.1.0"
 
 [dependencies.hudhook]
 git = "https://github.com/veeenu/hudhook"
