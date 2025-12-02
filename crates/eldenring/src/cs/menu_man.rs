@@ -73,7 +73,9 @@ impl CSMenuManImp {
             .rva_to_va(rva::get().cs_menu_man_imp_display_status_message)
             .unwrap();
 
-        let target = unsafe { std::mem::transmute::<u64, fn(&mut CSMenuManImp, i32) -> bool>(rva) };
+        let target = unsafe {
+            std::mem::transmute::<u64, extern "C" fn(&mut CSMenuManImp, i32) -> bool>(rva)
+        };
         target(self, message)
     }
 }

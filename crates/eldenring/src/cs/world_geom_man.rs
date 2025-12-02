@@ -109,7 +109,7 @@ impl CSWorldGeomManBlockData {
             .unwrap();
 
         let initialize_spawn_geometry_request = unsafe {
-            transmute::<u64, fn(&mut GeometrySpawnRequest, u32)>(
+            transmute::<u64, extern "C" fn(&mut GeometrySpawnRequest, u32)>(
                 initialize_spawn_geometry_request_va,
             )
         };
@@ -117,7 +117,7 @@ impl CSWorldGeomManBlockData {
         let spawn_geometry = unsafe {
             transmute::<
                 u64,
-                fn(
+                extern "C" fn(
                     &mut CSWorldGeomManBlockData,
                     &GeometrySpawnRequest,
                 ) -> Option<NonNull<CSWorldGeomIns>>,

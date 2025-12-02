@@ -7,6 +7,7 @@ pub trait DLAllocatorVmt {
     fn destructor(&mut self, param_2: bool);
 }
 
+#[repr(transparent)]
 pub struct DLAllocatorBase {
     pub vftable: VPtr<dyn DLAllocatorVmt, Self>,
 }
