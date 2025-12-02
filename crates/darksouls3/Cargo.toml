@@ -10,8 +10,7 @@ description = "Raw structures and bindings for From Software's title Dark Souls 
 [dependencies]
 bitfield.workspace = true
 encoding_rs.workspace = true
-nalgebra-glm.workspace = true
-nalgebra.workspace = true
+glam.workspace = true
 pelite.workspace = true
 fromsoftware-shared.workspace = true
 thiserror.workspace = true
