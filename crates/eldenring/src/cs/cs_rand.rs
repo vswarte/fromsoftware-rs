@@ -13,16 +13,6 @@ pub struct CSRand<T: CSRandVmt> {
     pub vftable: VPtr<dyn CSRandVmt, T>,
 }
 
-impl<T: CSRandVmt> CSRandVmt for CSRand<T> {
-    extern "C" fn destructor(&mut self, _should_free: bool) {}
-    extern "C" fn next_uint(&mut self) -> u32 {
-        unimplemented!()
-    }
-    extern "C" fn next_long(&mut self) -> u64 {
-        unimplemented!()
-    }
-}
-
 impl<T: CSRandVmt> CSRand<T> {
     pub fn next_uint(&mut self) -> u32 {
         unsafe {
