@@ -13,6 +13,7 @@ tracing.workspace = true
 thiserror.workspace = true
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
+glam.workspace = true
 pelite.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true

@@ -32,3 +32,10 @@ impl From<Quaternion> for glm::Quat {
         glm::quat(val.0, val.1, val.2, val.3)
     }
 }
+
+impl From<Quaternion> for glam::Quat {
+    #[inline]
+    fn from(Quaternion(x, y, z, w): Quaternion) -> Self {
+        Self::from_xyzw(x, y, z, w)
+    }
+}
