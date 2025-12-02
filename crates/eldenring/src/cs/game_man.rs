@@ -1,3 +1,5 @@
+use std::ptr::NonNull;
+
 use crate::cs::{
     BlockId, CSEzTask, CSEzUpdateTask, CSRandSFMT, CSRandXorshift, MultiplayRole, PartyMemberInfo,
     SummonParamType,
@@ -184,11 +186,13 @@ impl FromStatic for GameMan {
         let target = Program::current()
             .rva_to_va(rva::get().game_man)
             .map_err(|_| fromsoftware_shared::InstanceError::NotFound)?
-            as *mut GameMan;
+            as *mut Option<NonNull<GameMan>>;
 
         unsafe {
             target
                 .as_mut()
+                .and_then(|opt| opt.as_mut())
+                .map(|nn| nn.as_mut())
                 .ok_or(fromsoftware_shared::InstanceError::Null)
         }
     }
