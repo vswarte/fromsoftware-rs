@@ -8,8 +8,6 @@ use eldenring::{
 };
 use fromsoftware_shared::{F32Vector4, FromStatic, program::Program, task::*};
 
-use nalgebra_glm as glm;
-
 #[unsafe(no_mangle)]
 /// # Safety
 ///
@@ -59,8 +57,8 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                 // Make a directional vector that points forward following the players
                 // rotation.
                 let directional_vector = {
-                    let forward = glm::vec3(0.0, 0.0, -1.0);
-                    glm::quat_rotate_vec3(&physics.orientation.into(), &forward)
+                    let forward = glam::vec3(0.0, 0.0, -1.0);
+                    glam::Quat::from(physics.orientation).mul_vec3(forward)
                 };
 
                 // Set color for the to-be-rendered line.
