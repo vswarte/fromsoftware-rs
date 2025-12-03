@@ -14,6 +14,7 @@ pub fn subclass_helper(input: TokenStream) -> Result<TokenStream> {
     let mut subclass_struct: ItemStruct = syn::parse(input)?;
     let subclass = subclass_struct.ident.clone();
     let superclasses = extract_superclasses(&mut subclass_struct)?;
+    let first_superclass = superclasses.first().unwrap();
     let rva = Ident::new(
         &format!("{}_vmt", subclass.to_string().to_snake_case()),
         subclass.span(),
@@ -36,17 +37,13 @@ pub fn subclass_helper(input: TokenStream) -> Result<TokenStream> {
                 }
             }
 
-            impl #impl_generics AsRef<#superclasses> for #subclass
-                #ty_generics #where_clause
-            {
+            impl #impl_generics AsRef<#superclasses> for #subclass #ty_generics #where_clause {
                 fn as_ref(&self) -> &#superclasses {
                     self.superclass()
                 }
             }
 
-            impl #impl_generics AsMut<#superclasses> for #subclass
-                #ty_generics #where_clause
-            {
+            impl #impl_generics AsMut<#superclasses> for #subclass #ty_generics #where_clause {
                 fn as_mut(&mut self) -> &mut #superclasses {
                     self.superclass_mut()
                 }
@@ -57,7 +54,8 @@ pub fn subclass_helper(input: TokenStream) -> Result<TokenStream> {
             {
                 type Error = ::fromsoftware_shared::TryFromSuperclassError;
 
-                fn try_from(value: &#lifetime #superclasses) -> ::std::result::Result<Self, Self::Error> {
+                fn try_from(value: &#lifetime #superclasses)
+                            -> ::std::result::Result<Self, Self::Error> {
                     value
                         .as_subclass()
                         .ok_or_else(|| {
@@ -66,6 +64,20 @@ pub fn subclass_helper(input: TokenStream) -> Result<TokenStream> {
                 }
             }
         )*
+
+        impl #impl_generics ::std::ops::Deref for #subclass #ty_generics #where_clause {
+            type Target = #first_superclass;
+
+            fn deref(&self) -> &Self::Target {
+                self.superclass()
+            }
+        }
+
+        impl #impl_generics ::std::ops::DerefMut for #subclass #ty_generics #where_clause {
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                self.superclass_mut()
+            }
+        }
     }))
 }
 

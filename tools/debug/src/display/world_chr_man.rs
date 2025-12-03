@@ -132,7 +132,7 @@ impl DebugDisplay for WorldChrMan {
                     TreeNodeFlags::empty(),
                 ) {
                     ui.indent();
-                    chr_ins.superclass().render_debug(ui);
+                    chr_ins.render_debug(ui);
                     ui.unindent();
                 }
             }

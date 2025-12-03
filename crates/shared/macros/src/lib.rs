@@ -57,6 +57,12 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
 /// This macro will also add trait implementations for `AsRef<SuperclassType>`,
 /// `AsMut<SuperclassType>`, and `TryFrom<&SuperclassType>`.
 ///
+/// It will also implement `Deref<Target = SuperclassType>` and `DerefMut`, but
+/// because a type can only have one implementation of these traits, if this
+/// declares multiple superclasses they will only be implemented for the first
+/// one. Since types can be transitively dereferenced, be sure to order the
+/// bottommost superclass first so that all superclass methods can be accessed.
+///
 /// ## Safety
 ///
 /// The [::fromsoftware_shared::Subclass] trait is unsafe, and even though
