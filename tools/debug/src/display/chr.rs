@@ -1,8 +1,8 @@
 use eldenring::cs::{
     CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrTimeActModule, ChrAsm,
-    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, EquipGameData,
-    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
-    PlayerIns,
+    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass,
+    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
+    PlayerGameData, PlayerIns,
 };
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
@@ -10,7 +10,7 @@ use super::DebugDisplay;
 
 impl DebugDisplay for PlayerIns {
     fn render_debug(&self, ui: &&mut Ui) {
-        self.chr_ins.render_debug(ui);
+        chr_ins_common_debug(&self.chr_ins, ui);
 
         if ui.collapsing_header("ChrAsm", TreeNodeFlags::empty()) {
             ui.indent();
@@ -625,57 +625,64 @@ impl DebugDisplay for EquipInventoryData {
 
 impl DebugDisplay for ChrIns {
     fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!("Team: {}", self.team_type));
-
-        ui.text(format!("Block ID: {}", self.block_id_1));
-
-        ui.text(format!("Last hit by: {}", self.last_hit_by));
-        ui.text(format!("TAE use item: {:?}", self.tae_queued_use_item));
-
-        ui.text(format!(
-            "Block center origin 1: {}",
-            self.block_origin_override
-        ));
-        ui.text(format!("Block center origin 2: {}", self.block_origin));
-
-        if ui.collapsing_header("Special Effect", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "chr-ins-special-effects",
-                [
-                    TableColumnSetup::new("ID"),
-                    TableColumnSetup::new("Timer"),
-                    TableColumnSetup::new("Removal timer"),
-                    TableColumnSetup::new("Duration"),
-                    TableColumnSetup::new("Interval Timer"),
-                ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
-            ) {
-                self.special_effect.entries().for_each(|entry| {
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.param_id));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.interval_timer));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.removal_timer));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.duration));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.interval_timer));
-                });
-            }
-            ui.unindent();
+        match ChrInsSubclass::from(self) {
+            ChrInsSubclass::PlayerIns(player) => player.render_debug(ui),
+            _ => chr_ins_common_debug(self, ui),
         }
+    }
+}
 
-        if ui.collapsing_header("Modules", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.module_container.render_debug(ui);
-            ui.unindent();
+fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &&mut Ui) {
+    ui.text(format!("Team: {}", chr_ins.team_type));
+
+    ui.text(format!("Block ID: {}", chr_ins.block_id_1));
+
+    ui.text(format!("Last hit by: {}", chr_ins.last_hit_by));
+    ui.text(format!("TAE use item: {:?}", chr_ins.tae_queued_use_item));
+
+    ui.text(format!(
+        "Block center origin 1: {}",
+        chr_ins.block_origin_override
+    ));
+    ui.text(format!("Block center origin 2: {}", chr_ins.block_origin));
+
+    if ui.collapsing_header("Special Effect", TreeNodeFlags::empty()) {
+        ui.indent();
+        if let Some(_t) = ui.begin_table_header_with_flags(
+            "chr-ins-special-effects",
+            [
+                TableColumnSetup::new("ID"),
+                TableColumnSetup::new("Timer"),
+                TableColumnSetup::new("Removal timer"),
+                TableColumnSetup::new("Duration"),
+                TableColumnSetup::new("Interval Timer"),
+            ],
+            TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
+        ) {
+            chr_ins.special_effect.entries().for_each(|entry| {
+                ui.table_next_column();
+                ui.text(format!("{}", entry.param_id));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.interval_timer));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.removal_timer));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.duration));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.interval_timer));
+            });
         }
+        ui.unindent();
+    }
+
+    if ui.collapsing_header("Modules", TreeNodeFlags::empty()) {
+        ui.indent();
+        chr_ins.module_container.render_debug(ui);
+        ui.unindent();
     }
 }
 

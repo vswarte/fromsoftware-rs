@@ -1,18 +1,28 @@
 use vtable_rs::VPtr;
 
+use shared::{Subclass, Superclass};
+
 pub static TEAM_TYPE_RIVAL: CSTeamTypeRival = CSTeamTypeRival {
-    vftable: VPtr::new(),
+    base: CSTeamTypeBase {
+        vftable: VPtr::new(),
+    },
 };
 
 pub static TEAM_TYPE_ENEMY: CSTeamTypeEnemy = CSTeamTypeEnemy {
-    vftable: VPtr::new(),
+    base: CSTeamTypeBase {
+        vftable: VPtr::new(),
+    },
 };
 
 pub static TEAM_TYPE_FRIEND: CSTeamTypeFriend = CSTeamTypeFriend {
-    vftable: VPtr::new(),
+    base: CSTeamTypeBase {
+        vftable: VPtr::new(),
+    },
 };
 
 #[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(CSTeamTypeNeutral, CSTeamTypeFriend, CSTeamTypeEnemy, CSTeamTypeRival))]
 pub struct CSTeamTypeBase {
     vftable: VPtr<dyn CSTeamTypeVmt, Self>,
 }
@@ -36,8 +46,10 @@ impl CSTeamTypeVmt for CSTeamTypeBase {
     }
 }
 
+#[repr(C)]
+#[derive(Subclass)]
 pub struct CSTeamTypeNeutral {
-    pub vftable: VPtr<dyn CSTeamTypeVmt, Self>,
+    pub base: CSTeamTypeBase,
 }
 
 impl CSTeamTypeVmt for CSTeamTypeNeutral {
@@ -53,8 +65,10 @@ impl CSTeamTypeVmt for CSTeamTypeNeutral {
     }
 }
 
+#[repr(C)]
+#[derive(Subclass)]
 pub struct CSTeamTypeFriend {
-    pub vftable: VPtr<dyn CSTeamTypeVmt, Self>,
+    pub base: CSTeamTypeBase,
 }
 
 impl CSTeamTypeVmt for CSTeamTypeFriend {
@@ -70,8 +84,10 @@ impl CSTeamTypeVmt for CSTeamTypeFriend {
     }
 }
 
+#[repr(C)]
+#[derive(Subclass)]
 pub struct CSTeamTypeEnemy {
-    pub vftable: VPtr<dyn CSTeamTypeVmt, Self>,
+    pub base: CSTeamTypeBase,
 }
 
 impl CSTeamTypeVmt for CSTeamTypeEnemy {
@@ -87,8 +103,10 @@ impl CSTeamTypeVmt for CSTeamTypeEnemy {
     }
 }
 
+#[repr(C)]
+#[derive(Subclass)]
 pub struct CSTeamTypeRival {
-    pub vftable: VPtr<dyn CSTeamTypeVmt, Self>,
+    pub base: CSTeamTypeBase,
 }
 
 impl CSTeamTypeVmt for CSTeamTypeRival {
@@ -107,6 +125,7 @@ impl CSTeamTypeVmt for CSTeamTypeRival {
     }
 }
 
+#[repr(C)]
 pub struct TeamRelationTargetInfo {
     pub oppose_target: bool,
     pub friendly_target: bool,

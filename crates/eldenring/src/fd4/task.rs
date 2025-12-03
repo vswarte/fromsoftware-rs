@@ -3,6 +3,7 @@ use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
 use crate::{Tree, Vector, dlrf::DLRuntimeClass};
+use shared::Superclass;
 
 use super::FD4Time;
 
@@ -24,6 +25,7 @@ pub trait FD4TaskBaseVmt {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 pub struct FD4TaskBase {
     pub vftable: VPtr<dyn FD4TaskBaseVmt, Self>,
     unk8: u32,

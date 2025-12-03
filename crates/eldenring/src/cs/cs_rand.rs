@@ -1,5 +1,6 @@
-use shared::OwnedPtr;
 use vtable_rs::VPtr;
+
+use shared::{OwnedPtr, Subclass, Superclass};
 
 #[vtable_rs::vtable]
 pub trait CSRandVmt {
@@ -9,24 +10,18 @@ pub trait CSRandVmt {
 }
 
 #[repr(C)]
-pub struct CSRand<T: CSRandVmt> {
-    pub vftable: VPtr<dyn CSRandVmt, T>,
+#[derive(Superclass)]
+#[superclass(children(CSRandXorshift, CSRandSFMT))]
+pub struct CSRand {
+    pub vftable: VPtr<dyn CSRandVmt, Self>,
 }
 
-impl<T: CSRandVmt> CSRand<T> {
+impl CSRand {
     pub fn next_uint(&mut self) -> u32 {
-        unsafe {
-            // We need to cast self to T to call the vtable methods
-            let this = (self as *mut CSRand<T>) as *mut T;
-            (self.vftable.next_uint)(&mut *this)
-        }
+        (self.vftable.next_uint)(self)
     }
     pub fn next_long(&mut self) -> u64 {
-        unsafe {
-            // We need to cast self to T to call the vtable methods
-            let this = (self as *mut CSRand<T>) as *mut T;
-            (self.vftable.next_long)(&mut *this)
-        }
+        (self.vftable.next_long)(self)
     }
     /// Returns a random number in the range [min, max] \
     /// Implemetation is based on original game function
@@ -105,8 +100,10 @@ pub struct DLRandomGeneratorXorshift {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
+#[subclass(base = CSRand)]
 pub struct CSRandXorshift {
-    pub base: CSRand<Self>,
+    pub vftable: VPtr<dyn CSRandVmt, Self>,
     pub xorshift_state: DLRandomGeneratorXorshift,
 }
 
@@ -123,9 +120,7 @@ impl CSRandXorshift {
         }
 
         CSRandXorshift {
-            base: CSRand {
-                vftable: VPtr::<dyn CSRandVmt, CSRandXorshift>::new(),
-            },
+            vftable: VPtr::<dyn CSRandVmt, CSRandXorshift>::new(),
             xorshift_state: DLRandomGeneratorXorshift { state },
         }
     }
@@ -174,8 +169,9 @@ impl CSRandVmt for CSRandXorshift {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct CSRandSFMT {
-    pub base: CSRand<Self>,
+    pub base: CSRand,
     unk8: usize,
     pub state: DLRandomGeneratorSFMT,
 }
