@@ -131,10 +131,11 @@ fn build_subclass_enums(superclass_struct: &mut ItemStruct) -> Result<TokenStrea
         {
             fn from(subclass: &#lifetime __Subclass) -> #enum_name #ty_generics_with_lifetime {
                 use ::fromsoftware_shared::Program;
+                use ::pelite::pe64::Pe;
 
                 // Converting the runtime VMT to an RVA saves a few pointer
                 // calculations relative to converting each static RVA to a VA.
-                let rva = Program::current()
+                let rva = ::fromsoftware_shared::Program::current()
                     .va_to_rva(subclass.superclass().vmt())
                     .unwrap_or(0);
 
@@ -143,7 +144,9 @@ fn build_subclass_enums(superclass_struct: &mut ItemStruct) -> Result<TokenStrea
                     #(
                         if rva == #subclasses::vmt_rva() {
                             #enum_name::#subclasses(
-                                NonNull::from_ref(subclass).cast::<#subclasses>().as_ref()
+                                ::std::ptr::NonNull::from_ref(subclass)
+                                    .cast::<#subclasses>()
+                                    .as_ref()
                             )
                         }
                     )else*
@@ -159,10 +162,11 @@ fn build_subclass_enums(superclass_struct: &mut ItemStruct) -> Result<TokenStrea
         {
             fn from(subclass: &#lifetime mut __Subclass) -> #mut_enum_name #ty_generics_with_lifetime {
                 use ::fromsoftware_shared::Program;
+                use ::pelite::pe64::Pe;
 
                 // Converting the runtime VMT to an RVA saves a few pointer
                 // calculations relative to converting each static RVA to a VA.
-                let rva = Program::current()
+                let rva = ::fromsoftware_shared::Program::current()
                     .va_to_rva(subclass.superclass().vmt())
                     .unwrap_or(0);
 
@@ -171,7 +175,9 @@ fn build_subclass_enums(superclass_struct: &mut ItemStruct) -> Result<TokenStrea
                     #(
                         if rva == #subclasses::vmt_rva() {
                             #mut_enum_name::#subclasses(
-                                NonNull::from_ref(subclass).cast::<#subclasses>().as_mut()
+                                ::std::ptr::NonNull::from_ref(subclass)
+                                    .cast::<#subclasses>()
+                                    .as_mut()
                             )
                         }
                     )else*

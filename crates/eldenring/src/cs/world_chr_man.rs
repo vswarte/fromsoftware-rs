@@ -6,7 +6,7 @@ use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::position::HavokPosition;
 use crate::{ChainingTree, DoublyLinkedList, Tree};
 use crate::{Vector, cs::ChrIns};
-use shared::{F32Vector4, OwnedPtr};
+use shared::{F32Vector4, OwnedPtr, Subclass, Superclass};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
@@ -211,7 +211,10 @@ pub struct CSDebugChrCreatorInitData {
 }
 
 #[repr(C)]
-pub struct ChrSetHolder<T: 'static> {
+pub struct ChrSetHolder<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     pub chr_set: NonNull<ChrSet<T>>,
     pub chr_set_index: u32,
     _padc: u32,
@@ -219,8 +222,12 @@ pub struct ChrSetHolder<T: 'static> {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
-pub struct WorldAreaChr<T: 'static> {
+pub struct WorldAreaChr<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     pub base: WorldAreaChrBase,
     pub world_area_info: usize,
     unk18: u32,
@@ -229,6 +236,7 @@ pub struct WorldAreaChr<T: 'static> {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
 pub struct WorldAreaChrBase {
     vftable: usize,
@@ -237,7 +245,10 @@ pub struct WorldAreaChrBase {
 
 #[repr(C)]
 /// Source of name: RTTI
-pub struct WorldBlockChr<T: 'static> {
+pub struct WorldBlockChr<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     vftable: usize,
     pub world_block_info1: usize,
     unk10: [u8; 0x68],
@@ -301,8 +312,12 @@ trait ChrSetVmt {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
-pub struct ChrSet<T: 'static> {
+pub struct ChrSet<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     vftable: VPtr<dyn ChrSetVmt, Self>,
     pub index: i32,
     unkc: i32,
@@ -320,30 +335,38 @@ pub struct ChrSet<T: 'static> {
 }
 
 #[repr(C)]
-pub struct ChrSetEntityIdMapping<T> {
+pub struct ChrSetEntityIdMapping<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     pub entity_id: u32,
     _pad4: u32,
     pub chr_set_entry: NonNull<ChrSetEntry<T>>,
 }
 
 #[repr(C)]
-pub struct ChrSetGroupMapping<T> {
+pub struct ChrSetGroupMapping<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     pub group_id: u32,
     _pad4: u32,
     pub chr_set_entry: NonNull<ChrSetEntry<T>>,
 }
 
-impl<T> ChrSet<T> {
+impl<T> ChrSet<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
     pub fn get_capacity(&self) -> u32 {
         (self.vftable.get_capacity)(self)
     }
 
-    pub fn chr_ins_by_handle(&mut self, field_ins_handle: &FieldInsHandle) -> Option<&mut ChrIns> {
+    pub fn chr_ins_by_handle(&mut self, field_ins_handle: &FieldInsHandle) -> Option<&mut T> {
         (self.vftable.get_chr_ins_by_handle)(self, field_ins_handle.to_owned())
+            .and_then(|chr_ins| chr_ins.as_subclass_mut())
     }
-}
 
-impl<T> ChrSet<T> {
     pub fn characters(&self) -> impl Iterator<Item = &mut T> {
         let mut current = self.entries;
         let end = unsafe { current.add(self.capacity as usize) };
@@ -365,7 +388,10 @@ impl<T> ChrSet<T> {
 }
 
 #[repr(C)]
-pub struct ChrSetEntry<T> {
+pub struct ChrSetEntry<T>
+where
+    T: Subclass<ChrIns>,
+{
     pub chr_ins: Option<NonNull<T>>,
     pub chr_load_status: ChrLoadStatus,
     pub chr_update_type: ChrUpdateType,
@@ -395,6 +421,7 @@ pub enum ChrUpdateType {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct OpenFieldChrSet {
     pub base: ChrSet<ChrIns>,
@@ -426,6 +453,7 @@ pub struct OpenFieldChrSetList2Entry {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct WorldGridAreaChr {
     pub base: WorldAreaChrBase,

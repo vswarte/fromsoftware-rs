@@ -1281,6 +1281,7 @@ pub struct CSChrDataModule {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
 pub struct CSPairAnimNode {
     vftable: usize,
@@ -1307,6 +1308,7 @@ pub enum ThrowNodeState {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSThrowNode {
     pub super_pair_anim_node: CSPairAnimNode,
@@ -1603,6 +1605,7 @@ bitfield! {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
 pub struct CSModelIns {
     vftable: usize,
@@ -1650,6 +1653,7 @@ pub struct CSFD4LocationGxModelMatricesAndAabbExporter {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSChrModelIns {
     pub model_ins: CSModelIns,

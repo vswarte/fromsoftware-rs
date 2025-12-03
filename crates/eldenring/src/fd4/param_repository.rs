@@ -1,13 +1,15 @@
 use windows::core::PCSTR;
 
 use crate::param::ParamDef;
-use shared::OwnedPtr;
+use shared::{OwnedPtr, Subclass};
 
 use super::FD4ResRep;
 use super::resource::FD4ResCap;
 
 #[repr(C)]
 #[shared::singleton("FD4ParamRepository")]
+#[derive(Subclass)]
+#[subclass(base = FD4ResRep<FD4ParamResCap>, base = FD4ResCap)]
 pub struct FD4ParamRepository {
     /// Resource repository holding the actual param data.
     pub res_rep: FD4ResRep<FD4ParamResCap>,
@@ -17,7 +19,6 @@ pub struct FD4ParamRepository {
 impl FD4ParamRepository {
     pub fn get<T: ParamDef>(&self, id: u32) -> Option<&T> {
         let file_header = self
-            .res_rep
             .res_cap_holder
             .entries()
             .find(|e| e.data.name().as_str().eq(T::NAME))?;
@@ -28,7 +29,6 @@ impl FD4ParamRepository {
 
     pub fn get_mut<T: ParamDef>(&mut self, id: u32) -> Option<&mut T> {
         let file_header = self
-            .res_rep
             .res_cap_holder
             .entries_mut()
             .find(|e| e.data.name().as_str().eq(T::NAME))?;
@@ -39,24 +39,13 @@ impl FD4ParamRepository {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct FD4ParamResCap {
-    pub inner: FD4ResCap<Self>,
+    pub inner: FD4ResCap,
     /// Size of data at pointer.
     pub size: u64,
     /// Raw row data for this param file.
     pub data: OwnedPtr<ParamData>,
-}
-
-impl AsRef<FD4ResCap<Self>> for FD4ParamResCap {
-    fn as_ref(&self) -> &FD4ResCap<Self> {
-        &self.inner
-    }
-}
-
-impl AsMut<FD4ResCap<Self>> for FD4ParamResCap {
-    fn as_mut(&mut self) -> &mut FD4ResCap<Self> {
-        &mut self.inner
-    }
 }
 
 #[repr(C)]

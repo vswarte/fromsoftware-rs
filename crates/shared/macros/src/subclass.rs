@@ -56,6 +56,7 @@ pub fn subclass_helper(input: TokenStream) -> Result<TokenStream> {
 
                 fn try_from(value: &#lifetime #superclasses)
                             -> ::std::result::Result<Self, Self::Error> {
+                    use ::fromsoftware_shared::Superclass;
                     value
                         .as_subclass()
                         .ok_or_else(|| {
