@@ -1,3 +1,15 @@
+[[vmts]]
+class = "CS::ChrIns"
+vftable = "chr_ins_vmt"
+
+[[vmts]]
+class = "CS::EnemyIns"
+vftable = "enemy_ins_vmt"
+
+[[vmts]]
+class = "CS::PlayerIns"
+vftable = "player_ins_vmt"
+
 [[patterns]]
 pattern = "40 57 48 83 ec 40 48 c7 44 24 20 fe ff ff ff 48 89 5c 24 50 48 89 6c 24 58 48 89 74 24 60 49 8b f0 48 8b fa 48 8b d9 48 8d 69 28"
 captures = ["cs_ez_draw_draw_line"]
