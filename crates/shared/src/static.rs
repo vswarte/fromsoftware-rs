@@ -27,6 +27,9 @@ pub type InstanceResult<T> = Result<T, InstanceError>;
 /// [from_singleton!] macro, and may be manually implemented for other types
 /// that have different ways of looking up their locations in-memory.
 pub trait FromStatic {
+    /// The name of this object. Used for debugging purposes.
+    fn name() -> String;
+
     /// Looks up the single global instance of this object.
     ///
     /// Implementations may cache information about the object's location to
@@ -52,6 +55,10 @@ pub trait FromStatic {
 /// Note: currently this never returns [GetInstanceError::NotFound], but callers
 /// shouldn't rely on that being true into the future.
 impl<T: FromSingleton> FromStatic for T {
+    fn name() -> String {
+        <Self as FromSingleton>::name().to_string()
+    }
+
     /// ## Safety
     ///
     /// In addition to the standard [FromStatic::instance] safety requirements, the

@@ -235,6 +235,10 @@ pub struct MultiplayProperties {
 }
 
 impl FromStatic for MultiplayProperties {
+    fn name() -> String {
+        "MultiplayProperties".to_string()
+    }
+
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
         use crate::rva;
         use pelite::pe64::Pe;

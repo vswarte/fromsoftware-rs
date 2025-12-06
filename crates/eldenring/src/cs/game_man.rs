@@ -179,6 +179,10 @@ pub enum ForceCamRotationMethod {
 }
 
 impl FromStatic for GameMan {
+    fn name() -> String {
+        "GameMan".to_string()
+    }
+
     unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
         use crate::rva;
         use pelite::pe64::Pe;

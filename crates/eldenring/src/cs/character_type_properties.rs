@@ -46,6 +46,10 @@ pub struct CharacterTypePropertiesTable {
 }
 
 impl FromStatic for CharacterTypePropertiesTable {
+    fn name() -> String {
+        "CharacterTypePropertiesTable".to_string()
+    }
+
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
         use crate::rva;
         use pelite::pe64::Pe;
