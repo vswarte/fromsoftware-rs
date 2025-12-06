@@ -1,6 +1,6 @@
 use crate::cs::{ChrType, FullScreenMessage};
 use bitfield::bitfield;
-use shared::FromStatic;
+use shared::{FromStatic, load_static_direct};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -240,15 +240,6 @@ impl FromStatic for MultiplayProperties {
     }
 
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
-        use crate::rva;
-        use pelite::pe64::Pe;
-        use shared::Program;
-
-        let target = Program::current()
-            .rva_to_va(rva::get().multiplay_properties)
-            .map_err(|_| shared::InstanceError::NotFound)?
-            as *mut MultiplayProperties;
-
-        unsafe { Ok(&mut *target) }
+        unsafe { load_static_direct(crate::rva::get().multiplay_properties) }
     }
 }

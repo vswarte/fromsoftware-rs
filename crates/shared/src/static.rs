@@ -1,5 +1,10 @@
+use std::ptr::NonNull;
+
 use from_singleton::*;
+use pelite::pe64::{Pe, Rva};
 use thiserror::Error;
+
+use crate::Program;
 
 /// An error type returned by [FromStatic::instance].
 #[derive(Error, Debug)]
@@ -70,5 +75,44 @@ impl<T: FromSingleton> FromStatic for T {
         address_of::<T>()
             .map(|mut ptr| unsafe { ptr.as_mut() })
             .ok_or(InstanceError::NotFound)
+    }
+}
+
+/// Loads a static reference to [T] from an [Rva] that points directly to its
+/// memory. Because this always assumes that the underlying object is
+/// initialized, it can only return [InstanceResult::Null] if [rva] itself is 0.
+///
+/// ## Safety
+///
+/// This has all the same safety requirements as [FromStatic::instance]. In
+/// addition, the caller must ensure that [rva] points to a valid, initialized
+/// instance of [T].
+pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
+    let target = Program::current()
+        .rva_to_va(rva)
+        .map_err(|_| InstanceError::NotFound)? as *mut T;
+
+    unsafe { target.as_mut().ok_or(InstanceError::Null) }
+}
+
+/// Loads a static reference to [T] from an [Rva] that points to a pointer to
+/// its memory.
+///
+/// ## Safety
+///
+/// This has all the same safety requirements as [FromStatic::instance]. In
+/// addition, the caller must ensure that [rva] points to a pointer that is
+/// either null or points to a valid, initialized instance of [T].
+pub unsafe fn load_static_indirect<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
+    let target = Program::current()
+        .rva_to_va(rva)
+        .map_err(|_| InstanceError::NotFound)? as *mut Option<NonNull<T>>;
+
+    unsafe {
+        target
+            .as_mut()
+            .and_then(|opt| opt.as_mut())
+            .map(|nn| nn.as_mut())
+            .ok_or(InstanceError::Null)
     }
 }
