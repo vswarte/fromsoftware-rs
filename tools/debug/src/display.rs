@@ -1,4 +1,4 @@
-use fromsoftware_shared::{FromSingleton, FromStatic};
+use fromsoftware_shared::FromStatic;
 use hudhook::imgui::{TreeNodeFlags, Ui};
 
 pub(crate) mod area_time;
@@ -27,7 +27,7 @@ pub trait DebugDisplay {
     fn render_debug(&self, ui: &&mut Ui);
 }
 
-pub fn render_debug_singleton<T: FromSingleton + DebugDisplay + 'static>(ui: &&mut Ui) {
+pub fn render_debug_singleton<T: FromStatic + DebugDisplay + 'static>(ui: &&mut Ui) {
     let singleton = unsafe { T::instance() };
 
     match singleton {
