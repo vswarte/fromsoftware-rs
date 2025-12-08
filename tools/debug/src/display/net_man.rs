@@ -108,13 +108,10 @@ impl DebugDisplay for CSBattleRoyalContext {
         )
         .read_only(true)
         .build();
-
-        ui.input_text(
-            "Match settings",
-            &mut self.quickmatch_context.match_settings.to_string(),
-        )
-        .read_only(true)
-        .build();
+        let mut settings = format!("{:?}", self.quickmatch_context.match_settings);
+        ui.input_text("Match settings", &mut settings)
+            .read_only(true)
+            .build();
 
         ui.input_text(
             "Match map (map ID)",
