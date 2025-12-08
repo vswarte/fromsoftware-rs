@@ -189,12 +189,96 @@ pub struct CSBattleRoyalContext {
     unkf4: u32,
 }
 
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum QuickMatchSettings {
+    Duel = 0,
+    Brawl1v1 = 1,
+    Brawl2v2 = 2,
+    Brawl3v3 = 3,
+    Team1v1 = 4,
+    Team2v2 = 5,
+    Team3v3 = 6,
+    AlliesPasswordTeam1v1 = 7,
+    AlliesPasswordTeam2v2 = 8,
+    AlliesPasswordTeam3v3 = 9,
+    SpiritAshesDuel = 10,
+    SpiritAshesBrawl1v1 = 11,
+    SpiritAshesBrawl2v2 = 12,
+    SpiritAshesBrawl3v3 = 13,
+    SpiritAshesTeam1v1 = 14,
+    SpiritAshesTeam2v2 = 15,
+    SpiritAshesTeam3v3 = 16,
+    SpiritAshesAlliesPasswordTeam1v1 = 17,
+    SpiritAshesAlliesPasswordTeam2v2 = 18,
+    SpiritAshesAlliesPasswordTeam3v3 = 19,
+}
+
+impl QuickMatchSettings {
+    pub const fn spirit_ashes_allowed(&self) -> bool {
+        matches!(
+            self,
+            QuickMatchSettings::SpiritAshesDuel
+                | QuickMatchSettings::SpiritAshesBrawl1v1
+                | QuickMatchSettings::SpiritAshesBrawl2v2
+                | QuickMatchSettings::SpiritAshesBrawl3v3
+                | QuickMatchSettings::SpiritAshesTeam1v1
+                | QuickMatchSettings::SpiritAshesTeam2v2
+                | QuickMatchSettings::SpiritAshesTeam3v3
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam1v1
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam2v2
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam3v3
+        )
+    }
+    pub const fn is_team_mode(&self) -> bool {
+        matches!(
+            self,
+            QuickMatchSettings::Team1v1
+                | QuickMatchSettings::Team2v2
+                | QuickMatchSettings::Team3v3
+                | QuickMatchSettings::AlliesPasswordTeam1v1
+                | QuickMatchSettings::AlliesPasswordTeam2v2
+                | QuickMatchSettings::AlliesPasswordTeam3v3
+                | QuickMatchSettings::SpiritAshesTeam1v1
+                | QuickMatchSettings::SpiritAshesTeam2v2
+                | QuickMatchSettings::SpiritAshesTeam3v3
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam1v1
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam2v2
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam3v3
+        )
+    }
+
+    pub const fn is_allies_password_mode(&self) -> bool {
+        matches!(
+            self,
+            QuickMatchSettings::AlliesPasswordTeam1v1
+                | QuickMatchSettings::AlliesPasswordTeam2v2
+                | QuickMatchSettings::AlliesPasswordTeam3v3
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam1v1
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam2v2
+                | QuickMatchSettings::SpiritAshesAlliesPasswordTeam3v3
+        )
+    }
+
+    pub const fn is_brawl_mode(&self) -> bool {
+        matches!(
+            self,
+            QuickMatchSettings::Brawl1v1
+                | QuickMatchSettings::Brawl2v2
+                | QuickMatchSettings::Brawl3v3
+                | QuickMatchSettings::SpiritAshesBrawl1v1
+                | QuickMatchSettings::SpiritAshesBrawl2v2
+                | QuickMatchSettings::SpiritAshesBrawl3v3
+        )
+    }
+}
+
 /// Source of name: RTTI
 #[repr(C)]
 pub struct CSQuickMatchContext {
     vtable: usize,
     /// Encodes the battle type (1v1, 2v2, 3v3, etc)
-    pub match_settings: u32,
+    pub match_settings: QuickMatchSettings,
     /// Map for this map as an integer, 45000000 as an example.
     pub match_map: u32,
     unk10: u32,
@@ -226,15 +310,6 @@ pub struct CSQuickMatchContext {
     unka4: u32,
     unka8: u32,
     unkac: u32,
-}
-
-#[repr(C)]
-pub struct QuickmatchSettings(pub u32);
-
-impl QuickmatchSettings {
-    pub const fn spirit_ashes_allowed(&self) -> bool {
-        self.0 > 10 && self.0 < 20
-    }
 }
 
 #[repr(C)]
