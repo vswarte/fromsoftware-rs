@@ -47,6 +47,7 @@ impl TryFrom<u8> for ItemCategory {
 }
 
 bitfield! {
+    #[repr(transparent)]
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
     pub struct MaybeInvalidItemId(u32);
 
@@ -103,6 +104,11 @@ impl MaybeInvalidItemId {
     pub fn category(&self) -> Option<ItemCategory> {
         ItemCategory::try_from(self.category_raw()).ok()
     }
+
+    /// Returns the underlying numeric value of the item ID.
+    pub fn into_inner(self) -> u32 {
+        self.0
+    }
 }
 
 impl From<u32> for MaybeInvalidItemId {
@@ -143,6 +149,7 @@ impl fmt::Debug for MaybeInvalidItemId {
 /// "Valid" in this case means that the category is known to be a meaningful
 /// item category that corresponds to a parameter table. It doesn't guarantee
 /// that a parameter exists at the given parameter ID.
+#[repr(transparent)]
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct ItemId(MaybeInvalidItemId);
 
@@ -169,6 +176,11 @@ impl ItemId {
     /// of the row in the parameter struct that corresponds to [category].
     pub fn param_id(&self) -> u32 {
         self.0.param_id_raw()
+    }
+
+    /// Returns the underlying numeric value of the item ID.
+    pub fn into_inner(self) -> u32 {
+        self.0.into_inner()
     }
 }
 
