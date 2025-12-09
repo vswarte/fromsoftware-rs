@@ -1,6 +1,6 @@
 use eldenring::cs::{
-    ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, PlayerIns, SummonBuddyManager,
-    SummonBuddyWarpManager, WorldChrMan,
+    ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, PlayerIns, SummonBuddyGroupEntry,
+    SummonBuddyManager, SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
 };
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
@@ -83,15 +83,10 @@ impl DebugDisplay for WorldChrMan {
             None => ui.text("No Main player instance"),
         }
 
-        match self.summon_buddy_manager.as_ref() {
-            Some(s) => {
-                if ui.collapsing_header("SummonBuddyManager", TreeNodeFlags::empty()) {
-                    ui.indent();
-                    s.render_debug(ui);
-                    ui.unindent();
-                }
-            }
-            None => ui.text("No SummonBuddyManager instance"),
+        if ui.collapsing_header("SummonBuddyManager", TreeNodeFlags::empty()) {
+            ui.indent();
+            self.summon_buddy_manager.render_debug(ui);
+            ui.unindent();
         }
 
         if ui.collapsing_header("NetChrSync", TreeNodeFlags::empty()) {
@@ -153,7 +148,7 @@ impl DebugDisplay for NetChrSetSync {
             self.update_flags()
                 .iter()
                 .enumerate()
-                .for_each(|e| ui.text(format!("{} {:016b}", e.0, e.1 .0)));
+                .for_each(|e| ui.text(format!("{} {:016b}", e.0, e.1.0)));
             ui.unindent();
         }
 
@@ -325,36 +320,182 @@ impl DebugDisplay for OpenFieldChrSet {
     }
 }
 
-impl DebugDisplay for SummonBuddyManager {
+impl DebugDisplay for SummonBuddyWarpEntry {
     fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!(
-            "To spawn buddy param: {}",
-            self.to_spawn_buddy_param
-        ));
-        ui.text(format!("Spawned buddy param: {}", self.spawned_buddy_param));
-        ui.text(format!("Next summony buddy slot: {}", self.next_buddy_slot));
-
-        // self.w.render_debug(ui);
+        ui.text(format!("Handle: {}", self.handle));
+        ui.text(format!("Warp stage: {:?}", self.warp_stage));
+        ui.text(format!("Target position: {}", self.target_position));
+        ui.text(format!("Target rotation: {:?}", self.q_target_rotation));
+        ui.text(format!("Flags: {:032b}", self.flags));
+        ui.text(format!("Time ray blocked: {}", self.time_ray_blocked));
+        ui.text(format!("Time path stacked: {}", self.time_path_stacked));
     }
 }
 
 impl DebugDisplay for SummonBuddyWarpManager {
     fn render_debug(&self, ui: &&mut Ui) {
+        ui.text(format!("Warp entry count: {}", self.entries.len()));
+
+        for (index, entry) in self.entries.iter().enumerate() {
+            if ui.collapsing_header(format!("Warp Entry {index}"), TreeNodeFlags::empty()) {
+                ui.indent();
+                entry.render_debug(ui);
+                ui.unindent();
+            }
+        }
+    }
+}
+
+impl DebugDisplay for SummonBuddyGroupEntry {
+    fn render_debug(&self, ui: &&mut Ui) {
+        ui.text(format!("Buddy param ID: {}", self.buddy_param_id));
+        ui.text(format!("Has mount: {}", self.has_mount));
         ui.text(format!(
-            "Trigger time ray block: {}",
-            self.trigger_time_ray_block
+            "Buddy stone param ID: {}",
+            self.buddy_stone_param_id
+        ));
+        ui.text(format!("Doping SpEffect ID: {}", self.doping_sp_effect_id));
+        ui.text(format!(
+            "Dopping level SpEffect ID: {}",
+            self.dopping_level_sp_effect_id
+        ));
+        ui.text(format!("Spawn animation ID: {}", self.spawn_animation));
+        ui.text(format!("Warp requested: {}", self.warp_requested));
+        ui.text(format!("Disappear requested: {}", self.disappear_requested));
+        ui.text(format!("Disappear delay sec: {}", self.disappear_delay_sec));
+        ui.text(format!("Has spawn point: {}", self.has_spawn_point));
+        ui.text(format!(
+            "Disable PC target share: {}",
+            self.disable_pc_target_share
+        ));
+        ui.text(format!("Follow type: {}", self.follow_type));
+        ui.text(format!("Is remote: {}", self.is_remote));
+        ui.text(format!(
+            "Has Mogh's Great Rune buff: {}",
+            self.has_mogh_great_rune_buff
+        ));
+    }
+}
+
+impl DebugDisplay for SummonBuddyManager {
+    fn render_debug(&self, ui: &&mut Ui) {
+        ui.text(format!(
+            "Request summon SpEffect ID: {}",
+            self.request_summon_speffect_id
         ));
         ui.text(format!(
-            "Trigger dist to player: {}",
-            self.trigger_dist_to_player
+            "Active summon SpEffect ID: {}",
+            self.active_summon_speffect_id
+        ));
+        ui.text(format!("Disappear requested: {}", self.disappear_requested));
+        ui.text(format!(
+            "Buddy stone entity ID: {}",
+            self.buddy_stone_entity_id
         ));
         ui.text(format!(
-            "Trigger threshold time path stacked: {}",
-            self.trigger_threshold_time_path_stacked
+            "Active summon buddy stone entity ID: {}",
+            self.active_summmon_buddy_stone_entity_id
         ));
         ui.text(format!(
-            "Trigger treshhold range path stacked: {}",
-            self.trigger_threshold_range_path_stacked
+            "Buddy disappear delay sec: {}",
+            self.buddy_disappear_delay_sec
         ));
+        ui.text(format!(
+            "Item use cooldown timer: {}",
+            self.item_use_cooldown_timer
+        ));
+        ui.text(format!("Spawn rotation: {}", self.spawn_rotation));
+        ui.text(format!(
+            "Player has alive summon: {}",
+            self.player_has_alive_summon
+        ));
+        ui.text(format!(
+            "Is within activation range: {}",
+            self.is_within_activation_range
+        ));
+        ui.text(format!(
+            "Is within warn range: {}",
+            self.is_within_warn_range
+        ));
+        ui.text(format!("Last buddy slot: {}", self.last_buddy_slot));
+        ui.text(format!(
+            "Debug buddy stone param ID: {}",
+            self.debug_buddy_stone_param_id
+        ));
+        ui.text(format!(
+            "Requested summon buddy goods ID: {}",
+            self.requested_summon_goods_id
+        ));
+        ui.text(format!(
+            "Active summon buddy goods ID: {}",
+            self.active_summon_goods_id
+        ));
+
+        if ui.collapsing_header("Spawn Origin", TreeNodeFlags::empty()) {
+            ui.indent();
+            ui.text(format!("X: {}", self.spawn_origin.0));
+            ui.text(format!("Y: {}", self.spawn_origin.1));
+            ui.text(format!("Z: {}", self.spawn_origin.2));
+            ui.text(format!("W: {}", self.spawn_origin.3));
+            ui.unindent();
+        }
+
+        if ui.collapsing_header("Groups", TreeNodeFlags::empty()) {
+            ui.indent();
+            for group in self.groups.iter() {
+                if ui.collapsing_header(
+                    format!("Group {}", group.owner_event_id),
+                    TreeNodeFlags::empty(),
+                ) {
+                    ui.indent();
+                    for (index, v) in group.entries.iter().enumerate() {
+                        if ui.collapsing_header(format!("Entry {index}"), TreeNodeFlags::empty()) {
+                            ui.indent();
+                            v.render_debug(ui);
+                            ui.unindent();
+                        }
+                    }
+                    ui.unindent();
+                }
+            }
+            ui.unindent();
+        }
+
+        if ui.collapsing_header("Eliminate Target Entries", TreeNodeFlags::empty()) {
+            ui.indent();
+            for (index, entry) in self.eliminate_target_entries.iter().enumerate() {
+                if ui.collapsing_header(format!("Entry {index}"), TreeNodeFlags::empty()) {
+                    ui.indent();
+                    ui.text(format!(
+                        "Buddy field ins handle: {}",
+                        entry.buddy_field_ins_handle
+                    ));
+                    ui.text(format!(
+                        "Buddy stone param ID: {}",
+                        entry.target_calc.buddy_stone_param_id
+                    ));
+                    ui.text(format!(
+                        "Target event entity ID: {}",
+                        entry.target_calc.target_event_entity_id
+                    ));
+                    ui.text(format!(
+                        "Target in range: {}",
+                        entry.target_calc.target_in_range
+                    ));
+                    ui.text(format!(
+                        "Range check counter: {}",
+                        entry.target_calc.range_check_counter
+                    ));
+                    ui.unindent();
+                }
+            }
+            ui.unindent();
+        }
+
+        if ui.collapsing_header("Warp Manager", TreeNodeFlags::empty()) {
+            ui.indent();
+            self.warp_manager.render_debug(ui);
+            ui.unindent();
+        }
     }
 }

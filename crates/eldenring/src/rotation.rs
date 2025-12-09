@@ -1,8 +1,6 @@
 use nalgebra_glm as glm;
 use std::fmt::Display;
 
-use shared::F32Vector4;
-
 #[repr(C, align(16))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Quaternion(pub f32, pub f32, pub f32, pub f32);
@@ -32,5 +30,12 @@ impl Quaternion {
 impl From<Quaternion> for glm::Quat {
     fn from(val: Quaternion) -> Self {
         glm::quat(val.0, val.1, val.2, val.3)
+    }
+}
+
+impl From<Quaternion> for glam::Quat {
+    #[inline]
+    fn from(Quaternion(x, y, z, w): Quaternion) -> Self {
+        Self::from_xyzw(x, y, z, w)
     }
 }

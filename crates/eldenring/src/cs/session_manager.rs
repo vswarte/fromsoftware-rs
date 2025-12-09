@@ -3,13 +3,14 @@ use std::ptr::NonNull;
 use windows::Win32::Foundation::FILETIME;
 
 use crate::{
+    DoublyLinkedList, Vector,
+    cs::CSRandXorshift,
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
-    dltx::{DLCodedString, DLInplaceStr, DLUTF16StringKind},
+    dltx::{DLInplaceStr, DLUTF16StringKind},
     fd4::FD4Time,
-    DoublyLinkedList, Vector,
 };
-use shared::{F32Vector3, F32Vector4, OwnedPtr};
+use shared::{F32Vector3, OwnedPtr};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
@@ -45,6 +46,7 @@ pub enum ProtocolState {
 
 impl ProtocolState {
     /// Seems to be checked for packet 39,
+    #[allow(unused)]
     fn should_handle_some_packets(&self) -> bool {
         match self {
             ProtocolState::Inactive => false,
@@ -254,7 +256,8 @@ pub struct CSStayInMultiplayAreaWarpData {
 pub struct CSSessionManagerP2PSendQueue {
     pub queue: Vector<CSSessionManagerP2PSendQueueEntry>,
     unk20: CSSessionManager0x20,
-    rand_xor_shift: usize,
+    /// [crate::cs::GameMan::rand_xorshift]
+    pub rand_xor_shift: NonNull<CSRandXorshift>,
     unk38: u32,
     unk3c: u32,
 }

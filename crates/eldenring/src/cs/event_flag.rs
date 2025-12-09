@@ -1,8 +1,9 @@
 use std::mem::ManuallyDrop;
 
 use crate::Tree;
-use shared::{F32Vector4, OwnedPtr};
+use shared::OwnedPtr;
 
+#[repr(transparent)]
 pub struct EventFlag(u32);
 
 impl From<u32> for EventFlag {

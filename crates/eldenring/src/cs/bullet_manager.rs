@@ -152,6 +152,7 @@ impl CSBulletManager {
     }
 }
 
+#[repr(C)]
 /// Contains a pre allocated buffer that takes priority when creating a new T, when full
 /// starts allocating manually on the heap.
 /// Living elements create a linked list.

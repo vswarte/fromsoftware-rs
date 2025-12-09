@@ -2,6 +2,7 @@ use vtable_rs::VPtr;
 
 use crate::fd4::FD4SlotInsBaseVmt;
 
+#[repr(C)]
 pub struct ChrSlotBase {
     pub vftable: VPtr<dyn ChrSlotBaseVmt, Self>,
 }

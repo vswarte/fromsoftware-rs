@@ -1,12 +1,8 @@
-use std::{
-    cell::UnsafeCell,
-    ptr::NonNull,
-    sync::{atomic::AtomicBool, Arc},
-};
+use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::{dlrf::DLRuntimeClass, Tree, Vector};
+use crate::{Tree, Vector, dlrf::DLRuntimeClass};
 
 use super::FD4Time;
 
@@ -43,7 +39,7 @@ impl FD4TaskBaseVmt for FD4TaskBase {
         unimplemented!()
     }
 
-    extern "C" fn execute(&mut self, data: &FD4TaskData) {
+    extern "C" fn execute(&mut self, _data: &FD4TaskData) {
         unimplemented!()
     }
 }

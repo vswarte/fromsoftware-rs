@@ -18,9 +18,10 @@ pub enum FieldInsType {
     HitGeom = 8,
 }
 
-/// Used to reference a specific FieldIns managed by its respective (external) domain.
 bitfield! {
+    #[repr(C)]
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    /// Used to reference a specific FieldIns managed by its respective (external) domain.
     pub struct FieldInsSelector(u32);
     impl Debug;
 
@@ -109,7 +110,7 @@ pub trait FieldInsBaseVmt {
     fn use_npc_atk_param(&self) -> bool;
 
     fn get_atk_param_for_behavior(&self, param_2: u32, atk_param: &mut AtkParamLookupResult)
-        -> u32;
+    -> u32;
 
     /// Part of FieldInsBase. ChrIns = 0, PlayerIns = 1, EnemyIns = 0, ReplayGhostIns = 1,
     /// ReplayEnemyIns = 0, CSBulletIns = 0, CSWorldGeomIns = 0, CSFieldInsBase = 0,

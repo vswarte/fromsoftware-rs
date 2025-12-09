@@ -7,6 +7,7 @@ use vtable_rs::VPtr;
 
 use super::{CSBulletTargetingSystemOwner, CSTargetingSystemBase, FieldInsBaseVmt, FieldInsHandle};
 
+#[repr(C)]
 pub struct BulletParamLookupResult {
     pub param_row: Option<NonNull<BULLET_PARAM_ST>>,
     pub param_id: i32,

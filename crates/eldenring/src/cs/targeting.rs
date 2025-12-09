@@ -31,7 +31,7 @@ pub trait CSTargetingSystemOwnerVmt {
     ///
     /// For bullets: uses bullet's position and hit radius but chr owner's forward
     fn get_outmost_forward_position<'a>(&self, out: &'a mut HavokPosition)
-        -> &'a mut HavokPosition;
+    -> &'a mut HavokPosition;
 
     /// The point on the hit capsule that is in front of the owner.
     ///
@@ -183,6 +183,7 @@ pub struct CSTargetSearchSys {
     unk95: [u8; 0xB],
 }
 
+#[allow(unused)]
 enum SearchSlotIndex {
     Enemy = 0,
     Friend = 1,

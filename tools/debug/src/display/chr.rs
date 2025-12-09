@@ -305,7 +305,8 @@ impl DebugDisplay for PlayerGameData {
         ui.text(format!("Blue Ring Active: {:?}", self.blue_ring_active));
 
         ui.text(format!("Character Event ID: {:?}", self.character_event_id));
-        ui.text(format!("Team Type: {:?}", self.team_type));
+        ui.text(format!("Character Type: {:?}", self.chr_type));
+        ui.text(format!("Multiplay Role: {:?}", self.multiplay_role));
 
         if ui.collapsing_header("EquipGameData", TreeNodeFlags::empty()) {
             ui.indent();

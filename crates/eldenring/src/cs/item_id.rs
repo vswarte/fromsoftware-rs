@@ -1,6 +1,6 @@
 use std::{fmt, mem};
 
-use bitfield::{bitfield, BitRange};
+use bitfield::bitfield;
 use thiserror::Error;
 
 /// An error indicating that a valid [ItemId] or [ItemCategory] couldn't be
@@ -219,9 +219,7 @@ impl fmt::Debug for ItemId {
 
 #[cfg(test)]
 mod tests {
-    use bitfield::bitfield;
-
-    use crate::cs::{ItemCategory, MaybeInvalidItemId};
+    use crate::cs::{ItemCategory, ItemId};
 
     #[test]
     fn test_bitfield() {

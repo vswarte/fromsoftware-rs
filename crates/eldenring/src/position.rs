@@ -20,8 +20,6 @@ use std::{
     ops::{Add, Sub},
 };
 
-use nalgebra::{Vector, Vector3};
-
 /// Represents a position relative to some block center and character's yaw.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -31,6 +29,7 @@ pub struct BlockPosition {
     pub z: f32,
     pub yaw: f32,
 }
+
 impl BlockPosition {
     pub const fn from_xyz(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z, yaw: 0.0 }

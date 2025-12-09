@@ -7,9 +7,6 @@ license.workspace = true
 readme = false
 description = "Raw structures and bindings for From Software's title Dark Souls III"
 
-[lints.rust]
-unused = "allow"
-
 [dependencies]
 bitfield.workspace = true
 encoding_rs.workspace = true

@@ -1,11 +1,10 @@
-use std::ffi;
 use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
+use crate::DoublyLinkedList;
 use crate::dlkr::DLPlainLightMutex;
 use crate::fd4::{FD4BasicHashString, FD4FileCap, FD4ResCap, FD4ResCapHolder, FD4ResRep};
-use crate::DoublyLinkedList;
 use shared::OwnedPtr;
 
 #[vtable_rs::vtable]

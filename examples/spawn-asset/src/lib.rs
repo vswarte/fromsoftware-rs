@@ -5,7 +5,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
-use fromsoftware_shared::{program::Program, task::*, FromStatic};
+use fromsoftware_shared::{FromStatic, program::Program, task::*};
 
 #[unsafe(no_mangle)]
 /// # Safety
@@ -21,14 +21,14 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
         wait_for_system_init(&Program::current(), Duration::MAX)
             .expect("Could not await system init.");
 
-        let cs_task = CSTaskImp::instance().unwrap();
+        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 if !input::is_key_pressed(0x48) {
                     return;
                 }
 
-                let Some(player) = WorldChrMan::instance()
+                let Some(player) = unsafe { WorldChrMan::instance() }
                     .ok()
                     .and_then(|w| w.main_player.as_ref())
                 else {

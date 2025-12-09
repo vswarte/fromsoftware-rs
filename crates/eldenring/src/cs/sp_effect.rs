@@ -26,7 +26,7 @@ impl SpecialEffect {
 
         std::iter::from_fn(move || {
             let ret = current.and_then(|c| unsafe { c.as_ref() });
-            current = unsafe { ret?.next.map(|e| e.as_ptr()) };
+            current = ret?.next.map(|e| e.as_ptr());
             ret
         })
     }

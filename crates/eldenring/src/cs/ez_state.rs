@@ -1,4 +1,4 @@
-use vtable_rs::{vtable, VPtr};
+use vtable_rs::{VPtr, vtable};
 
 #[vtable]
 pub trait EzStateEventVmt {

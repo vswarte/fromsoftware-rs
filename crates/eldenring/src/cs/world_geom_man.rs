@@ -5,8 +5,8 @@ use windows::core::PCWSTR;
 
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 use crate::position::BlockPosition;
-use crate::{param::ASSET_GEOMETORY_PARAM_ST, rva, Tree, Vector};
-use shared::{program::Program, OwnedPtr};
+use crate::{Tree, Vector, param::ASSET_GEOMETORY_PARAM_ST, rva};
+use shared::{OwnedPtr, program::Program};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -109,7 +109,7 @@ impl CSWorldGeomManBlockData {
             .unwrap();
 
         let initialize_spawn_geometry_request = unsafe {
-            transmute::<u64, fn(&mut GeometrySpawnRequest, u32)>(
+            transmute::<u64, extern "C" fn(&mut GeometrySpawnRequest, u32)>(
                 initialize_spawn_geometry_request_va,
             )
         };
@@ -117,7 +117,7 @@ impl CSWorldGeomManBlockData {
         let spawn_geometry = unsafe {
             transmute::<
                 u64,
-                fn(
+                extern "C" fn(
                     &mut CSWorldGeomManBlockData,
                     &GeometrySpawnRequest,
                 ) -> Option<NonNull<CSWorldGeomIns>>,

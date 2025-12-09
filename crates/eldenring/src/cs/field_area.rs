@@ -1,10 +1,6 @@
 use std::ptr::NonNull;
 
-use crate::{
-    param::CEREMONY_PARAM_ST,
-    position::{BlockPosition, HavokPosition},
-    Tree,
-};
+use crate::{Tree, param::CEREMONY_PARAM_ST, position::HavokPosition};
 use shared::OwnedPtr;
 
 use super::BlockId;

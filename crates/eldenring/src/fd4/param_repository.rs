@@ -1,12 +1,10 @@
-use std::ptr::NonNull;
-
 use windows::core::PCSTR;
 
 use crate::param::ParamDef;
 use shared::OwnedPtr;
 
-use super::resource::FD4ResCap;
 use super::FD4ResRep;
+use super::resource::FD4ResCap;
 
 #[repr(C)]
 #[shared::singleton("FD4ParamRepository")]

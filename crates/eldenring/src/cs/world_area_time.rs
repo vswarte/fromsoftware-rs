@@ -17,7 +17,7 @@ pub struct WorldAreaTime {
 }
 
 impl WorldAreaTime {
-    fn request_time(&mut self, hour: u32, minute: u32, second: u32) {
+    pub fn request_time(&mut self, hour: u32, minute: u32, second: u32) {
         self.target_hour = hour;
         self.target_minute = minute;
         self.target_second = second;

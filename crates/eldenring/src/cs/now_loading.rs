@@ -1,5 +1,9 @@
 /// Used by the game to determine what background image to display during a loading screen.
-use crate::cs::task::{CSEzTask, CSEzUpdateTask};
+use crate::cs::{
+    CSRandXorshift,
+    task::{CSEzTask, CSEzUpdateTask},
+};
+use shared::OwnedPtr;
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -8,7 +12,7 @@ use crate::cs::task::{CSEzTask, CSEzUpdateTask};
 #[shared::singleton("CSNowLoadingHelper")]
 pub struct CSNowLoadingHelper {
     vftable: u64,
-    rand_xorshift: u64,
+    pub rand_xorshift: OwnedPtr<CSRandXorshift>,
     pub update_task: CSEzUpdateTask<CSEzTask, Self>,
     unk38: u64,
     unk40: u64,

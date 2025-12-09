@@ -1,7 +1,7 @@
 use pelite::pe64::{Pe, PeView};
 use std::sync::LazyLock;
-use windows::core::PCSTR;
 use windows::Win32::System::LibraryLoader::GetModuleHandleA;
+use windows::core::PCSTR;
 
 mod bundle;
 mod rva_jp;

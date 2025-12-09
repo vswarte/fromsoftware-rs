@@ -7,15 +7,13 @@ license.workspace = true
 readme = false
 description = "Structures, bindings, and utilities for From Software's title Elden Ring"
 
-[lints.rust]
-unused = "allow"
-
 [dependencies]
 fromsoftware-shared.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
 nalgebra-glm.workspace = true
 nalgebra.workspace = true
+glam.workspace = true
 pelite.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true

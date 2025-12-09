@@ -8,7 +8,7 @@ use eldenring::{
     fd4::FD4TaskData,
     util::system::wait_for_system_init,
 };
-use fromsoftware_shared::{program::Program, task::*, FromStatic};
+use fromsoftware_shared::{FromStatic, program::Program, task::*};
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
@@ -27,18 +27,18 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
             .expect("Could not await system init.");
 
         let mut last_pressed = Instant::now();
-        let cs_task = CSTaskImp::instance().unwrap();
+        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
                 if Instant::now() - last_pressed < DEBOUNCE_DELAY {
                     return;
                 }
 
-                let Ok(action_button_man) = CSActionButtonManImp::instance() else {
+                let Ok(action_button_man) = (unsafe { CSActionButtonManImp::instance() }) else {
                     return;
                 };
 
-                let Some(player) = WorldChrMan::instance()
+                let Some(player) = unsafe { WorldChrMan::instance() }
                     .ok()
                     .and_then(|w| w.main_player.as_ref())
                 else {
