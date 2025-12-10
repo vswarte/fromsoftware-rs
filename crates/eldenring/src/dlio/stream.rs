@@ -4,7 +4,7 @@ use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
 use crate::dlkr::DLAllocatorBase;
-use shared::OwnedPtr;
+use shared::{OwnedPtr, Subclass, Superclass};
 
 use super::{DLFileOperatorContainer, DLFileSeekDirection, DLIOResult};
 
@@ -180,8 +180,9 @@ where
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Input stream used as base in all decompress streams and DLBufferedInputStream.
-pub struct PseudoAsyncInputStream {
+pub struct DLPseudoAsyncInputStream {
     pub vftable: VPtr<dyn DLSeekableInputStreamVmt, Self>,
     /// Amount of bytes read last time.
     /// Used to emulate the behavior of ReadAsync and return the amount of bytes read.
@@ -189,7 +190,7 @@ pub struct PseudoAsyncInputStream {
     // _pad: [u8; 4],
 }
 
-impl io::Read for PseudoAsyncInputStream {
+impl io::Read for DLPseudoAsyncInputStream {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         (self.vftable.read_bytes)(self, buf.as_mut_ptr(), buf.len())
             .try_into()
@@ -198,9 +199,10 @@ impl io::Read for PseudoAsyncInputStream {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Buffered input stream that reads data from the source stream into a buffer.
 pub struct DLBufferedInputStream {
-    pub base: PseudoAsyncInputStream,
+    pub base: DLPseudoAsyncInputStream,
     /// Source file stream to read from.
     pub source_stream: Option<NonNull<DLFileInputStream>>,
     /// Set to true if the source file stream reached the end of the file.

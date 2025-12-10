@@ -425,6 +425,8 @@ dependencies = [
 name = "fromsoftware-shared-macros"
 version = "0.11.0"
 dependencies = [
+ "inflections",
+ "proc-macro2",
  "quote",
  "syn",
 ]
@@ -529,6 +531,12 @@ dependencies = [
  "equivalent",
  "hashbrown",
 ]
+
+[[package]]
+name = "inflections"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
 
 [[package]]
 name = "is_terminal_polyfill"

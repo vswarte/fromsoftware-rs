@@ -1,7 +1,7 @@
 use std::ptr::NonNull;
 
 use crate::{Tree, param::CEREMONY_PARAM_ST, position::HavokPosition};
-use shared::OwnedPtr;
+use shared::{OwnedPtr, Subclass, Superclass};
 
 use super::BlockId;
 
@@ -94,6 +94,8 @@ impl WorldInfo {
 
 // Source of name: RTTI
 #[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(WorldAreaInfo, WorldGridAreaInfo))]
 pub struct WorldAreaInfoBase {
     vtable: usize,
     pub block_id: BlockId,
@@ -109,6 +111,7 @@ pub struct WorldAreaInfoBase {
 
 // Source of name: RTTI
 #[repr(C)]
+#[derive(Subclass)]
 pub struct WorldAreaInfo {
     pub base: WorldAreaInfoBase,
     /// List index in the WorldInfoOwner
@@ -124,6 +127,7 @@ pub struct WorldAreaInfo {
 
 // Source of name: RTTI
 #[repr(C)]
+#[derive(Subclass)]
 pub struct WorldGridAreaInfo {
     pub base: WorldAreaInfoBase,
     unk38: [u32; 3],

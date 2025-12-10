@@ -6,6 +6,7 @@ use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
 use super::{CSBulletTargetingSystemOwner, CSTargetingSystemBase, FieldInsBaseVmt, FieldInsHandle};
+use fromsoftware_shared::{Subclass, Superclass};
 
 #[repr(C)]
 pub struct BulletParamLookupResult {
@@ -101,6 +102,13 @@ pub trait CSBulletStateVmt {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(
+    CSBulletWaitState,
+    CSBulletFlyState,
+    CSBulletExplosionState,
+    CSBulletNULLState
+))]
 /// Source of name: RTTI
 pub struct CSBulletState {
     pub vftable: VPtr<dyn CSBulletStateVmt, Self>,
@@ -112,6 +120,7 @@ pub struct CSBulletState {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSBulletWaitState {
     pub base: CSBulletState,
@@ -120,6 +129,7 @@ pub struct CSBulletWaitState {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSBulletFlyState {
     pub base: CSBulletState,
@@ -129,12 +139,14 @@ pub struct CSBulletFlyState {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSBulletExplosionState {
     pub base: CSBulletState,
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSBulletNULLState {
     pub base: CSBulletState,
