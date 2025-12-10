@@ -219,7 +219,7 @@ impl fmt::Debug for ItemId {
 
 #[cfg(test)]
 mod tests {
-    use crate::cs::{ItemCategory, ItemId};
+    use crate::cs::{ItemCategory, MaybeInvalidItemId};
 
     #[test]
     fn test_bitfield() {
