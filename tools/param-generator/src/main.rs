@@ -34,7 +34,7 @@ fn main() -> io::Result<()> {
     output.push_str("    const NAME: &str;\n");
 
     if definitions[0].index.is_some() {
-        output.push_str("\n");
+        output.push('\n');
         output.push_str("    /// The index in the global parameter repository of the *first*\n");
         output.push_str("    /// parameter with this definition. Some definitions are re-used\n");
         output.push_str("    /// across multiple parameters, which are usually contiguous in\n");
@@ -84,14 +84,14 @@ fn load_definitions(input_path: impl AsRef<Path>) -> io::Result<Vec<StructDef>> 
     // so that we can provide alphabetic indices to look them up by position.
     definitions.sort_by(|def1, def2| def1.name.cmp(&def2.name));
 
-    if let Some(has) = definitions.iter().find(|def| def.index.is_some()) {
-        if let Some(has_not) = definitions.iter().find(|def| def.index.is_none()) {
-            panic!(
-                "{} has an index defined and {} does not. Either all params must have indices or \
-                 none may.",
-                has.name, has_not.name
-            );
-        }
+    if let Some(has) = definitions.iter().find(|def| def.index.is_some())
+        && let Some(has_not) = definitions.iter().find(|def| def.index.is_none())
+    {
+        panic!(
+            "{} has an index defined and {} does not. Either all params must have indices or none \
+             may.",
+            has.name, has_not.name
+        );
     }
 
     Ok(definitions)
@@ -264,11 +264,11 @@ fn layout_struct(fields: &[LayoutField]) -> Vec<LayoutUnit> {
                 });
 
                 // Yeet bit cursor and advance offset if we get to the end of a byte.
-                if let Some((_, used)) = bit_cursor {
-                    if used == 8 {
-                        offset += 1;
-                        bit_cursor = None;
-                    }
+                if let Some((_, used)) = bit_cursor
+                    && used == 8
+                {
+                    offset += 1;
+                    bit_cursor = None;
                 }
             }
             FieldType::Standard(_) | FieldType::Array(_, _) => {
@@ -358,10 +358,10 @@ fn normalize_name(mut name: &str) -> String {
                         result.push('_');
                     } else if prev.is_uppercase() {
                         // Look ahead to avoid splitting acronyms prematurely
-                        if let Some(next) = name.chars().nth(i + 1) {
-                            if next.is_lowercase() {
-                                result.push('_');
-                            }
+                        if let Some(next) = name.chars().nth(i + 1)
+                            && next.is_lowercase()
+                        {
+                            result.push('_');
                         }
                     }
                 }
@@ -379,13 +379,11 @@ fn normalize_name(mut name: &str) -> String {
     }
 
     // Remove leading/trailing/multiple underscores
-    let cleaned = result
+    result
         .split('_')
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>()
-        .join("_");
-
-    cleaned
+        .join("_")
 }
 
 fn align_offset(offset: usize, align: usize) -> usize {
@@ -485,10 +483,10 @@ impl LayoutUnit {
             return true;
         }
 
-        if let FieldType::Array(inner, _) = &self.field_type {
-            if FieldType::Standard("dummy8".to_string()) == **inner {
-                return true;
-            }
+        if let FieldType::Array(inner, _) = &self.field_type
+            && FieldType::Standard("dummy8".to_string()) == **inner
+        {
+            return true;
         }
 
         let lower = self.name.to_lowercase();
