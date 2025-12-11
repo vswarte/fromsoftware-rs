@@ -20,8 +20,9 @@ struct Args {
 
 fn main() -> io::Result<()> {
     let args = Args::parse();
-    let input_path = Path::new(&args.input);
     let mut output = String::new();
+
+    let definitions = load_definitions(&args.input)?;
 
     output.push_str("//! Param bindings generated from paramdef XMLs.\n\n");
 
@@ -29,11 +30,39 @@ fn main() -> io::Result<()> {
 
     output.push_str("/// Trait to perform safe param lookups.\n");
     output.push_str("pub trait ParamDef {\n");
+    output.push_str("    /// The all-caps, snake-case name of the parameter definition.\n");
     output.push_str("    const NAME: &str;\n");
-    output.push_str("    const INDEX: usize;\n");
+
+    if definitions[0].index.is_some() {
+        output.push('\n');
+        output.push_str("    /// The index in the global parameter repository of the *first*\n");
+        output.push_str("    /// parameter with this definition. Some definitions are re-used\n");
+        output.push_str("    /// across multiple parameters, which are usually contiguous in\n");
+        output.push_str("    /// the repository.\n");
+        output.push_str("    const INDEX: usize;\n");
+    }
+
     output.push_str("}\n\n");
 
-    let mut definitions = fs::read_dir(input_path)?
+    for definition in &definitions {
+        output.push_str(&generate_code(definition));
+    }
+
+    let output_path = Path::new(&args.output);
+    if let Some(parent) = output_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    File::create(output_path)?.write_all(output.as_bytes())?;
+    Ok(())
+}
+
+/// Loads all the parameter definitions in the [input_path] directory and
+/// returns them, sorted by name.
+///
+/// This also guarantees that either all structs have indexes defined, or none
+/// do.
+fn load_definitions(input_path: impl AsRef<Path>) -> io::Result<Vec<StructDef>> {
+    let mut definitions = fs::read_dir(input_path.as_ref())?
         .filter_map(|entry| {
             let entry = entry.unwrap();
             let path = entry.path();
@@ -55,19 +84,20 @@ fn main() -> io::Result<()> {
     // so that we can provide alphabetic indices to look them up by position.
     definitions.sort_by(|def1, def2| def1.name.cmp(&def2.name));
 
-    for (i, definition) in definitions.iter().enumerate() {
-        output.push_str(&generate_code(i, definition));
+    if let Some(has) = definitions.iter().find(|def| def.index.is_some())
+        && let Some(has_not) = definitions.iter().find(|def| def.index.is_none())
+    {
+        panic!(
+            "{} has an index defined and {} does not. Either all params must have indices or none \
+             may.",
+            has.name, has_not.name
+        );
     }
 
-    let output_path = Path::new(&args.output);
-    if let Some(parent) = output_path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    File::create(output_path)?.write_all(output.as_bytes())?;
-    Ok(())
+    Ok(definitions)
 }
 
-fn generate_code(index: usize, def: &StructDef) -> String {
+fn generate_code(def: &StructDef) -> String {
     let mut code = String::new();
 
     // Group the bitfields
@@ -121,7 +151,10 @@ fn generate_code(index: usize, def: &StructDef) -> String {
 
     code.push_str(&format!("impl ParamDef for {} {{\n", def.name));
     code.push_str(&format!("    const NAME: &str = \"{}\";\n", def.name));
-    code.push_str(&format!("    const INDEX: usize = {};\n", index));
+
+    if let Some(index) = def.index {
+        code.push_str(&format!("    const INDEX: usize = {};\n", index));
+    }
     code.push_str("}\n\n");
 
     code.push_str(&format!("impl {} {{\n", def.name));
@@ -197,6 +230,7 @@ fn build_definition(parsed: &ParamDef) -> StructDef {
 
     StructDef {
         name: parsed.param_type.clone(),
+        index: parsed.index,
         layout,
     }
 }
@@ -361,6 +395,8 @@ fn align_offset(offset: usize, align: usize) -> usize {
 struct ParamDef {
     #[serde(rename = "ParamType")]
     param_type: String,
+    #[serde(rename = "Index")]
+    index: Option<usize>,
     #[serde(rename = "Fields")]
     fields: Fields,
 }
@@ -423,6 +459,7 @@ impl FieldType {
 #[derive(Debug)]
 struct StructDef {
     name: String,
+    index: Option<usize>,
     layout: Vec<LayoutUnit>,
 }
 
