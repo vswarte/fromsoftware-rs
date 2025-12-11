@@ -1,4 +1,4 @@
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::{HashMap, hash_map::Entry};
 use std::iter::{IntoIterator, Iterator};
 
 use proc_macro::TokenStream;

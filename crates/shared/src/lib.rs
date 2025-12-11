@@ -15,6 +15,5 @@ pub use rtti::*;
 pub use r#static::*;
 pub use task::*;
 
-
 pub use from_singleton::FromSingleton;
 pub use fromsoftware_shared_macros::*;
