@@ -4,7 +4,7 @@ use bitfield::bitfield;
 use pelite::pe64::Pe;
 use shared::program::Program;
 
-use super::{CSEzTask, CSEzUpdateTask, MaybeInvalidItemId};
+use super::{CSEzTask, CSEzUpdateTask, OptionalItemId};
 use crate::rva;
 
 pub const STATUS_MESSAGE_DEMIGOD_FELLED: i32 = 1;
@@ -118,8 +118,8 @@ pub struct CSPopupMenu {
 #[repr(C)]
 pub struct CSPlayerMenuCtrl {
     vftable: usize,
-    pub selected_goods_item: MaybeInvalidItemId,
-    pub selected_magic_item: MaybeInvalidItemId,
+    pub selected_goods_item: OptionalItemId,
+    pub selected_magic_item: OptionalItemId,
     unk10: i32,
     unk14: i32,
     pub chr_menu_flags: CSChrMenuFlags,

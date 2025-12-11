@@ -49,7 +49,7 @@ impl TryFrom<u8> for ItemCategory {
 bitfield! {
     #[repr(transparent)]
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
-    pub struct MaybeInvalidItemId(u32);
+    pub struct OptionalItemId(u32);
 
     u32;
     /// The raw item ID value, without the category.
@@ -61,19 +61,19 @@ bitfield! {
 }
 
 /// An item ID that includes category information in the higher bits, but may
-/// also be the special invalid ID [INVALID] that represents no item.
+/// also be the special invalid ID [NONE] that represents no item.
 ///
 /// This is often used by the game to represent items in situations where
 /// they're optional or uninitialized. It can be safely converted to a valid
 /// [ItemId] using [as_valid].
-impl MaybeInvalidItemId {
+impl OptionalItemId {
     /// The ID used by the game to indicate the absence of an item.
     ///
     /// It's generally expected that all invalid item IDs are this value, since
     /// the game uses it consistently and the Rust library normalizes invalid
     /// IDs. Don't assume that this is the case, though, because there could be
     /// unexpected situations where the game uses different invalid IDs.
-    const INVALID: MaybeInvalidItemId = MaybeInvalidItemId(u32::MAX);
+    const NONE: OptionalItemId = OptionalItemId(u32::MAX);
 
     /// If this is a valid ID, returns it as an [ItemId]. Otherwise, returns
     /// `None`.
@@ -111,28 +111,24 @@ impl MaybeInvalidItemId {
     }
 }
 
-impl From<u32> for MaybeInvalidItemId {
-    /// Converts a [u32] into a [MaybeInvalidItemId].
+impl From<u32> for OptionalItemId {
+    /// Converts a [u32] into a [OptionalItemId].
     ///
     /// This normalizes all invalid item IDs into the single
-    /// [MaybeInvalidItemId::INVALID] value.
+    /// [OptionalItemId::NONE] value.
     fn from(value: u32) -> Self {
         let id = Self(value);
-        if id.is_valid() {
-            id
-        } else {
-            Self::INVALID
-        }
+        if id.is_valid() { id } else { Self::NONE }
     }
 }
 
-impl From<ItemId> for MaybeInvalidItemId {
-    fn from(value: ItemId) -> MaybeInvalidItemId {
+impl From<ItemId> for OptionalItemId {
+    fn from(value: ItemId) -> OptionalItemId {
         value.0
     }
 }
 
-impl fmt::Debug for MaybeInvalidItemId {
+impl fmt::Debug for OptionalItemId {
     fn fmt(&self, f: &mut fmt::Formatter) -> std::fmt::Result {
         match ItemCategory::try_from(self.category_raw()) {
             Ok(category) => {
@@ -151,7 +147,7 @@ impl fmt::Debug for MaybeInvalidItemId {
 /// that a parameter exists at the given parameter ID.
 #[repr(transparent)]
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
-pub struct ItemId(MaybeInvalidItemId);
+pub struct ItemId(OptionalItemId);
 
 impl ItemId {
     /// Creates a new [ItemId] from the given category and param ID. Returns an
@@ -160,9 +156,7 @@ impl ItemId {
         if param_id > 0xFFFFFFF {
             Err(ItemIdError::InvalidParamId(param_id))
         } else {
-            Ok(Self(MaybeInvalidItemId(
-                ((category as u32) << 28) & param_id,
-            )))
+            Ok(Self(OptionalItemId(((category as u32) << 28) & param_id)))
         }
     }
 
@@ -188,14 +182,14 @@ impl TryFrom<u32> for ItemId {
     type Error = ItemIdError;
 
     fn try_from(value: u32) -> Result<ItemId, Self::Error> {
-        ItemId::try_from(MaybeInvalidItemId(value))
+        ItemId::try_from(OptionalItemId(value))
     }
 }
 
-impl TryFrom<MaybeInvalidItemId> for ItemId {
+impl TryFrom<OptionalItemId> for ItemId {
     type Error = ItemIdError;
 
-    fn try_from(value: MaybeInvalidItemId) -> Result<ItemId, Self::Error> {
+    fn try_from(value: OptionalItemId) -> Result<ItemId, Self::Error> {
         if value.is_valid() {
             // Safety: We just checked that the value is valid.
             Ok(Self(value))
@@ -219,11 +213,11 @@ impl fmt::Debug for ItemId {
 
 #[cfg(test)]
 mod tests {
-    use crate::cs::{ItemCategory, MaybeInvalidItemId};
+    use crate::cs::{ItemCategory, OptionalItemId};
 
     #[test]
     fn test_bitfield() {
-        let mut item = MaybeInvalidItemId(0);
+        let mut item = OptionalItemId(0);
         item.set_param_id_raw(123);
         item.set_category_raw(ItemCategory::Gem as u8);
 
@@ -231,7 +225,7 @@ mod tests {
         assert_eq!(item.category(), Some(ItemCategory::Gem));
         assert_eq!(item.0, 123 | (ItemCategory::Gem as u32) << 28);
 
-        item = MaybeInvalidItemId(u32::MAX);
+        item = OptionalItemId(u32::MAX);
         assert_eq!(item.param_id(), None);
         assert_eq!(item.category(), None);
     }
