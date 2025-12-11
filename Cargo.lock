@@ -425,6 +425,7 @@ dependencies = [
 name = "fromsoftware-shared-macros"
 version = "0.11.0"
 dependencies = [
+ "proc-macro2",
  "quote",
  "syn",
 ]
