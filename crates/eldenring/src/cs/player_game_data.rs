@@ -1,9 +1,13 @@
 use std::ops::Index;
 use std::ptr::NonNull;
 
+use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::Vector;
+use crate::{
+    BasicVector, Vector,
+    cs::{ChrType, MultiplayRole},
+};
 use shared::OwnedPtr;
 
 use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};
@@ -34,9 +38,9 @@ pub struct PlayerGameData {
     pub intelligence: u32,
     pub faith: u32,
     pub arcane: u32,
-    unk5c: f32,
-    unk60: f32,
-    unk64: f32,
+    pub base_hero_point: f32,
+    pub base_hero_point_2: f32,
+    pub base_durability: f32,
     pub level: u32,
     pub rune_count: u32,
     pub rune_memory: u32,
@@ -48,11 +52,9 @@ pub struct PlayerGameData {
     pub frost_resist: u32,
     pub sleep_resist: u32,
     pub madness_resist: u32,
-    pub block_clear_bonus: u32,
-    unk98: u32,
-    character_name: [u16; 16],
-    unkbc: u8,
-    unkbd: u8,
+    pub pending_block_clear_bonus: f32,
+    pub chr_type: ChrType,
+    character_name: [u16; 17],
     pub gender: u8,
     pub archetype: u8,
     pub vow_type: u8,
@@ -65,19 +67,23 @@ pub struct PlayerGameData {
     pub matchmaking_spirit_ashes_level: u8,
     pub total_summon_count: u32,
     pub coop_success_count: u32,
-    unkd0: [u8; 0xf],
+    /// Index into [crate::cs::GameDataMan]'s player game data array
+    pub game_data_man_index: u32,
+    unkd4: [u8; 0xb],
     pub furlcalling_finger_remedy_active: bool,
     unke0: u8,
     unke1: u8,
     pub matching_weapon_level: u8,
     pub white_ring_active: u8,
     pub blue_ring_active: u8,
-    pub team_type: u8,
+    /// [MultiplayRole] of the player this game data belongs to
+    pub multiplay_role: MultiplayRole,
     unke6: u8,
     /// True if the player is in their own world.
     pub is_my_world: bool,
-    unke8: [u8; 0x4],
-    unkec: u32,
+    unke8: [u8; 0x3],
+    unke9: bool,
+    pub character_id: u32,
     pub invasions_success_count: u32,
     pub solo_breakin_point: u32,
     pub invaders_killed: u32,
@@ -85,10 +91,12 @@ pub struct PlayerGameData {
     pub reversed_spirit_ash: u8,
     pub resist_curse_item_count: u8,
     pub rune_arc_active: bool,
-    unk100: u8,
+    unk100: bool,
     pub max_hp_flask: u8,
     pub max_fp_flask: u8,
-    unk103: [u8; 0x6],
+    unk103: [u8; 0x4],
+    pub sell_region: SellRegion,
+    unk108: u8,
     pub reached_max_rune_memory: u8,
     unk10a: [u8; 0xE],
     pub password: [u16; 0x8],
@@ -130,6 +138,7 @@ pub struct PlayerGameData {
     gesture_game_data: usize,
     ride_game_data: usize,
     unk8e8: usize,
+    /// True when this game data belongs to the main (local) player.
     pub is_main_player: bool,
     /// Did this player agreed to voice chat?
     pub is_voice_chat_enabled: bool,
@@ -143,7 +152,8 @@ pub struct PlayerGameData {
     pub fp_estus_additional: u8,
     _pad931: [u8; 3],
     unk934: u32,
-    visited_areas: [u8; 0x18],
+    /// Vector of all visited play area IDs
+    pub visited_areas: BasicVector<u32>,
     pub mount_handle: FieldInsHandle,
     unk958: [u8; 0x8],
     pub damage_negation_physical: i32,
@@ -166,7 +176,8 @@ pub struct PlayerGameData {
     pub proc_status_timers: [f32; 7],
     pub proc_status_timer_max: [f32; 7],
     unka54: u32,
-    unka58: [u8; 0xF],
+    pub frontend_flags: PlayerGameDataFrontendFlags,
+    unka59: [u8; 0xE],
     pub quickmatch_kill_count: u8,
     unka68: [u8; 0x4],
     pub poise: f32,
@@ -175,22 +186,61 @@ pub struct PlayerGameData {
     menu_ref_special_effect_2: usize,
     menu_ref_special_effect_3: usize,
     pub is_using_festering_bloody_finger: bool,
-    unka91: [u8; 3],
-    pub networked_speffect_entry_count: u32,
+    pub used_invasion_item_type: PlayerDataInvasionItemType,
+    unka92: [u8; 2],
+    pub packed_time_stamp: u32,
     pub quick_match_team: u8,
-    unka99: [u8; 0x12],
+    unka99: [u8; 0x3],
+    unka9c: i32,
+    pub quick_match_duel_points: u16,
+    pub quick_match_united_combat_points: u16,
+    pub quick_match_spirit_ashes_points: u16,
+    pub quickmatch_duel_rank: u8,
+    pub quickmatch_united_combat_rank: u8,
+    pub quickmatch_spirit_ashes_rank: u8,
+    pub unkaa9: bool,
+    unkaa: u8,
     pub is_quick_match_host: bool,
     pub quick_match_map_load_ready: bool,
     pub quick_match_desired_team: u8,
     unkaae: u8,
     /// Should sign cooldown be enabled?
     /// Each time your coop player dies and you have someone in your world
-    /// you will get a cooldown depending on WhiteSignCoolTimeParam and level from SosSignMan
+    /// you will get a cooldown depending on [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST] and level from [crate::cs::CSSosSignMan::white_sign_cool_time_param_id]
     pub sign_cooldown_enabled: bool,
     unkab0: [u8; 0x2],
     pub has_preorder_gesture: bool,
     pub has_preorder_sote_gesture: bool,
     unkab4: [u8; 0x34],
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum SellRegion {
+    None = 0,
+    Japan = 1,
+    NorthAmerica = 2,
+    Europe = 3,
+    Asia = 4,
+    Global = 5,
+}
+
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    pub struct PlayerGameDataFrontendFlags(u8);
+    impl Debug;
+
+    bool;
+    pub disable_status_effect_bars, set_disable_status_effect_bars: 0;
+    pub rune_arc_active, set_rune_arc_active: 1;
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum PlayerDataInvasionItemType {
+    BloodyFinger = 0,
+    FesteringBloodyFinger = 1,
+    RecusantFinger = 2,
 }
 
 #[repr(C)]
@@ -451,23 +501,33 @@ pub struct EquipInventoryData {
     unk124: u32,
 }
 
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    struct ItemIdMappingBits(u32);
+    impl Debug;
+
+    u32;
+    mapping_index, _: 23, 12;
+    item_slot, _: 11, 0;
+}
+
 #[repr(C)]
 pub struct ItemIdMapping {
-    pub item_id: u32,
-    bits4: u32,
+    pub item_id: ItemId,
+    bits4: ItemIdMappingBits,
 }
 
 impl ItemIdMapping {
     /// Returns the offset of the next item ID mapping with the same modulo result.
     pub fn next_mapping_item(&self) -> u32 {
-        ((self.bits4 >> 12) & 0xFFF) - 1
+        self.bits4.mapping_index() - 1
     }
 
     /// Returns the index of the item slot. This index is first checked against the key items
     /// capacity to see if it's contained in that. If not you will need to subtract the key items
     /// capacity to get the index for the normal items list.
     pub fn item_slot(&self) -> u32 {
-        self.bits4 & 0xFFF
+        self.bits4.item_slot()
     }
 }
 
@@ -642,4 +702,23 @@ pub struct ChrAsm {
     unkd4: u32,
     unkd8: u32,
     _paddc: [u8; 12],
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_item_id_mapping() {
+        let mapping = ItemIdMapping {
+            item_id: ItemId::from(0x40002760),
+            bits4: ItemIdMappingBits(0x003B8000),
+        };
+        assert_eq!(mapping.item_id, ItemId::from(0x40002760));
+        assert_eq!(
+            mapping.next_mapping_item(),
+            ((mapping.bits4.0 >> 12) & 0xFFF) - 1
+        );
+        assert_eq!(mapping.item_slot(), mapping.bits4.0 & 0xFFF);
+    }
 }

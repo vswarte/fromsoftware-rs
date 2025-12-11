@@ -1,10 +1,7 @@
-use std::alloc::Layout;
 use std::borrow::Cow;
 use std::fmt::Display;
-use std::mem::ManuallyDrop;
 use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
-use std::{alloc::GlobalAlloc, error::Error};
 
 use crate::dlkr::DLAllocatorRef;
 
@@ -12,11 +9,7 @@ use encoding_rs;
 
 use thiserror::Error;
 
-use cxx_stl::string::{
-    CxxNarrowString, CxxUtf16String, CxxUtf32String, CxxUtf8String, CxxWideString,
-};
-
-use shared::OwnedPtr;
+use cxx_stl::string::{CxxNarrowString, CxxUtf8String, CxxUtf16String, CxxUtf32String};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
@@ -108,7 +101,7 @@ pub trait DLStringKind: DLStringKindSeal {
                 Ok(unsafe { std::mem::transmute::<Vec<u32>, Vec<Self::CharType>>(bytes) })
             }
             DLCharacterSet::UTF8 => {
-                /// We can just slice the string as UTF-8 bytes because Rust's `str` is UTF-8 encoded.
+                // We can just slice the string as UTF-8 bytes because Rust's `str` is UTF-8 encoded.
                 let bytes = s.as_bytes().to_vec();
                 // SAFETY: Transmuting Vec<u8> to Vec<Self::CharType> is safe
                 // because this arm ensures CharType is u8.

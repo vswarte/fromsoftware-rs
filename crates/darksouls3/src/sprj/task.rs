@@ -1,8 +1,7 @@
-use pelite::{pattern, pattern::Atom, pe64::Pe};
-use std::{ffi, marker::PhantomData, sync::LazyLock};
-use vtable_rs::VPtr;
+use pelite::pe64::Pe;
+use std::sync::LazyLock;
 
-use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
+use shared::{OwnedPtr, RecurringTask, SharedTaskImp, program::Program};
 
 use crate::fd4::FD4BasicHashString;
 use crate::rva;

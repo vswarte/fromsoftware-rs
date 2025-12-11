@@ -7,6 +7,7 @@ pub struct MsbRepository {
     pub res_rep: FD4ResRep<MsbFileCap>,
 }
 
+#[repr(C)]
 pub struct MsbFileCap {
     pub file_cap: FD4FileCap<Self>,
 }

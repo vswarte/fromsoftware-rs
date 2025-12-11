@@ -1,3 +1,4 @@
+#[repr(C)]
 pub struct ItemLotUtil {
     pub item_lot: u32,
     pub is_map_item_lot: bool,

@@ -1,8 +1,9 @@
 use std::{fmt::Display, mem::transmute};
 
+use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::cs::ItemId;
+use crate::cs::{CSRandXorshift, ItemId};
 use shared::OwnedPtr;
 
 #[repr(C)]
@@ -15,7 +16,7 @@ pub struct CSGaitemImp {
     indexes: [u32; 5120],
     write_index: u32,
     read_index: u32,
-    rand_xorshift: [u8; 0x18],
+    pub rand_xorshift: CSRandXorshift,
     unk23028: [u8; 8],
     /// Becomes true if the CSGaitemImp is being serialized for saving to the save file.
     pub is_being_serialized: bool,
@@ -117,9 +118,32 @@ pub struct CSGaitemImpEntry {
     ref_count: u32,
 }
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct GaitemHandle(pub u32);
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    pub struct GaitemHandle(u32);
+    impl Debug;
+
+    /// The index of the GaitemIns inside the CSGaitemImp.
+    pub index, _: 15, 0;
+    _, set_index: 15, 0;
+
+    pub selector, _: 23, 0;
+    _, set_selector: 23, 0;
+
+    /// Indicates if the gaitem handle refers to a GaitemIns available in CSGaitemImp.
+    /// Will be true for Protectors, Weapons and Gems.
+    pub is_indexed, _: 23;
+    _, set_is_indexed: 23;
+
+    u8;
+    /// The category of the GaitemHandle.
+    pub category_raw, _: 30, 28;
+    _, set_category_raw: 30, 28;
+
+    /// A flag that is always set along with the category.
+    /// Separated into it's own bitfield to avoid bitshifts on the category.
+    category_flag, set_category_flag: 31;
+}
 
 #[derive(Debug, Error)]
 pub enum GaitemHandleError {
@@ -128,27 +152,16 @@ pub enum GaitemHandleError {
 }
 
 impl GaitemHandle {
-    pub const fn from_parts(selector: u32, category: GaitemCategory) -> Self {
-        GaitemHandle(selector & 0x00FFFFFF | (((category as i32) | -8) as u32) << 28)
+    pub fn from_parts(selector: u32, category: GaitemCategory) -> Self {
+        let mut handle = GaitemHandle(0);
+        handle.set_selector(selector);
+        handle.set_category_raw(category as u8);
+        handle.set_category_flag(true);
+        handle
     }
 
-    /// Indicates if the gaitem handle refers to a GaitemIns available in CSGaitemImp.
-    /// Will be true for Protectors, Weapons and Gems.
-    pub const fn is_indexed(self) -> bool {
-        self.0 >> 23 & 1 == 1
-    }
-
-    pub const fn selector(self) -> u32 {
-        self.0 & 0x00ffffff
-    }
-
-    /// Index of the GaitemIns inside of the CSGaitemImp
-    pub const fn index(self) -> u32 {
-        self.0 & 0xffff
-    }
-
-    pub const fn category(self) -> Result<GaitemCategory, GaitemHandleError> {
-        GaitemCategory::from_u8(&((self.0 >> 28 & 7) as u8))
+    pub fn category(self) -> Result<GaitemCategory, GaitemHandleError> {
+        GaitemCategory::try_from(self.category_raw())
     }
 }
 
@@ -162,16 +175,18 @@ pub enum GaitemCategory {
     Gem = 4,
 }
 
-impl GaitemCategory {
-    pub const fn from_u8(val: &u8) -> Result<Self, GaitemHandleError> {
-        Ok(match val {
-            0 => GaitemCategory::Weapon,
-            1 => GaitemCategory::Protector,
-            2 => GaitemCategory::Accessory,
-            3 => GaitemCategory::Goods,
-            4 => GaitemCategory::Gem,
-            _ => return Err(GaitemHandleError::InvalidCategory(*val)),
-        })
+impl TryFrom<u8> for GaitemCategory {
+    type Error = GaitemHandleError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(GaitemCategory::Weapon),
+            1 => Ok(GaitemCategory::Protector),
+            2 => Ok(GaitemCategory::Accessory),
+            3 => Ok(GaitemCategory::Goods),
+            4 => Ok(GaitemCategory::Gem),
+            _ => Err(GaitemHandleError::InvalidCategory(value)),
+        }
     }
 }
 

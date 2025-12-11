@@ -7,17 +7,12 @@ license.workspace = true
 readme = false
 description = "Raw structures and bindings for From Software's title Dark Souls III"
 
-[lints.rust]
-unused = "allow"
-
 [dependencies]
 bitfield.workspace = true
 encoding_rs.workspace = true
-from-singleton.workspace = true
-nalgebra-glm.workspace = true
-nalgebra.workspace = true
+glam.workspace = true
 pelite.workspace = true
-shared.workspace = true
+fromsoftware-shared.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 vtable-rs.workspace = true
@@ -31,3 +26,7 @@ regex = "1"
 [build-dependencies.serde]
 version = "1"
 features = ["derive"]
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]

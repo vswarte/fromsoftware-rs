@@ -16,6 +16,14 @@ For Dark Souls III:
 $ cargo run --bin binary-mapper -- ds3 --exe "<game exe path>"
 ```
 
+These shortcuts expect the repository folder structure to be the same as this repository. To override the output root path, pass `--project-root <path>` to either command.
+
+For example, to output to the eldenring crate while running from the repository root:
+
+```
+$ cargo run --bin binary-mapper -- er --ww-exe "<game exe path>" --jp-exe "<game exe path>" --project-root crates/eldenring
+```
+
 You can also set environment variables for the executable paths rather than passing them by flag every time. These take the form `MAPPER_{GAME}_{REGION}_EXE`. For example, instead of `er --ww-exe`, you can set `MAPPER_ER_WW_EXE`. Because Dark Souls III has the same mappings for all regions, it just takes `MAPPER_DS3_EXE`.
 
 ## Manual Mapping and Debugging

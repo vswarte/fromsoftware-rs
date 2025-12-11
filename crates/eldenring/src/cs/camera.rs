@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{F32Matrix4x4, F32Vector4, OwnedPtr};
+use shared::{F32Vector4, F32ViewMatrix, OwnedPtr};
 
 use crate::position::{HavokPosition, PositionDelta};
 
@@ -34,7 +34,7 @@ pub struct CSCam {
     vftable: usize,
     unk8: u32,
     unkc: u32,
-    pub matrix: F32Matrix4x4,
+    pub matrix: F32ViewMatrix,
     pub fov: f32,
     pub aspect_ratio: f32,
     pub near_plane: f32,
@@ -43,23 +43,23 @@ pub struct CSCam {
 
 impl CSCam {
     pub fn right(&self) -> PositionDelta {
-        PositionDelta(self.matrix.0 .0, self.matrix.0 .1, self.matrix.0 .2)
+        PositionDelta(self.matrix.0.0, self.matrix.0.1, self.matrix.0.2)
     }
 
     pub fn up(&self) -> PositionDelta {
-        PositionDelta(self.matrix.1 .0, self.matrix.1 .1, self.matrix.1 .2)
+        PositionDelta(self.matrix.1.0, self.matrix.1.1, self.matrix.1.2)
     }
 
     pub fn forward(&self) -> PositionDelta {
-        PositionDelta(self.matrix.2 .0, self.matrix.2 .1, self.matrix.2 .2)
+        PositionDelta(self.matrix.2.0, self.matrix.2.1, self.matrix.2.2)
     }
 
     pub fn position(&self) -> HavokPosition {
         HavokPosition(
-            self.matrix.3 .0,
-            self.matrix.3 .1,
-            self.matrix.3 .2,
-            self.matrix.3 .3,
+            self.matrix.3.0,
+            self.matrix.3.1,
+            self.matrix.3.2,
+            self.matrix.3.3,
         )
     }
 }

@@ -5,7 +5,7 @@ use crate::{
     position::{HavokPosition, PositionDelta},
     rva,
 };
-use shared::{program::Program, OwnedPtr};
+use shared::{OwnedPtr, program::Program};
 
 // Source of name: RTTI
 #[shared::singleton("CSHavokMan")]

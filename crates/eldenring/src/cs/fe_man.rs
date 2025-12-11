@@ -1,6 +1,6 @@
 use std::{fmt::Display, ptr::NonNull};
 
-use crate::{dltx::DLString, CSFixedList};
+use crate::{CSFixedList, dltx::DLString};
 use shared::{F32Vector4, OwnedPtr};
 
 use super::{CSMenuManImp, FieldInsHandle};

@@ -1,4 +1,4 @@
-use std::{ffi, fmt::Display};
+use std::fmt::Display;
 
 use crate::dltx::{DLString, DLStringKind, DLUTF16StringKind};
 

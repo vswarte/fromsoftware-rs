@@ -1,15 +1,8 @@
-use std::ffi;
-use std::fmt::Display;
-use std::marker::PhantomData;
-use std::mem::transmute;
 use std::ptr::NonNull;
 
-use vtable_rs::VPtr;
-
-use crate::cs::ChrIns;
 use crate::Tree;
 
-use super::{BlockId, FieldInsHandle, NetChrSync, PlayerIns, WorldInfoOwner};
+use super::{BlockId, WorldInfoOwner};
 
 #[repr(C)]
 /// Source of name: RTTI

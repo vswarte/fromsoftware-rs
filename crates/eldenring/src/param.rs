@@ -8440,21 +8440,21 @@ pub struct BUDDY_PARAM_ST {
     doping_sp_effect_lv10: i32,
     npc_player_init_param_id: i32,
     generate_anim_id: i32,
-    unknown_0x5c: u32,
-    unknown_0x60: u32,
-    unknown_0x64: i32,
-    unknown_0x68: i32,
-    unknown_0x6c: i32,
-    unknown_0x70: i32,
-    unknown_0x74: i32,
-    unknown_0x78: i32,
-    unknown_0x7c: i32,
-    unknown_0x80: i32,
-    unknown_0x84: u32,
-    unknown_0x88: i32,
-    unknown_0x8c: i32,
-    unknown_0x90: i32,
-    unknown_0x94: i32,
+    arena_doping_sp_effect_1: i32,
+    arena_doping_sp_effect_2: i32,
+    arena_doping_sp_effect_3: i32,
+    arena_doping_sp_effect_4: i32,
+    arena_doping_sp_effect_5: i32,
+    arena_friendly_sp_effect_1: i32,
+    arena_friendly_sp_effect_2: i32,
+    arena_friendly_sp_effect_3: i32,
+    arena_friendly_sp_effect_4: i32,
+    arena_friendly_sp_effect_5: i32,
+    arena_hostile_sp_effect_1: u32,
+    arena_hostile_sp_effect_2: i32,
+    arena_hostile_sp_effect_3: i32,
+    arena_hostile_sp_effect_4: i32,
+    arena_hostile_sp_effect_5: i32,
     unknown_0x98: i32,
     unknown_0x9c: u32,
 }
@@ -8665,6 +8665,126 @@ impl BUDDY_PARAM_ST {
 
     pub fn set_generate_anim_id(&mut self, value: i32) {
         self.generate_anim_id = value;
+    }
+
+    pub fn arena_doping_sp_effect_1(&self) -> i32 {
+        self.arena_doping_sp_effect_1
+    }
+
+    pub fn set_arena_doping_sp_effect_1(&mut self, value: i32) {
+        self.arena_doping_sp_effect_1 = value;
+    }
+
+    pub fn arena_doping_sp_effect_2(&self) -> i32 {
+        self.arena_doping_sp_effect_2
+    }
+
+    pub fn set_arena_doping_sp_effect_2(&mut self, value: i32) {
+        self.arena_doping_sp_effect_2 = value;
+    }
+
+    pub fn arena_doping_sp_effect_3(&self) -> i32 {
+        self.arena_doping_sp_effect_3
+    }
+
+    pub fn set_arena_doping_sp_effect_3(&mut self, value: i32) {
+        self.arena_doping_sp_effect_3 = value;
+    }
+
+    pub fn arena_doping_sp_effect_4(&self) -> i32 {
+        self.arena_doping_sp_effect_4
+    }
+
+    pub fn set_arena_doping_sp_effect_4(&mut self, value: i32) {
+        self.arena_doping_sp_effect_4 = value;
+    }
+
+    pub fn arena_doping_sp_effect_5(&self) -> i32 {
+        self.arena_doping_sp_effect_5
+    }
+
+    pub fn set_arena_doping_sp_effect_5(&mut self, value: i32) {
+        self.arena_doping_sp_effect_5 = value;
+    }
+
+    pub fn arena_friendly_sp_effect_1(&self) -> i32 {
+        self.arena_friendly_sp_effect_1
+    }
+
+    pub fn set_arena_friendly_sp_effect_1(&mut self, value: i32) {
+        self.arena_friendly_sp_effect_1 = value;
+    }
+
+    pub fn arena_friendly_sp_effect_2(&self) -> i32 {
+        self.arena_friendly_sp_effect_2
+    }
+
+    pub fn set_arena_friendly_sp_effect_2(&mut self, value: i32) {
+        self.arena_friendly_sp_effect_2 = value;
+    }
+
+    pub fn arena_friendly_sp_effect_3(&self) -> i32 {
+        self.arena_friendly_sp_effect_3
+    }
+
+    pub fn set_arena_friendly_sp_effect_3(&mut self, value: i32) {
+        self.arena_friendly_sp_effect_3 = value;
+    }
+
+    pub fn arena_friendly_sp_effect_4(&self) -> i32 {
+        self.arena_friendly_sp_effect_4
+    }
+
+    pub fn set_arena_friendly_sp_effect_4(&mut self, value: i32) {
+        self.arena_friendly_sp_effect_4 = value;
+    }
+
+    pub fn arena_friendly_sp_effect_5(&self) -> i32 {
+        self.arena_friendly_sp_effect_5
+    }
+
+    pub fn set_arena_friendly_sp_effect_5(&mut self, value: i32) {
+        self.arena_friendly_sp_effect_5 = value;
+    }
+
+    pub fn arena_hostile_sp_effect_1(&self) -> u32 {
+        self.arena_hostile_sp_effect_1
+    }
+
+    pub fn set_arena_hostile_sp_effect_1(&mut self, value: u32) {
+        self.arena_hostile_sp_effect_1 = value;
+    }
+
+    pub fn arena_hostile_sp_effect_2(&self) -> i32 {
+        self.arena_hostile_sp_effect_2
+    }
+
+    pub fn set_arena_hostile_sp_effect_2(&mut self, value: i32) {
+        self.arena_hostile_sp_effect_2 = value;
+    }
+
+    pub fn arena_hostile_sp_effect_3(&self) -> i32 {
+        self.arena_hostile_sp_effect_3
+    }
+
+    pub fn set_arena_hostile_sp_effect_3(&mut self, value: i32) {
+        self.arena_hostile_sp_effect_3 = value;
+    }
+
+    pub fn arena_hostile_sp_effect_4(&self) -> i32 {
+        self.arena_hostile_sp_effect_4
+    }
+
+    pub fn set_arena_hostile_sp_effect_4(&mut self, value: i32) {
+        self.arena_hostile_sp_effect_4 = value;
+    }
+
+    pub fn arena_hostile_sp_effect_5(&self) -> i32 {
+        self.arena_hostile_sp_effect_5
+    }
+
+    pub fn set_arena_hostile_sp_effect_5(&mut self, value: i32) {
+        self.arena_hostile_sp_effect_5 = value;
     }
 }
 
@@ -10484,8 +10604,8 @@ pub struct CHARACTER_INIT_PARAM {
     equip_accessory02: i32,
     equip_accessory03: i32,
     equip_accessory04: i32,
-    unknown_0x50: u8,
-    unknown_0x51: u8,
+    scadutree_blessing: u8,
+    revered_spirit_ash_blessing: u8,
     pad8: [u8; 2],
     elixir_material00: i32,
     elixir_material01: i32,
@@ -10744,6 +10864,22 @@ impl CHARACTER_INIT_PARAM {
 
     pub fn set_equip_accessory04(&mut self, value: i32) {
         self.equip_accessory04 = value;
+    }
+
+    pub fn scadutree_blessing(&self) -> u8 {
+        self.scadutree_blessing
+    }
+
+    pub fn set_scadutree_blessing(&mut self, value: u8) {
+        self.scadutree_blessing = value;
+    }
+
+    pub fn revered_spirit_ash_blessing(&self) -> u8 {
+        self.revered_spirit_ash_blessing
+    }
+
+    pub fn set_revered_spirit_ash_blessing(&mut self, value: u8) {
+        self.revered_spirit_ash_blessing = value;
     }
 
     pub fn elixir_material00(&self) -> i32 {
@@ -18234,7 +18370,7 @@ pub struct EQUIP_PARAM_GOODS_ST {
     goods_type: u8,
     ref_category: u8,
     sp_effect_category: u8,
-    unknown_0x40: u8,
+    quick_match_use_restriction: u8,
     goods_use_anim: u8,
     opme_menu_type: u8,
     use_limit_category: u8,
@@ -18489,6 +18625,14 @@ impl EQUIP_PARAM_GOODS_ST {
 
     pub fn set_sp_effect_category(&mut self, value: u8) {
         self.sp_effect_category = value;
+    }
+
+    pub fn quick_match_use_restriction(&self) -> u8 {
+        self.quick_match_use_restriction
+    }
+
+    pub fn set_quick_match_use_restriction(&mut self, value: u8) {
+        self.quick_match_use_restriction = value;
     }
 
     pub fn goods_use_anim(&self) -> u8 {
@@ -19028,12 +19172,12 @@ impl EQUIP_PARAM_GOODS_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn quick_match_replanish(&self) -> u8 {
+    pub fn quick_match_replenish(&self) -> u8 {
         (self.bits_73 >> 2) & 0b00000001
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_quick_match_replanish(&mut self, value: u8) {
+    pub fn set_quick_match_replenish(&mut self, value: u8) {
         self.bits_73 = (self.bits_73 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
     }
 
@@ -23178,12 +23322,12 @@ impl EQUIP_PARAM_WEAPON_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn quick_match_replanish(&self) -> u8 {
+    pub fn quick_match_replenish(&self) -> u8 {
         (self.bits_17c >> 6) & 0b00000001
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_quick_match_replanish(&mut self, value: u8) {
+    pub fn set_quick_match_replenish(&mut self, value: u8) {
         self.bits_17c = (self.bits_17c & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
     }
 
@@ -30849,34 +30993,34 @@ pub struct GAME_SYSTEM_COMMON_PARAM_ST {
     block_clear_bonus_delay_time: f32,
     bonfire_check_enemy_range: f32,
     unknown_0x2f0: i32,
-    matching_level_unk_upper_rel: u8,
-    matching_level_unk_upper_abs: u8,
-    matching_weapon_level_upper_unk_0: u8,
-    matching_weapon_level_upper_unk_1: u8,
-    matching_weapon_level_upper_unk_2: u8,
-    matching_weapon_level_upper_unk_3: u8,
-    matching_weapon_level_upper_unk_4: u8,
-    matching_weapon_level_upper_unk_5: u8,
-    matching_weapon_level_upper_unk_6: u8,
-    matching_weapon_level_upper_unk_7: u8,
-    matching_weapon_level_upper_unk_8: u8,
-    matching_weapon_level_upper_unk_9: u8,
-    matching_weapon_level_upper_unk_10: u8,
-    matching_weapon_level_upper_unk_11: u8,
-    matching_weapon_level_upper_unk_12: u8,
-    matching_weapon_level_upper_unk_13: u8,
-    matching_weapon_level_upper_unk_14: u8,
-    matching_weapon_level_upper_unk_15: u8,
-    matching_weapon_level_upper_unk_16: u8,
-    matching_weapon_level_upper_unk_17: u8,
-    matching_weapon_level_upper_unk_18: u8,
-    matching_weapon_level_upper_unk_19: u8,
-    matching_weapon_level_upper_unk_20: u8,
-    matching_weapon_level_upper_unk_21: u8,
-    matching_weapon_level_upper_unk_22: u8,
-    matching_weapon_level_upper_unk_23: u8,
-    matching_weapon_level_upper_unk_24: u8,
-    matching_weapon_level_upper_unk_25: u8,
+    matching_level_arena_upper_rel: u8,
+    matching_level_arena_upper_abs: u8,
+    matching_weapon_level_upper_arena_0: u8,
+    matching_weapon_level_upper_arena_1: u8,
+    matching_weapon_level_upper_arena_2: u8,
+    matching_weapon_level_upper_arena_3: u8,
+    matching_weapon_level_upper_arena_4: u8,
+    matching_weapon_level_upper_arena_5: u8,
+    matching_weapon_level_upper_arena_6: u8,
+    matching_weapon_level_upper_arena_7: u8,
+    matching_weapon_level_upper_arena_8: u8,
+    matching_weapon_level_upper_arena_9: u8,
+    matching_weapon_level_upper_arena_10: u8,
+    matching_weapon_level_upper_arena_11: u8,
+    matching_weapon_level_upper_arena_12: u8,
+    matching_weapon_level_upper_arena_13: u8,
+    matching_weapon_level_upper_arena_14: u8,
+    matching_weapon_level_upper_arena_15: u8,
+    matching_weapon_level_upper_arena_16: u8,
+    matching_weapon_level_upper_arena_17: u8,
+    matching_weapon_level_upper_arena_18: u8,
+    matching_weapon_level_upper_arena_19: u8,
+    matching_weapon_level_upper_arena_20: u8,
+    matching_weapon_level_upper_arena_21: u8,
+    matching_weapon_level_upper_arena_22: u8,
+    matching_weapon_level_upper_arena_23: u8,
+    matching_weapon_level_upper_arena_24: u8,
+    matching_weapon_level_upper_arena_25: u8,
     unknown_0x310: f32,
     unknown_0x314: f32,
     unknown_0x318: f32,
@@ -30891,11 +31035,20 @@ pub struct GAME_SYSTEM_COMMON_PARAM_ST {
     unknown_0x33c: f32,
     unknown_0x340: f32,
     unknown_0x344: f32,
-    unknown_0x34c: i32,
-    unknown_0x350: i32,
-    unknown_0x354: i32,
+    summon_data_coop_matching_spirit_ash_level_mul: i16,
+    matching_spirit_ash_level_upper_0: u8,
+    matching_spirit_ash_level_upper_1: u8,
+    matching_spirit_ash_level_upper_2: u8,
+    matching_spirit_ash_level_upper_3: u8,
+    matching_spirit_ash_level_upper_4: u8,
+    matching_spirit_ash_level_upper_5: u8,
+    matching_spirit_ash_level_upper_6: u8,
+    matching_spirit_ash_level_upper_7: u8,
+    matching_spirit_ash_level_upper_8: u8,
+    matching_spirit_ash_level_upper_9: u8,
+    matching_spirit_ash_level_upper_10: u8,
+    pad_0x34c: [u8; 3],
     unknown_0x358: i32,
-    unknown_0x35c: i32,
     base_scadu_blessing_sp_effect_id: i32,
     base_revered_spirit_ash_blessing_sp_effect_id: i32,
     unknown_0x368: i32,
@@ -33233,228 +33386,324 @@ impl GAME_SYSTEM_COMMON_PARAM_ST {
         self.bonfire_check_enemy_range = value;
     }
 
-    pub fn matching_level_unk_upper_rel(&self) -> u8 {
-        self.matching_level_unk_upper_rel
+    pub fn matching_level_arena_upper_rel(&self) -> u8 {
+        self.matching_level_arena_upper_rel
     }
 
-    pub fn set_matching_level_unk_upper_rel(&mut self, value: u8) {
-        self.matching_level_unk_upper_rel = value;
+    pub fn set_matching_level_arena_upper_rel(&mut self, value: u8) {
+        self.matching_level_arena_upper_rel = value;
     }
 
-    pub fn matching_level_unk_upper_abs(&self) -> u8 {
-        self.matching_level_unk_upper_abs
+    pub fn matching_level_arena_upper_abs(&self) -> u8 {
+        self.matching_level_arena_upper_abs
     }
 
-    pub fn set_matching_level_unk_upper_abs(&mut self, value: u8) {
-        self.matching_level_unk_upper_abs = value;
+    pub fn set_matching_level_arena_upper_abs(&mut self, value: u8) {
+        self.matching_level_arena_upper_abs = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_0(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_0
+    pub fn matching_weapon_level_upper_arena_0(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_0
     }
 
-    pub fn set_matching_weapon_level_upper_unk_0(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_0 = value;
+    pub fn set_matching_weapon_level_upper_arena_0(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_0 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_1(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_1
+    pub fn matching_weapon_level_upper_arena_1(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_1
     }
 
-    pub fn set_matching_weapon_level_upper_unk_1(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_1 = value;
+    pub fn set_matching_weapon_level_upper_arena_1(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_1 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_2(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_2
+    pub fn matching_weapon_level_upper_arena_2(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_2
     }
 
-    pub fn set_matching_weapon_level_upper_unk_2(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_2 = value;
+    pub fn set_matching_weapon_level_upper_arena_2(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_2 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_3(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_3
+    pub fn matching_weapon_level_upper_arena_3(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_3
     }
 
-    pub fn set_matching_weapon_level_upper_unk_3(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_3 = value;
+    pub fn set_matching_weapon_level_upper_arena_3(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_3 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_4(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_4
+    pub fn matching_weapon_level_upper_arena_4(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_4
     }
 
-    pub fn set_matching_weapon_level_upper_unk_4(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_4 = value;
+    pub fn set_matching_weapon_level_upper_arena_4(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_4 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_5(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_5
+    pub fn matching_weapon_level_upper_arena_5(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_5
     }
 
-    pub fn set_matching_weapon_level_upper_unk_5(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_5 = value;
+    pub fn set_matching_weapon_level_upper_arena_5(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_5 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_6(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_6
+    pub fn matching_weapon_level_upper_arena_6(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_6
     }
 
-    pub fn set_matching_weapon_level_upper_unk_6(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_6 = value;
+    pub fn set_matching_weapon_level_upper_arena_6(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_6 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_7(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_7
+    pub fn matching_weapon_level_upper_arena_7(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_7
     }
 
-    pub fn set_matching_weapon_level_upper_unk_7(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_7 = value;
+    pub fn set_matching_weapon_level_upper_arena_7(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_7 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_8(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_8
+    pub fn matching_weapon_level_upper_arena_8(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_8
     }
 
-    pub fn set_matching_weapon_level_upper_unk_8(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_8 = value;
+    pub fn set_matching_weapon_level_upper_arena_8(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_8 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_9(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_9
+    pub fn matching_weapon_level_upper_arena_9(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_9
     }
 
-    pub fn set_matching_weapon_level_upper_unk_9(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_9 = value;
+    pub fn set_matching_weapon_level_upper_arena_9(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_9 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_10(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_10
+    pub fn matching_weapon_level_upper_arena_10(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_10
     }
 
-    pub fn set_matching_weapon_level_upper_unk_10(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_10 = value;
+    pub fn set_matching_weapon_level_upper_arena_10(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_10 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_11(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_11
+    pub fn matching_weapon_level_upper_arena_11(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_11
     }
 
-    pub fn set_matching_weapon_level_upper_unk_11(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_11 = value;
+    pub fn set_matching_weapon_level_upper_arena_11(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_11 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_12(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_12
+    pub fn matching_weapon_level_upper_arena_12(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_12
     }
 
-    pub fn set_matching_weapon_level_upper_unk_12(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_12 = value;
+    pub fn set_matching_weapon_level_upper_arena_12(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_12 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_13(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_13
+    pub fn matching_weapon_level_upper_arena_13(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_13
     }
 
-    pub fn set_matching_weapon_level_upper_unk_13(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_13 = value;
+    pub fn set_matching_weapon_level_upper_arena_13(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_13 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_14(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_14
+    pub fn matching_weapon_level_upper_arena_14(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_14
     }
 
-    pub fn set_matching_weapon_level_upper_unk_14(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_14 = value;
+    pub fn set_matching_weapon_level_upper_arena_14(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_14 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_15(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_15
+    pub fn matching_weapon_level_upper_arena_15(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_15
     }
 
-    pub fn set_matching_weapon_level_upper_unk_15(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_15 = value;
+    pub fn set_matching_weapon_level_upper_arena_15(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_15 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_16(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_16
+    pub fn matching_weapon_level_upper_arena_16(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_16
     }
 
-    pub fn set_matching_weapon_level_upper_unk_16(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_16 = value;
+    pub fn set_matching_weapon_level_upper_arena_16(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_16 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_17(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_17
+    pub fn matching_weapon_level_upper_arena_17(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_17
     }
 
-    pub fn set_matching_weapon_level_upper_unk_17(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_17 = value;
+    pub fn set_matching_weapon_level_upper_arena_17(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_17 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_18(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_18
+    pub fn matching_weapon_level_upper_arena_18(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_18
     }
 
-    pub fn set_matching_weapon_level_upper_unk_18(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_18 = value;
+    pub fn set_matching_weapon_level_upper_arena_18(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_18 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_19(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_19
+    pub fn matching_weapon_level_upper_arena_19(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_19
     }
 
-    pub fn set_matching_weapon_level_upper_unk_19(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_19 = value;
+    pub fn set_matching_weapon_level_upper_arena_19(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_19 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_20(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_20
+    pub fn matching_weapon_level_upper_arena_20(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_20
     }
 
-    pub fn set_matching_weapon_level_upper_unk_20(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_20 = value;
+    pub fn set_matching_weapon_level_upper_arena_20(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_20 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_21(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_21
+    pub fn matching_weapon_level_upper_arena_21(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_21
     }
 
-    pub fn set_matching_weapon_level_upper_unk_21(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_21 = value;
+    pub fn set_matching_weapon_level_upper_arena_21(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_21 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_22(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_22
+    pub fn matching_weapon_level_upper_arena_22(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_22
     }
 
-    pub fn set_matching_weapon_level_upper_unk_22(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_22 = value;
+    pub fn set_matching_weapon_level_upper_arena_22(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_22 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_23(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_23
+    pub fn matching_weapon_level_upper_arena_23(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_23
     }
 
-    pub fn set_matching_weapon_level_upper_unk_23(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_23 = value;
+    pub fn set_matching_weapon_level_upper_arena_23(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_23 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_24(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_24
+    pub fn matching_weapon_level_upper_arena_24(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_24
     }
 
-    pub fn set_matching_weapon_level_upper_unk_24(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_24 = value;
+    pub fn set_matching_weapon_level_upper_arena_24(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_24 = value;
     }
 
-    pub fn matching_weapon_level_upper_unk_25(&self) -> u8 {
-        self.matching_weapon_level_upper_unk_25
+    pub fn matching_weapon_level_upper_arena_25(&self) -> u8 {
+        self.matching_weapon_level_upper_arena_25
     }
 
-    pub fn set_matching_weapon_level_upper_unk_25(&mut self, value: u8) {
-        self.matching_weapon_level_upper_unk_25 = value;
+    pub fn set_matching_weapon_level_upper_arena_25(&mut self, value: u8) {
+        self.matching_weapon_level_upper_arena_25 = value;
+    }
+
+    pub fn summon_data_coop_matching_spirit_ash_level_mul(&self) -> i16 {
+        self.summon_data_coop_matching_spirit_ash_level_mul
+    }
+
+    pub fn set_summon_data_coop_matching_spirit_ash_level_mul(&mut self, value: i16) {
+        self.summon_data_coop_matching_spirit_ash_level_mul = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_0(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_0
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_0(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_0 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_1(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_1
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_1(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_1 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_2(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_2
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_2(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_2 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_3(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_3
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_3(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_3 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_4(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_4
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_4(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_4 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_5(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_5
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_5(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_5 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_6(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_6
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_6(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_6 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_7(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_7
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_7(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_7 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_8(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_8
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_8(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_8 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_9(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_9
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_9(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_9 = value;
+    }
+
+    pub fn matching_spirit_ash_level_upper_10(&self) -> u8 {
+        self.matching_spirit_ash_level_upper_10
+    }
+
+    pub fn set_matching_spirit_ash_level_upper_10(&mut self, value: u8) {
+        self.matching_spirit_ash_level_upper_10 = value;
     }
 
     pub fn base_scadu_blessing_sp_effect_id(&self) -> i32 {
@@ -39979,10 +40228,7 @@ pub struct MENU_COMMON_PARAM_ST {
     enemy_tag_safe_top: u16,
     enemy_tag_safe_bottom: u16,
     pc_horse_hp_recover_disp_threshold: u32,
-    unknown_0xe0: u8,
-    unknown_0xe1: u8,
-    unknown_0xe2: u8,
-    unknown_0xe3: u8,
+    world_map_dlc_layer_event_flag_id: u32,
     unknown_0xe4: u8,
     unknown_0xe5: u8,
     unknown_0xe6: u8,
@@ -40457,6 +40703,14 @@ impl MENU_COMMON_PARAM_ST {
 
     pub fn set_pc_horse_hp_recover_disp_threshold(&mut self, value: u32) {
         self.pc_horse_hp_recover_disp_threshold = value;
+    }
+
+    pub fn world_map_dlc_layer_event_flag_id(&self) -> u32 {
+        self.world_map_dlc_layer_event_flag_id
+    }
+
+    pub fn set_world_map_dlc_layer_event_flag_id(&mut self, value: u32) {
+        self.world_map_dlc_layer_event_flag_id = value;
     }
 }
 
@@ -42101,11 +42355,11 @@ pub struct NETWORK_MSG_PARAM_ST {
     force_join_black_npc: i32,
     force_join_black_b_npc: i32,
     force_join_black_c_npc: i32,
-    unknown_0xa4: i32,
-    unknown_0xa8: i32,
-    unknown_0xac: i32,
-    unknown_0xb0: i32,
-    unknown_0xb4: i32,
+    npc17: i32,
+    npc18: i32,
+    npc19: i32,
+    npc20: i32,
+    npc21: i32,
     pad2_new: [u8; 8],
 }
 
@@ -42450,6 +42704,46 @@ impl NETWORK_MSG_PARAM_ST {
     pub fn set_force_join_black_c_npc(&mut self, value: i32) {
         self.force_join_black_c_npc = value;
     }
+
+    pub fn npc17(&self) -> i32 {
+        self.npc17
+    }
+
+    pub fn set_npc17(&mut self, value: i32) {
+        self.npc17 = value;
+    }
+
+    pub fn npc18(&self) -> i32 {
+        self.npc18
+    }
+
+    pub fn set_npc18(&mut self, value: i32) {
+        self.npc18 = value;
+    }
+
+    pub fn npc19(&self) -> i32 {
+        self.npc19
+    }
+
+    pub fn set_npc19(&mut self, value: i32) {
+        self.npc19 = value;
+    }
+
+    pub fn npc20(&self) -> i32 {
+        self.npc20
+    }
+
+    pub fn set_npc20(&mut self, value: i32) {
+        self.npc20 = value;
+    }
+
+    pub fn npc21(&self) -> i32 {
+        self.npc21
+    }
+
+    pub fn set_npc21(&mut self, value: i32) {
+        self.npc21 = value;
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -42461,9 +42755,9 @@ pub struct NETWORK_PARAM_ST {
     summon_timeout_time: f32,
     pad_0: [u8; 4],
     sign_puddle_active_message_interval_sec: f32,
-    key_guide_height_0: f32,
-    reload_sign_interval_time1: f32,
-    reload_sign_interval_time2: f32,
+    sign_puddle_send_interval: f32,
+    sign_puddle_match_areas_num: i32,
+    sign_puddle_update_sign_interval: f32,
     reload_sign_total_count_0: u32,
     reload_sign_cell_count_0: u32,
     update_sign_interval_time: f32,
@@ -42501,7 +42795,7 @@ pub struct NETWORK_PARAM_ST {
     sign_visible_range_1: f32,
     max_write_sign_count: u32,
     max_read_sign_count: u32,
-    reload_sign_interval_time_0: f32,
+    blood_message_download_time: f32,
     cell_group_horizontal_range_1: u32,
     cell_group_top_range_1: u32,
     cell_group_bottom_range_1: u32,
@@ -42517,7 +42811,7 @@ pub struct NETWORK_PARAM_ST {
     reload_sign_cell_count_1: u32,
     max_sign_total_count_1: u32,
     max_sign_cell_count_1: u32,
-    reload_sign_interval_time_1: f32,
+    blood_stain_download_time: f32,
     sign_visible_range_2: f32,
     basic_exclusive_range_2: f32,
     basic_exclusive_height_2: f32,
@@ -42597,13 +42891,13 @@ pub struct NETWORK_PARAM_ST {
     guest_player_no_time_out_time: f32,
     host_player_no_time_out_time: f32,
     request_search_quick_match_limit: u32,
-    avatar_match_search_max: u32,
+    quick_match_search_timeout: u32,
     battle_royal_match_search_min: u32,
     battle_royal_match_search_max: u32,
     pad11: [u8; 8],
     visitor_list_max: u32,
     visitor_time_out_time: f32,
-    download_span_2: f32,
+    visitor_download_span: f32,
     visitor_guest_request_message_interval_sec: f32,
     wander_ghost_interval_life_time: f32,
     pad13: [u8; 12],
@@ -42652,28 +42946,28 @@ impl NETWORK_PARAM_ST {
         self.sign_puddle_active_message_interval_sec = value;
     }
 
-    pub fn key_guide_height_0(&self) -> f32 {
-        self.key_guide_height_0
+    pub fn sign_puddle_send_interval(&self) -> f32 {
+        self.sign_puddle_send_interval
     }
 
-    pub fn set_key_guide_height_0(&mut self, value: f32) {
-        self.key_guide_height_0 = value;
+    pub fn set_sign_puddle_send_interval(&mut self, value: f32) {
+        self.sign_puddle_send_interval = value;
     }
 
-    pub fn reload_sign_interval_time1(&self) -> f32 {
-        self.reload_sign_interval_time1
+    pub fn sign_puddle_match_areas_num(&self) -> i32 {
+        self.sign_puddle_match_areas_num
     }
 
-    pub fn set_reload_sign_interval_time1(&mut self, value: f32) {
-        self.reload_sign_interval_time1 = value;
+    pub fn set_sign_puddle_match_areas_num(&mut self, value: i32) {
+        self.sign_puddle_match_areas_num = value;
     }
 
-    pub fn reload_sign_interval_time2(&self) -> f32 {
-        self.reload_sign_interval_time2
+    pub fn sign_puddle_update_sign_interval(&self) -> f32 {
+        self.sign_puddle_update_sign_interval
     }
 
-    pub fn set_reload_sign_interval_time2(&mut self, value: f32) {
-        self.reload_sign_interval_time2 = value;
+    pub fn set_sign_puddle_update_sign_interval(&mut self, value: f32) {
+        self.sign_puddle_update_sign_interval = value;
     }
 
     pub fn reload_sign_total_count_0(&self) -> u32 {
@@ -42956,12 +43250,12 @@ impl NETWORK_PARAM_ST {
         self.max_read_sign_count = value;
     }
 
-    pub fn reload_sign_interval_time_0(&self) -> f32 {
-        self.reload_sign_interval_time_0
+    pub fn blood_message_download_time(&self) -> f32 {
+        self.blood_message_download_time
     }
 
-    pub fn set_reload_sign_interval_time_0(&mut self, value: f32) {
-        self.reload_sign_interval_time_0 = value;
+    pub fn set_blood_message_download_time(&mut self, value: f32) {
+        self.blood_message_download_time = value;
     }
 
     pub fn cell_group_horizontal_range_1(&self) -> u32 {
@@ -43076,12 +43370,12 @@ impl NETWORK_PARAM_ST {
         self.max_sign_cell_count_1 = value;
     }
 
-    pub fn reload_sign_interval_time_1(&self) -> f32 {
-        self.reload_sign_interval_time_1
+    pub fn blood_stain_download_time(&self) -> f32 {
+        self.blood_stain_download_time
     }
 
-    pub fn set_reload_sign_interval_time_1(&mut self, value: f32) {
-        self.reload_sign_interval_time_1 = value;
+    pub fn set_blood_stain_download_time(&mut self, value: f32) {
+        self.blood_stain_download_time = value;
     }
 
     pub fn sign_visible_range_2(&self) -> f32 {
@@ -43684,12 +43978,12 @@ impl NETWORK_PARAM_ST {
         self.request_search_quick_match_limit = value;
     }
 
-    pub fn avatar_match_search_max(&self) -> u32 {
-        self.avatar_match_search_max
+    pub fn quick_match_search_timeout(&self) -> u32 {
+        self.quick_match_search_timeout
     }
 
-    pub fn set_avatar_match_search_max(&mut self, value: u32) {
-        self.avatar_match_search_max = value;
+    pub fn set_quick_match_search_timeout(&mut self, value: u32) {
+        self.quick_match_search_timeout = value;
     }
 
     pub fn battle_royal_match_search_min(&self) -> u32 {
@@ -43724,12 +44018,12 @@ impl NETWORK_PARAM_ST {
         self.visitor_time_out_time = value;
     }
 
-    pub fn download_span_2(&self) -> f32 {
-        self.download_span_2
+    pub fn visitor_download_span(&self) -> f32 {
+        self.visitor_download_span
     }
 
-    pub fn set_download_span_2(&mut self, value: f32) {
-        self.download_span_2 = value;
+    pub fn set_visitor_download_span(&mut self, value: f32) {
+        self.visitor_download_span = value;
     }
 
     pub fn visitor_guest_request_message_interval_sec(&self) -> f32 {

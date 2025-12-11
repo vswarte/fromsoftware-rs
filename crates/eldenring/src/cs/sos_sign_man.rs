@@ -1,10 +1,8 @@
 use std::{num::ParseIntError, ptr::NonNull};
 
-use crate::cs::{BlockId, ChrAsmArmStyle, ChrAsmEquipment, FaceDataBuffer};
-use crate::dlkr::DLAllocatorBase;
-use crate::dltx::DLString;
+use crate::cs::{BlockId, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType};
 use crate::fd4::FD4Time;
-use crate::{stl::DoublyLinkedList, Tree, Vector};
+use crate::{Tree, Vector, stl::DoublyLinkedList};
 
 use shared::F32Vector3;
 
@@ -21,8 +19,8 @@ pub struct CSSosSignMan {
     /// List of signs that were requested to be summoned
     /// Inserting values here will not do anything unless you also have data in `join_data`
     pub summon_requests: DoublyLinkedList<i32>,
-    /// Similar to MultiplayType, but negative
-    pub summon_param_type: i32,
+    /// Type of multiplayer for summoning
+    pub summon_param_type: SummonParamType,
     unk54: [u8; 4],
     /// List of data for join push notifications
     pub join_data: DoublyLinkedList<NonNull<PhantomJoinData>>,
@@ -31,14 +29,14 @@ pub struct CSSosSignMan {
     unk88: [u8; 0x8],
     display_ghost: usize,
     timer: FD4Time,
-    /// Param ID for WhiteSignCoolTimeParam, incremented with each level and capped at 10
+    /// Param ID for [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST], incremented with each level and capped at 10
     pub white_sign_cool_time_param_id: u8,
     // _pada9: [u8; 3],
     unkac: u32,
-    /// Vector of sign cooldowns from WhiteSignCoolTimeParam
+    /// Vector of sign cooldowns from [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST]
     /// Each time your coop player dies and you have someone in your world
-    /// you will get a cooldown depending on WhiteSignCoolTimeParam.
-    /// All this cooldowns are stored in this vector.
+    /// you will get a cooldown depending on [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST].
+    /// All this cooldown timers are stored in this vector.
     pub signs_cooldown: Vector<f32>,
     /// Leftover from Dark Souls 3, never set to true or changed
     /// Source of names: Sekiro debug menu
@@ -197,7 +195,7 @@ pub struct PhantomJoinData {
     /// if exceeds 55 seconds in `Waiting` state or 180 in `Joining` state,
     /// the join request will be cancelled
     pub join_time: f32,
-    /// Multiplay type
+    /// Type of multiplayer player is joining as
     pub multiplay_type: MultiplayType,
     /// Whether the sign is in the sign pool
     /// IMPORTANT: can be anything if multiplay_type is not a sign type
@@ -253,41 +251,4 @@ impl From<SteamIdStr> for u64 {
     fn from(val: SteamIdStr) -> Self {
         val.to_u64().unwrap_or_default()
     }
-}
-
-#[repr(u8)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum MultiplayType {
-    WhiteSign = 0,
-    Invasion = 1,
-    RedSign = 2,
-    Unk3 = 3,
-    Unk4 = 4,
-    BerserkerWhite = 5,
-    SinnerHero = 6,
-    SinnerHunterInvasion = 7,
-    BlueHunterSummon = 8,
-    RosariaGuardian = 9,
-    Unk10 = 10,
-    Unk11 = 11,
-    Unk12 = 12,
-    QuickMatch = 13,
-    CultWhiteSummon = 14,
-    Unk15 = 15,
-    Unk16 = 16,
-    Unk17 = 17,
-    Unk18 = 18,
-    Unk19 = 19,
-    NpcWhiteSign = 20,
-    Unk21 = 21,
-    Unk22 = 22,
-    NpcInvasion1 = 23,
-    Unk24 = 24,
-    Unk25 = 25,
-    Unk26 = 26,
-    AlwaysAllow = 27,
-    Unk28 = 28,
-    NpcInvasion2 = 29,
-    Unk30 = 30,
-    None = 31,
 }

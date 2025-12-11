@@ -5,13 +5,13 @@ use eldenring::{
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
-use shared::{program::Program, task::*, FromStatic};
+use fromsoftware_shared::{FromStatic, program::Program, task::*};
 
 const SP_EFFECT: i32 = 4330;
 
 /// # Safety
 /// This is exposed this way such that libraryloader can call it. Do not call this yourself.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
     // Exit early if we're not attaching a DLL
     if reason != 1 {
@@ -23,7 +23,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
             .expect("Timeout waiting for system init");
 
         // Retrieve games task runner and register a task at frame begin.
-        let cs_task = CSTaskImp::instance().unwrap();
+        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 // Retrieve WorldChrMan

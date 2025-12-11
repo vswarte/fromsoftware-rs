@@ -81,12 +81,14 @@ pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
 unsafe impl GlobalAlloc for DLAllocatorRef {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let allocator = self.0.as_ptr();
-        ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8
+        unsafe { ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8 }
     }
 
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         let allocator = self.0.as_ptr();
-        ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
+        unsafe {
+            ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
+        }
     }
 }
 
@@ -97,7 +99,7 @@ impl From<NonNull<DLAllocatorBase>> for DLAllocatorRef {
 }
 
 impl DLAllocatorVmt for DLAllocatorBase {
-    extern "C" fn destructor(&mut self, param_2: bool) {
+    extern "C" fn destructor(&mut self, _param_2: bool) {
         todo!()
     }
 
@@ -129,11 +131,11 @@ impl DLAllocatorVmt for DLAllocatorBase {
         todo!()
     }
 
-    extern "C" fn allocation_size(&self, allocation: *const u8) -> usize {
+    extern "C" fn allocation_size(&self, _allocation: *const u8) -> usize {
         todo!()
     }
 
-    extern "C" fn allocate(&mut self, size: usize) -> *const u8 {
+    extern "C" fn allocate(&mut self, _size: usize) -> *const u8 {
         todo!()
     }
 
@@ -141,45 +143,45 @@ impl DLAllocatorVmt for DLAllocatorBase {
         (self.vftable.allocate_aligned)(self, size, alignment)
     }
 
-    extern "C" fn reallocate(&mut self, allocation: *const u8, size: usize) -> *const u8 {
+    extern "C" fn reallocate(&mut self, _allocation: *const u8, _size: usize) -> *const u8 {
         todo!()
     }
 
     extern "C" fn reallocate_aligned(
         &mut self,
-        allocation: *const u8,
-        size: usize,
-        alignment: usize,
+        _allocation: *const u8,
+        _size: usize,
+        _alignment: usize,
     ) -> *const u8 {
         todo!()
     }
 
-    extern "C" fn deallocate(&mut self, allocation: *const u8) {
+    extern "C" fn deallocate(&mut self, _allocation: *const u8) {
         todo!()
     }
 
-    extern "C" fn allocate_second(&mut self, size: usize) -> *const u8 {
+    extern "C" fn allocate_second(&mut self, _size: usize) -> *const u8 {
         todo!()
     }
 
-    extern "C" fn allocate_aligned_second(&mut self, size: usize, alignment: usize) -> *const u8 {
+    extern "C" fn allocate_aligned_second(&mut self, _size: usize, _alignment: usize) -> *const u8 {
         todo!()
     }
 
-    extern "C" fn reallocate_second(&mut self, allocation: *const u8, size: usize) -> *const u8 {
+    extern "C" fn reallocate_second(&mut self, _allocation: *const u8, _size: usize) -> *const u8 {
         todo!()
     }
 
     extern "C" fn reallocate_aligned_second(
         &mut self,
-        allocation: *const u8,
-        size: usize,
-        alignment: usize,
+        _allocation: *const u8,
+        _size: usize,
+        _alignment: usize,
     ) -> *const u8 {
         todo!()
     }
 
-    extern "C" fn deallocate_second(&mut self, allocation: *const u8) {
+    extern "C" fn deallocate_second(&mut self, _allocation: *const u8) {
         todo!()
     }
 
@@ -187,11 +189,14 @@ impl DLAllocatorVmt for DLAllocatorBase {
         todo!()
     }
 
-    extern "C" fn allocation_belongs_to_first_allocator(&mut self, allocation: *const u8) -> bool {
+    extern "C" fn allocation_belongs_to_first_allocator(&mut self, _allocation: *const u8) -> bool {
         todo!()
     }
 
-    extern "C" fn allocation_belongs_to_second_allocator(&mut self, allocation: *const u8) -> bool {
+    extern "C" fn allocation_belongs_to_second_allocator(
+        &mut self,
+        _allocation: *const u8,
+    ) -> bool {
         todo!()
     }
 
@@ -203,7 +208,7 @@ impl DLAllocatorVmt for DLAllocatorBase {
         todo!()
     }
 
-    extern "C" fn get_memory_block_for_allocation(&mut self, allocation: *const u8) -> *const u8 {
+    extern "C" fn get_memory_block_for_allocation(&mut self, _allocation: *const u8) -> *const u8 {
         todo!()
     }
 }

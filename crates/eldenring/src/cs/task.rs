@@ -1,18 +1,18 @@
-use pelite::{pattern, pattern::Atom, pe64::Pe};
+use pelite::pe64::Pe;
 use std::ptr::NonNull;
-use std::{ffi, marker::PhantomData, sync::LazyLock};
+use std::sync::LazyLock;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
 use crate::dlkr::DLPlainConditionSignal;
-use crate::dlrf::DLRuntimeClass;
-use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
+use crate::fd4::{FD4TaskBaseVmt, FD4TaskData};
 use crate::{
+    Vector,
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
-    rva, Tree, Vector,
+    rva,
 };
-use shared::{program::Program, OwnedPtr, RecurringTask, SharedTaskImp};
+use shared::{OwnedPtr, RecurringTask, SharedTaskImp, program::Program};
 
 #[vtable_rs::vtable]
 pub trait CSEzTaskVmt: FD4TaskBaseVmt {

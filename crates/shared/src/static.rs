@@ -61,7 +61,7 @@ impl<T: FromSingleton> FromStatic for T {
     /// function).
     unsafe fn instance() -> InstanceResult<&'static mut T> {
         address_of::<T>()
-            .map(|mut ptr| ptr.as_mut())
+            .map(|mut ptr| unsafe { ptr.as_mut() })
             .ok_or(InstanceError::NotFound)
     }
 }

@@ -230,11 +230,11 @@ fn layout_struct(fields: &[LayoutField]) -> Vec<LayoutUnit> {
                 });
 
                 // Yeet bit cursor and advance offset if we get to the end of a byte.
-                if let Some((_, used)) = bit_cursor {
-                    if used == 8 {
-                        offset += 1;
-                        bit_cursor = None;
-                    }
+                if let Some((_, used)) = bit_cursor
+                    && used == 8
+                {
+                    offset += 1;
+                    bit_cursor = None;
                 }
             }
             FieldType::Standard(_) | FieldType::Array(_, _) => {
@@ -324,10 +324,10 @@ fn normalize_name(mut name: &str) -> String {
                         result.push('_');
                     } else if prev.is_uppercase() {
                         // Look ahead to avoid splitting acronyms prematurely
-                        if let Some(next) = name.chars().nth(i + 1) {
-                            if next.is_lowercase() {
-                                result.push('_');
-                            }
+                        if let Some(next) = name.chars().nth(i + 1)
+                            && next.is_lowercase()
+                        {
+                            result.push('_');
                         }
                     }
                 }
@@ -345,13 +345,11 @@ fn normalize_name(mut name: &str) -> String {
     }
 
     // Remove leading/trailing/multiple underscores
-    let cleaned = result
+    result
         .split('_')
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>()
-        .join("_");
-
-    cleaned
+        .join("_")
 }
 
 fn align_offset(offset: usize, align: usize) -> usize {
@@ -448,10 +446,10 @@ impl LayoutUnit {
             return true;
         }
 
-        if let FieldType::Array(inner, _) = &self.field_type {
-            if FieldType::Standard("dummy8".to_string()) == **inner {
-                return true;
-            }
+        if let FieldType::Array(inner, _) = &self.field_type
+            && FieldType::Standard("dummy8".to_string()) == **inner
+        {
+            return true;
         }
 
         let lower = self.name.to_lowercase();

@@ -9,6 +9,6 @@ license.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
-shared.workspace = true
+fromsoftware-shared.workspace = true
 eldenring.workspace = true
-nalgebra-glm = "0.19.0"
+glam.workspace = true

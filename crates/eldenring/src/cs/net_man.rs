@@ -9,7 +9,7 @@ use crate::{
 };
 use shared::OwnedPtr;
 
-use super::{BlockId, CSEzTask, CSEzUpdateTask, PlayerIns};
+use super::{BlockId, CSEzTask, CSEzUpdateTask};
 
 #[repr(C)]
 #[shared::singleton("CSNetMan")]

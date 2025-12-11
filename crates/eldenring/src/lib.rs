@@ -1,3 +1,5 @@
+extern crate fromsoftware_shared as shared;
+
 mod stl;
 pub use stl::*;
 

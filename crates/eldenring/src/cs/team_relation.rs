@@ -29,8 +29,8 @@ pub trait CSTeamTypeVmt {
 impl CSTeamTypeVmt for CSTeamTypeBase {
     extern "C" fn validate(
         &self,
-        team_relation: &TeamRelationTargetInfo,
-        self_target: bool,
+        _team_relation: &TeamRelationTargetInfo,
+        _self_target: bool,
     ) -> bool {
         unimplemented!("CSTeamTypeBase should not be used directly");
     }
