@@ -20,6 +20,7 @@ pub struct DLCipherKey {
 
 impl DLCipherKey {
     /// Get the key as a byte slice
+    /// NOTE: The returned slice may contain trailing null bytes, eg for sd/ keys
     pub fn key(&self) -> &[u8] {
         unsafe {
             let ptr = (self.vftable.get_key)(self);
@@ -30,7 +31,9 @@ impl DLCipherKey {
 
     /// Get the key as a string (for PEM keys)
     pub fn key_as_str(&self) -> Option<&str> {
-        std::str::from_utf8(self.key()).ok()
+        // Strip trailing null if present (present in sd/ keys)
+        let bytes = self.key();
+        std::str::from_utf8(bytes.strip_suffix(&[0]).unwrap_or(bytes)).ok()
     }
 }
 
