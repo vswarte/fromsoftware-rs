@@ -102,45 +102,27 @@ impl DebugDisplay for QuickmatchManager {
 
 impl DebugDisplay for CSBattleRoyalContext {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text(
-            "Error State",
-            &mut self.quickmatch_context.error_state.to_string(),
-        )
-        .read_only(true)
-        .build();
-        let mut settings = format!("{:?}", self.quickmatch_context.match_settings);
-        ui.input_text("Match settings", &mut settings)
-            .read_only(true)
-            .build();
+        ui.text(format!(
+            "Error State: {:?}",
+            self.quickmatch_context.error_state
+        ));
 
-        ui.input_text(
-            "Match map (map ID)",
-            &mut self.quickmatch_context.match_map.to_string(),
-        )
-        .read_only(true)
-        .build();
+        ui.text(format!(
+            "Match settings: {:?}",
+            self.quickmatch_context.match_settings
+        ));
 
-        ui.input_text(
-            "Match Player Count",
-            &mut self.match_player_count.to_string(),
-        )
-        .read_only(true)
-        .build();
+        ui.text(format!(
+            "Match map (arena): {:?}",
+            self.quickmatch_context.match_map
+        ));
 
-        ui.input_text("Match Map (enum)", &mut self.match_player_count.to_string())
-            .read_only(true)
-            .build();
+        ui.text(format!("Max players: {}", self.match_player_count));
+        ui.text(format!("Current players: {}", self.current_player_count));
 
         ui.input_text("Password", &mut self.password.to_string())
             .read_only(true)
             .build();
-
-        ui.input_text(
-            "Participant count",
-            &mut self.quickmatch_context.participants.len().to_string(),
-        )
-        .read_only(true)
-        .build();
     }
 }
 
