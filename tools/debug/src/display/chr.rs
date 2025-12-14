@@ -533,7 +533,7 @@ impl DebugDisplay for EquipInventoryData {
                         ui.text(item.quantity.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.display_id.to_string());
+                        ui.text(item.sort_id.to_string());
                     });
             }
             ui.unindent();
@@ -574,7 +574,7 @@ impl DebugDisplay for EquipInventoryData {
                         ui.text(item.quantity.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.display_id.to_string());
+                        ui.text(item.sort_id.to_string());
                     });
             }
             ui.unindent();
@@ -615,7 +615,7 @@ impl DebugDisplay for EquipInventoryData {
                         ui.text(item.quantity.to_string());
 
                         ui.table_next_column();
-                        ui.text(item.display_id.to_string());
+                        ui.text(item.sort_id.to_string());
                     });
             }
             ui.unindent();
