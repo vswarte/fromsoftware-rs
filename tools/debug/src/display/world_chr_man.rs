@@ -46,17 +46,15 @@ impl DebugDisplay for WorldChrMan {
             self.open_field_chr_set.render_debug(ui);
         });
 
-        ui.header("All ChrSets", || {
-            ui.list(
-                "All ChrSets",
-                self.chr_sets.iter().filter_map(|entry| entry.as_ref()),
-                |ui, i, chr_set| {
-                    ui.header(&format!("ChrSet {i}"), || {
-                        chr_set.render_debug(ui);
-                    });
-                },
-            );
-        });
+        ui.list(
+            "All ChrSets",
+            self.chr_sets.iter().filter_map(|entry| entry.as_ref()),
+            |ui, i, chr_set| {
+                ui.header(&format!("ChrSet {i}"), || {
+                    chr_set.render_debug(ui);
+                });
+            },
+        );
 
         match self.main_player.as_ref() {
             Some(p) => {
@@ -71,20 +69,18 @@ impl DebugDisplay for WorldChrMan {
             self.summon_buddy_manager.render_debug(ui);
         });
 
-        ui.header("NetChrSync", || {
-            ui.list(
-                "NetChrSetSync",
-                self.net_chr_sync
-                    .net_chr_set_sync
-                    .iter()
-                    .filter_map(|s| s.as_ref()),
-                |ui, i, entry| {
-                    ui.header(&format!("NetChrSetSync {i}"), || {
-                        entry.render_debug(ui);
-                    });
-                },
-            );
-        });
+        ui.list(
+            "NetChrSetSync",
+            self.net_chr_sync
+                .net_chr_set_sync
+                .iter()
+                .filter_map(|s| s.as_ref()),
+            |ui, i, entry| {
+                ui.header(&format!("NetChrSetSync {i}"), || {
+                    entry.render_debug(ui);
+                });
+            },
+        );
 
         ui.header("Debug Character Creator", || {
             ui.input_text(
@@ -131,21 +127,19 @@ impl DebugDisplay for ChrSet<ChrIns> {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Character capacity: {}", self.capacity));
 
-        ui.header("Characters", || {
-            ui.list("Characters", self.characters(), |ui, _i, chr_ins| {
-                ui.header(
-                    &format!(
-                        "c{:0>4} - {} FieldInsSelector({}, {})",
-                        chr_ins.character_id,
-                        chr_ins.field_ins_handle.block_id,
-                        chr_ins.field_ins_handle.selector.container(),
-                        chr_ins.field_ins_handle.selector.index()
-                    ),
-                    || {
-                        chr_ins.render_debug(ui);
-                    },
-                );
-            });
+        ui.list("Characters", self.characters(), |ui, _i, chr_ins| {
+            ui.header(
+                &format!(
+                    "c{:0>4} - {} FieldInsSelector({}, {})",
+                    chr_ins.character_id,
+                    chr_ins.field_ins_handle.block_id,
+                    chr_ins.field_ins_handle.selector.container(),
+                    chr_ins.field_ins_handle.selector.index()
+                ),
+                || {
+                    chr_ins.render_debug(ui);
+                },
+            );
         });
 
         ui.header("Character event ID mapping", || {
@@ -196,21 +190,19 @@ impl DebugDisplay for ChrSet<PlayerIns> {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Character capacity: {}", self.capacity));
 
-        ui.header("Characters", || {
-            ui.list("Characters", self.characters(), |ui, _i, player_ins| {
-                ui.header(
-                    &format!(
-                        "c{:0>4} - {} FieldInsSelector({}, {})",
-                        player_ins.chr_ins.character_id,
-                        player_ins.chr_ins.field_ins_handle.block_id,
-                        player_ins.chr_ins.field_ins_handle.selector.container(),
-                        player_ins.chr_ins.field_ins_handle.selector.index()
-                    ),
-                    || {
-                        player_ins.render_debug(ui);
-                    },
-                );
-            });
+        ui.list("Characters", self.characters(), |ui, _i, player_ins| {
+            ui.header(
+                &format!(
+                    "c{:0>4} - {} FieldInsSelector({}, {})",
+                    player_ins.chr_ins.character_id,
+                    player_ins.chr_ins.field_ins_handle.block_id,
+                    player_ins.chr_ins.field_ins_handle.selector.container(),
+                    player_ins.chr_ins.field_ins_handle.selector.index()
+                ),
+                || {
+                    player_ins.render_debug(ui);
+                },
+            );
         });
 
         ui.header("Character event ID mapping", || {
@@ -277,11 +269,9 @@ impl DebugDisplay for SummonBuddyWarpEntry {
 
 impl DebugDisplay for SummonBuddyWarpManager {
     fn render_debug(&self, ui: &Ui) {
-        ui.header("Warp Entries", || {
-            ui.list("Warp Entries", self.entries.iter(), |ui, index, entry| {
-                ui.header(&format!("Warp Entry {index}"), || {
-                    entry.render_debug(ui);
-                });
+        ui.list("Warp Entries", self.entries.iter(), |ui, index, entry| {
+            ui.header(&format!("Warp Entry {index}"), || {
+                entry.render_debug(ui);
             });
         });
     }
@@ -379,48 +369,44 @@ impl DebugDisplay for SummonBuddyManager {
             ui.text(format!("W: {}", self.spawn_origin.3));
         });
 
-        ui.header("Groups", || {
-            ui.list("Groups", self.groups.iter(), |ui, _i, group| {
-                ui.header(&format!("Group {}", group.owner_event_id), || {
-                    ui.list("Entries", group.entries.iter(), |ui, index, v| {
-                        ui.header(&format!("Entry {index}"), || {
-                            v.render_debug(ui);
-                        });
+        ui.list("Groups", self.groups.iter(), |ui, _i, group| {
+            ui.header(&format!("Group {}", group.owner_event_id), || {
+                ui.list("Entries", group.entries.iter(), |ui, index, v| {
+                    ui.header(&format!("Entry {index}"), || {
+                        v.render_debug(ui);
                     });
                 });
             });
         });
 
-        ui.header("Eliminate Target Entries", || {
-            ui.list(
-                "Eliminate Target Entries",
-                self.eliminate_target_entries.iter(),
-                |ui, index, entry| {
-                    ui.header(&format!("Entry {index}"), || {
-                        ui.text(format!(
-                            "Buddy field ins handle: {}",
-                            entry.buddy_field_ins_handle
-                        ));
-                        ui.text(format!(
-                            "Buddy stone param ID: {}",
-                            entry.target_calc.buddy_stone_param_id
-                        ));
-                        ui.text(format!(
-                            "Target event entity ID: {}",
-                            entry.target_calc.target_event_entity_id
-                        ));
-                        ui.text(format!(
-                            "Target in range: {}",
-                            entry.target_calc.target_in_range
-                        ));
-                        ui.text(format!(
-                            "Range check counter: {}",
-                            entry.target_calc.range_check_counter
-                        ));
-                    });
-                },
-            );
-        });
+        ui.list(
+            "Eliminate Target Entries",
+            self.eliminate_target_entries.iter(),
+            |ui, index, entry| {
+                ui.header(&format!("Entry {index}"), || {
+                    ui.text(format!(
+                        "Buddy field ins handle: {}",
+                        entry.buddy_field_ins_handle
+                    ));
+                    ui.text(format!(
+                        "Buddy stone param ID: {}",
+                        entry.target_calc.buddy_stone_param_id
+                    ));
+                    ui.text(format!(
+                        "Target event entity ID: {}",
+                        entry.target_calc.target_event_entity_id
+                    ));
+                    ui.text(format!(
+                        "Target in range: {}",
+                        entry.target_calc.target_in_range
+                    ));
+                    ui.text(format!(
+                        "Range check counter: {}",
+                        entry.target_calc.range_check_counter
+                    ));
+                });
+            },
+        );
 
         ui.header("Warp Manager", || {
             self.warp_manager.render_debug(ui);
