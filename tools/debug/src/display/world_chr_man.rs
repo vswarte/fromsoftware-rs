@@ -95,21 +95,19 @@ impl DebugDisplay for WorldChrMan {
             .build();
         });
 
+        // We can't use .list here because it relies on entries being stable across frames
+        // and these are constantly changing, making it hard to keep track of which collapsing header is closed or open.
         ui.header("ChrInses by distance", || {
-            ui.list(
-                "ChrInses",
-                self.chr_inses_by_distance.items().iter(),
-                |ui, _i, entry| {
-                    let distance = entry.distance;
-                    let chr_ins = unsafe { entry.chr_ins.as_ref() };
-                    ui.header(
-                        &format!("ChrIns {} - {}", chr_ins.field_ins_handle, distance),
-                        || {
-                            chr_ins.render_debug(ui);
-                        },
-                    );
-                },
-            );
+            self.chr_inses_by_distance.items().iter().for_each(|entry| {
+                let distance = entry.distance;
+                let chr_ins = unsafe { entry.chr_ins.as_ref() };
+                let label = format!("ChrIns {}", chr_ins.field_ins_handle);
+                let _id = ui.push_id(&label);
+                ui.header(&label, || {
+                    ui.text(format!("Distance: {}", distance));
+                    chr_ins.render_debug(ui);
+                });
+            });
         });
     }
 }
