@@ -526,17 +526,20 @@ impl DebugDisplay for EquipInventoryData {
 impl DebugDisplay for ChrIns {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Team: {}", self.team_type));
+        ui.text(format!("Chr Type: {:?}", self.chr_type));
+        ui.text(format!("Field Ins Handle: {}", self.field_ins_handle));
+        ui.text(format!("P2P Entity Handle: {}", self.p2p_entity_handle));
 
-        ui.text(format!("Block ID: {}", self.block_id_1));
+        ui.text(format!("Block ID: {}", self.block_id));
+        ui.text(format!("Block ID Override: {}", self.block_id_override));
+        ui.text(format!("Block ID Origin: {}", self.block_origin));
+        ui.text(format!(
+            "Block ID Origin Override: {}",
+            self.block_origin_override
+        ));
 
         ui.text(format!("Last hit by: {}", self.last_hit_by));
         ui.text(format!("TAE use item: {:?}", self.tae_queued_use_item));
-
-        ui.text(format!(
-            "Block center origin 1: {}",
-            self.block_origin_override
-        ));
-        ui.text(format!("Block center origin 2: {}", self.block_origin));
 
         ui.header("Special Effect", || {
             ui.table(

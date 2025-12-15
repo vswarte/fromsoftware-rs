@@ -1,4 +1,5 @@
 use bitfield::bitfield;
+use std::fmt::Display;
 use std::mem::transmute;
 use std::ptr::NonNull;
 
@@ -32,8 +33,56 @@ use shared::{Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPt
 /// into block_id (4 bytes) + chr_selector (3 bytes). According to Sekiro's debug asserts the packed
 /// version is referred to as the "whoid".
 pub struct P2PEntityHandle {
-    pub block_id: i32,
-    pub chr_selector: i32,
+    pub block_id: BlockId,
+    pub chr_selector: P2PEntitySelector,
+}
+
+impl P2PEntityHandle {
+    pub fn is_empty(&self) -> bool {
+        self.chr_selector.0 == u32::MAX
+    }
+}
+
+impl Display for P2PEntityHandle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.is_empty() {
+            write!(f, "P2PEntity(None)")
+        } else {
+            write!(
+                f,
+                "P2PEntity({}, {}, {})",
+                self.block_id,
+                self.chr_selector.container(),
+                self.chr_selector.index()
+            )
+        }
+    }
+}
+
+bitfield! {
+    #[repr(C)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    /// Represents a packed ChrSet selector for P2P entity handles.
+    pub struct P2PEntitySelector(u32);
+    impl Debug;
+
+    /// The index within the container.
+    pub index, _: 10, 0;
+    _, set_index: 10, 0;
+
+    /// The container for this P2PEntity, used to determine which ChrSet to use.
+    pub container, _: 18, 11;
+    _, set_container: 18, 11;
+}
+
+impl P2PEntitySelector {
+    /// Create a new P2PEntitySelector from container and index.
+    pub fn from_parts(container: u32, index: u32) -> Self {
+        let mut selector = P2PEntitySelector(0);
+        selector.set_container(container);
+        selector.set_index(index);
+        selector
+    }
 }
 
 #[repr(C)]
@@ -80,9 +129,12 @@ pub struct ChrIns {
     pub backread_state: u32,
     unk24: u32,
     chr_res: usize,
-    pub block_id_1: BlockId,
-    pub block_id_origin_1: i32,
+    pub block_id: BlockId,
+    pub block_id_override: BlockId,
+    /// Override Block ID for [ChrIns::block_origin] will be used if not -1
     pub block_origin_override: BlockId,
+    /// Block ID used for the overworld map chunk positioning [ChrIns::chunk_position] and
+    /// offsets calculations.
     pub block_origin: BlockId,
     pub chr_set_cleanup: u32,
     _pad44: u32,
@@ -218,7 +270,11 @@ pub struct ChrIns {
     render_group_mask_3: [u8; 0x20],
     unk2bc: [u8; 0x4c],
     chr_slot_sys: [u8; 0x40],
-    unk348: [u8; 0x40],
+    unk348: [u8; 0x1c],
+    /// Whether this character's position has been synchronized over the network.
+    /// Will be set by NetAIManipulator after receiving a position update.
+    pub net_position_synchronized: bool,
+    unk368: [u8; 0x20],
     last_received_packet60: u32,
     unk38c: [u8; 0xc],
     hka_pose_importer: usize,
@@ -277,6 +333,23 @@ impl ChrIns {
 
         let call = unsafe { transmute::<u64, extern "C" fn(&mut ChrIns, i32) -> u64>(rva) };
         call(self, sp_effect);
+    }
+
+    /// Get the effective Block ID for this character.
+    pub fn block_id(&self) -> BlockId {
+        if self.block_id_override.0 != -1 {
+            self.block_id_override
+        } else {
+            self.block_id
+        }
+    }
+    /// Get the effective Block ID used for chunk positioning and offsets.
+    pub fn block_id_origin(&self) -> BlockId {
+        if self.block_origin_override.0 != -1 {
+            self.block_origin_override
+        } else {
+            self.block_origin
+        }
     }
 }
 
