@@ -1,91 +1,70 @@
 use eldenring::cs::{FieldArea, WorldInfoOwner};
-use hudhook::imgui::{TreeNodeFlags, Ui};
+use hudhook::imgui::Ui;
+
+use crate::display::UiExt;
 
 use super::DebugDisplay;
 
 impl DebugDisplay for FieldArea {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("World Info Owner", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("World Info Owner", || {
             self.world_info_owner.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for WorldInfoOwner {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header(
-            format!(
+    fn render_debug(&self, ui: &Ui) {
+        ui.list(
+            &format!(
                 "WorldAreaInfo - {}",
                 self.world_res.world_info.world_area_info_count
             ),
-            TreeNodeFlags::empty(),
-        ) {
-            ui.indent();
-            for entry in self.world_res.world_info.world_area_info().iter() {
-                if ui.collapsing_header(
-                    format!("World Area Info {}", entry.base.block_id),
-                    TreeNodeFlags::empty(),
-                ) {
+            self.world_res.world_info.world_area_info().iter(),
+            |ui, _i, entry| {
+                ui.header(&format!("World Area Info {}", entry.base.block_id), || {
                     // chr_set.render_debug(ui);
-                }
-            }
-            ui.unindent();
-        }
+                });
+            },
+        );
 
-        if ui.collapsing_header(
-            format!(
+        ui.list(
+            &format!(
                 "WorldGridAreaInfo - {}",
                 self.world_res.world_info.world_grid_area_info_count
             ),
-            TreeNodeFlags::empty(),
-        ) {
-            ui.indent();
-            for entry in self.world_res.world_info.world_grid_area_info().iter() {
-                if ui.collapsing_header(
-                    format!("World Grid Area Info {}", entry.base.block_id),
-                    TreeNodeFlags::empty(),
-                ) {
-                    ui.indent();
-                    entry.blocks.iter().for_each(|entry| {
-                        if ui.collapsing_header(
-                            format!("World Block Info {}", entry.block_id),
-                            TreeNodeFlags::empty(),
-                        ) {
-                            ui.indent();
-                            ui.text(format!(
-                                "Center physics coords: {}",
-                                entry.block.physics_center
-                            ));
-                            ui.unindent();
-                        }
-                    });
-                    ui.unindent();
-                }
-            }
-            ui.unindent();
-        }
+            self.world_res.world_info.world_grid_area_info().iter(),
+            |ui, _i, entry| {
+                ui.header(
+                    &format!("World Grid Area Info {}", entry.base.block_id),
+                    || {
+                        ui.list("Blocks", entry.blocks.iter(), |ui, _i, block_entry| {
+                            ui.header(
+                                &format!("World Block Info {}", block_entry.block_id),
+                                || {
+                                    ui.text(format!(
+                                        "Center physics coords: {}",
+                                        block_entry.block.physics_center
+                                    ));
+                                },
+                            );
+                        });
+                    },
+                );
+            },
+        );
 
-        if ui.collapsing_header(
-            format!(
+        ui.list(
+            &format!(
                 "WorldBlockInfo - {}",
                 self.world_res.world_info.world_block_info_count
             ),
-            TreeNodeFlags::empty(),
-        ) {
-            ui.indent();
-            for entry in self.world_res.world_info.world_block_info().iter() {
-                if ui.collapsing_header(
-                    format!("World Block Info {}", entry.block_id),
-                    TreeNodeFlags::empty(),
-                ) {
-                    ui.indent();
+            self.world_res.world_info.world_block_info().iter(),
+            |ui, _i, entry| {
+                ui.header(&format!("World Block Info {}", entry.block_id), || {
                     ui.text(format!("Center physics coords: {}", entry.physics_center));
-                    ui.unindent();
-                }
-            }
-            ui.unindent();
-        }
+                });
+            },
+        );
     }
 }
