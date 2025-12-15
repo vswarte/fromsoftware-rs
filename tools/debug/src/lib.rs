@@ -26,6 +26,7 @@ use eldenring::cs::WorldChrMan;
 use eldenring::fd4::FD4ParamRepository;
 use eldenring::util::system::wait_for_system_init;
 
+use fromsoftware_shared::FromStatic;
 use fromsoftware_shared::program::Program;
 
 use hudhook::Hudhook;
@@ -97,17 +98,21 @@ impl EldenRingDebugGui {
             scale: 1.0,
         }
     }
+
+    fn update_scale(&mut self) -> bool {
+        if let Ok(window) = unsafe { CSWindowImp::instance() } {
+            self.scale = window.screen_width as f32 / 1920.0;
+            self.size[0] = 600.0 * self.scale;
+            self.size[1] = 400.0 * self.scale;
+            return true;
+        }
+        false
+    }
 }
 
 impl ImguiRenderLoop for EldenRingDebugGui {
     fn initialize(&mut self, ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
-        if let Ok(window) = unsafe { <CSWindowImp as fromsoftware_shared::FromStatic>::instance() }
-        {
-            if window.screen_width > 1920 {
-                self.scale = window.screen_width as f32 / 1920.0;
-                self.size[0] *= self.scale;
-                self.size[1] *= self.scale;
-            }
+        if self.update_scale() {
             ctx.style_mut()
                 .scale_all_sizes(f32::max(self.scale / 2.0, 1.0));
         }
@@ -122,6 +127,7 @@ impl ImguiRenderLoop for EldenRingDebugGui {
             let ctx = imgui_sys::igGetCurrentContext();
             forward_imgui_context_on_reload(ctx);
         }
+        self.update_scale();
 
         // SAFETY: *do not* modify this function signature while the game is running.
         unsafe {
