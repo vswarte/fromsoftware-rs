@@ -227,8 +227,11 @@ pub struct ChrIns {
     unk200: usize,
     /// Amount of coop players currently in the session
     pub coop_players_for_multiplay_correction: u32,
-    /// Changes what phantom param is applied to the character
-    pub phantom_param_override: i32,
+    /// Override for character role param id.
+    /// Will be used when the character joins ceremony.
+    ///
+    /// See [crate::cs::PartyMemberInfo::pseudo_mp_role_param_override]
+    pub role_param_id_override: i32,
     unk210: [u8; 0x8],
     /// Steam ID of the player that created this character if it's a summon
     pub character_creator_steam_id: u64,
@@ -312,7 +315,7 @@ pub struct ChrIns {
     /// (e.g. water, lava, etc.), -1 if none.
     pub hit_material_override: i32,
     unk540: u32,
-    pub role_param_id: i32,
+    pub debug_role_param_id: i32,
     unk548: [u8; 0x38],
 }
 
@@ -349,6 +352,23 @@ impl ChrIns {
             self.block_origin_override
         } else {
             self.block_origin
+        }
+    }
+
+    /// Calculates the role param ID for this character based on its chr_type, vow_type and
+    /// whether this character has same group password in case of a player-like summon.
+    pub fn calculate_role_param_id(
+        &self,
+        character_type: ChrType,
+        vow_type: u8,
+        from_group_password: bool,
+    ) -> i32 {
+        if self.debug_flags.use_debug_role_param() {
+            self.debug_role_param_id
+        } else {
+            let base = (if from_group_password { 100 } else { 0 }) + vow_type as u32;
+            base.saturating_mul(10_000)
+                .saturating_add(character_type as u32) as i32
         }
     }
 }
@@ -477,8 +497,8 @@ bitfield! {
     /// Will disable character entirely (no updates, no rendering, no physics)
     /// Set most of the time on remote character's horses
     pub character_disabled, set_character_disabled:                         12;
-    /// Makes character use ChrIns.role_param_id instead of combination of chr_type and vow_type
-    pub use_role_param, set_use_role_param:                                 13;
+    /// Makes character use [ChrIns::debug_role_param_id] instead of combination of chr_type and vow_type
+    pub use_debug_role_param, set_use_debug_role_param:                                 13;
     /// Enables debug view render of state info 110 speffect (counter attack frames)
     pub state_info_110_debug_view, set_state_info_110_debug_view:           14;
     /// Enables debug view render of state info 434 speffect
