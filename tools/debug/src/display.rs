@@ -27,10 +27,10 @@ pub trait DebugDisplay {
     fn render_debug(&self, ui: &&mut Ui);
 }
 
-pub fn render_debug_singleton<T: FromStatic + DebugDisplay + 'static>(ui: &&mut Ui) {
-    let singleton = unsafe { T::instance() };
+pub fn render_debug_static<T: FromStatic + DebugDisplay + 'static>(ui: &&mut Ui) {
+    let instance = unsafe { T::instance() };
 
-    match singleton {
+    match instance {
         Ok(instance) => {
             if ui.collapsing_header(T::name(), TreeNodeFlags::empty()) {
                 ui.indent();
