@@ -25,6 +25,8 @@ fn init_wall_jump_task() {
             };
 
             let physics = &main_player.chr_ins.module_container.physics;
+
+            // Exit early if we've jumped and undo the trigger once we've landed.
             if wj_man.has_jumped {
                 wj_man.has_jumped = physics.is_jumping;
                 return;
@@ -36,6 +38,7 @@ fn init_wall_jump_task() {
             let slide_info = &physics.slide_info;
             let scaleable_slope = !physics.touching_solid_ground && slide_info.is_sliding;
 
+            // Represent a window where we allow the character to jump.
             if scaleable_slope {
                 if !wj_man.has_entered_window {
                     wj_man.has_entered_window = true;
@@ -45,6 +48,7 @@ fn init_wall_jump_task() {
                 wj_man.has_entered_window = false;
             }
 
+            // Check if we are inside aforementioned window of time.
             let in_jump_window = now.duration_since(wj_man.window_enter_time) <= JUMP_TIME_FRAME;
 
             let jump_requested = main_player
@@ -53,8 +57,9 @@ fn init_wall_jump_task() {
                 .action_request
                 .action_requests
                 .jump();
-
+            
             if scaleable_slope && in_jump_window && jump_requested {
+                // If the animation started succesfully the function returns true.
                 wj_man.has_jumped =  main_player.chr_ins.play_animation_by_name("W_Jump_D");
             }
         },
