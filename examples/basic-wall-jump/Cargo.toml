@@ -1,0 +1,15 @@
+[package]
+name = "basic-wall-jump"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+fromsoftware-shared.workspace = true
+eldenring.workspace = true
+pelite.workspace = true
+glam.workspace = true
