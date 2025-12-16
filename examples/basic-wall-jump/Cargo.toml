@@ -12,4 +12,3 @@ crate-type = ["cdylib"]
 fromsoftware-shared.workspace = true
 eldenring.workspace = true
 pelite.workspace = true
-glam.workspace = true
