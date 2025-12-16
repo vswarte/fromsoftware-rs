@@ -213,7 +213,8 @@ pub struct CSWepGaitemIns {
     pub gaitem_ins: CSGaitemIns,
     /// Item durability mechanic. Unused in ER.
     pub durability: u32,
-    // _pad14: [u8; 0x4],
+    /// DS3 leftover from when weapons reinforcement was tracked here.
+    pub reinforcement_param_id: u32,
     /// Gem slots, used for ashes of war in ER.
     pub gem_slot_table: CSGemSlotTable,
 }

@@ -15,7 +15,7 @@ use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
 use crate::cs::world_geom_man::CSMsbPartsEne;
-use crate::cs::{BlockId, CSPlayerMenuCtrl, ItemId};
+use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, ItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
@@ -1680,9 +1680,20 @@ pub struct PlayerIns {
     /// Set on player spawn and maybe on arena respawn?
     /// Players cannot be hurt if this is above 0.
     pub invincibility_timer_for_net_player: f32,
-    unk67c: [u8; 0x24],
+    /// Durability statuses for player's equipment (weapons and protectors only).
+    /// (DS3 leftover)
+    ///
+    /// See [crate::cs::ChrAsmSlot] for index mapping.
+    pub durability_statuses: [EquipmentDurabilityStatus; 16],
+    unk68c: u8,
+    /// Hand used for attack calculations, set by HKS.
+    pub attack_reference_hand: HandIndex,
+    /// Hand used for guard calculations, set by HKS.
+    pub guard_reference_hand: HandIndex,
+    unk698: u32,
+    unk69c: u32,
     pub player_menu_ctrl: NonNull<CSPlayerMenuCtrl>,
-    unk6b0: [u8; 0x8],
+    unk6a8: [u8; 0x8],
     pub locked_on_enemy: FieldInsHandle,
     pub session_manager_player_entry: OwnedPtr<SessionManagerPlayerEntryBase>,
     /// Position within the current block.
@@ -1715,6 +1726,13 @@ impl AsRef<ChrIns> for PlayerIns {
     fn as_ref(&self) -> &ChrIns {
         &self.chr_ins
     }
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum HandIndex {
+    Left = 0,
+    Right = 1,
 }
 
 #[repr(C)]

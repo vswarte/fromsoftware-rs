@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::{collections::HashMap, fs, fs::File};
 
-use clap::{Args, Parser, ValueEnum, command};
+use clap::{Args, Parser, ValueEnum};
 use fromsoftware_shared::{Class, find_rtti_classes};
 use memmap::MmapOptions;
 use pelite::{
