@@ -921,7 +921,8 @@ pub struct CSChrPhysicsModule {
     /// Set by TAE Event 0 ChrActionFlag (action 27 DISABLE_GRAVITY)
     pub gravity_disabled: bool,
     unk1d6: u8,
-    unk1d7: u8,
+    /// True once jumped untill you've landed.
+    pub is_jumping: bool,
     unk1d8: u8,
     /// Set by TAE Event 0 ChrActionFlag (action 38 FLYING_CHARACTER_FALL)
     pub flying_character_fall_requested: bool,
