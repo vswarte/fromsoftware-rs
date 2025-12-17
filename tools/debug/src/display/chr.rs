@@ -483,6 +483,17 @@ impl DebugDisplay for ChrIns {
             self.block_origin_override
         ));
 
+        ui.header("Chunk Position", || {
+            self.chunk_position.render_debug(ui);
+        });
+
+        ui.header("Initial Position", || {
+            self.initial_position.render_debug(ui);
+        });
+        ui.header("Initial Orientation", || {
+            self.initial_orientation_euler.render_debug(ui);
+        });
+
         ui.text(format!("Last hit by: {}", self.last_hit_by));
         ui.text(format!("TAE use item: {:?}", self.tae_queued_use_item));
 
