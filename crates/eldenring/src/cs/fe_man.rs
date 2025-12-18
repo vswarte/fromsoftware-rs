@@ -311,9 +311,9 @@ pub struct TagHudData {
     /// Handle to the tag owner character
     pub field_ins_handle: FieldInsHandle,
     /// Position of the tag on the screen - X
-    pub screen_pos_x: f32,
+    pub screen_pos_x: i32,
     /// Position of the tag on the screen - Y
-    pub screen_pos_y: f32,
+    pub screen_pos_y: i32,
     /// Current hp of the character
     pub hp: u32,
     unk1c: [u8; 0x4],
