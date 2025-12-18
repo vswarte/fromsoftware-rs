@@ -98,7 +98,10 @@ pub struct CSFeManImp {
     pub get_item_log_view_model: [u8; 0x1d48],
     unk82a8: [u8; 8],
     pub clock_view_model: usize,
-    unk82b0: [u8; 16],
+    unk82b0: [u8; 8],
+    /// Don't update intermediate `frontend_values` data each frame in the `CSMenuMan` update task
+    pub disable_updates: bool,
+    unk82c1: [u8; 7],
     /// Tag of the debug player
     pub debug_tag: TagHudData,
     unk83f0: [u8; 48],
