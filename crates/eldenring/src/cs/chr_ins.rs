@@ -439,7 +439,7 @@ pub struct ChrInsModuleContainer {
     magic: usize,
     /// Describes the characters physics-related properties.
     pub physics: OwnedPtr<CSChrPhysicsModule>,
-    fall: usize,
+    pub fall: OwnedPtr<CSChrFallModule>,
     ladder: usize,
     pub action_request: OwnedPtr<CSChrActionRequestModule>,
     pub throw: OwnedPtr<CSChrThrowModule>,
@@ -1817,4 +1817,16 @@ pub enum ChrType {
     BloodyFingerNpc = 20,
     RecusantNpc = 21,
     Unk22 = 22,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct CSChrFallModule {
+    vftable: usize,
+    pub owner: NonNull<ChrIns>,
+    unk10: i64,
+    pub fall_timer: f32,
+    hamari_fall_death_checked: bool,
+    pub force_max_fall_height: bool,
+    pub disable_fall_motion: bool,
 }
