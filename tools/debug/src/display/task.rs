@@ -1,10 +1,10 @@
 use eldenring::cs::{CSTaskGroup, CSTaskImp};
 use hudhook::imgui::*;
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSTaskGroup {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         for task_group in self.task_groups.iter() {
             ui.text(task_group.base.name.to_string());
         }
@@ -12,22 +12,17 @@ impl DebugDisplay for CSTaskGroup {
 }
 
 impl DebugDisplay for CSTaskImp {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Task Groups", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Task Groups", || {
+            ui.table(
                 "task-group-table",
                 [
                     TableColumnSetup::new("ID"),
                     TableColumnSetup::new("Name"),
                     TableColumnSetup::new("Active"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                for task_group in self.inner.task_base.task_groups.items() {
+                self.inner.task_base.task_groups.items(),
+                |ui, _i, task_group| {
                     ui.table_next_column();
                     ui.text(format!("{:x}", task_group.index));
 
@@ -44,9 +39,8 @@ impl DebugDisplay for CSTaskImp {
 
                     ui.table_next_column();
                     ui.text(format!("{}", task_group.active));
-                }
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
     }
 }

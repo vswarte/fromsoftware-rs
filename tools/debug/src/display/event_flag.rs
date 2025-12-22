@@ -1,25 +1,23 @@
 use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
 use fromsoftware_shared::FromStatic;
-use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSEventFlagMan {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.input_text("World type", &mut self.world_type.to_string())
             .read_only(true)
             .build();
 
-        if ui.collapsing_header("CSFD4VirtualMemory", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("CSFD4VirtualMemory", || {
             self.virtual_memory_flag.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for CSFD4VirtualMemoryFlag {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.input_text(
             "Event flag divisor",
             &mut self.event_flag_divisor.to_string(),
@@ -41,29 +39,23 @@ impl DebugDisplay for CSFD4VirtualMemoryFlag {
         .read_only(true)
         .build();
 
-        if ui.collapsing_header("Block Descriptors", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header("Block Descriptors", || {
+            ui.table(
                 "event-flags-groups",
                 [
                     TableColumnSetup::new("Group ID"),
                     TableColumnSetup::new("Location mode"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.flag_block_descriptors.iter().for_each(|e| {
+                self.flag_block_descriptors.iter(),
+                |ui, _i, e| {
                     ui.table_next_column();
                     ui.text(e.group.to_string());
 
                     ui.table_next_column();
                     ui.text(e.location_mode.to_string());
-                });
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
 
         let virtual_memory_flag = &mut unsafe { CSEventFlagMan::instance() }
             .unwrap()
