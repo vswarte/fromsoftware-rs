@@ -163,7 +163,7 @@ pub trait DLFileOperatorVmt {
 
     fn seek(&mut self, is_stream: bool, offset: i64, seek_mode: DLFileSeekDirection) -> bool;
 
-    fn cursor_position(&self) -> usize;
+    fn cursor_position(&mut self) -> usize;
 
     /// # Safety
     ///
@@ -567,12 +567,17 @@ where
         seek_mode: DLFileSeekDirection,
     ) -> bool {
         tracing::debug!("{self}::seek({}, {}, {:?})", is_stream, offset, seek_mode);
-        unimplemented!()
+        let seek_from = match seek_mode {
+            DLFileSeekDirection::Head => SeekFrom::Start(offset as u64),
+            DLFileSeekDirection::Current => SeekFrom::Current(offset),
+            DLFileSeekDirection::Tail => SeekFrom::End(offset),
+        };
+        self.buffer.seek(seek_from).is_ok()
     }
 
-    extern "C" fn cursor_position(&self) -> usize {
+    extern "C" fn cursor_position(&mut self) -> usize {
         tracing::debug!("{self}::cursor_position()");
-        unimplemented!()
+        self.buffer.stream_position().unwrap_or(0) as usize
     }
 
     unsafe extern "C" fn read(&mut self, output: *mut u8, length: usize) -> i32 {
