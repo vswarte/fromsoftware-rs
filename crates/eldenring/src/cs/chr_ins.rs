@@ -15,7 +15,7 @@ use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
 use crate::cs::world_geom_man::CSMsbPartsEne;
-use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, ItemId};
+use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
@@ -127,7 +127,7 @@ pub struct ChrIns {
     pub stamina_recovery_modifier: f32,
     unkec: [u8; 0x74],
     /// Used by TAE's UseGoods to figure out what item to actually apply.
-    pub tae_queued_use_item: ItemId,
+    pub tae_queued_use_item: OptionalItemId,
     unk164: u32,
     unk168: u32,
     unk16c: u32,
