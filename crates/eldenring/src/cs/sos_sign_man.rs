@@ -86,7 +86,7 @@ pub struct CSSosSignSfx {
 #[repr(C)]
 pub struct DisplayGhostData {
     /// Param ID for the equipment
-    /// See ChrAsmSlot enum to know which slot it is
+    /// See [crate::cs::ChrAsmSlot] for the indexing
     pub equipment_param_ids: [i32; 12],
     /// Param ID for the armor
     /// in order: head, chest, arms, legs, unsued

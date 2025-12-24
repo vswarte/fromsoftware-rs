@@ -361,7 +361,44 @@ pub struct EquipGameData {
     unk3e0: usize,
     unk3e8: usize,
     pub player_game_data: NonNull<PlayerGameData>,
-    unk3f8: [u8; 0xb8],
+    unk3f8: [u8; 0x8],
+    /// Bitfield tracking which equipment slots have fully broken equipment
+    /// Used to sync visuals of broken equipment in multiplayer
+    /// (DS3 leftover)
+    pub broken_equipment_slots: BrokenEquipmentSlots,
+    unk404: [u8; 0xac],
+}
+
+bitfield! {
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    /// Flags indicating that certain equipment slots are fully broken
+    /// (DS3 leftover)
+    pub struct BrokenEquipmentSlots(u32);
+    impl Debug;
+
+    bool;
+    pub weapon_left1, set_weapon_left1: 0;
+    pub weapon_right1, set_weapon_right1: 1;
+    pub weapon_left2, set_weapon_left2: 2;
+    pub weapon_right2, set_weapon_right2: 3;
+    pub weapon_left3, set_weapon_left3: 4;
+    pub weapon_right3, set_weapon_right3: 5;
+    pub arrow1, set_arrow1: 6;
+    pub bolt1, set_bolt1: 7;
+    pub arrow2, set_arrow2: 8;
+    pub bolt2, set_bolt2: 9;
+    pub arrow3, set_arrow3: 10;
+    pub bolt3, set_bolt3: 11;
+    pub protector_head, set_protector_head: 12;
+    pub protector_chest, set_protector_chest: 13;
+    pub protector_hands, set_protector_hands: 14;
+    pub protector_legs, set_protector_legs: 15;
+    pub unused16, set_unused16: 16;
+    pub accessory1, set_accessory1: 17;
+    pub accessory2, set_accessory2: 18;
+    pub accessory3, set_accessory3: 19;
+    pub accessory4, set_accessory4: 20;
+    pub accessory_covenant, set_accessory_covenant: 21;
 }
 
 #[repr(C)]
@@ -486,7 +523,9 @@ pub struct EquipInventoryData {
     vftable: usize,
     pub items_data: InventoryItemsData,
     pub total_item_entry_count: u32,
-    unk84: u32,
+    /// Next sort ID to assign to newly added items.
+    /// Used to sort items by acquisition order.
+    pub next_sort_id: u32,
     /// Count of all pot items by their pot group
     pub pot_items_count: [u32; 16],
     /// Capacity of all pot items by their pot group
@@ -539,7 +578,8 @@ pub struct EquipInventoryDataListEntry {
     pub item_id: OptionalItemId,
     /// Quantity of the item we have.
     pub quantity: u32,
-    pub display_id: u32,
+    /// Sort ID used to sort items by acquisition order.
+    pub sort_id: u32,
     unk10: u8,
     _pad11: [u8; 3],
     pub pot_group: i32,
@@ -670,6 +710,7 @@ pub struct ChrAsmEquipmentSlots {
     /// 0 for primary, 1 for secondary.
     pub right_bolt_slot: u32,
 }
+
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ChrAsmArmStyle {
@@ -702,6 +743,14 @@ pub struct ChrAsm {
     unkd4: u32,
     unkd8: u32,
     _paddc: [u8; 12],
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum EquipmentDurabilityStatus {
+    Ok = 0,
+    AtRisk = 1,
+    Broken = 2,
 }
 
 #[cfg(test)]

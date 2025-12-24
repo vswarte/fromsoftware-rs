@@ -4,31 +4,25 @@ use eldenring::cs::{
     EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
     PlayerIns,
 };
-use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for PlayerIns {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         self.chr_ins.render_debug(ui);
 
-        if ui.collapsing_header("ChrAsm", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("ChrAsm", || {
             self.chr_asm.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("PlayerGameData", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("PlayerGameData", || {
             self.player_game_data.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Session Player Entry", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Session Player Entry", || {
             self.session_manager_player_entry.as_ref().render_debug(ui);
-            ui.unindent();
-        }
+        });
 
         ui.text(format!(
             "Invincibility timer: {}",
@@ -40,62 +34,22 @@ impl DebugDisplay for PlayerIns {
 }
 
 impl DebugDisplay for ChrAsm {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("ChrAsmEquipment", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("ChrAsmEquipment", || {
             self.equipment.render_debug(ui);
-            ui.unindent();
-        }
-        if ui.collapsing_header("GaitemHandles", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        });
+        ui.header("GaitemHandles", || {
+            ui.table(
                 "chr-asm-gaitem-handles",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Slot"),
                     TableColumnSetup::new("Gaitem Handle"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                for (i, e) in self.gaitem_handles.iter().enumerate() {
+                self.gaitem_handles.iter(),
+                |ui, i, e| {
                     ui.table_next_column();
                     ui.text(format!("{i}"));
-
-                    ui.table_next_column();
-                    match ChrAsmSlot::from_index(i as u32) {
-                        Ok(slot) => ui.text(format!("{slot:?}")),
-                        Err(e) => {
-                            ui.text(format!("{e:?}"));
-                        }
-                    }
-
-                    ui.table_next_column();
-                    ui.text(e.to_string());
-                }
-            }
-            ui.unindent();
-        }
-
-        if ui.collapsing_header("Param IDs", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "chr-asm-param-ids",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("Slot"),
-                    TableColumnSetup::new("Param ID"),
-                ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                for (i, e) in self.equipment_param_ids.iter().enumerate() {
-                    ui.table_next_column();
-                    ui.text(i.to_string());
 
                     ui.table_next_column();
                     match ChrAsmSlot::from_index(i as u32) {
@@ -107,15 +61,41 @@ impl DebugDisplay for ChrAsm {
 
                     ui.table_next_column();
                     ui.text(e.to_string());
-                }
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
+
+        ui.header("Param IDs", || {
+            ui.table(
+                "chr-asm-param-ids",
+                [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("Slot"),
+                    TableColumnSetup::new("Param ID"),
+                ],
+                self.equipment_param_ids.iter(),
+                |ui, i, e| {
+                    ui.table_next_column();
+                    ui.text(format!("{i}"));
+
+                    ui.table_next_column();
+                    match ChrAsmSlot::from_index(i as u32) {
+                        Ok(slot) => ui.text(format!("{slot:?}")),
+                        Err(err) => {
+                            ui.text(err.to_string());
+                        }
+                    }
+
+                    ui.table_next_column();
+                    ui.text(e.to_string());
+                },
+            );
+        });
     }
 }
 
 impl DebugDisplay for ChrAsmEquipment {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Arm style: {:?}", self.arm_style));
         ui.text(format!(
             "Left-hand weapon slot: {:?}",
@@ -131,7 +111,7 @@ impl DebugDisplay for ChrAsmEquipment {
         ));
         ui.text(format!(
             "Right-hand arrow slot: {:?}",
-            self.selected_slots.right_weapon_slot
+            self.selected_slots.right_arrow_slot
         ));
         ui.text(format!(
             "Left-hand bolt slot: {:?}",
@@ -145,7 +125,7 @@ impl DebugDisplay for ChrAsmEquipment {
 }
 
 impl DebugDisplay for ChrAsmEquipEntries {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!(
             "Primary Left weapon: {:?}",
             self.weapon_primary_left.param_id()
@@ -213,88 +193,24 @@ impl DebugDisplay for ChrAsmEquipEntries {
             self.protector_legs.param_id()
         ));
 
-        if ui.collapsing_header("Accessories", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "chr-asm-equip-entries-accessories",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("Item ID"),
-                ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.accessories
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
-                        ui.table_next_column();
-                        ui.text(format!("{:?}", item.param_id()));
-                    });
-            }
-            ui.unindent();
-        }
+        ui.list("Accessories", self.accessories.iter(), |ui, i, item| {
+            ui.text(format!("{}: {:?}", i, item));
+        });
 
         ui.text(format!("Covenant: {:?}", self.covenant.param_id()));
 
-        if ui.collapsing_header("Quick Items", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "chr-asm-equip-entries-quick-items",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("Item ID"),
-                ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.quick_tems
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
-                        ui.table_next_column();
-                        ui.text(format!("{:?}", item.param_id()));
-                    });
-            }
-            ui.unindent();
-        }
+        ui.list("Quick Items", self.quick_tems.iter(), |ui, index, item| {
+            ui.text(format!("{}: {:?}", index, item));
+        });
 
-        if ui.collapsing_header("Pouch", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "chr-asm-equip-entries-pouch",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("Item ID"),
-                ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.pouch.iter().enumerate().for_each(|(index, item)| {
-                    ui.table_next_column();
-                    ui.text(index.to_string());
-
-                    ui.table_next_column();
-                    ui.text(format!("{:?}", item.param_id()));
-                });
-            }
-            ui.unindent();
-        }
+        ui.list("Pouch", self.pouch.iter(), |ui, i, item| {
+            ui.text(format!("{}: {:?}", i, item));
+        });
     }
 }
 
 impl DebugDisplay for PlayerGameData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Player ID: {}", self.player_id));
         ui.text(format!(
             "Furlcalling Finger Active: {:?}",
@@ -308,90 +224,40 @@ impl DebugDisplay for PlayerGameData {
         ui.text(format!("Character Type: {:?}", self.chr_type));
         ui.text(format!("Multiplay Role: {:?}", self.multiplay_role));
 
-        if ui.collapsing_header("EquipGameData", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("EquipGameData", || {
             self.equipment.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Storage Box EquipInventoryData", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Storage Box EquipInventoryData", || {
             self.storage.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for EquipGameData {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("EquipInventoryData", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("EquipInventoryData", || {
             self.equip_inventory_data.render_debug(ui);
-            ui.unindent();
-        }
-        if ui.collapsing_header("EquipMagicData", TreeNodeFlags::empty()) {
-            ui.indent();
+        });
+
+        ui.header("EquipMagicData", || {
             self.equip_magic_data.render_debug(ui);
-            ui.unindent();
-        }
-        if ui.collapsing_header("EquipItemData", TreeNodeFlags::empty()) {
-            ui.indent();
+        });
+
+        ui.header("EquipItemData", || {
             self.equip_item_data.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("QuickMatch Item Backup Vector", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "equip-game-data-qm-item-backup-vector",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("ItemId"),
-                    TableColumnSetup::new("Quantity"),
-                ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.qm_item_backup_vector
-                    .items()
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
-
-                        ui.table_next_column();
-                        ui.text(format!("{:?}", item.item_id));
-
-                        ui.table_next_column();
-                        ui.text(item.quantity.to_string());
-                    });
-            }
-            ui.unindent();
-        }
-        self.item_replenish_state_tracker.render_debug(ui);
-    }
-}
-
-impl DebugDisplay for ItemReplenishStateTracker {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Item Replenish State Entries", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
-                "item-replenish-state-tracker-entries",
+        ui.header("Item Replenish State Tracker", || {
+            ui.table(
+                "equip-game-data-item-replenish-state-tracker",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Item ID"),
                     TableColumnSetup::new("Auto Replenish"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.entries().iter().enumerate().for_each(|(index, item)| {
+                self.item_replenish_state_tracker.entries().iter(),
+                |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
 
@@ -400,33 +266,54 @@ impl DebugDisplay for ItemReplenishStateTracker {
 
                     ui.table_next_column();
                     ui.text(item.auto_replenish.to_string());
-                });
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
+        self.item_replenish_state_tracker.render_debug(ui);
+    }
+}
+
+impl DebugDisplay for ItemReplenishStateTracker {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Item Replenish State Entries", || {
+            ui.table(
+                "item-replenish-state-tracker-entries",
+                [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("Item ID"),
+                    TableColumnSetup::new("Auto Replenish"),
+                ],
+                self.entries().iter(),
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
+
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", item.item_id));
+
+                    ui.table_next_column();
+                    ui.text(item.auto_replenish.to_string());
+                },
+            );
+        });
         ui.text(format!("Count: {}", self.count));
     }
 }
 
 impl DebugDisplay for EquipMagicData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Selected slot: {}", self.selected_slot));
 
-        if ui.collapsing_header("EquipDataItem", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header("EquipDataItem", || {
+            ui.table(
                 "equip-magic-data-entries",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Param ID"),
                     TableColumnSetup::new("Charges"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.entries.iter().enumerate().for_each(|(index, item)| {
+                self.entries.iter(),
+                |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
 
@@ -435,97 +322,76 @@ impl DebugDisplay for EquipMagicData {
 
                     ui.table_next_column();
                     ui.text(item.charges.to_string());
-                });
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
     }
 }
 
 impl DebugDisplay for EquipItemData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Selected quick slot: {}", self.selected_quick_slot));
 
-        if ui.collapsing_header("Quick slots", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header("Quick slots", || {
+            ui.table(
                 "equip-item-data-quick-slots",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Gaitem Handle"),
                     TableColumnSetup::new("Inventory Index"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.quick_slots
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
-                        ui.align_text_to_frame_padding();
+                self.quick_slots.iter(),
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
+                    ui.align_text_to_frame_padding();
 
-                        ui.table_next_column();
-                        ui.text(item.gaitem_handle.to_string());
+                    ui.table_next_column();
+                    ui.text(item.gaitem_handle.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.index.to_string());
-                    });
-            }
-            ui.unindent();
-        }
+                    ui.table_next_column();
+                    ui.text(item.index.to_string());
+                },
+            );
+        });
 
-        if ui.collapsing_header("Pouch slots", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header("Pouch slots", || {
+            ui.table(
                 "equip-item-data-pouch-slots",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Gaitem Handle"),
                     TableColumnSetup::new("Inventory Index"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                self.pouch_slots
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
+                self.pouch_slots.iter(),
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.gaitem_handle.to_string());
+                    ui.table_next_column();
+                    ui.text(item.gaitem_handle.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.index.to_string());
-                    });
-            }
-            ui.unindent();
-        }
+                    ui.table_next_column();
+                    ui.text(item.index.to_string());
+                },
+            );
+        });
 
         ui.text(format!(
             "Greatrune: {}, index: {}",
             self.great_rune.gaitem_handle, self.great_rune.index
         ));
 
-        if ui.collapsing_header("Equipment Entries", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Equipment Entries", || {
             self.equip_entries.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
         ui.text(format!("Selected Quick Slot: {}", self.selected_quick_slot));
     }
 }
 
 impl DebugDisplay for EquipInventoryData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!(
             "Total item entry count: {}",
             self.total_item_entry_count
@@ -535,9 +401,8 @@ impl DebugDisplay for EquipInventoryData {
             "Normal Items ({}/{})",
             self.items_data.normal_items_count, self.items_data.normal_items_capacity
         );
-        if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header(&label, || {
+            ui.table(
                 "equip-inventory-data-normal-items",
                 [
                     TableColumnSetup::new("Index"),
@@ -546,39 +411,32 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
-            ) {
-                self.items_data
-                    .normal_items()
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
+                self.items_data.normal_items().iter(),
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.gaitem_handle.to_string());
+                    ui.table_next_column();
+                    ui.text(item.gaitem_handle.to_string());
 
-                        ui.table_next_column();
-                        ui.text(format!("{:?}", item.item_id));
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", item.item_id));
 
-                        ui.table_next_column();
-                        ui.text(item.quantity.to_string());
+                    ui.table_next_column();
+                    ui.text(item.quantity.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.display_id.to_string());
-                    });
-            }
-            ui.unindent();
-        }
+                    ui.table_next_column();
+                    ui.text(item.sort_id.to_string());
+                },
+            );
+        });
 
         let label = format!(
             "Key Items ({}/{})",
             self.items_data.key_items_count, self.items_data.key_items_capacity
         );
-        if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header(&label, || {
+            ui.table(
                 "equip-inventory-data-key-items",
                 [
                     TableColumnSetup::new("Index"),
@@ -587,39 +445,32 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
-            ) {
-                self.items_data
-                    .key_items()
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
+                self.items_data.key_items().iter(),
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.gaitem_handle.to_string());
+                    ui.table_next_column();
+                    ui.text(item.gaitem_handle.to_string());
 
-                        ui.table_next_column();
-                        ui.text(format!("{:?}", item.item_id));
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", item.item_id));
 
-                        ui.table_next_column();
-                        ui.text(item.quantity.to_string());
+                    ui.table_next_column();
+                    ui.text(item.quantity.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.display_id.to_string());
-                    });
-            }
-            ui.unindent();
-        }
+                    ui.table_next_column();
+                    ui.text(item.sort_id.to_string());
+                },
+            );
+        });
 
         let label = format!(
             "Multiplay Key Items ({}/{})",
             self.items_data.multiplay_key_items_count, self.items_data.multiplay_key_items_capacity
         );
-        if ui.collapsing_header(label.as_str(), TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header(&label, || {
+            ui.table(
                 "equip-inventory-data-multiplay-key-items",
                 [
                     TableColumnSetup::new("Index"),
@@ -628,36 +479,30 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
-            ) {
-                self.items_data
-                    .multiplay_key_items()
-                    .iter()
-                    .enumerate()
-                    .for_each(|(index, item)| {
-                        ui.table_next_column();
-                        ui.text(index.to_string());
+                self.items_data.multiplay_key_items().iter(),
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.gaitem_handle.to_string());
+                    ui.table_next_column();
+                    ui.text(item.gaitem_handle.to_string());
 
-                        ui.table_next_column();
-                        ui.text(format!("{:?}", item.item_id));
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", item.item_id));
 
-                        ui.table_next_column();
-                        ui.text(item.quantity.to_string());
+                    ui.table_next_column();
+                    ui.text(item.quantity.to_string());
 
-                        ui.table_next_column();
-                        ui.text(item.display_id.to_string());
-                    });
-            }
-            ui.unindent();
-        }
+                    ui.table_next_column();
+                    ui.text(item.sort_id.to_string());
+                },
+            );
+        });
     }
 }
 
 impl DebugDisplay for ChrIns {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Team: {}", self.team_type));
 
         ui.text(format!("Block ID: {}", self.block_id_1));
@@ -671,9 +516,8 @@ impl DebugDisplay for ChrIns {
         ));
         ui.text(format!("Block center origin 2: {}", self.block_origin));
 
-        if ui.collapsing_header("Special Effect", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+        ui.header("Special Effect", || {
+            ui.table(
                 "chr-ins-special-effects",
                 [
                     TableColumnSetup::new("ID"),
@@ -682,9 +526,8 @@ impl DebugDisplay for ChrIns {
                     TableColumnSetup::new("Duration"),
                     TableColumnSetup::new("Interval Timer"),
                 ],
-                TableFlags::RESIZABLE | TableFlags::SIZING_FIXED_FIT,
-            ) {
-                self.special_effect.entries().for_each(|entry| {
+                self.special_effect.entries(),
+                |ui, _i, entry| {
                     ui.table_next_column();
                     ui.text(format!("{}", entry.param_id));
 
@@ -699,69 +542,56 @@ impl DebugDisplay for ChrIns {
 
                     ui.table_next_column();
                     ui.text(format!("{}", entry.interval_timer));
-                });
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
 
-        if ui.collapsing_header("Modules", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Modules", || {
             self.module_container.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for ChrInsModuleContainer {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Physics", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Physics", || {
             self.physics.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Model param modifier", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Model param modifier", || {
             self.model_param_modifier.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Time Act", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Time Act", || {
             self.time_act.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for CSChrPhysicsModule {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Position: {}", self.position));
         ui.text(format!("Orientation: {}", self.orientation));
     }
 }
 
 impl DebugDisplay for CSChrModelParamModifierModule {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if let Some(_t) = ui.begin_table_header_with_flags(
+    fn render_debug(&self, ui: &Ui) {
+        ui.table(
             "chr-ins-model-param-modifier",
             [TableColumnSetup::new("Name")],
-            TableFlags::RESIZABLE
-                | TableFlags::BORDERS
-                | TableFlags::ROW_BG
-                | TableFlags::SIZING_STRETCH_PROP,
-        ) {
-            self.modifiers.items().iter().for_each(|modifier| {
+            self.modifiers.items().iter(),
+            |ui, _i, modifier| {
                 ui.table_next_column();
                 ui.text(unsafe { modifier.name.to_string() }.unwrap());
-            });
-        }
+            },
+        );
     }
 }
 
 impl DebugDisplay for CSChrTimeActModule {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if let Some(_t) = ui.begin_table_header_with_flags(
+    fn render_debug(&self, ui: &Ui) {
+        ui.table(
             "chr-ins-time-act-module",
             [
                 TableColumnSetup::new("Index"),
@@ -769,37 +599,28 @@ impl DebugDisplay for CSChrTimeActModule {
                 TableColumnSetup::new("Play Time"),
                 TableColumnSetup::new("Length"),
             ],
-            TableFlags::RESIZABLE
-                | TableFlags::BORDERS
-                | TableFlags::ROW_BG
-                | TableFlags::SIZING_STRETCH_PROP,
-        ) {
-            self.anim_queue
-                .iter()
-                .enumerate()
-                .for_each(|(index, entry)| {
-                    ui.table_next_column();
-                    ui.text(index.to_string());
+            self.anim_queue.iter(),
+            |ui, index, entry| {
+                ui.table_next_column();
+                ui.text(index.to_string());
 
-                    ui.table_next_column();
-                    ui.text(entry.anim_id.to_string());
+                ui.table_next_column();
+                ui.text(entry.anim_id.to_string());
 
-                    ui.table_next_column();
-                    ui.text(entry.play_time.to_string());
+                ui.table_next_column();
+                ui.text(entry.play_time.to_string());
 
-                    ui.table_next_column();
-                    ui.text(entry.anim_length.to_string());
-                });
-        }
+                ui.table_next_column();
+                ui.text(entry.anim_length.to_string());
+            },
+        );
         ui.text(format!("Read IDX: {}", self.read_idx));
         ui.text(format!("Write IDX: {}", self.write_idx));
-        if ui.collapsing_header("Current Anim Info", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Current Anim Info", || {
             let current_anim_info = &self.anim_queue[self.read_idx as usize];
             ui.text(format!("Anim ID: {}", current_anim_info.anim_id));
             ui.text(format!("Play Time: {}", current_anim_info.play_time));
             ui.text(format!("Anim Length: {}", current_anim_info.anim_length));
-            ui.unindent();
-        }
+        });
     }
 }
