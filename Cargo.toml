@@ -4,7 +4,6 @@ members = [
     "crates/shared",
     "crates/darksouls3",
     "crates/eldenring",
-    "crates/darksouls3",
     "crates/nightreign",
     "tools/debug",
     "tools/binary-mapper",
@@ -30,8 +29,6 @@ nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightr
 binary_mapper = { path = "crates/binary-mapper" }
 thiserror = "1"
 tracing = "0.1"
-nalgebra-glm = "0.19"
-nalgebra = "0.33"
 glam = ">= 0.30"
 byteorder = "1"
 pelite = "0.10"

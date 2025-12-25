@@ -2,58 +2,45 @@ use eldenring::cs::{
     CSBattleRoyalContext, CSNetBloodMessageDb, CSNetBloodMessageDbItem, CSNetMan,
     CSQuickMatchingCtrl, QuickmatchManager,
 };
-use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSNetMan {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Blood Messages", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Blood Messages", || {
             self.blood_message_db.render_debug(ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Quickmatch", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Quickmatch", || {
             self.quickmatch_manager.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for CSNetBloodMessageDb {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Entries", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Entries", || {
             render_message_table(self.entries.iter().map(|f| f.as_ref()), ui);
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Created message data", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Created message data", || {
             self.created_data
                 .iter()
                 .for_each(|f| ui.text(format!("{f} {f:x}")));
-            ui.unindent();
-        }
+        });
 
-        if ui.collapsing_header("Discovered messages", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Discovered messages", || {
             render_message_table(
                 self.discovered_messages.iter().map(|f| f.as_ref().as_ref()),
                 ui,
             );
-            ui.unindent();
-        }
+        });
     }
 }
 
-fn render_message_table<'a>(
-    messages: impl Iterator<Item = &'a CSNetBloodMessageDbItem>,
-    ui: &&mut Ui,
-) {
-    if let Some(_t) = ui.begin_table_header_with_flags(
+fn render_message_table<'a>(messages: impl Iterator<Item = &'a CSNetBloodMessageDbItem>, ui: &Ui) {
+    ui.table(
         "cs-net-man-blood-messages-entries",
         [
             TableColumnSetup::new("Message ID"),
@@ -66,12 +53,8 @@ fn render_message_table<'a>(
             TableColumnSetup::new("Part 2"),
             TableColumnSetup::new("Gesture"),
         ],
-        TableFlags::RESIZABLE
-            | TableFlags::BORDERS
-            | TableFlags::ROW_BG
-            | TableFlags::SIZING_STRETCH_PROP,
-    ) {
-        messages.for_each(|message| {
+        messages,
+        |ui, _i, message| {
             ui.table_next_column();
             ui.text(format!("{:x}", message.message_id));
 
@@ -101,28 +84,24 @@ fn render_message_table<'a>(
 
             ui.table_next_column();
             ui.text(message.gesture_param.to_string());
+        },
+    );
+}
+
+impl DebugDisplay for QuickmatchManager {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("CSQuickMatchingCtrl", || {
+            self.quickmatching_ctrl.render_debug(ui);
+        });
+
+        ui.header("CSBattleRoyalContext", || {
+            self.battle_royal_context.render_debug(ui);
         });
     }
 }
 
-impl DebugDisplay for QuickmatchManager {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("CSQuickMatchingCtrl", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.quickmatching_ctrl.render_debug(ui);
-            ui.unindent();
-        }
-
-        if ui.collapsing_header("CSBattleRoyalContext", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.battle_royal_context.render_debug(ui);
-            ui.unindent();
-        }
-    }
-}
-
 impl DebugDisplay for CSBattleRoyalContext {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.input_text(
             "Error State",
             &mut self.quickmatch_context.error_state.to_string(),
@@ -169,7 +148,7 @@ impl DebugDisplay for CSBattleRoyalContext {
 }
 
 impl DebugDisplay for CSQuickMatchingCtrl {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.input_text("Match state", &mut format!("{:?}", self.current_state))
             .read_only(true)
             .build();
