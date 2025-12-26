@@ -28,7 +28,6 @@ pub enum ItemCategory {
     Protector = 1,
     Accessory = 2,
     Goods = 4,
-    Gem = 8,
 }
 
 impl TryFrom<u8> for ItemCategory {
@@ -40,9 +39,59 @@ impl TryFrom<u8> for ItemCategory {
             1 => ItemCategory::Protector,
             2 => ItemCategory::Accessory,
             4 => ItemCategory::Goods,
-            8 => ItemCategory::Gem,
             _ => return Err(ItemIdError::InvalidCategory(value)),
         })
+    }
+}
+
+/// Like [ItemCategory], but using high bits so it can be bitwise ORed with a
+/// parameter to create a [CategorizedItemID].
+///
+/// This is sometimes used in place of [ItemCategory] in internal APIs.
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum ItemCategoryHigh {
+    Weapon = 0,
+    Protector = 0x10000000,
+    Accessory = 0x20000000,
+    Goods = 0x40000000,
+}
+
+impl TryFrom<u32> for ItemCategoryHigh {
+    type Error = ItemIdError;
+
+    fn try_from(value: u32) -> Result<ItemCategoryHigh, Self::Error> {
+        match value {
+            0 => Ok(ItemCategoryHigh::Weapon),
+            0x10000000 => Ok(ItemCategoryHigh::Protector),
+            0x20000000 => Ok(ItemCategoryHigh::Accessory),
+            0x40000000 => Ok(ItemCategoryHigh::Goods),
+            _ => Err(ItemIdError::InvalidCategory((value >> 28) as u8)),
+        }
+    }
+}
+
+impl From<ItemCategory> for ItemCategoryHigh {
+    fn from(value: ItemCategory) -> ItemCategoryHigh {
+        unsafe { mem::transmute((value as u32) << 28) }
+    }
+}
+
+impl From<ItemCategoryHigh> for ItemCategory {
+    fn from(value: ItemCategoryHigh) -> ItemCategory {
+        unsafe { mem::transmute((value as u32 >> 28) as u8) }
+    }
+}
+
+impl PartialEq<ItemCategory> for ItemCategoryHigh {
+    fn eq(&self, other: &ItemCategory) -> bool {
+        (*self as u32) == (*other as u32) << 28
+    }
+}
+
+impl PartialEq<ItemCategoryHigh> for ItemCategory {
+    fn eq(&self, other: &ItemCategoryHigh) -> bool {
+        other == self
     }
 }
 
@@ -213,17 +262,17 @@ impl fmt::Debug for ItemId {
 
 #[cfg(test)]
 mod tests {
-    use crate::cs::{ItemCategory, OptionalItemId};
+    use crate::sprj::{ItemCategory, OptionalItemId};
 
     #[test]
     fn test_bitfield() {
         let mut item = OptionalItemId(0);
         item.set_param_id_raw(123);
-        item.set_category_raw(ItemCategory::Gem as u8);
+        item.set_category_raw(ItemCategory::Goods as u8);
 
         assert_eq!(item.param_id(), Some(123));
-        assert_eq!(item.category(), Some(ItemCategory::Gem));
-        assert_eq!(item.0, 123 | (ItemCategory::Gem as u32) << 28);
+        assert_eq!(item.category(), Some(ItemCategory::Goods));
+        assert_eq!(item.0, 123 | (ItemCategory::Goods as u32) << 28);
 
         item = OptionalItemId(u32::MAX);
         assert_eq!(item.param_id(), None);
