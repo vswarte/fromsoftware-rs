@@ -9,8 +9,6 @@ description = "Helpers for dealing with pointers and other common stuff across g
 
 [dependencies]
 windows.workspace = true
-nalgebra-glm.workspace = true
-nalgebra.workspace = true
 glam.workspace = true
 pelite.workspace = true
 fromsoftware-shared-macros.workspace = true

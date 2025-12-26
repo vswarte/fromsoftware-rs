@@ -3,7 +3,7 @@ use std::fmt::Display;
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::cs::{CSRandXorshift, ItemId};
+use crate::cs::{CSRandXorshift, OptionalItemId};
 use shared::{OwnedPtr, Subclass, Superclass};
 
 #[repr(C)]
@@ -59,7 +59,7 @@ impl CSGaitemImp {
 pub struct CSGaitemIns {
     vftable: usize,
     pub gaitem_handle: GaitemHandle,
-    pub item_id: ItemId,
+    pub item_id: OptionalItemId,
 }
 
 #[repr(C)]
@@ -164,7 +164,8 @@ pub struct CSWepGaitemIns {
     pub gaitem_ins: CSGaitemIns,
     /// Item durability mechanic. Unused in ER.
     pub durability: u32,
-    // _pad14: [u8; 0x4],
+    /// DS3 leftover from when weapons reinforcement was tracked here.
+    pub reinforcement_param_id: u32,
     /// Gem slots, used for ashes of war in ER.
     pub gem_slot_table: CSGemSlotTable,
 }

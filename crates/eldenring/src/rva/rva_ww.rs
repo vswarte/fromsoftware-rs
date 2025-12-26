@@ -15,6 +15,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     chr_ins_remove_speffect: 0x3ee1b0,
     chr_ins_vmt: 0x2a2e0b8,
     chr_set_vmt: 0x2a3e318,
+    crypto_spi_registry: 0x4843038,
     cs_action_button_man_execute_action_button: 0xa62ff0,
     cs_bullet_manager_spawn_bullet: 0x3a2dd0,
     cs_ez_draw_draw_capsule: 0x2c0ca0,

@@ -1,13 +1,12 @@
 use eldenring::cs::{CSGaitemImp, CSGaitemInsSubclass};
-use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags};
+use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSGaitemImp {
-    fn render_debug(&self, ui: &&mut hudhook::imgui::Ui) {
-        if ui.collapsing_header("Gaitem Inses", TreeNodeFlags::empty()) {
-            ui.indent();
-            if let Some(_t) = ui.begin_table_header_with_flags(
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Gaitem Inses", || {
+            ui.table(
                 "cs-gaitem-imp-gaiteminses",
                 [
                     TableColumnSetup::new("Index"),
@@ -16,29 +15,22 @@ impl DebugDisplay for CSGaitemImp {
                     TableColumnSetup::new("Category"),
                     TableColumnSetup::new("Additional"),
                 ],
-                TableFlags::RESIZABLE
-                    | TableFlags::BORDERS
-                    | TableFlags::ROW_BG
-                    | TableFlags::SIZING_STRETCH_PROP,
-            ) {
-                for gaitem in self.gaitems.iter().filter_map(|f| f.as_ref()) {
-                    let gaitem = gaitem.as_ref();
-                    let index = gaitem.gaitem_handle.index() as i32;
-
+                self.gaitems.iter().filter_map(|f| f.as_ref()),
+                |ui, index, gaitem| {
                     ui.table_next_column();
-                    ui.text(format!("{index:?}"));
+                    ui.text(index.to_string());
 
                     ui.table_next_column();
                     ui.text(gaitem.gaitem_handle.to_string());
 
                     ui.table_next_column();
-                    ui.text(gaitem.item_id.to_string());
+                    ui.text(format!("{:?}", gaitem.item_id));
 
                     ui.table_next_column();
                     ui.text(format!("{:?}", gaitem.gaitem_handle.category()));
 
                     ui.table_next_column();
-                    match gaitem.into() {
+                    match gaitem.as_ref().into() {
                         CSGaitemInsSubclass::CSWepGaitemIns(wep) => {
                             let gem_handle = wep.gem_slot_table.gem_slots[0].gaitem_handle;
                             if gem_handle.0 != 0 {
@@ -50,9 +42,8 @@ impl DebugDisplay for CSGaitemImp {
                         }
                         _ => {}
                     }
-                }
-            }
-            ui.unindent();
-        }
+                },
+            );
+        });
     }
 }
