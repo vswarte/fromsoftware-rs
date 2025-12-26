@@ -1,3 +1,4 @@
+use eldenring::position::{BlockPosition, HavokPosition};
 use fromsoftware_shared::{
     F32Matrix2x2, F32Matrix2x3, F32Matrix2x4, F32Matrix3x2, F32Matrix3x3, F32Matrix3x4,
     F32Matrix4x2, F32Matrix4x3, F32Matrix4x4, F32ModelMatrix, F32PackedModelMatrix, F32Vector2,
@@ -62,5 +63,23 @@ impl DebugDisplay for F32Vector2 {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("x: {}", self.0));
         ui.text(format!("y: {}", self.1));
+    }
+}
+
+impl DebugDisplay for HavokPosition {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("x: {}", self.0));
+        ui.text(format!("y: {}", self.1));
+        ui.text(format!("z: {}", self.2));
+        ui.text(format!("w: {}", self.3));
+    }
+}
+
+impl DebugDisplay for BlockPosition {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("x: {}", self.x));
+        ui.text(format!("y: {}", self.y));
+        ui.text(format!("z: {}", self.z));
+        ui.text(format!("yaw: {}", self.yaw));
     }
 }

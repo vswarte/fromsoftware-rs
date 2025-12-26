@@ -123,7 +123,8 @@ pub struct SosSignData {
     /// Whether the sign is in the sign pool
     pub is_sign_puddle: bool,
     unk30: u8,
-    unk31: u8,
+    /// Whether the sign is from the player using same group password
+    pub from_group_password: bool,
     /// Whether to apply multiplayer rules for summoning frame check
     /// if true, the game will check if the player is allowed to see the signs in the area,
     /// has special effects for the sign, etc.

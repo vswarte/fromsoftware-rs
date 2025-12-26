@@ -1,6 +1,9 @@
 use std::ptr::NonNull;
 
-use shared::OwnedPtr;
+use bitfield::bitfield;
+use shared::{F32Vector3, OwnedPtr};
+
+use crate::cs::FieldInsHandle;
 
 use super::{ChrIns, ChrSet};
 
@@ -27,7 +30,7 @@ pub struct NetChrSetSync {
     _pad14: u32,
 
     unk18_readback_values: usize,
-    unk20_readback_values: usize,
+    placement_readback_values: *mut ChrSyncPlacementUpdate,
     unk28_readback_values: usize,
     /// Holds incoming health updates.
     health_readback_values: *mut ChrSyncHealthUpdate,
@@ -46,6 +49,12 @@ impl NetChrSetSync {
         unsafe { std::slice::from_raw_parts(self.health_readback_values, self.capacity as usize) }
     }
 
+    pub fn placement_updates(&self) -> &[ChrSyncPlacementUpdate] {
+        unsafe {
+            std::slice::from_raw_parts(self.placement_readback_values, self.capacity as usize)
+        }
+    }
+
     pub fn update_flags_mut(&mut self) -> &mut [ChrSyncUpdateFlags] {
         unsafe { std::slice::from_raw_parts_mut(self.update_flags, self.capacity as usize) }
     }
@@ -55,25 +64,49 @@ impl NetChrSetSync {
             std::slice::from_raw_parts_mut(self.health_readback_values, self.capacity as usize)
         }
     }
+
+    pub fn placement_updates_mut(&mut self) -> &mut [ChrSyncPlacementUpdate] {
+        unsafe {
+            std::slice::from_raw_parts_mut(self.placement_readback_values, self.capacity as usize)
+        }
+    }
 }
 
-/// Holds a set of bits where most bits correspond to a particular type of received sync value.
-#[repr(C)]
-pub struct ChrSyncUpdateFlags(pub u16);
+bitfield! {
+    #[repr(C)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    /// Holds a set of bits where each bit corresponds to a particular type of received sync value.
+    pub struct ChrSyncUpdateFlags(u16);
+    impl Debug;
 
-const CHR_SYNC_HEALTH_UPDATE: u16 = 0b0000000000010000;
+    bool;
+    /// Whether there is a pending placement update.
+    pub has_placement_update, _: 0;
+    _, set_has_placement_update: 0;
 
-impl ChrSyncUpdateFlags {
-    /// Checks if the update flags indicate a pending health update.
-    pub fn has_health_update(&self) -> bool {
-        self.0 & CHR_SYNC_HEALTH_UPDATE != 0
-    }
+    /// Whether there is a pending health update.
+    pub has_health_update, _: 4;
+    _, set_has_health_update: 4;
 }
 
 #[repr(C)]
 /// Incoming health update, describes how much HP the ChrIns has left as well as how much damage it
 /// has taken since the last sync.
 pub struct ChrSyncHealthUpdate {
-    current_hp: u32,
-    damage_taken: u32,
+    pub current_hp: i32,
+    pub damage_taken: u32,
+}
+
+#[repr(C)]
+pub struct ChrSyncPlacementUpdate {
+    /// Position in MSB space.
+    pub position: F32Vector3,
+    /// Orientation in radians.
+    pub rotation: F32Vector3,
+    // these field used for dynamic geometry sync
+    unk18: F32Vector3,
+    unk24: u32,
+    unk28: FieldInsHandle,
+    unk30: u16,
+    unk34: u32,
 }

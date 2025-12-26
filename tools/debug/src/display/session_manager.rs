@@ -19,10 +19,8 @@ impl DebugDisplay for CSSessionManager {
             self.session_player_limit_override
         ));
 
-        ui.header("Members", || {
-            for player in self.players.items() {
-                player.render_debug(ui);
-            }
+        ui.list("Members", self.players.items(), |ui, _i, player| {
+            player.render_debug(ui);
         });
 
         if self.host_player.steam_id != 0x0 {

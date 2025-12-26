@@ -112,14 +112,40 @@ impl DebugDisplay for NetChrSetSync {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Character capacity: {}", self.capacity));
 
-        ui.header("Readback Flags", || {
-            self.update_flags()
-                .iter()
-                .enumerate()
-                .for_each(|e| ui.text(format!("{} {:016b}", e.0, e.1.0)));
-        });
+        ui.list(
+            "Placement Updates",
+            self.update_flags().iter(),
+            |ui, i, flags| {
+                let placement = &self.placement_updates()[i];
+                ui.header(&format!("Index {i}"), || {
+                    ui.text(format!(
+                        "Has Placement Update: {}",
+                        flags.has_placement_update()
+                    ));
+                    ui.text(format!(
+                        "Position: ({},{},{})",
+                        placement.position.0, placement.position.1, placement.position.2
+                    ));
+                    ui.text(format!(
+                        "Orientation: ({},{},{})",
+                        placement.rotation.0, placement.rotation.1, placement.rotation.2
+                    ));
+                });
+            },
+        );
 
-        ui.text(format!("Character capacity: {}", self.capacity));
+        ui.list(
+            "Health Updates",
+            self.update_flags().iter(),
+            |ui, i, flags| {
+                let health = &self.health_updates()[i];
+                ui.header(&format!("Index {i}"), || {
+                    ui.text(format!("Has Health Update: {}", flags.has_health_update()));
+                    ui.text(format!("Current HP: {}", health.current_hp));
+                    ui.text(format!("Damage Taken: {}", health.damage_taken));
+                });
+            },
+        );
     }
 }
 
