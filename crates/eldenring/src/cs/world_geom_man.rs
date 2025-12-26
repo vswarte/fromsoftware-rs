@@ -6,7 +6,7 @@ use windows::core::PCWSTR;
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 use crate::position::BlockPosition;
 use crate::{Tree, Vector, param::ASSET_GEOMETORY_PARAM_ST, rva};
-use shared::{OwnedPtr, program::Program};
+use shared::{OwnedPtr, Subclass, Superclass, program::Program};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -257,12 +257,15 @@ pub struct CSWorldGeomInfoUnk {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Seems to describe how to draw the MSB part.
 pub struct CSMsbPartsGeom {
     pub msb_parts: CSMsbParts,
 }
 
 #[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(CSMsbPartsGeom, CSMsbPartsEne))]
 /// Seems to describe how to draw the MSB part.
 pub struct CSMsbParts {
     vfptr: usize,
@@ -274,6 +277,7 @@ pub struct CSMsbParts {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSMsbPartsEne {
     pub cs_msb_parts: CSMsbParts,

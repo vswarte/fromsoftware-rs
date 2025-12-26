@@ -1,8 +1,8 @@
 use eldenring::cs::{
     CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrTimeActModule, ChrAsm,
-    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, EquipGameData,
-    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
-    PlayerIns,
+    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass,
+    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
+    PlayerGameData, PlayerIns,
 };
 use hudhook::imgui::{TableColumnSetup, Ui};
 
@@ -10,7 +10,7 @@ use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for PlayerIns {
     fn render_debug(&self, ui: &Ui) {
-        self.chr_ins.render_debug(ui);
+        chr_ins_common_debug(&self.chr_ins, ui);
 
         ui.header("ChrAsm", || {
             self.chr_asm.render_debug(ui);
@@ -503,53 +503,60 @@ impl DebugDisplay for EquipInventoryData {
 
 impl DebugDisplay for ChrIns {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Team: {}", self.team_type));
-
-        ui.text(format!("Block ID: {}", self.block_id_1));
-
-        ui.text(format!("Last hit by: {}", self.last_hit_by));
-        ui.text(format!("TAE use item: {:?}", self.tae_queued_use_item));
-
-        ui.text(format!(
-            "Block center origin 1: {}",
-            self.block_origin_override
-        ));
-        ui.text(format!("Block center origin 2: {}", self.block_origin));
-
-        ui.header("Special Effect", || {
-            ui.table(
-                "chr-ins-special-effects",
-                [
-                    TableColumnSetup::new("ID"),
-                    TableColumnSetup::new("Timer"),
-                    TableColumnSetup::new("Removal timer"),
-                    TableColumnSetup::new("Duration"),
-                    TableColumnSetup::new("Interval Timer"),
-                ],
-                self.special_effect.entries(),
-                |ui, _i, entry| {
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.param_id));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.interval_timer));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.removal_timer));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.duration));
-
-                    ui.table_next_column();
-                    ui.text(format!("{}", entry.interval_timer));
-                },
-            );
-        });
-
-        ui.header("Modules", || {
-            self.module_container.render_debug(ui);
-        });
+        match ChrInsSubclass::from(self) {
+            ChrInsSubclass::PlayerIns(player) => player.render_debug(ui),
+            _ => chr_ins_common_debug(self, ui),
+        }
     }
+}
+
+fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
+    ui.text(format!("Team: {}", chr_ins.team_type));
+
+    ui.text(format!("Block ID: {}", chr_ins.block_id_1));
+
+    ui.text(format!("Last hit by: {}", chr_ins.last_hit_by));
+    ui.text(format!("TAE use item: {:?}", chr_ins.tae_queued_use_item));
+
+    ui.text(format!(
+        "Block center origin 1: {}",
+        chr_ins.block_origin_override
+    ));
+    ui.text(format!("Block center origin 2: {}", chr_ins.block_origin));
+
+    ui.header("Special Effect", || {
+        ui.table(
+            "chr-ins-special-effects",
+            [
+                TableColumnSetup::new("ID"),
+                TableColumnSetup::new("Timer"),
+                TableColumnSetup::new("Removal timer"),
+                TableColumnSetup::new("Duration"),
+                TableColumnSetup::new("Interval Timer"),
+            ],
+            chr_ins.special_effect.entries(),
+            |ui, _i, entry| {
+                ui.table_next_column();
+                ui.text(format!("{}", entry.param_id));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.interval_timer));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.removal_timer));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.duration));
+
+                ui.table_next_column();
+                ui.text(format!("{}", entry.interval_timer));
+            },
+        );
+    });
+
+    ui.header("Modules", || {
+        chr_ins.module_container.render_debug(ui);
+    });
 }
 
 impl DebugDisplay for ChrInsModuleContainer {
