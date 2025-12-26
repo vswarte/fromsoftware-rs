@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::cs::{
     BlockId, CSEzTask, CSEzUpdateTask, CSRandSFMT, CSRandXorshift, MultiplayRole, PartyMemberInfo,
     SummonParamType,
@@ -177,8 +179,8 @@ pub enum ForceCamRotationMethod {
 }
 
 impl FromStatic for GameMan {
-    fn name() -> String {
-        "GameMan".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("GameMan")
     }
 
     unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {

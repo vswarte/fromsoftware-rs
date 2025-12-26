@@ -1,4 +1,4 @@
-use std::ptr::NonNull;
+use std::{borrow::Cow, ptr::NonNull};
 
 use from_singleton::*;
 use pelite::pe64::{Pe, Rva};
@@ -33,7 +33,7 @@ pub type InstanceResult<T> = Result<T, InstanceError>;
 /// that have different ways of looking up their locations in-memory.
 pub trait FromStatic {
     /// The name of this object. Used for debugging purposes.
-    fn name() -> String;
+    fn name() -> Cow<'static, str>;
 
     /// Looks up the single global instance of this object.
     ///
@@ -60,8 +60,8 @@ pub trait FromStatic {
 /// Note: currently this never returns [GetInstanceError::NotFound], but callers
 /// shouldn't rely on that being true into the future.
 impl<T: FromSingleton> FromStatic for T {
-    fn name() -> String {
-        <Self as FromSingleton>::name().to_string()
+    fn name() -> Cow<'static, str> {
+        <Self as FromSingleton>::name()
     }
 
     /// ## Safety

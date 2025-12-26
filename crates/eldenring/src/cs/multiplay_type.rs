@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::cs::{ChrType, FullScreenMessage};
 use bitfield::bitfield;
 use shared::{FromStatic, load_static_direct};
@@ -235,8 +237,8 @@ pub struct MultiplayProperties {
 }
 
 impl FromStatic for MultiplayProperties {
-    fn name() -> String {
-        "MultiplayProperties".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("MultiplayProperties")
     }
 
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {

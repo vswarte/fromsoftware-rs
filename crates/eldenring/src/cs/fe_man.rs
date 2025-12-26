@@ -98,7 +98,10 @@ pub struct CSFeManImp {
     pub get_item_log_view_model: [u8; 0x1d48],
     unk82a8: [u8; 8],
     pub clock_view_model: usize,
-    unk82b0: [u8; 16],
+    unk82b0: [u8; 8],
+    /// Don't update intermediate `frontend_values` data each frame in the `CSMenuMan` update task
+    pub disable_updates: bool,
+    unk82c1: [u8; 7],
     /// Tag of the debug player
     pub debug_tag: TagHudData,
     unk83f0: [u8; 48],
@@ -311,9 +314,9 @@ pub struct TagHudData {
     /// Handle to the tag owner character
     pub field_ins_handle: FieldInsHandle,
     /// Position of the tag on the screen - X
-    pub screen_pos_x: f32,
+    pub screen_pos_x: i32,
     /// Position of the tag on the screen - Y
-    pub screen_pos_y: f32,
+    pub screen_pos_y: i32,
     /// Current hp of the character
     pub hp: u32,
     unk1c: [u8; 0x4],

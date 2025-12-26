@@ -15,7 +15,7 @@ use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
 use crate::cs::world_geom_man::CSMsbPartsEne;
-use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, ItemId};
+use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
@@ -127,7 +127,7 @@ pub struct ChrIns {
     pub stamina_recovery_modifier: f32,
     unkec: [u8; 0x74],
     /// Used by TAE's UseGoods to figure out what item to actually apply.
-    pub tae_queued_use_item: ItemId,
+    pub tae_queued_use_item: OptionalItemId,
     unk164: u32,
     unk168: u32,
     unk16c: u32,
@@ -439,7 +439,7 @@ pub struct ChrInsModuleContainer {
     magic: usize,
     /// Describes the characters physics-related properties.
     pub physics: OwnedPtr<CSChrPhysicsModule>,
-    fall: usize,
+    pub fall: OwnedPtr<CSChrFallModule>,
     ladder: usize,
     pub action_request: OwnedPtr<CSChrActionRequestModule>,
     pub throw: OwnedPtr<CSChrThrowModule>,
@@ -1817,4 +1817,16 @@ pub enum ChrType {
     BloodyFingerNpc = 20,
     RecusantNpc = 21,
     Unk22 = 22,
+}
+
+#[repr(C)]
+/// Source of name: RTTI
+pub struct CSChrFallModule {
+    vftable: usize,
+    pub owner: NonNull<ChrIns>,
+    unk10: i64,
+    pub fall_timer: f32,
+    hamari_fall_death_checked: bool,
+    pub force_max_fall_height: bool,
+    pub disable_fall_motion: bool,
 }

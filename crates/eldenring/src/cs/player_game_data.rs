@@ -10,7 +10,7 @@ use crate::{
 };
 use shared::OwnedPtr;
 
-use crate::cs::{FieldInsHandle, GaitemHandle, ItemId};
+use crate::cs::{FieldInsHandle, GaitemHandle, ItemId, OptionalItemId};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -280,13 +280,13 @@ pub struct PlayerGameDataSpEffect {
 
 #[repr(C)]
 pub struct ItemReplenishStateEntry {
-    pub item_id: ItemId,
+    pub item_id: OptionalItemId,
     pub auto_replenish: bool,
 }
 
 #[repr(C)]
 pub struct ItemReplenishStateEntryUnk {
-    pub item_id: ItemId,
+    pub item_id: OptionalItemId,
     pub auto_replenish: bool,
 }
 
@@ -312,7 +312,7 @@ impl ItemReplenishStateTracker {
 
 #[repr(C)]
 pub struct QMItemBackupVectorItem {
-    pub item_id: ItemId,
+    pub item_id: OptionalItemId,
     pub quantity: u32,
 }
 
@@ -325,21 +325,21 @@ pub struct ChrAsmEquipEntries {
     pub weapon_secondary_right: ItemId,
     pub weapon_tertiary_left: ItemId,
     pub weapon_tertiary_right: ItemId,
-    pub arrow_primary: ItemId,
-    pub bolt_primary: ItemId,
-    pub arrow_secondary: ItemId,
-    pub bolt_secondary: ItemId,
-    pub arrow_tertiary: ItemId,
-    pub bolt_tertiary: ItemId,
+    pub arrow_primary: OptionalItemId,
+    pub bolt_primary: OptionalItemId,
+    pub arrow_secondary: OptionalItemId,
+    pub bolt_secondary: OptionalItemId,
+    pub arrow_tertiary: OptionalItemId,
+    pub bolt_tertiary: OptionalItemId,
     pub protector_head: ItemId,
     pub protector_chest: ItemId,
     pub protector_hands: ItemId,
     pub protector_legs: ItemId,
-    pub unused40: ItemId,
-    pub accessories: [ItemId; 4],
-    pub covenant: ItemId,
-    pub quick_tems: [ItemId; 10],
-    pub pouch: [ItemId; 6],
+    pub unused40: OptionalItemId,
+    pub accessories: [OptionalItemId; 4],
+    pub covenant: OptionalItemId,
+    pub quick_tems: [OptionalItemId; 10],
+    pub pouch: [OptionalItemId; 6],
 }
 
 #[repr(C)]
@@ -552,7 +552,7 @@ bitfield! {
 
 #[repr(C)]
 pub struct ItemIdMapping {
-    pub item_id: ItemId,
+    pub item_id: OptionalItemId,
     bits4: ItemIdMappingBits,
 }
 
@@ -575,7 +575,7 @@ pub struct EquipInventoryDataListEntry {
     /// Handle to the gaitem instance which describes additional properties to the inventory item,
     /// like durability and gems in the case of weapons.
     pub gaitem_handle: GaitemHandle,
-    pub item_id: ItemId,
+    pub item_id: OptionalItemId,
     /// Quantity of the item we have.
     pub quantity: u32,
     /// Sort ID used to sort items by acquisition order.
@@ -760,10 +760,10 @@ mod tests {
     #[test]
     fn test_item_id_mapping() {
         let mapping = ItemIdMapping {
-            item_id: ItemId::from(0x40002760),
+            item_id: OptionalItemId::from(0x40002760),
             bits4: ItemIdMappingBits(0x003B8000),
         };
-        assert_eq!(mapping.item_id, ItemId::from(0x40002760));
+        assert_eq!(mapping.item_id, OptionalItemId::from(0x40002760));
         assert_eq!(
             mapping.next_mapping_item(),
             ((mapping.bits4.0 >> 12) & 0xFFF) - 1

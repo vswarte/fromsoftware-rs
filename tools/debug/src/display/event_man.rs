@@ -4,83 +4,63 @@ use eldenring::cs::DisplayGhostData;
 use eldenring::cs::PhantomJoinData;
 use eldenring::cs::SosSignData;
 
-use hudhook::imgui::{TableColumnSetup, TreeNodeFlags, Ui};
+use hudhook::imgui::Ui;
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSEventManImp {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("CSEventSosSignCtrl", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("CSEventSosSignCtrl", || {
             let sos_sign_ctrl = self.sos_sign.as_ref();
-            if ui.collapsing_header("SosSignMan", TreeNodeFlags::empty()) {
-                ui.indent();
+            ui.header("SosSignMan", || {
                 if let Some(sos_sign_man) = sos_sign_ctrl.sos_sign_man {
                     unsafe { sos_sign_man.as_ref().render_debug(ui) };
                 }
-                ui.unindent();
-            }
-            ui.unindent();
-        }
+            });
+        });
     }
 }
 
 impl DebugDisplay for CSSosSignMan {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Signs", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.signs.iter().for_each(|entry| {
-                if ui.collapsing_header(format!("Sign {}", entry.sign_id), TreeNodeFlags::empty()) {
-                    entry.sign_data.render_debug(ui);
-                }
+    fn render_debug(&self, ui: &Ui) {
+        ui.list("Signs", self.signs.iter(), |ui, _i, entry| {
+            ui.header(&format!("Sign {}", entry.sign_id), || {
+                entry.sign_data.render_debug(ui);
             });
-            ui.unindent();
-        }
-        if ui.collapsing_header("Sign SFX", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.sign_sfx.iter().for_each(|entry| {
-                ui.text(format!("Sign ID: {}", entry.sign_id));
-            });
-            ui.unindent();
-        }
-        if ui.collapsing_header("Summon Requests", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.summon_requests.iter().for_each(|entry| {
+        });
+        ui.list("Sign SFX", self.sign_sfx.iter(), |ui, _i, entry| {
+            ui.text(format!("Sign ID: {}", entry.sign_id));
+        });
+        ui.list(
+            "Summon Requests",
+            self.summon_requests.iter(),
+            |ui, _i, entry| {
                 ui.text(format!("Summon Request ID: {entry}"));
-            });
-            ui.unindent();
-        }
-        if ui.collapsing_header("Join Data", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.join_data
-                .iter()
-                .map(|e| unsafe { e.as_ref() })
-                .for_each(|entry| {
-                    if ui.collapsing_header(
-                        format!("Join Data (Sign ID: {})", entry.sign_id),
-                        TreeNodeFlags::empty(),
-                    ) {
-                        entry.render_debug(ui);
-                    }
+            },
+        );
+
+        ui.list(
+            "Join Data",
+            self.join_data.iter().map(|e| unsafe { e.as_ref() }),
+            |ui, _i, entry| {
+                ui.header(&format!("Join Data (Sign ID: {})", entry.sign_id), || {
+                    entry.render_debug(ui);
                 });
-            ui.unindent();
-        }
+            },
+        );
 
         ui.text(format!(
             "White Sign Cool Time Param ID: {}",
             self.white_sign_cool_time_param_id
         ));
-        if ui.collapsing_header("Signs Cooldown", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.signs_cooldown
-                .items()
-                .iter()
-                .enumerate()
-                .for_each(|(i, t)| {
-                    ui.text(format!("Cooldown {i}: {t:.2}s"));
-                });
-            ui.unindent();
-        }
+
+        ui.list(
+            "Sign Cooldowns",
+            self.signs_cooldown.items().iter(),
+            |ui, i, t| {
+                ui.text(format!("Cooldown {}: {:.2}s", i, t));
+            },
+        );
 
         ui.text(format!(
             "Override Guardian of Rosalia Count Enabled: {}",
@@ -158,7 +138,7 @@ impl DebugDisplay for CSSosSignMan {
 }
 
 impl DebugDisplay for SosSignData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Sign ID: {}", self.sign_id));
         ui.text(format!("Sign Identifier: {}", self.sign_identifier.0));
         ui.text(format!("Map ID: {}", self.block_id));
@@ -178,11 +158,9 @@ impl DebugDisplay for SosSignData {
         ));
         ui.text(format!("FMG Name ID: {}", self.fmg_name_id));
         ui.text(format!("NPC Param ID: {}", self.npc_param_id));
-        if ui.collapsing_header("Display Ghost Data", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Display Ghost Data", || {
             self.display_ghost.render_debug(ui);
-            ui.unindent();
-        }
+        });
         ui.text(format!(
             "Summoned NPC Entity ID: {}",
             self.summoned_npc_entity_id
@@ -201,61 +179,46 @@ impl DebugDisplay for SosSignData {
 }
 
 impl DebugDisplay for DisplayGhostData {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if let Some(_t) = ui.begin_table_header(
-            "sign-data-equipment",
-            [
-                TableColumnSetup::new("Weapon Left 1"),
-                TableColumnSetup::new("Weapon Right 1"),
-                TableColumnSetup::new("Weapon Left 2"),
-                TableColumnSetup::new("Weapon Right 2"),
-                TableColumnSetup::new("Weapon Left 3"),
-                TableColumnSetup::new("Weapon Right 3"),
-                TableColumnSetup::new("Arrow 1"),
-                TableColumnSetup::new("Bolt 1"),
-                TableColumnSetup::new("Arrow 2"),
-                TableColumnSetup::new("Bolt 2"),
-                TableColumnSetup::new("Arrow 3"),
-                TableColumnSetup::new("Bolt 3"),
-            ],
-        ) {
-            ui.indent();
-            ui.table_next_row();
-            for i in 0..12 {
-                ui.table_next_column();
-                ui.text(format!("{}", self.equipment_param_ids[i as usize]));
-            }
-            ui.unindent();
-        }
-        if let Some(_t) = ui.begin_table_header(
-            "sign-data-protector",
-            [
-                TableColumnSetup::new("Head"),
-                TableColumnSetup::new("Chest"),
-                TableColumnSetup::new("Gauntlets"),
-                TableColumnSetup::new("Greaves"),
-                TableColumnSetup::new("Unused"),
-            ],
-        ) {
-            ui.indent();
-            ui.table_next_row();
-            for i in 0..5 {
-                ui.table_next_column();
-                ui.text(format!("{:?}", self.armor_param_ids[i as usize]));
-            }
-            ui.unindent();
-        }
+    fn render_debug(&self, ui: &Ui) {
+        ui.list(
+            "Equipment Param IDs",
+            self.equipment_param_ids.iter().zip([
+                "Weapon Left 1",
+                "Weapon Right 1",
+                "Weapon Left 2",
+                "Weapon Right 2",
+                "Weapon Left 3",
+                "Weapon Right 3",
+                "Arrow 1",
+                "Bolt 1",
+                "Arrow 2",
+                "Bolt 2",
+                "Arrow 3",
+                "Bolt 3",
+            ]),
+            |ui, _i, item| {
+                ui.text(format!("{}: {}", item.1, item.0));
+            },
+        );
+
+        ui.list(
+            "Protector Param IDs",
+            self.armor_param_ids
+                .iter()
+                .zip(["Head", "Chest", "Gauntlets", "Greaves", "Unused"]),
+            |ui, _i, item| {
+                ui.text(format!("{}: {}", item.1, item.0));
+            },
+        );
         ui.text(format!("Gender: {}", self.gender));
-        if ui.collapsing_header("Sign Equipment", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Selected Slots", || {
             self.asm_equipment.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for PhantomJoinData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Sign ID: {}", self.sign_id));
         ui.text(format!("Sign Identifier: {}", self.sign_identifier.0));
         ui.text(format!("Join Time: {}", self.join_time));

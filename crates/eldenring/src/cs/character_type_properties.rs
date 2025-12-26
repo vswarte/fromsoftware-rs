@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use shared::{FromStatic, load_static_direct};
 
 use crate::cs::ChrType;
@@ -46,8 +48,8 @@ pub struct CharacterTypePropertiesTable {
 }
 
 impl FromStatic for CharacterTypePropertiesTable {
-    fn name() -> String {
-        "CharacterTypePropertiesTable".to_string()
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("CharacterTypePropertiesTable")
     }
 
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
