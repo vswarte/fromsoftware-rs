@@ -1,28 +1,22 @@
 use eldenring::cs::{AutoInvadePointBlockEntry, CSAutoInvadePoint};
-use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSAutoInvadePoint {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Blocks", TreeNodeFlags::empty()) {
-            ui.indent();
-            for block_entry in self.entries.iter() {
-                if ui.collapsing_header(block_entry.block_id.to_string(), TreeNodeFlags::empty()) {
-                    ui.indent();
-                    block_entry.render_debug(ui);
-                    ui.unindent();
-                }
-            }
-            ui.unindent();
-        }
+    fn render_debug(&self, ui: &Ui) {
+        ui.list("Entries", self.entries.iter(), |ui, _i, block_entry| {
+            ui.header(&format!("Block {}", block_entry.block_id), || {
+                block_entry.render_debug(ui);
+            });
+        });
     }
 }
 
 impl DebugDisplay for AutoInvadePointBlockEntry {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if let Some(_t) = ui.begin_table_header_with_flags(
-            "cs-auto-invade-point-items",
+    fn render_debug(&self, ui: &hudhook::imgui::Ui) {
+        ui.table(
+            "items",
             [
                 TableColumnSetup::new("Index"),
                 TableColumnSetup::new("X"),
@@ -30,12 +24,8 @@ impl DebugDisplay for AutoInvadePointBlockEntry {
                 TableColumnSetup::new("Z"),
                 TableColumnSetup::new("Yaw"),
             ],
-            TableFlags::RESIZABLE
-                | TableFlags::BORDERS
-                | TableFlags::ROW_BG
-                | TableFlags::SIZING_STRETCH_PROP,
-        ) {
-            for (i, item) in self.items().iter().enumerate() {
+            self.items().iter(),
+            |ui, i, item| {
                 ui.table_next_column();
                 ui.text(i.to_string());
                 ui.table_next_column();
@@ -46,7 +36,7 @@ impl DebugDisplay for AutoInvadePointBlockEntry {
                 ui.text(format!("{:.2}", item.position.2));
                 ui.table_next_column();
                 ui.text(format!("{:.2}", item.yaw));
-            }
-        }
+            },
+        );
     }
 }

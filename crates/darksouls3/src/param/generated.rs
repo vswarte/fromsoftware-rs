@@ -4,7 +4,13 @@
 
 /// Trait to perform safe param lookups.
 pub trait ParamDef {
+    /// The all-caps, snake-case name of the parameter definition.
     const NAME: &str;
+
+    /// The index in the global parameter repository of the *first*
+    /// parameter with this definition. Some definitions are re-used
+    /// across multiple parameters, which are usually contiguous in
+    /// the repository.
     const INDEX: usize;
 }
 
@@ -194,6 +200,7 @@ impl ACTIONBUTTON_PARAM_ST {
     pub fn set_same_category_action_display(&mut self, value: u8) {
         self.same_category_action_display = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -284,6 +291,7 @@ impl AI_SOUND_PARAM_ST {
     pub fn set_rank(&mut self, value: u8) {
         self.rank = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -1921,6 +1929,7 @@ impl ATK_PARAM_ST {
     pub fn set_atk_element_correct_id(&mut self, value: i32) {
         self.atk_element_correct_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -1986,7 +1995,7 @@ pub struct ATTACK_ELEMENT_CORRECT_PARAM_ST {
 
 impl ParamDef for ATTACK_ELEMENT_CORRECT_PARAM_ST {
     const NAME: &str = "ATTACK_ELEMENT_CORRECT_PARAM_ST";
-    const INDEX: usize = 3;
+    const INDEX: usize = 4;
 }
 
 impl ATTACK_ELEMENT_CORRECT_PARAM_ST {
@@ -2639,6 +2648,7 @@ impl ATTACK_ELEMENT_CORRECT_PARAM_ST {
     pub fn set_influence_luck_correct_rate_by_dark(&mut self, value: i16) {
         self.influence_luck_correct_rate_by_dark = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -2661,7 +2671,7 @@ pub struct BEHAVIOR_PARAM_ST {
 
 impl ParamDef for BEHAVIOR_PARAM_ST {
     const NAME: &str = "BEHAVIOR_PARAM_ST";
-    const INDEX: usize = 4;
+    const INDEX: usize = 5;
 }
 
 impl BEHAVIOR_PARAM_ST {
@@ -2744,6 +2754,7 @@ impl BEHAVIOR_PARAM_ST {
     pub fn set_hero_point(&mut self, value: u8) {
         self.hero_point = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -2765,7 +2776,7 @@ pub struct BONFIRE_WARP_PARAM_ST {
 
 impl ParamDef for BONFIRE_WARP_PARAM_ST {
     const NAME: &str = "BONFIRE_WARP_PARAM_ST";
-    const INDEX: usize = 5;
+    const INDEX: usize = 7;
 }
 
 impl BONFIRE_WARP_PARAM_ST {
@@ -2848,6 +2859,7 @@ impl BONFIRE_WARP_PARAM_ST {
     pub fn set_online_area_id2(&mut self, value: i32) {
         self.online_area_id2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -2885,7 +2897,7 @@ pub struct BUDGET_PARAM_ST {
 
 impl ParamDef for BUDGET_PARAM_ST {
     const NAME: &str = "BUDGET_PARAM_ST";
-    const INDEX: usize = 6;
+    const INDEX: usize = 8;
 }
 
 impl BUDGET_PARAM_ST {
@@ -3096,6 +3108,7 @@ impl BUDGET_PARAM_ST {
     pub fn set_havok_navimesh(&mut self, value: f32) {
         self.havok_navimesh = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -3108,7 +3121,7 @@ pub struct BULLET_CREATE_LIMIT_PARAM_ST {
 
 impl ParamDef for BULLET_CREATE_LIMIT_PARAM_ST {
     const NAME: &str = "BULLET_CREATE_LIMIT_PARAM_ST";
-    const INDEX: usize = 7;
+    const INDEX: usize = 10;
 }
 
 impl BULLET_CREATE_LIMIT_PARAM_ST {
@@ -3119,6 +3132,7 @@ impl BULLET_CREATE_LIMIT_PARAM_ST {
     pub fn set_max_ammount(&mut self, value: u8) {
         self.max_ammount = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -3207,7 +3221,7 @@ pub struct BULLET_PARAM_ST {
 
 impl ParamDef for BULLET_PARAM_ST {
     const NAME: &str = "BULLET_PARAM_ST";
-    const INDEX: usize = 8;
+    const INDEX: usize = 9;
 }
 
 impl BULLET_PARAM_ST {
@@ -4066,6 +4080,7 @@ impl BULLET_PARAM_ST {
     pub fn set_lock_shoot_correction_ang(&mut self, value: f32) {
         self.lock_shoot_correction_ang = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -4096,7 +4111,7 @@ pub struct CACL_CORRECT_GRAPH_ST {
 
 impl ParamDef for CACL_CORRECT_GRAPH_ST {
     const NAME: &str = "CACL_CORRECT_GRAPH_ST";
-    const INDEX: usize = 9;
+    const INDEX: usize = 11;
 }
 
 impl CACL_CORRECT_GRAPH_ST {
@@ -4251,6 +4266,7 @@ impl CACL_CORRECT_GRAPH_ST {
     pub fn set_boundry_value(&mut self, value: f32) {
         self.boundry_value = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -4271,7 +4287,7 @@ pub struct CEREMONY_PARAM_ST {
 
 impl ParamDef for CEREMONY_PARAM_ST {
     const NAME: &str = "CEREMONY_PARAM_ST";
-    const INDEX: usize = 10;
+    const INDEX: usize = 12;
 }
 
 impl CEREMONY_PARAM_ST {
@@ -4346,6 +4362,7 @@ impl CEREMONY_PARAM_ST {
     pub fn set_is_disable_online(&mut self, value: u8) {
         self.is_disable_online = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -4474,7 +4491,7 @@ pub struct CHARACTER_INIT_PARAM {
 
 impl ParamDef for CHARACTER_INIT_PARAM {
     const NAME: &str = "CHARACTER_INIT_PARAM";
-    const INDEX: usize = 11;
+    const INDEX: usize = 14;
 }
 
 impl CHARACTER_INIT_PARAM {
@@ -5405,6 +5422,7 @@ impl CHARACTER_INIT_PARAM {
     pub fn set_secondary_item_num_08(&mut self, value: u8) {
         self.secondary_item_num_08 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -5420,7 +5438,7 @@ pub struct CHARACTER_LOAD_PARAM_ST {
 
 impl ParamDef for CHARACTER_LOAD_PARAM_ST {
     const NAME: &str = "CHARACTER_LOAD_PARAM_ST";
-    const INDEX: usize = 12;
+    const INDEX: usize = 13;
 }
 
 impl CHARACTER_LOAD_PARAM_ST {
@@ -5463,6 +5481,7 @@ impl CHARACTER_LOAD_PARAM_ST {
     pub fn set_snd_chr_type(&mut self, value: u8) {
         self.snd_chr_type = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -5481,7 +5500,7 @@ pub struct CHARMAKEMENUTOP_PARAM_ST {
 
 impl ParamDef for CHARMAKEMENUTOP_PARAM_ST {
     const NAME: &str = "CHARMAKEMENUTOP_PARAM_ST";
-    const INDEX: usize = 13;
+    const INDEX: usize = 16;
 }
 
 impl CHARMAKEMENUTOP_PARAM_ST {
@@ -5532,6 +5551,7 @@ impl CHARMAKEMENUTOP_PARAM_ST {
     pub fn set_menu_type(&mut self, value: i8) {
         self.menu_type = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -5546,7 +5566,7 @@ pub struct CHARMAKEMENU_LISTITEM_PARAM_ST {
 
 impl ParamDef for CHARMAKEMENU_LISTITEM_PARAM_ST {
     const NAME: &str = "CHARMAKEMENU_LISTITEM_PARAM_ST";
-    const INDEX: usize = 14;
+    const INDEX: usize = 15;
 }
 
 impl CHARMAKEMENU_LISTITEM_PARAM_ST {
@@ -5573,6 +5593,7 @@ impl CHARMAKEMENU_LISTITEM_PARAM_ST {
     pub fn set_icon_id(&mut self, value: u8) {
         self.icon_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -5611,7 +5632,7 @@ pub struct CLEAR_COUNT_CORRECT_PARAM_ST {
 
 impl ParamDef for CLEAR_COUNT_CORRECT_PARAM_ST {
     const NAME: &str = "CLEAR_COUNT_CORRECT_PARAM_ST";
-    const INDEX: usize = 15;
+    const INDEX: usize = 17;
 }
 
 impl CLEAR_COUNT_CORRECT_PARAM_ST {
@@ -5830,6 +5851,7 @@ impl CLEAR_COUNT_CORRECT_PARAM_ST {
     pub fn set_sub_hp_recover(&mut self, value: f32) {
         self.sub_hp_recover = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -5848,7 +5870,7 @@ pub struct COOL_TIME_PARAM_ST {
 
 impl ParamDef for COOL_TIME_PARAM_ST {
     const NAME: &str = "COOL_TIME_PARAM_ST";
-    const INDEX: usize = 16;
+    const INDEX: usize = 18;
 }
 
 impl COOL_TIME_PARAM_ST {
@@ -5915,6 +5937,7 @@ impl COOL_TIME_PARAM_ST {
     pub fn set_observation_time_3(&mut self, value: f32) {
         self.observation_time_3 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -5932,7 +5955,7 @@ pub struct CULT_SETTING_PARAM_ST {
 
 impl ParamDef for CULT_SETTING_PARAM_ST {
     const NAME: &str = "CULT_SETTING_PARAM_ST";
-    const INDEX: usize = 17;
+    const INDEX: usize = 19;
 }
 
 impl CULT_SETTING_PARAM_ST {
@@ -5983,6 +6006,7 @@ impl CULT_SETTING_PARAM_ST {
     pub fn set_cult_state2(&mut self, value: i8) {
         self.cult_state2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -6061,7 +6085,7 @@ pub struct DECAL_PARAM_ST {
 
 impl ParamDef for DECAL_PARAM_ST {
     const NAME: &str = "DECAL_PARAM_ST";
-    const INDEX: usize = 18;
+    const INDEX: usize = 20;
 }
 
 impl DECAL_PARAM_ST {
@@ -6670,6 +6694,7 @@ impl DECAL_PARAM_ST {
     pub fn set_fade_in_time_sec(&mut self, value: f32) {
         self.fade_in_time_sec = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -6682,7 +6707,7 @@ pub struct DIRECTION_CAMERA_PARAM_ST {
 
 impl ParamDef for DIRECTION_CAMERA_PARAM_ST {
     const NAME: &str = "DIRECTION_CAMERA_PARAM_ST";
-    const INDEX: usize = 19;
+    const INDEX: usize = 21;
 }
 
 impl DIRECTION_CAMERA_PARAM_ST {
@@ -6695,6 +6720,7 @@ impl DIRECTION_CAMERA_PARAM_ST {
     pub fn set_is_use_option(&mut self, value: u8) {
         self.bits_0 = (self.bits_0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -6717,7 +6743,7 @@ pub struct EQUIP_MTRL_SET_PARAM_ST {
 
 impl ParamDef for EQUIP_MTRL_SET_PARAM_ST {
     const NAME: &str = "EQUIP_MTRL_SET_PARAM_ST";
-    const INDEX: usize = 20;
+    const INDEX: usize = 22;
 }
 
 impl EQUIP_MTRL_SET_PARAM_ST {
@@ -6850,6 +6876,7 @@ impl EQUIP_MTRL_SET_PARAM_ST {
     pub fn set_is_disable_disp_num05(&mut self, value: u8) {
         self.bits_19 = (self.bits_19 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -6893,7 +6920,7 @@ pub struct EQUIP_PARAM_ACCESSORY_ST {
 
 impl ParamDef for EQUIP_PARAM_ACCESSORY_ST {
     const NAME: &str = "EQUIP_PARAM_ACCESSORY_ST";
-    const INDEX: usize = 21;
+    const INDEX: usize = 23;
 }
 
 impl EQUIP_PARAM_ACCESSORY_ST {
@@ -7198,6 +7225,7 @@ impl EQUIP_PARAM_ACCESSORY_ST {
     pub fn set_resident_sp_effect_id4(&mut self, value: i32) {
         self.resident_sp_effect_id4 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -7260,7 +7288,7 @@ pub struct EQUIP_PARAM_GOODS_ST {
 
 impl ParamDef for EQUIP_PARAM_GOODS_ST {
     const NAME: &str = "EQUIP_PARAM_GOODS_ST";
-    const INDEX: usize = 22;
+    const INDEX: usize = 24;
 }
 
 impl EQUIP_PARAM_GOODS_ST {
@@ -8099,6 +8127,7 @@ impl EQUIP_PARAM_GOODS_ST {
     pub fn set_use_limit_category2(&mut self, value: i16) {
         self.use_limit_category2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -8314,7 +8343,7 @@ pub struct EQUIP_PARAM_PROTECTOR_ST {
 
 impl ParamDef for EQUIP_PARAM_PROTECTOR_ST {
     const NAME: &str = "EQUIP_PARAM_PROTECTOR_ST";
-    const INDEX: usize = 23;
+    const INDEX: usize = 25;
 }
 
 impl EQUIP_PARAM_PROTECTOR_ST {
@@ -10461,6 +10490,7 @@ impl EQUIP_PARAM_PROTECTOR_ST {
     pub fn set_mask97(&mut self, value: u8) {
         self.mask97 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -10670,7 +10700,7 @@ pub struct EQUIP_PARAM_WEAPON_ST {
 
 impl ParamDef for EQUIP_PARAM_WEAPON_ST {
     const NAME: &str = "EQUIP_PARAM_WEAPON_ST";
-    const INDEX: usize = 24;
+    const INDEX: usize = 26;
 }
 
 impl EQUIP_PARAM_WEAPON_ST {
@@ -12721,6 +12751,7 @@ impl EQUIP_PARAM_WEAPON_ST {
     pub fn set_level_sync_correct_id(&mut self, value: i16) {
         self.level_sync_correct_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -12751,7 +12782,7 @@ pub struct ESTUS_FLASK_RECOVERY_PARAM_ST {
 
 impl ParamDef for ESTUS_FLASK_RECOVERY_PARAM_ST {
     const NAME: &str = "ESTUS_FLASK_RECOVERY_PARAM_ST";
-    const INDEX: usize = 25;
+    const INDEX: usize = 42;
 }
 
 impl ESTUS_FLASK_RECOVERY_PARAM_ST {
@@ -12914,6 +12945,7 @@ impl ESTUS_FLASK_RECOVERY_PARAM_ST {
     pub fn set_param_replace_id(&mut self, value: i32) {
         self.param_replace_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -13060,7 +13092,7 @@ pub struct FACE_GEN_PARAM_ST {
 
 impl ParamDef for FACE_GEN_PARAM_ST {
     const NAME: &str = "FACE_GEN_PARAM_ST";
-    const INDEX: usize = 26;
+    const INDEX: usize = 27;
 }
 
 impl FACE_GEN_PARAM_ST {
@@ -14151,6 +14183,7 @@ impl FACE_GEN_PARAM_ST {
     pub fn set_decal_scale(&mut self, value: u8) {
         self.decal_scale = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -14336,7 +14369,7 @@ pub struct FACE_PARAM_ST {
 
 impl ParamDef for FACE_PARAM_ST {
     const NAME: &str = "FACE_PARAM_ST";
-    const INDEX: usize = 27;
+    const INDEX: usize = 28;
 }
 
 impl FACE_PARAM_ST {
@@ -15731,6 +15764,7 @@ impl FACE_PARAM_ST {
     pub fn set_face_geo_asym_data31(&mut self, value: u8) {
         self.face_geo_asym_data31 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -15887,7 +15921,7 @@ pub struct FACE_RANGE_PARAM_ST {
 
 impl ParamDef for FACE_RANGE_PARAM_ST {
     const NAME: &str = "FACE_RANGE_PARAM_ST";
-    const INDEX: usize = 28;
+    const INDEX: usize = 29;
 }
 
 impl FACE_RANGE_PARAM_ST {
@@ -16666,6 +16700,7 @@ impl FACE_RANGE_PARAM_ST {
     pub fn set_face_tex_data35(&mut self, value: f32) {
         self.face_tex_data35 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -16876,7 +16911,7 @@ pub struct FOOT_SFX_PARAM_ST {
 
 impl ParamDef for FOOT_SFX_PARAM_ST {
     const NAME: &str = "FOOT_SFX_PARAM_ST";
-    const INDEX: usize = 29;
+    const INDEX: usize = 30;
 }
 
 impl FOOT_SFX_PARAM_ST {
@@ -18479,6 +18514,7 @@ impl FOOT_SFX_PARAM_ST {
     pub fn set_sfx_id_199(&mut self, value: u32) {
         self.sfx_id_199 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -18505,7 +18541,7 @@ pub struct GAME_AREA_PARAM_ST {
 
 impl ParamDef for GAME_AREA_PARAM_ST {
     const NAME: &str = "GAME_AREA_PARAM_ST";
-    const INDEX: usize = 30;
+    const INDEX: usize = 31;
 }
 
 impl GAME_AREA_PARAM_ST {
@@ -18628,6 +18664,7 @@ impl GAME_AREA_PARAM_ST {
     pub fn set_solo_break_in_point_max(&mut self, value: i32) {
         self.solo_break_in_point_max = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -18641,7 +18678,7 @@ pub struct GAME_PROGRESS_PARAM_ST {
 
 impl ParamDef for GAME_PROGRESS_PARAM_ST {
     const NAME: &str = "GAME_PROGRESS_PARAM_ST";
-    const INDEX: usize = 31;
+    const INDEX: usize = 32;
 }
 
 impl GAME_PROGRESS_PARAM_ST {
@@ -18660,6 +18697,7 @@ impl GAME_PROGRESS_PARAM_ST {
     pub fn set_progress_id(&mut self, value: u8) {
         self.progress_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -18679,7 +18717,7 @@ pub struct GEMEFFECT_PARAM_ST {
 
 impl ParamDef for GEMEFFECT_PARAM_ST {
     const NAME: &str = "GEMEFFECT_PARAM_ST";
-    const INDEX: usize = 32;
+    const INDEX: usize = 36;
 }
 
 impl GEMEFFECT_PARAM_ST {
@@ -18746,6 +18784,7 @@ impl GEMEFFECT_PARAM_ST {
     pub fn set_sp_effect_id_for_atk(&mut self, value: i32) {
         self.sp_effect_id_for_atk = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -18958,6 +18997,7 @@ impl GEM_CATEGORY_PARAM_ST {
     pub fn set_affinity_modify_rate_3(&mut self, value: f32) {
         self.affinity_modify_rate_3 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -19133,6 +19173,7 @@ impl GEM_DROP_DOPING_PARAM_ST {
     pub fn set_directional_id_rate_7(&mut self, value: f32) {
         self.directional_id_rate_7 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -19425,6 +19466,7 @@ impl GEM_DROP_MODIFY_PARAM_ST {
     pub fn set_normal_distribution_sigma(&mut self, value: i32) {
         self.normal_distribution_sigma = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -19472,7 +19514,7 @@ pub struct GEM_GEN_PARAM_ST {
 
 impl ParamDef for GEM_GEN_PARAM_ST {
     const NAME: &str = "GEM_GEN_PARAM_ST";
-    const INDEX: usize = 36;
+    const INDEX: usize = 37;
 }
 
 impl GEM_GEN_PARAM_ST {
@@ -19749,6 +19791,7 @@ impl GEM_GEN_PARAM_ST {
     pub fn set_negativize_rate_5(&mut self, value: f32) {
         self.negativize_rate_5 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -19895,7 +19938,7 @@ pub struct HIT_EFFECT_SE_PARAM_ST {
 
 impl ParamDef for HIT_EFFECT_SE_PARAM_ST {
     const NAME: &str = "HIT_EFFECT_SE_PARAM_ST";
-    const INDEX: usize = 37;
+    const INDEX: usize = 38;
 }
 
 impl HIT_EFFECT_SE_PARAM_ST {
@@ -20978,6 +21021,7 @@ impl HIT_EFFECT_SE_PARAM_ST {
     pub fn set_energy_strong_blow_ll(&mut self, value: i32) {
         self.energy_strong_blow_ll = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -21028,7 +21072,7 @@ pub struct HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
 
 impl ParamDef for HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
     const NAME: &str = "HIT_EFFECT_SFX_CONCEPT_PARAM_ST";
-    const INDEX: usize = 38;
+    const INDEX: usize = 39;
 }
 
 impl HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
@@ -21127,6 +21171,7 @@ impl HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
     pub fn set_atk_none_2(&mut self, value: i16) {
         self.atk_none_2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -21157,7 +21202,7 @@ pub struct HIT_EFFECT_SFX_PARAM_ST {
 
 impl ParamDef for HIT_EFFECT_SFX_PARAM_ST {
     const NAME: &str = "HIT_EFFECT_SFX_PARAM_ST";
-    const INDEX: usize = 39;
+    const INDEX: usize = 40;
 }
 
 impl HIT_EFFECT_SFX_PARAM_ST {
@@ -21320,6 +21365,7 @@ impl HIT_EFFECT_SFX_PARAM_ST {
     pub fn set_neutral_specific2(&mut self, value: i32) {
         self.neutral_specific2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -21353,7 +21399,7 @@ pub struct HIT_MTRL_PARAM_ST {
 
 impl ParamDef for HIT_MTRL_PARAM_ST {
     const NAME: &str = "HIT_MTRL_PARAM_ST";
-    const INDEX: usize = 40;
+    const INDEX: usize = 41;
 }
 
 impl HIT_MTRL_PARAM_ST {
@@ -21566,6 +21612,7 @@ impl HIT_MTRL_PARAM_ST {
     pub fn set_sp_effect_id_on_hit1_clear_count_8(&mut self, value: i32) {
         self.sp_effect_id_on_hit1_clear_count_8 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -21632,7 +21679,7 @@ pub struct ITEMLOT_PARAM_ST {
 
 impl ParamDef for ITEMLOT_PARAM_ST {
     const NAME: &str = "ITEMLOT_PARAM_ST";
-    const INDEX: usize = 41;
+    const INDEX: usize = 43;
 }
 
 impl ITEMLOT_PARAM_ST {
@@ -22219,6 +22266,7 @@ impl ITEMLOT_PARAM_ST {
     pub fn set_clear_count(&mut self, value: i8) {
         self.clear_count = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -22260,7 +22308,7 @@ pub struct KNOCKBACK_PARAM_ST {
 
 impl ParamDef for KNOCKBACK_PARAM_ST {
     const NAME: &str = "KNOCKBACK_PARAM_ST";
-    const INDEX: usize = 42;
+    const INDEX: usize = 44;
 }
 
 impl KNOCKBACK_PARAM_ST {
@@ -22503,6 +22551,7 @@ impl KNOCKBACK_PARAM_ST {
     pub fn set_guard_brake_dec_time(&mut self, value: f32) {
         self.guard_brake_dec_time = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -22516,7 +22565,7 @@ pub struct KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
 
 impl ParamDef for KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
     const NAME: &str = "KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST";
-    const INDEX: usize = 43;
+    const INDEX: usize = 45;
 }
 
 impl KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
@@ -22535,6 +22584,7 @@ impl KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
     pub fn set_knowledge_id(&mut self, value: i32) {
         self.knowledge_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -22567,7 +22617,7 @@ pub struct LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
 
 impl ParamDef for LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
     const NAME: &str = "LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST";
-    const INDEX: usize = 44;
+    const INDEX: usize = 46;
 }
 
 impl LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
@@ -22738,6 +22788,7 @@ impl LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
     pub fn set_lv20(&mut self, value: f32) {
         self.lv20 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -22773,7 +22824,7 @@ pub struct LOAD_BALANCER_PARAM_ST {
 
 impl ParamDef for LOAD_BALANCER_PARAM_ST {
     const NAME: &str = "LOAD_BALANCER_PARAM_ST";
-    const INDEX: usize = 45;
+    const INDEX: usize = 47;
 }
 
 impl LOAD_BALANCER_PARAM_ST {
@@ -22920,6 +22971,7 @@ impl LOAD_BALANCER_PARAM_ST {
     pub fn set_load_balancer_val17(&mut self, value: u8) {
         self.load_balancer_val17 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -22949,7 +23001,7 @@ pub struct LOCK_CAM_PARAM_ST {
 
 impl ParamDef for LOCK_CAM_PARAM_ST {
     const NAME: &str = "LOCK_CAM_PARAM_ST";
-    const INDEX: usize = 46;
+    const INDEX: usize = 48;
 }
 
 impl LOCK_CAM_PARAM_ST {
@@ -23096,6 +23148,7 @@ impl LOCK_CAM_PARAM_ST {
     pub fn set_bullet_ang_range(&mut self, value: f32) {
         self.bullet_ang_range = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -23120,7 +23173,7 @@ pub struct LOD_BANK {
 
 impl ParamDef for LOD_BANK {
     const NAME: &str = "LOD_BANK";
-    const INDEX: usize = 47;
+    const INDEX: usize = 49;
 }
 
 impl LOD_BANK {
@@ -23219,6 +23272,7 @@ impl LOD_BANK {
     pub fn set_distance_scale_id(&mut self, value: u8) {
         self.distance_scale_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -23289,7 +23343,7 @@ pub struct MAGIC_PARAM_ST {
 
 impl ParamDef for MAGIC_PARAM_ST {
     const NAME: &str = "MAGIC_PARAM_ST";
-    const INDEX: usize = 48;
+    const INDEX: usize = 52;
 }
 
 impl MAGIC_PARAM_ST {
@@ -23968,6 +24022,7 @@ impl MAGIC_PARAM_ST {
     pub fn set_ref_id4(&mut self, value: i32) {
         self.ref_id4 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -23991,7 +24046,7 @@ pub struct MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
 
 impl ParamDef for MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
     const NAME: &str = "MAP_MIMICRY_ESTABLISHMENT_PARAM_ST";
-    const INDEX: usize = 49;
+    const INDEX: usize = 53;
 }
 
 impl MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
@@ -24090,6 +24145,7 @@ impl MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
     pub fn set_mimicry_end_sfx_id2(&mut self, value: i32) {
         self.mimicry_end_sfx_id2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24105,7 +24161,7 @@ pub struct MENUPROPERTY_LAYOUT {
 
 impl ParamDef for MENUPROPERTY_LAYOUT {
     const NAME: &str = "MENUPROPERTY_LAYOUT";
-    const INDEX: usize = 50;
+    const INDEX: usize = 55;
 }
 
 impl MENUPROPERTY_LAYOUT {
@@ -24140,6 +24196,7 @@ impl MENUPROPERTY_LAYOUT {
     pub fn set_help_text_id(&mut self, value: i32) {
         self.help_text_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24156,7 +24213,7 @@ pub struct MENUPROPERTY_SPEC {
 
 impl ParamDef for MENUPROPERTY_SPEC {
     const NAME: &str = "MENUPROPERTY_SPEC";
-    const INDEX: usize = 51;
+    const INDEX: usize = 56;
 }
 
 impl MENUPROPERTY_SPEC {
@@ -24207,6 +24264,7 @@ impl MENUPROPERTY_SPEC {
     pub fn set_adhoc_caption(&mut self, value: [u16; 9]) {
         self.adhoc_caption = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24230,7 +24288,7 @@ pub struct MENU_OFFSCR_REND_PARAM_ST {
 
 impl ParamDef for MENU_OFFSCR_REND_PARAM_ST {
     const NAME: &str = "MENU_OFFSCR_REND_PARAM_ST";
-    const INDEX: usize = 52;
+    const INDEX: usize = 54;
 }
 
 impl MENU_OFFSCR_REND_PARAM_ST {
@@ -24329,6 +24387,7 @@ impl MENU_OFFSCR_REND_PARAM_ST {
     pub fn set_gparam_id(&mut self, value: u32) {
         self.gparam_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24343,7 +24402,7 @@ pub struct MENU_PARAM_COLOR_TABLE_ST {
 
 impl ParamDef for MENU_PARAM_COLOR_TABLE_ST {
     const NAME: &str = "MENU_PARAM_COLOR_TABLE_ST";
-    const INDEX: usize = 53;
+    const INDEX: usize = 68;
 }
 
 impl MENU_PARAM_COLOR_TABLE_ST {
@@ -24378,6 +24437,7 @@ impl MENU_PARAM_COLOR_TABLE_ST {
     pub fn set_color_a(&mut self, value: u8) {
         self.color_a = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24392,7 +24452,7 @@ pub struct MENU_VALUE_TABLE_SPEC {
 
 impl ParamDef for MENU_VALUE_TABLE_SPEC {
     const NAME: &str = "MENU_VALUE_TABLE_SPEC";
-    const INDEX: usize = 54;
+    const INDEX: usize = 57;
 }
 
 impl MENU_VALUE_TABLE_SPEC {
@@ -24419,6 +24479,7 @@ impl MENU_VALUE_TABLE_SPEC {
     pub fn set_compare_type(&mut self, value: u8) {
         self.compare_type = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24453,7 +24514,7 @@ pub struct MODEL_SFX_PARAM_ST {
 
 impl ParamDef for MODEL_SFX_PARAM_ST {
     const NAME: &str = "MODEL_SFX_PARAM_ST";
-    const INDEX: usize = 55;
+    const INDEX: usize = 58;
 }
 
 impl MODEL_SFX_PARAM_ST {
@@ -24584,6 +24645,7 @@ impl MODEL_SFX_PARAM_ST {
     pub fn set_dmypoly_id_7(&mut self, value: i32) {
         self.dmypoly_id_7 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24633,7 +24695,7 @@ pub struct MOVE_PARAM_ST {
 
 impl ParamDef for MOVE_PARAM_ST {
     const NAME: &str = "MOVE_PARAM_ST";
-    const INDEX: usize = 56;
+    const INDEX: usize = 59;
 }
 
 impl MOVE_PARAM_ST {
@@ -24948,6 +25010,7 @@ impl MOVE_PARAM_ST {
     pub fn set_turn_wait_no_anim_angle(&mut self, value: u8) {
         self.turn_wait_no_anim_angle = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -24975,7 +25038,7 @@ pub struct MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
 
 impl ParamDef for MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
     const NAME: &str = "MULTI_ESTUS_FLASK_BONUS_PARAM_ST";
-    const INDEX: usize = 57;
+    const INDEX: usize = 61;
 }
 
 impl MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
@@ -25106,6 +25169,7 @@ impl MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
     pub fn set_yellow_monk(&mut self, value: u8) {
         self.yellow_monk = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -25121,7 +25185,7 @@ pub struct MULTI_PLAY_CORRECTION_PARAM_ST {
 
 impl ParamDef for MULTI_PLAY_CORRECTION_PARAM_ST {
     const NAME: &str = "MULTI_PLAY_CORRECTION_PARAM_ST";
-    const INDEX: usize = 58;
+    const INDEX: usize = 63;
 }
 
 impl MULTI_PLAY_CORRECTION_PARAM_ST {
@@ -25156,6 +25220,7 @@ impl MULTI_PLAY_CORRECTION_PARAM_ST {
     pub fn set_b_override_sp_effect(&mut self, value: i32) {
         self.b_override_sp_effect = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -25183,7 +25248,7 @@ pub struct MULTI_SOUL_BONUS_RATE_PARAM_ST {
 
 impl ParamDef for MULTI_SOUL_BONUS_RATE_PARAM_ST {
     const NAME: &str = "MULTI_SOUL_BONUS_RATE_PARAM_ST";
-    const INDEX: usize = 59;
+    const INDEX: usize = 64;
 }
 
 impl MULTI_SOUL_BONUS_RATE_PARAM_ST {
@@ -25314,6 +25379,7 @@ impl MULTI_SOUL_BONUS_RATE_PARAM_ST {
     pub fn set_soul_multiplier_rate15(&mut self, value: f32) {
         self.soul_multiplier_rate15 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -25330,7 +25396,7 @@ pub struct NETWORK_AREA_PARAM_ST {
 
 impl ParamDef for NETWORK_AREA_PARAM_ST {
     const NAME: &str = "NETWORK_AREA_PARAM_ST";
-    const INDEX: usize = 60;
+    const INDEX: usize = 65;
 }
 
 impl NETWORK_AREA_PARAM_ST {
@@ -25417,6 +25483,7 @@ impl NETWORK_AREA_PARAM_ST {
     pub fn set_enable_break_in_search(&mut self, value: u8) {
         self.bits_18 = (self.bits_18 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -25454,7 +25521,7 @@ pub struct NETWORK_MSG_PARAM_ST {
 
 impl ParamDef for NETWORK_MSG_PARAM_ST {
     const NAME: &str = "NETWORK_MSG_PARAM_ST";
-    const INDEX: usize = 61;
+    const INDEX: usize = 66;
 }
 
 impl NETWORK_MSG_PARAM_ST {
@@ -25657,6 +25724,7 @@ impl NETWORK_MSG_PARAM_ST {
     pub fn set_msg_id22(&mut self, value: i32) {
         self.msg_id22 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -25822,7 +25890,7 @@ pub struct NETWORK_PARAM_ST {
 
 impl ParamDef for NETWORK_PARAM_ST {
     const NAME: &str = "NETWORK_PARAM_ST";
-    const INDEX: usize = 62;
+    const INDEX: usize = 67;
 }
 
 impl NETWORK_PARAM_ST {
@@ -26969,6 +27037,7 @@ impl NETWORK_PARAM_ST {
     pub fn set_yellow_monk_overall_flow_time_out_time(&mut self, value: f32) {
         self.yellow_monk_overall_flow_time_out_time = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -26990,7 +27059,7 @@ pub struct NPC_AI_ACTION_PARAM_ST {
 
 impl ParamDef for NPC_AI_ACTION_PARAM_ST {
     const NAME: &str = "NPC_AI_ACTION_PARAM_ST";
-    const INDEX: usize = 63;
+    const INDEX: usize = 69;
 }
 
 impl NPC_AI_ACTION_PARAM_ST {
@@ -27073,6 +27142,7 @@ impl NPC_AI_ACTION_PARAM_ST {
     pub fn set_b_life_end_success(&mut self, value: u8) {
         self.b_life_end_success = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -27290,7 +27360,7 @@ pub struct NPC_PARAM_ST {
 
 impl ParamDef for NPC_PARAM_ST {
     const NAME: &str = "NPC_PARAM_ST";
-    const INDEX: usize = 64;
+    const INDEX: usize = 70;
 }
 
 impl NPC_PARAM_ST {
@@ -29489,6 +29559,7 @@ impl NPC_PARAM_ST {
     pub fn set_hearing_head_size(&mut self, value: f32) {
         self.hearing_head_size = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -29572,7 +29643,7 @@ pub struct NPC_THINK_PARAM_ST {
 
 impl ParamDef for NPC_THINK_PARAM_ST {
     const NAME: &str = "NPC_THINK_PARAM_ST";
-    const INDEX: usize = 65;
+    const INDEX: usize = 71;
 }
 
 impl NPC_THINK_PARAM_ST {
@@ -30181,6 +30252,7 @@ impl NPC_THINK_PARAM_ST {
     pub fn set_back_to_home_stuck_act(&mut self, value: u8) {
         self.back_to_home_stuck_act = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -30223,7 +30295,7 @@ pub struct OBJECT_MATERIAL_SFX_PARAM_ST {
 
 impl ParamDef for OBJECT_MATERIAL_SFX_PARAM_ST {
     const NAME: &str = "OBJECT_MATERIAL_SFX_PARAM_ST";
-    const INDEX: usize = 66;
+    const INDEX: usize = 73;
 }
 
 impl OBJECT_MATERIAL_SFX_PARAM_ST {
@@ -30482,6 +30554,7 @@ impl OBJECT_MATERIAL_SFX_PARAM_ST {
     pub fn set_sfx_id_31(&mut self, value: u32) {
         self.sfx_id_31 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -30549,7 +30622,7 @@ pub struct OBJECT_PARAM_ST {
 
 impl ParamDef for OBJECT_PARAM_ST {
     const NAME: &str = "OBJECT_PARAM_ST";
-    const INDEX: usize = 67;
+    const INDEX: usize = 74;
 }
 
 impl OBJECT_PARAM_ST {
@@ -31130,6 +31203,7 @@ impl OBJECT_PARAM_ST {
     pub fn set_break_landing_sfx_id(&mut self, value: i32) {
         self.break_landing_sfx_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -31160,7 +31234,7 @@ pub struct OBJ_ACT_PARAM_ST {
 
 impl ParamDef for OBJ_ACT_PARAM_ST {
     const NAME: &str = "OBJ_ACT_PARAM_ST";
-    const INDEX: usize = 68;
+    const INDEX: usize = 72;
 }
 
 impl OBJ_ACT_PARAM_ST {
@@ -31315,6 +31389,7 @@ impl OBJ_ACT_PARAM_ST {
     pub fn set_enable_treasure_delay_sec(&mut self, value: f32) {
         self.enable_treasure_delay_sec = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -31352,7 +31427,7 @@ pub struct PHANTOM_PARAM_ST {
 
 impl ParamDef for PHANTOM_PARAM_ST {
     const NAME: &str = "PHANTOM_PARAM_ST";
-    const INDEX: usize = 69;
+    const INDEX: usize = 75;
 }
 
 impl PHANTOM_PARAM_ST {
@@ -31563,6 +31638,7 @@ impl PHANTOM_PARAM_ST {
     pub fn set_is_no2_pass(&mut self, value: u8) {
         self.is_no2_pass = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -31598,7 +31674,7 @@ pub struct PLAY_REGION_PARAM_ST {
 
 impl ParamDef for PLAY_REGION_PARAM_ST {
     const NAME: &str = "PLAY_REGION_PARAM_ST";
-    const INDEX: usize = 70;
+    const INDEX: usize = 76;
 }
 
 impl PLAY_REGION_PARAM_ST {
@@ -31931,6 +32007,7 @@ impl PLAY_REGION_PARAM_ST {
     pub fn set_sign_puddle_open_event_flag_id(&mut self, value: i32) {
         self.sign_puddle_open_event_flag_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -31952,7 +32029,7 @@ pub struct PROTECTOR_GEN_PARAM_ST {
 
 impl ParamDef for PROTECTOR_GEN_PARAM_ST {
     const NAME: &str = "PROTECTOR_GEN_PARAM_ST";
-    const INDEX: usize = 71;
+    const INDEX: usize = 77;
 }
 
 impl PROTECTOR_GEN_PARAM_ST {
@@ -32043,6 +32120,7 @@ impl PROTECTOR_GEN_PARAM_ST {
     pub fn set_gem_gen_id_4(&mut self, value: i32) {
         self.gem_gen_id_4 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -32064,7 +32142,7 @@ pub struct RAGDOLL_PARAM_ST {
 
 impl ParamDef for RAGDOLL_PARAM_ST {
     const NAME: &str = "RAGDOLL_PARAM_ST";
-    const INDEX: usize = 72;
+    const INDEX: usize = 78;
 }
 
 impl RAGDOLL_PARAM_ST {
@@ -32147,6 +32225,7 @@ impl RAGDOLL_PARAM_ST {
     pub fn set_parts_hit_mask_no(&mut self, value: i8) {
         self.parts_hit_mask_no = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -32175,7 +32254,7 @@ pub struct REINFORCE_PARAM_PROTECTOR_ST {
 
 impl ParamDef for REINFORCE_PARAM_PROTECTOR_ST {
     const NAME: &str = "REINFORCE_PARAM_PROTECTOR_ST";
-    const INDEX: usize = 73;
+    const INDEX: usize = 79;
 }
 
 impl REINFORCE_PARAM_PROTECTOR_ST {
@@ -32314,6 +32393,7 @@ impl REINFORCE_PARAM_PROTECTOR_ST {
     pub fn set_resist_frost(&mut self, value: f32) {
         self.resist_frost = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -32359,7 +32439,7 @@ pub struct REINFORCE_PARAM_WEAPON_ST {
 
 impl ParamDef for REINFORCE_PARAM_WEAPON_ST {
     const NAME: &str = "REINFORCE_PARAM_WEAPON_ST";
-    const INDEX: usize = 74;
+    const INDEX: usize = 80;
 }
 
 impl REINFORCE_PARAM_WEAPON_ST {
@@ -32634,6 +32714,7 @@ impl REINFORCE_PARAM_WEAPON_ST {
     pub fn set_base_change_price_rate(&mut self, value: f32) {
         self.base_change_price_rate = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -32676,7 +32757,7 @@ pub struct ROLE_PARAM_ST {
 
 impl ParamDef for ROLE_PARAM_ST {
     const NAME: &str = "ROLE_PARAM_ST";
-    const INDEX: usize = 75;
+    const INDEX: usize = 81;
 }
 
 impl ROLE_PARAM_ST {
@@ -32911,6 +32992,7 @@ impl ROLE_PARAM_ST {
     pub fn set_non_player_summon_start_anim_id(&mut self, value: i32) {
         self.non_player_summon_start_anim_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -32923,7 +33005,7 @@ pub struct SE_MATERIAL_CONVERT_PARAM_ST {
 
 impl ParamDef for SE_MATERIAL_CONVERT_PARAM_ST {
     const NAME: &str = "SE_MATERIAL_CONVERT_PARAM_ST";
-    const INDEX: usize = 76;
+    const INDEX: usize = 82;
 }
 
 impl SE_MATERIAL_CONVERT_PARAM_ST {
@@ -32934,6 +33016,7 @@ impl SE_MATERIAL_CONVERT_PARAM_ST {
     pub fn set_se_material_id(&mut self, value: u8) {
         self.se_material_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -32956,7 +33039,7 @@ pub struct SHOP_LINEUP_PARAM {
 
 impl ParamDef for SHOP_LINEUP_PARAM {
     const NAME: &str = "SHOP_LINEUP_PARAM";
-    const INDEX: usize = 77;
+    const INDEX: usize = 83;
 }
 
 impl SHOP_LINEUP_PARAM {
@@ -33039,6 +33122,7 @@ impl SHOP_LINEUP_PARAM {
     pub fn set_value_magnification(&mut self, value: f32) {
         self.value_magnification = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -33075,7 +33159,7 @@ pub struct SKELETON_PARAM_ST {
 
 impl ParamDef for SKELETON_PARAM_ST {
     const NAME: &str = "SKELETON_PARAM_ST";
-    const INDEX: usize = 78;
+    const INDEX: usize = 84;
 }
 
 impl SKELETON_PARAM_ST {
@@ -33278,6 +33362,7 @@ impl SKELETON_PARAM_ST {
     pub fn set_neck_turn_max_angle(&mut self, value: u8) {
         self.neck_turn_max_angle = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -33540,7 +33625,7 @@ pub struct SP_EFFECT_PARAM_ST {
 
 impl ParamDef for SP_EFFECT_PARAM_ST {
     const NAME: &str = "SP_EFFECT_PARAM_ST";
-    const INDEX: usize = 79;
+    const INDEX: usize = 85;
 }
 
 impl SP_EFFECT_PARAM_ST {
@@ -36247,6 +36332,7 @@ impl SP_EFFECT_PARAM_ST {
     pub fn set_delete_criteria_damage(&mut self, value: i8) {
         self.delete_criteria_damage = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -36308,7 +36394,7 @@ pub struct SP_EFFECT_VFX_PARAM_ST {
 
 impl ParamDef for SP_EFFECT_VFX_PARAM_ST {
     const NAME: &str = "SP_EFFECT_VFX_PARAM_ST";
-    const INDEX: usize = 80;
+    const INDEX: usize = 86;
 }
 
 impl SP_EFFECT_VFX_PARAM_ST {
@@ -36829,6 +36915,7 @@ impl SP_EFFECT_VFX_PARAM_ST {
     pub fn set_ember_effect_glow(&mut self, value: f32) {
         self.ember_effect_glow = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -36854,7 +36941,7 @@ pub struct SWORD_ARTS_PARAM_ST {
 
 impl ParamDef for SWORD_ARTS_PARAM_ST {
     const NAME: &str = "SWORD_ARTS_PARAM_ST";
-    const INDEX: usize = 81;
+    const INDEX: usize = 87;
 }
 
 impl SWORD_ARTS_PARAM_ST {
@@ -37001,6 +37088,7 @@ impl SWORD_ARTS_PARAM_ST {
     pub fn set_shield_icon_type(&mut self, value: i8) {
         self.shield_icon_type = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -37023,7 +37111,7 @@ pub struct TALK_PARAM_ST {
 
 impl ParamDef for TALK_PARAM_ST {
     const NAME: &str = "TALK_PARAM_ST";
-    const INDEX: usize = 82;
+    const INDEX: usize = 88;
 }
 
 impl TALK_PARAM_ST {
@@ -37122,6 +37210,7 @@ impl TALK_PARAM_ST {
     pub fn set_talk_duration(&mut self, value: f32) {
         self.talk_duration = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -37163,7 +37252,7 @@ pub struct THROW_DIRECTION_SFX_PARAM_ST {
 
 impl ParamDef for THROW_DIRECTION_SFX_PARAM_ST {
     const NAME: &str = "THROW_DIRECTION_SFX_PARAM_ST";
-    const INDEX: usize = 83;
+    const INDEX: usize = 89;
 }
 
 impl THROW_DIRECTION_SFX_PARAM_ST {
@@ -37406,6 +37495,7 @@ impl THROW_DIRECTION_SFX_PARAM_ST {
     pub fn set_sfx_id_29(&mut self, value: i32) {
         self.sfx_id_29 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -37450,7 +37540,7 @@ pub struct THROW_INFO_BANK {
 
 impl ParamDef for THROW_INFO_BANK {
     const NAME: &str = "THROW_INFO_BANK";
-    const INDEX: usize = 84;
+    const INDEX: usize = 90;
 }
 
 impl THROW_INFO_BANK {
@@ -37753,6 +37843,7 @@ impl THROW_INFO_BANK {
     pub fn set_judge_range_base_pos_dmy_id2(&mut self, value: i32) {
         self.judge_range_base_pos_dmy_id2 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -37769,7 +37860,7 @@ pub struct TOUGHNESS_PARAM_ST {
 
 impl ParamDef for TOUGHNESS_PARAM_ST {
     const NAME: &str = "TOUGHNESS_PARAM_ST";
-    const INDEX: usize = 85;
+    const INDEX: usize = 91;
 }
 
 impl TOUGHNESS_PARAM_ST {
@@ -37804,6 +37895,7 @@ impl TOUGHNESS_PARAM_ST {
     pub fn set_sp_effect_id(&mut self, value: i32) {
         self.sp_effect_id = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -37835,7 +37927,7 @@ pub struct UPPER_ARM_PARAM_ST {
 
 impl ParamDef for UPPER_ARM_PARAM_ST {
     const NAME: &str = "UPPER_ARM_PARAM_ST";
-    const INDEX: usize = 86;
+    const INDEX: usize = 92;
 }
 
 impl UPPER_ARM_PARAM_ST {
@@ -37998,6 +38090,7 @@ impl UPPER_ARM_PARAM_ST {
     pub fn set_arm_xy9(&mut self, value: f32) {
         self.arm_xy9 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -38019,7 +38112,7 @@ pub struct WEAPON_GEN_PARAM_ST {
 
 impl ParamDef for WEAPON_GEN_PARAM_ST {
     const NAME: &str = "WEAPON_GEN_PARAM_ST";
-    const INDEX: usize = 87;
+    const INDEX: usize = 93;
 }
 
 impl WEAPON_GEN_PARAM_ST {
@@ -38110,6 +38203,7 @@ impl WEAPON_GEN_PARAM_ST {
     pub fn set_gem_gen_id4(&mut self, value: i32) {
         self.gem_gen_id4 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -38176,7 +38270,7 @@ pub struct WEP_ABSORP_POS_PARAM_ST {
 
 impl ParamDef for WEP_ABSORP_POS_PARAM_ST {
     const NAME: &str = "WEP_ABSORP_POS_PARAM_ST";
-    const INDEX: usize = 88;
+    const INDEX: usize = 94;
 }
 
 impl WEP_ABSORP_POS_PARAM_ST {
@@ -38611,6 +38705,7 @@ impl WEP_ABSORP_POS_PARAM_ST {
     pub fn set_disp_pos_type_left_hang_3(&mut self, value: u8) {
         self.disp_pos_type_left_hang_3 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -38634,7 +38729,7 @@ pub struct WET_ASPECT_PARAM_ST {
 
 impl ParamDef for WET_ASPECT_PARAM_ST {
     const NAME: &str = "WET_ASPECT_PARAM_ST";
-    const INDEX: usize = 89;
+    const INDEX: usize = 95;
 }
 
 impl WET_ASPECT_PARAM_ST {
@@ -38701,6 +38796,7 @@ impl WET_ASPECT_PARAM_ST {
     pub fn set_shininess(&mut self, value: u8) {
         self.shininess = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -38715,7 +38811,7 @@ pub struct WHITE_SIGN_COOL_TIME_PARAM_ST {
 
 impl ParamDef for WHITE_SIGN_COOL_TIME_PARAM_ST {
     const NAME: &str = "WHITE_SIGN_COOL_TIME_PARAM_ST";
-    const INDEX: usize = 90;
+    const INDEX: usize = 96;
 }
 
 impl WHITE_SIGN_COOL_TIME_PARAM_ST {
@@ -38750,6 +38846,7 @@ impl WHITE_SIGN_COOL_TIME_PARAM_ST {
     pub fn set_time_limit3(&mut self, value: f32) {
         self.time_limit3 = value;
     }
+
 }
 
 #[derive(Debug, Clone)]
@@ -38788,7 +38885,7 @@ pub struct WIND_PARAM_ST {
 
 impl ParamDef for WIND_PARAM_ST {
     const NAME: &str = "WIND_PARAM_ST";
-    const INDEX: usize = 91;
+    const INDEX: usize = 97;
 }
 
 impl WIND_PARAM_ST {
@@ -39009,4 +39106,6 @@ impl WIND_PARAM_ST {
     pub fn set_cloth_maximum_drag(&mut self, value: f32) {
         self.cloth_maximum_drag = value;
     }
+
 }
+

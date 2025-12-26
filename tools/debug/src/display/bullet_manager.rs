@@ -1,32 +1,24 @@
 use eldenring::cs::{CSBulletIns, CSBulletManager};
-use hudhook::imgui::{TreeNodeFlags, Ui};
+use hudhook::imgui::Ui;
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSBulletManager {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("BulletInses", TreeNodeFlags::empty()) {
-            ui.indent();
-            self.bullets().for_each(|b| {
-                if ui.collapsing_header(format!("{}", b.field_ins_handle), TreeNodeFlags::empty()) {
-                    ui.indent();
-                    b.render_debug(ui);
-                    ui.unindent();
-                }
+    fn render_debug(&self, ui: &Ui) {
+        ui.list("BulletInses", self.bullets(), |ui, _i, bullet| {
+            ui.header(&format!("{}", bullet.field_ins_handle), || {
+                bullet.render_debug(ui);
             });
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for CSBulletIns {
-    fn render_debug(&self, ui: &&mut Ui) {
-        if ui.collapsing_header("Physics", TreeNodeFlags::empty()) {
-            ui.indent();
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Physics", || {
             ui.text(format!("Position: {}", self.physics.position));
             ui.text(format!("Orientation: {}", self.physics.orientation));
             ui.text(format!("Velocity: {:?}", self.physics.velocity));
-            ui.unindent();
-        }
+        });
     }
 }

@@ -4,7 +4,7 @@ use hudhook::imgui::Ui;
 use super::DebugDisplay;
 
 impl DebugDisplay for CSFade {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text("Fade plates");
         for fade_plate in self.fade_plates.iter() {
             let _ = unsafe {
@@ -17,7 +17,7 @@ impl DebugDisplay for CSFade {
 }
 
 impl DebugDisplay for CSFD4FadePlate {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         let mut current_color: [f32; 4] = (&self.current_color).into();
         ui.color_edit4("current_color", &mut current_color);
 
