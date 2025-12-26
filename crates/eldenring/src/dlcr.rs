@@ -1,4 +1,4 @@
-use std::ptr::NonNull;
+use std::{borrow::Cow, ptr::NonNull};
 
 use shared::{FromStatic, OwnedPtr, Program};
 
@@ -341,6 +341,10 @@ impl CryptoSPIRegistry {
 }
 
 impl FromStatic for CryptoSPIRegistry {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("CryptoSPIRegistry")
+    }
+
     unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
         use crate::rva;
         use pelite::pe64::Pe;
