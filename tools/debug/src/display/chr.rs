@@ -4,6 +4,7 @@ use eldenring::cs::{
     EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
     PlayerIns,
 };
+use fromsoftware_shared::NonEmptyIteratorExt;
 use hudhook::imgui::{TableColumnSetup, Ui};
 
 use super::{DebugDisplay, UiExt};
@@ -397,9 +398,16 @@ impl DebugDisplay for EquipInventoryData {
             self.total_item_entry_count
         ));
 
+        let normal_items = self
+            .items_data
+            .normal_entries()
+            .iter()
+            .non_empty()
+            .collect::<Vec<_>>();
         let label = format!(
             "Normal Items ({}/{})",
-            self.items_data.normal_items_count, self.items_data.normal_items_capacity
+            normal_items.len(),
+            self.items_data.normal_items_capacity
         );
         ui.header(&label, || {
             ui.table(
@@ -411,7 +419,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                self.items_data.normal_items().iter(),
+                normal_items.iter(),
                 |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
@@ -431,9 +439,16 @@ impl DebugDisplay for EquipInventoryData {
             );
         });
 
+        let key_items = self
+            .items_data
+            .key_entries()
+            .iter()
+            .non_empty()
+            .collect::<Vec<_>>();
         let label = format!(
             "Key Items ({}/{})",
-            self.items_data.key_items_count, self.items_data.key_items_capacity
+            key_items.len(),
+            self.items_data.key_items_capacity
         );
         ui.header(&label, || {
             ui.table(
@@ -445,7 +460,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                self.items_data.key_items().iter(),
+                key_items.iter(),
                 |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
@@ -465,9 +480,16 @@ impl DebugDisplay for EquipInventoryData {
             );
         });
 
+        let multiplay_key_items = self
+            .items_data
+            .multiplay_key_entries()
+            .iter()
+            .non_empty()
+            .collect::<Vec<_>>();
         let label = format!(
             "Multiplay Key Items ({}/{})",
-            self.items_data.multiplay_key_items_count, self.items_data.multiplay_key_items_capacity
+            multiplay_key_items.len(),
+            self.items_data.multiplay_key_items_capacity
         );
         ui.header(&label, || {
             ui.table(
@@ -479,7 +501,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                self.items_data.multiplay_key_items().iter(),
+                multiplay_key_items.iter(),
                 |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
