@@ -531,6 +531,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "invoke-esd"
+version = "0.11.0"
+dependencies = [
+ "eldenring",
+ "fromsoftware-shared",
+ "windows",
+]
+
+[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
