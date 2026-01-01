@@ -42,7 +42,7 @@ use hudhook::windows::Win32::Foundation::HINSTANCE;
 
 use pelite::pe64::Pe;
 
-use display::render_debug_singleton;
+use display::render_debug_static;
 use rva::RVA_GLOBAL_FIELD_AREA;
 use tracing_panic::panic_hook;
 use windows::Win32::System::SystemServices::DLL_PROCESS_ATTACH;
@@ -161,45 +161,45 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
                     ui.unindent();
                 }
 
-                // render_debug_singleton::<FieldArea>(ui);
-                render_debug_singleton::<CSEventFlagMan>(ui);
-                render_debug_singleton::<WorldChrMan>(ui);
-                render_debug_singleton::<CSWorldGeomMan>(ui);
-                render_debug_singleton::<WorldAreaTime>(ui);
-                render_debug_singleton::<CSBulletManager>(ui);
-                render_debug_singleton::<CSEventManImp>(ui);
-                render_debug_singleton::<CSAutoInvadePoint>(ui);
+                // render_debug_static::<FieldArea>(ui);
+                render_debug_static::<CSEventFlagMan>(ui);
+                render_debug_static::<WorldChrMan>(ui);
+                render_debug_static::<CSWorldGeomMan>(ui);
+                render_debug_static::<WorldAreaTime>(ui);
+                render_debug_static::<CSBulletManager>(ui);
+                render_debug_static::<CSEventManImp>(ui);
+                render_debug_static::<CSAutoInvadePoint>(ui);
                 item.end();
             }
 
             if let Some(item) = ui.tab_item("Inventory") {
-                render_debug_singleton::<CSGaitemImp>(ui);
+                render_debug_static::<CSGaitemImp>(ui);
                 item.end();
             }
 
             if let Some(item) = ui.tab_item("Networking") {
-                render_debug_singleton::<CSSessionManager>(ui);
-                render_debug_singleton::<CSNetMan>(ui);
+                render_debug_static::<CSSessionManager>(ui);
+                render_debug_static::<CSNetMan>(ui);
                 item.end();
             }
 
             if let Some(item) = ui.tab_item("Resource") {
-                render_debug_singleton::<CSTaskGroup>(ui);
-                render_debug_singleton::<CSTaskImp>(ui);
-                render_debug_singleton::<FD4ParamRepository>(ui);
+                render_debug_static::<CSTaskGroup>(ui);
+                render_debug_static::<CSTaskImp>(ui);
+                render_debug_static::<FD4ParamRepository>(ui);
                 item.end();
             }
 
             if let Some(item) = ui.tab_item("Render") {
-                render_debug_singleton::<CSCamera>(ui);
-                render_debug_singleton::<CSFade>(ui);
-                render_debug_singleton::<CSSfxImp>(ui);
-                render_debug_singleton::<CSWorldSceneDrawParamManager>(ui);
+                render_debug_static::<CSCamera>(ui);
+                render_debug_static::<CSFade>(ui);
+                render_debug_static::<CSSfxImp>(ui);
+                render_debug_static::<CSWorldSceneDrawParamManager>(ui);
                 item.end();
             }
 
             if let Some(item) = ui.tab_item("Front End") {
-                render_debug_singleton::<CSFeManImp>(ui);
+                render_debug_static::<CSFeManImp>(ui);
                 item.end();
             }
             if let Some(item) = ui.tab_item("Eject") {

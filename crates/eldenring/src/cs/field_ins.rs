@@ -67,7 +67,7 @@ impl FieldInsSelector {
 ///
 /// Source of name: Destructor reveals this being a field in FieldIns and it's used as a means of
 /// naming some FieldIns derivant everywhere where raw pointers cannot be shared.
-#[repr(C)]
+#[repr(C, align(8))]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct FieldInsHandle {
     pub selector: FieldInsSelector,

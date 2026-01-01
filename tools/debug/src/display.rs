@@ -1,4 +1,4 @@
-use fromsoftware_shared::{FromSingleton, FromStatic};
+use fromsoftware_shared::FromStatic;
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 pub(crate) mod area_time;
@@ -98,10 +98,10 @@ impl UiExt for Ui {
     }
 }
 
-pub fn render_debug_singleton<T: FromSingleton + DebugDisplay + 'static>(ui: &Ui) {
-    let singleton = unsafe { T::instance() };
+pub fn render_debug_static<T: FromStatic + DebugDisplay + 'static>(ui: &Ui) {
+    let instance = unsafe { T::instance() };
 
-    match singleton {
+    match instance {
         Ok(instance) => {
             ui.header(&T::name(), || {
                 let pointer = instance as *const T;
