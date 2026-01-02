@@ -6,6 +6,7 @@ pub mod owned_pointer;
 pub mod program;
 pub mod rtti;
 mod r#static;
+pub mod steam;
 pub mod task;
 pub mod util;
 
@@ -14,8 +15,9 @@ pub use dl_math::*;
 pub use empty::*;
 pub use owned_pointer::*;
 pub use program::*;
-pub use rtti::*;
 pub use r#static::*;
+pub use rtti::*;
+pub use steam::*;
 pub use task::*;
 pub use util::*;
 
