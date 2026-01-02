@@ -1,7 +1,7 @@
 use shared::{CCallback, OwnedPtr};
 use vtable_rs::VPtr;
 
-use crate::{dlkr::DLRunnableVmt, Vector};
+use crate::{Vector, dlkr::DLRunnableVmt};
 
 #[repr(C)]
 #[shared::singleton("CSTrophy")]
@@ -32,7 +32,8 @@ trait CSTrophyPlatformImpVmt: DLRunnableVmt {
 
     fn unk20(&mut self);
 
-    fn award_achievement(&mut self, achievement: &u32);
+    /// Gives the player an achievement based on the internal achievement ID.
+    fn award_achievement(&mut self, achievement_id: &u32);
 
     fn unk30(&mut self);
 }
