@@ -39,25 +39,25 @@ pub unsafe trait Superclass: Sized {
             .expect("VMT address not in executable!")
     }
 
-    /// Returns the [Va] for the runtime virtual method table for [self].
+    /// Returns the [Va] for the runtime virtual method table for this.
     fn vmt(&self) -> Va {
         *unsafe { NonNull::from_ref(self).cast::<Va>().as_ref() }
     }
 
-    /// Returns whether this is an instance of [T].
+    /// Returns whether this is an instance of `T`.
     ///
     /// **Note:** Because this just checks the address of the virtual method
-    /// table, it will return `false` for *subclasses* of [T] even though C++
-    /// considers them to be of type [T].
+    /// table, it will return `false` for *subclasses* of `T` even though C++
+    /// considers them to be of type `T`.
     fn is_subclass<T: Subclass<Self>>(&self) -> bool {
         self.vmt() == Self::vmt_va()
     }
 
-    /// Returns this as a [T] if it is one. Otherwise, returns `None`.
+    /// Returns this as a `T` if it is one. Otherwise, returns `None`.
     ///
     /// **Note:** Because this just checks the address of the virtual method
-    /// table, it will return `None` for *subclasses* of [T] even though C++
-    /// considers them to be of type [T].
+    /// table, it will return `None` for *subclasses* of `T` even though C++
+    /// considers them to be of type `T`.
     fn as_subclass<T: Subclass<Self>>(&self) -> Option<&T> {
         if self.is_subclass::<T>() {
             // Safety: We require that VMTs indicate object type.
@@ -67,11 +67,11 @@ pub unsafe trait Superclass: Sized {
         }
     }
 
-    /// Returns this as a mutable [T] if it is one. Otherwise, returns `None`.
+    /// Returns this as a mutable `T` if it is one. Otherwise, returns `None`.
     ///
     /// **Note:** Because this just checks the address of the virtual method
-    /// table, it will return `None` for *subclasses* of [T] even though C++
-    /// considers them to be of type [T].
+    /// table, it will return `None` for *subclasses* of `T` even though C++
+    /// considers them to be of type `T`.
     fn as_subclass_mut<T: Subclass<Self>>(&mut self) -> Option<&mut T> {
         if self.is_subclass::<T>() {
             // Safety: We require that VMTs indicate object type.
@@ -82,7 +82,7 @@ pub unsafe trait Superclass: Sized {
     }
 }
 
-/// A trait for C++ subclasses of the superclass [T]. Implementing this trait
+/// A trait for C++ subclasses of the superclass `T`. Implementing this trait
 /// makes it possible for Rust code to be generic over all subclasses of a given
 /// C++ supertype.
 ///
@@ -91,7 +91,7 @@ pub unsafe trait Superclass: Sized {
 /// In order to implement this for a struct, you must guarantee:
 ///
 /// * The struct uses C-style layout.
-/// * An initial subsequence of the struct is a valid isntance of [T].
+/// * An initial subsequence of the struct is a valid isntance of `T`.
 pub unsafe trait Subclass<T: Superclass> {
     /// The RVA of this class's virtual method table.
     fn vmt_rva() -> Rva;
@@ -103,14 +103,14 @@ pub unsafe trait Subclass<T: Superclass> {
             .expect("VMT address not in executable!")
     }
 
-    /// Returns this as a [T].
+    /// Returns this as a `T`.
     fn superclass(&self) -> &T {
         // The implementer has vouched that this type's struct layout begins
         // with its superclass.
         unsafe { NonNull::from_ref(self).cast::<T>().as_ref() }
     }
 
-    /// Returns this as a mutable [T].
+    /// Returns this as a mutable `T`.
     fn superclass_mut(&mut self) -> &mut T {
         // The implementer has vouched that this type's struct layout begins
         // with its superclass.

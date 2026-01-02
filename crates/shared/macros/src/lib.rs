@@ -31,7 +31,7 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
     })
 }
 
-/// A derive macro for [::fromsoftware_shared::Subclass].
+/// A derive macro for `fromsoftware_shared::Subclass`.
 ///
 /// ## Finding the RVA
 ///
@@ -65,11 +65,11 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
 ///
 /// ## Safety
 ///
-/// The [::fromsoftware_shared::Subclass] trait is unsafe, and even though
-/// there's currently no way to require that a derive macro be explicitly
-/// flagged as unsafe, this does not add any additional safety guarantees beyond
-/// a manual implementation. PLease read the `Subclass` documentation carefully
-/// to understand the requirements to use this safety.
+/// The `fromsoftware_shared::Subclass` trait is unsafe, and even though there's
+/// currently no way to require that a derive macro be explicitly flagged as
+/// unsafe, this does not add any additional safety guarantees beyond a manual
+/// implementation. PLease read the `Subclass` documentation carefully to
+/// understand the requirements to use this safety.
 #[proc_macro_derive(Subclass, attributes(subclass))]
 pub fn derive_subclass(input: TokenStream) -> TokenStream {
     match subclass::subclass_helper(input) {
@@ -78,7 +78,7 @@ pub fn derive_subclass(input: TokenStream) -> TokenStream {
     }
 }
 
-/// A derive macro for [::fromsoftware_shared::Superclass].
+/// A derive macro for `fromsoftware_shared::Superclass`.
 ///
 /// ## Finding the RVA
 ///
@@ -143,7 +143,7 @@ pub fn derive_subclass(input: TokenStream) -> TokenStream {
 ///
 /// ## Safety
 ///
-/// The [::fromsoftware_shared::Superclass] trait is unsafe, and even though
+/// The `fromsoftware_shared::Superclass` trait is unsafe, and even though
 /// there's currently no way to require that a derive macro be explicitly
 /// flagged as unsafe, this does not add any additional safety guarantees beyond
 /// a manual implementation. PLease read the `Superclass` documentation

@@ -140,13 +140,13 @@ fn main() {
     }
 }
 
-/// Reads a mapper profile from disk at [path].
+/// Reads a mapper profile from disk at `path`.
 fn read_profile<P: AsRef<Path>>(path: P) -> MapperProfile {
     let contents = fs::read_to_string(path).expect("Could not read profile file");
     toml::from_str(&contents).expect("Could not parse profile TOML")
 }
 
-/// Returns the path to the game crate named [basename] in this repo.
+/// Returns the path to the game crate named `basename` in this repo.
 ///
 /// Panics if this isn't being run from within the fromsoftware-rs repo.
 fn game_crate_path<P: AsRef<Path>>(basename: P) -> PathBuf {
@@ -165,7 +165,7 @@ fn game_crate_path<P: AsRef<Path>>(basename: P) -> PathBuf {
     path
 }
 
-/// Runs `cargo fmt` in [path].
+/// Runs `cargo fmt` in `path`.
 fn cargo_fmt<P: AsRef<Path>>(path: P) {
     Command::new("cargo")
         .arg("fmt")
@@ -176,7 +176,7 @@ fn cargo_fmt<P: AsRef<Path>>(path: P) {
         .unwrap();
 }
 
-/// Loads the results for [profile] from the binary at [exe].
+/// Loads the results for `profile` from the binary at `exe`.
 fn map_results(profile: &MapperProfile, exe: &Path) -> Vec<MapperEntryResult> {
     let exe_file = File::open(exe).expect("Could not open game binary");
     let exe_mmap =
@@ -203,7 +203,7 @@ fn map_results(profile: &MapperProfile, exe: &Path) -> Vec<MapperEntryResult> {
 }
 
 /// Generates a Rust struct with fields for each RVA lsited in the given
-/// [profile].
+/// `profile`.
 fn generate_rust_struct(profile: &MapperProfile) -> String {
     let mut output = String::from(
         "//! A generated RVA struct.\n\
@@ -212,7 +212,8 @@ fn generate_rust_struct(profile: &MapperProfile) -> String {
         \n\
         /// A struct containing offsets (relative to the beginning of the executable) of\n\
         /// various addresses of structures and functions. They can be converted to a\n\
-        /// usable address using the [Pe::rva_to_va] trait function of [Program].\n\
+        /// usable address using the [Pe::rva_to_va](pelite::Pe::rva_to_va) trait function\n\
+        /// of [Program](fromsoftware_shared::Program).\n\
         ///\n\
         /// These are populated from `mapper-profile.toml` in the root of this package\n\
         /// using `tools/binary-generator`.\n\
@@ -241,7 +242,7 @@ fn generate_rust_struct(profile: &MapperProfile) -> String {
 }
 
 /// Generates a file that declares an instance of `RvaBundle` with the given
-/// [results].
+/// `results`.
 fn generate_rust_instance(results: &[MapperEntryResult]) -> String {
     let mut output = String::from(
         "//! Generated RVA mappings for a single executable.\n\
@@ -276,8 +277,9 @@ struct MapperProfile {
 #[derive(Debug, Deserialize)]
 struct MapperProfilePattern {
     /// Pattern used for matching. Under the hood this uses pelite's parser.
-    /// As such, the same pattern syntax is used. More:
-    /// https://docs.rs/pelite/latest/pelite/pattern/fn.parse.html
+    /// As such, the [same pattern syntax] is used.
+    ///
+    /// [same pattern syntax]: https://docs.rs/pelite/latest/pelite/pattern/fn.parse.html
     pattern: String,
 
     /// Names for the captures. These names can be referenced from the
@@ -286,7 +288,7 @@ struct MapperProfilePattern {
 }
 
 impl MapperProfilePattern {
-    /// Consumes self and looks up the pattern in [program].
+    /// Consumes self and looks up the pattern in `program`.
     fn find<'a>(&self, program: &impl Pe<'a>) -> Vec<MapperEntryResult> {
         let Ok(scanner_pattern) = pattern::parse(&self.pattern) else {
             panic!("Could not parse provided pattern \"{}\"", &self.pattern)
@@ -334,7 +336,7 @@ struct MapperProfileVmt {
 }
 
 impl MapperProfileVmt {
-    /// Consumes self and looks up the VMT in [rtti_map].
+    /// Consumes self and looks up the VMT in `rtti_map`.
     fn find<'a, T: Pe<'a>>(
         &self,
         program: &T,
@@ -375,7 +377,7 @@ struct MapperEntryResult {
 }
 
 impl MapperEntryResult {
-    /// Returns a result indicating that the capture named [name] wasn't found.
+    /// Returns a result indicating that the capture named `name` wasn't found.
     fn not_found(name: impl AsRef<str>) -> Self {
         MapperEntryResult {
             name: name.as_ref().to_string(),
