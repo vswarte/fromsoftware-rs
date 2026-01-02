@@ -17,61 +17,62 @@ pub struct GameMan {
     unk14: BlockId,
     unk18: BlockId,
     unk1c: [u8; 0x4],
-    /// Backup of local time when player is in someone else's world
-    /// See [crate::cs::WorldAreaTime::clock]
+    /// Backup of local time when player is in someone else's world.
+    /// See [crate::cs::WorldAreaTime::clock].
     pub world_area_time: DLDateTime,
     unk30: [u8; 0xc],
-    /// Set by emevd 2003[14] WarpPlayer \
-    /// See https://soulsmods.github.io/emedf/er-emedf.html#WarpPlayer
+    /// Set by emevd `2003[14]` [`WarpPlayer`].
+    ///
+    /// [`WarpPlayer`]: https://soulsmods.github.io/emedf/er-emedf.html#WarpPlayer
     pub initial_area_entity_id: u32,
-    /// Set by emevd 2008[1] ChangeCamera \
-    /// Overrides default camera parameters in area. \
-    /// See [crate::param::LOCK_CAM_PARAM_ST] \
-    /// and https://soulsmods.github.io/emedf/er-emedf.html#ChangeCamera
+    /// Set by emevd `2008[1]` [`ChangeCamera`]. Overrides default camera
+    /// parameters in area. See [crate::param::LOCK_CAM_PARAM_ST].
+    ///
+    /// [`ChangeCamera`]: https://soulsmods.github.io/emedf/er-emedf.html#ChangeCamera
     pub normal_camera_param_id: i32,
-    /// Identical to [Self::normal_camera_param_id]
+    /// Identical to [Self::normal_camera_param_id].
     pub locked_camera_param_id: i32,
-    /// Set by TalkESD 138 ChangeCamera
-    /// Overrides default camera parameters when talking to NPC. \
-    /// See [crate::param::LOCK_CAM_PARAM_ST]
+    /// Set by TalkESD 138 `ChangeCamera`. Overrides default camera parameters
+    /// when talking to NPC. See [crate::param::LOCK_CAM_PARAM_ST].
     pub talk_esd_camera_param_id: i32,
-    /// Set by TAE event 150 SetLockCamParamSelf
-    /// See [crate::param::LOCK_CAM_PARAM_ST]
+    /// Set by TAE event 150 `SetLockCamParamSelf`. See
+    /// [crate::param::LOCK_CAM_PARAM_ST].
     pub lock_on_camera_param_id: i32,
-    /// Set by TAE event 151 SetCameraFollowDummyPoly
-    /// Overrides default dummy poly ID for camera to follow.
+    /// Set by TAE event 151 `SetCameraFollowDummyPoly` Overrides default dummy
+    /// poly ID for camera to follow.
     pub camera_follow_dummy_poly_id: i32,
-    /// Read from [crate::cs::CSChrActionFlagModule::camera_lock_on_param_id]
-    /// of character being locked on to. \
-    /// See [crate::param::LOCK_CAM_PARAM_ST]
+    /// Read from [CSChrActionFlagModule::camera_lock_on_param_id] of character
+    /// being locked on to. See [crate::param::LOCK_CAM_PARAM_ST].
+    ///
+    /// [CSChrActionFlagModule::camera_lock_on_param_id]: crate::cs::CSChrActionFlagModule::camera_lock_on_param_id
     pub camera_chr_lock_on_param_id: i32,
-    /// Set by TAE event 152 CameraZoomOut
+    /// Set by TAE event 152 `CameraZoomOut`.
     pub camera_zoom_target_dist_mult: f32,
-    /// Set by TAE event 152 CameraZoomOut when SIMPLE_LERP type is used
+    /// Set by TAE event 152 `CameraZoomOut` when `SIMPLE_LERP` type is used.
     pub cam_override_lerp_factor: f32,
-    /// Set by TAE event 152 CameraZoomOut when EASE_OUT_QUADRATIC type is used
+    /// Set by TAE event 152 `CameraZoomOut` when `EASE_OUT_QUADRATIC` type is used.
     pub cam_zoom_interpolated_progress: f32,
-    /// Set by TAE event 152 CameraZoomOut
+    /// Set by TAE event 152 `CameraZoomOut`.
     pub cam_timed_override_duration: f32,
-    /// Set by TAE event 152 CameraZoomOut
+    /// Set by TAE event 152 `CameraZoomOut`.
     pub cam_zoom_override_lerp_factor: f32,
-    /// Set by TAE event 152 CameraZoomOut
+    /// Set by TAE event 152 `CameraZoomOut`.
     pub cam_zoom_reset_previous_distance: bool,
-    /// Set by TAE event 152 CameraZoomOut
+    /// Set by TAE event 152 `CameraZoomOut`.
     pub cam_override_check_collisions: bool,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_vertical_angle_rad: f32,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_horizontal_angle_rad: f32,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_rotation_method: ForceCamRotationMethod,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_interpolation_progress: f32,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_first_execution: bool,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_vertical_enabled: bool,
-    /// Set by TAE event 153 ForceCameraDirection
+    /// Set by TAE event 153 `ForceCameraDirection`.
     pub force_cam_horizontal_enabled: bool,
     pub rand_xorshift: CSRandXorshift,
     pub rand_sfmt: CSRandSFMT,
@@ -100,11 +101,14 @@ pub struct GameMan {
     unkb54: u32,
     unkb58: bool,
     unkb59: u8,
-    /// Whether or not item replenishment from chest is requested.
-    /// Will trigger refill of all the items in inventory from item storage during MoveMapStep::STEP_CreateDrawPlan
+    /// Whether or not item replenishment from chest is requested. Will trigger
+    /// refill of all the items in inventory from item storage during
+    /// `MoveMapStep::STEP_CreateDrawPlan`.
     pub item_replanish_from_chest_requested: bool,
-    /// Whether or not item restoration after quickmatch is requested. \
-    /// See [crate::cs::EquipGameData::qm_item_backup_vector]
+    /// Whether or not item restoration after quickmatch is requested. See
+    /// [EquipGameData::qm_item_backup_vector].
+    ///
+    /// [EquipGameData::qm_item_backup_vector]: crate::cs::EquipGameData::qm_item_backup_vector
     pub item_restore_after_qmrequested: bool,
     unkb5c: u8,
     unkb5d: u8,
@@ -142,11 +146,11 @@ pub struct GameMan {
     unkbcf: [u8; 0x19],
     unkbe8: u64,
     unkbf0: [u8; 0x10],
-    /// See [crate::cs::CSStayInMultiplayAreaWarpData]
+    /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).
     pub stay_in_multiplay_area_saved_position: F32Vector3,
-    /// See [crate::cs::CSStayInMultiplayAreaWarpData]
+    /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).
     pub stay_in_multiplay_area_saved_block_id: BlockId,
-    /// See [crate::cs::CSStayInMultiplayAreaWarpData]
+    /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).
     pub stay_in_multiplay_area_saved_rotation: F32Vector4,
     unkc20: [u8; 0x20],
     unkc40: F32Vector4,

@@ -35,7 +35,7 @@ pub struct CharacterTypePropertiesEntry {
     /// See [`crate::cs::PartyMemberInfo::hostile_phantom_count`]
     pub is_hostile_phantom: bool,
     unkb: u8,
-    /// [DS3] Controls the character type assigned to the character after revival logic.
+    /// \[DS3] Controls the character type assigned to the character after revival logic.
     /// Doesn't do anything in Elden Ring.
     pub post_revival_character_type: ChrType,
     unk10: i32,

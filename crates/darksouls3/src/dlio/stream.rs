@@ -5,7 +5,7 @@ use super::DLIOResult;
 
 #[vtable_rs::vtable]
 pub trait DLMemoryInputStreamVmt {
-    /// Sets the status of the last operation to [status].
+    /// Sets the status of the last operation to `status`.
     fn set_last_error(&mut self, status: DLIOResult);
 
     fn destructor(&mut self, param_2: u8);
@@ -13,7 +13,7 @@ pub trait DLMemoryInputStreamVmt {
     /// Returns the status of the last operation.
     fn get_last_error(&self) -> DLIOResult;
 
-    /// Reads up to [length] bytes from the underlying target to [data]. Returns
+    /// Reads up to `length` bytes from the underlying target to `data`. Returns
     /// the number of bytes read successfully.
     fn read_bytes(&mut self, data: *mut u8, length: usize) -> usize;
 
@@ -128,7 +128,7 @@ pub trait DLMemoryOutputStreamVmt {
     fn unk08(&mut self);
     fn unk0a(&mut self);
 
-    /// Writes [length] bytes of [data] to the underlying target. Returns the
+    /// Writes `length` bytes of `data` to the underlying target. Returns the
     /// number of bytes written successfully.
     fn write(&mut self, data: *const u8, length: usize) -> usize;
 }

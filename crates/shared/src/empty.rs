@@ -1,6 +1,6 @@
 use std::{fmt, iter::FusedIterator, mem::MaybeUninit, ptr::NonNull};
 
-/// A wrapper type to represent an instance of a type [T] that may be in a
+/// A wrapper type to represent an instance of a type `T` that may be in a
 /// well-known "empty" state where its usual guarantees aren't upheld.
 ///
 /// This is similar to [MaybeUninit] in that it ensures that the underlying
@@ -24,11 +24,11 @@ where
 ///
 /// ## Safety
 ///
-/// Implementors must guarantee that if [is_empty] returns true for a given
-/// `MaybeEmpty<T>`, that value meets all the requirements for a value of type
-/// `T`.
+/// Implementors must guarantee that if [is_empty](Self::is_empty) returns true
+/// for a given `MaybeEmpty<T>`, that value meets all the requirements for a
+/// value of type `T`.
 pub unsafe trait IsEmpty: Sized {
-    /// Returns whether the given [value] is "empty" according to its own
+    /// Returns whether the given `value` is "empty" according to its own
     /// internal logic.
     fn is_empty(value: &MaybeEmpty<Self>) -> bool;
 }
@@ -45,7 +45,7 @@ where
 
     /// Gets a pointer to the contained value. Reading from this pointer is
     /// unsafe but well-defined, since the underlying memory will either be
-    /// a valid [T] *or* match the well-known empty pattern.
+    /// a valid `T` *or* match the well-known empty pattern.
     pub fn as_non_null(&self) -> NonNull<T> {
         NonNull::from_ref(self).cast::<T>()
     }
@@ -118,8 +118,8 @@ where
 {
 }
 
-/// An extension trait to add the [non_empty] method to iterators of
-/// [MaybeEmpty] values.
+/// An extension trait to add the [non_empty](Self::non_empty) method to
+/// iterators of [MaybeEmpty] values.
 pub trait NonEmptyIteratorExt<'a, E>: Iterator<Item = &'a MaybeEmpty<E>>
 where
     E: IsEmpty + 'a,
@@ -166,8 +166,8 @@ where
     }
 }
 
-/// An extension trait to add the [non_empty] method to iterators of
-/// [MaybeEmpty] values.
+/// An extension trait to add the [non_empty](Self::non_empty) method to
+/// iterators of [MaybeEmpty] values.
 pub trait NonEmptyIteratorMutExt<'a, E>: Iterator<Item = &'a mut MaybeEmpty<E>>
 where
     E: IsEmpty + 'a,

@@ -56,7 +56,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-/// Loads all the parameter definitions in the [input_path] directory and
+/// Loads all the parameter definitions in the `input_path` directory and
 /// returns them, sorted by name.
 ///
 /// This also guarantees that either all structs have indexes defined, or none

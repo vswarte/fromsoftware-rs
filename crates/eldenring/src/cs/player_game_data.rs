@@ -520,7 +520,7 @@ impl InventoryItemsData {
 
     /// A slice over all the normal item [EquipInventoryDataListEntry] allocated
     /// for this [InventoryItemsData], whether or not they're empty or in range
-    /// of [normal_items_len].
+    /// of [normal_items_len](Self::normal_items_len).
     pub fn normal_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts(
@@ -532,7 +532,7 @@ impl InventoryItemsData {
 
     /// A mutable slice over all the normal item [EquipInventoryDataListEntry]
     /// allocated for this [InventoryItemsData], whether or not they're empty or
-    /// in range of [normal_items_len].
+    /// in range of [normal_items_len](Self::normal_items_len).
     pub fn normal_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(
@@ -551,7 +551,7 @@ impl InventoryItemsData {
 
     /// A slice over all the key item [EquipInventoryDataListEntry] allocated
     /// for this [InventoryItemsData], whether or not they're empty or in range
-    /// of [key_items_len].
+    /// of [key_items_len](Self::key_items_len).
     pub fn key_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts(self.key_items_head.as_ptr(), self.key_items_len as usize)
@@ -560,7 +560,7 @@ impl InventoryItemsData {
 
     /// A mutable slice over all the key item [EquipInventoryDataListEntry]
     /// allocated for this [InventoryItemsData], whether or not they're empty or
-    /// in range of [key_items_len].
+    /// in range of [key_items_len](Self::key_items_len).
     pub fn key_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(
@@ -579,7 +579,7 @@ impl InventoryItemsData {
 
     /// A slice over all the multiplayer key item [EquipInventoryDataListEntry]
     /// allocated for this [InventoryItemsData], whether or not they're empty or
-    /// in range of [multiplay_key_items_len].
+    /// in range of [multiplay_key_items_len](Self::multiplay_key_items_len).
     pub fn multiplay_key_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts(
@@ -591,7 +591,8 @@ impl InventoryItemsData {
 
     /// A mutable slice over all the multiplayer key item
     /// [EquipInventoryDataListEntry] allocated for this [InventoryItemsData],
-    /// whether or not they're empty or in range of [multiplay_key_items_len].
+    /// whether or not they're empty or in range of
+    /// [multiplay_key_items_len](Self::multiplay_key_items_len).
     pub fn multiplay_key_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(
@@ -610,10 +611,11 @@ impl InventoryItemsData {
 
     /// A slice over all the key item [EquipInventoryDataListEntry] allocated
     /// for this [InventoryItemsData], whether or not they're empty or in range
-    /// of [current_key_items_len].
+    /// of the associated length field.
     ///
-    /// This is equivalent to either [key_entries] and [multiplay_key_entries],
-    /// depending on whether the player is currently in a multiplayer session.
+    /// This is equivalent to either [key_entries](Self::key_entries) and
+    /// [multiplay_key_entries](Self::multiplay_key_entries), depending on
+    /// whether the player is currently in a multiplayer session.
     pub fn current_key_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts(
@@ -625,11 +627,11 @@ impl InventoryItemsData {
 
     /// A mutable slice over all the key item [EquipInventoryDataListEntry]
     /// allocated for this [InventoryItemsData], whether or not they're empty or
-    /// in range of [current_key_items_len].
+    /// in range of the associated length field.
     ///
-    /// This is equivalent to either [key_entries_mut] and
-    /// [multiplay_key_entries_mut], depending on whether the player is
-    /// currently in a multiplayer session.
+    /// This is equivalent to either [key_entries_mut](Self::key_entries_mut)
+    /// and [multiplay_key_entries_mut](Self::multiplay_key_entries_mut),
+    /// depending on whether the player is currently in a multiplayer session.
     pub fn current_key_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(

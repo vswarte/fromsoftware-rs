@@ -61,11 +61,11 @@ bitfield! {
 }
 
 /// An item ID that includes category information in the higher bits, but may
-/// also be the special invalid ID [NONE] that represents no item.
+/// also be the special invalid ID [NONE](Self::NONE) that represents no item.
 ///
 /// This is often used by the game to represent items in situations where
 /// they're optional or uninitialized. It can be safely converted to a valid
-/// [ItemId] using [as_valid].
+/// [ItemId] using [as_valid](Self::as_valid).
 impl OptionalItemId {
     /// The ID used by the game to indicate the absence of an item.
     ///
@@ -86,7 +86,8 @@ impl OptionalItemId {
     }
 
     /// Whether this represents a valid [ItemId]. In most cases, it's better to
-    /// use [as_valid] to check this and get the valid value at once.
+    /// use [as_valid](Self::as_valid) to check this and get the valid value at
+    /// once.
     pub fn is_valid(&self) -> bool {
         self.category().is_some()
     }
@@ -151,7 +152,7 @@ pub struct ItemId(OptionalItemId);
 
 impl ItemId {
     /// Creates a new [ItemId] from the given category and param ID. Returns an
-    /// [ItemIdError] if [param_id] is greater than 0xFFFFFFF.
+    /// [ItemIdError] if [param_id](Self::param_id) is greater than 0xFFFFFFF.
     pub const fn new(category: ItemCategory, param_id: u32) -> Result<Self, ItemIdError> {
         if param_id > 0xFFFFFFF {
             Err(ItemIdError::InvalidParamId(param_id))
@@ -167,7 +168,8 @@ impl ItemId {
     }
 
     /// Returns the parameter ID of the item this ID represents. This is the ID
-    /// of the row in the parameter struct that corresponds to [category].
+    /// of the row in the parameter struct that corresponds to
+    /// [category](Self::category).
     pub fn param_id(&self) -> u32 {
         self.0.param_id_raw()
     }

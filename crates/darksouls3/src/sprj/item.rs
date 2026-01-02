@@ -43,14 +43,14 @@ pub static MAP_ITEM_MAN_GRANT_ITEM_VA: LazyLock<u64> = LazyLock::new(|| {
 });
 
 impl MapItemMan {
-    /// Grants the player the single [item], with an on-screen pop-up indicating
+    /// Grants the player the single `item`, with an on-screen pop-up indicating
     /// that they received it.
     pub fn grant_item(&self, item: impl Into<ItemBufferEntry>) {
         let array = ItemArray::new([item.into()]);
         self.grant_items(&array);
     }
 
-    /// Grants the player the given [items], with an on-screen pop-up indicating
+    /// Grants the player the given `items`, with an on-screen pop-up indicating
     /// that they received them.
     pub fn grant_items(&self, items: impl AsRef<ItemBuffer>) {
         let grant_items: extern "C" fn(&MapItemMan, &ItemBuffer, &i32) =
@@ -106,12 +106,12 @@ impl ItemBuffer {
         unsafe { self.items.as_mut_slice(self.length.try_into().unwrap()) }
     }
 
-    /// Removes the entry at [index] from the buffer, shifting all elements
+    /// Removes the entry at `index` from the buffer, shifting all elements
     /// after it to the left.
     ///
     /// ## Panics
     ///
-    /// Panics if [index] is out-of-bounds.
+    /// Panics if `index` is out-of-bounds.
     pub fn remove(&mut self, index: usize) -> ItemBufferEntry {
         let len = self.length as usize;
         if index >= len {
