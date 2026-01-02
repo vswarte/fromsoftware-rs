@@ -1,5 +1,5 @@
 [package]
-name = "present-action-button"
+name = "invoke-esd"
 version.workspace = true
 edition.workspace = true
 repository.workspace = true
@@ -7,8 +7,9 @@ license.workspace = true
 publish = false
 
 [dependencies]
-fromsoftware-shared.workspace = true
 eldenring.workspace = true
+fromsoftware-shared.workspace = true
+windows.workspace = true
 
 [lib]
 crate-type = ["cdylib"]

@@ -8,7 +8,7 @@ use crate::{
     BasicVector, Vector,
     cs::{ChrType, MultiplayRole},
 };
-use shared::OwnedPtr;
+use shared::{IsEmpty, MaybeEmpty, NonEmptyIteratorExt, NonEmptyIteratorMutExt, OwnedPtr};
 
 use crate::cs::{FieldInsHandle, GaitemHandle, ItemId, OptionalItemId};
 
@@ -403,8 +403,8 @@ bitfield! {
 
 #[repr(C)]
 pub struct InventoryItemListAccessor {
-    pub head: NonNull<EquipInventoryDataListEntry>,
-    pub count: NonNull<u32>,
+    pub head: NonNull<MaybeEmpty<EquipInventoryDataListEntry>>,
+    pub length: NonNull<u32>,
 }
 
 #[repr(C)]
@@ -412,42 +412,65 @@ pub struct InventoryItemsData {
     /// How many items can one hold in total?
     pub global_capacity: u32,
 
-    /// Capacity of the normal items inventory.
+    /// The maximum capacity of the normal items inventory.
     pub normal_items_capacity: u32,
-    /// Pointer to the head of the normal items inventory.
-    pub normal_items_head: OwnedPtr<EquipInventoryDataListEntry>,
-    /// Count of the items in the normal items inventory.
-    pub normal_items_count: u32,
 
-    /// Capacity of the key items inventory.
+    /// A pointer to the head of the normal items inventory.
+    pub normal_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>>,
+
+    /// The length currently in use of the normal items inventory.
+    ///
+    /// This isn't necessarily the number of items in the inventory. The
+    /// inventory can have gaps (such as when you pick up two items and then
+    /// discard the earlier one), and this counts those gaps as part of the
+    /// length despite not being actual items.
+    pub normal_items_len: u32,
+
+    /// The maximum capacity of the key items inventory.
     pub key_items_capacity: u32,
-    /// Pointer to the head of the key items inventory.
-    pub key_items_head: OwnedPtr<EquipInventoryDataListEntry>,
-    /// Count of the items in the key items inventory.
-    pub key_items_count: u32,
 
-    /// Capacity of the multiplayer key items inventory
+    /// A pointer to the head of the key items inventory.
+    pub key_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>>,
+
+    /// The length currently in use of the key items inventory.
+    ///
+    /// This isn't necessarily the number of items in the inventory. The
+    /// inventory can have gaps (such as when you pick up two items and then
+    /// discard the earlier one), and this counts those gaps as part of the
+    /// length despite not being actual items.
+    pub key_items_len: u32,
+
+    /// The maximum capacity of the multiplayer key items inventory.
     pub multiplay_key_items_capacity: u32,
-    /// Holds key items, that are available in multiplayer.
+
+    /// Holds key items that are available in multiplayer.
     ///
     /// Unless new key items are somehow obtained in multiplayer, this only contains
     /// copies of the items from `key_items` that have `REGENERATIVE_MATERIAL`
     /// and `WONDROUS_PHYSICK_TEAR` types (pots and wondrous physic tears).
-    pub multiplay_key_items_head: OwnedPtr<EquipInventoryDataListEntry>,
-    /// Count of the items in the multiplayer key items inventory.
-    pub multiplay_key_items_count: u32,
+    pub multiplay_key_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>>,
+
+    /// The length currently in use of the multiplayer key items inventory.
+    ///
+    /// This isn't necessarily the number of items in the inventory. The
+    /// inventory can have gaps (such as when you pick up two items and then
+    /// discard the earlier one), and this counts those gaps as part of the
+    /// length despite not being actual items.
+    pub multiplay_key_items_len: u32,
 
     _pad3c: u32,
-    /// Pointers to the active normal item list and its count, all inventory reads and writes in the game
-    /// will go through this.
+
+    /// Pointers to the active normal item list and its length. All inventory
+    /// reads and writes in the game go through this.
     ///
-    /// Compared to `key_items_accessor`, this is always the same as `normal_items`.
+    /// Unlike `key_items_accessor`, this is always the same as `normal_items`.
     pub normal_items_accessor: InventoryItemListAccessor,
-    /// Pointers to the active key item list and its count, all inventory reads and writes in the game
-    /// will go through this.
+
+    /// Pointers to the active key item list and its length. All inventory reads
+    /// and writes in the game go through this.
     ///
-    /// In single-player, this typically points to `key_items`.
-    /// In multiplayer, it switches to `multiplay_key_items`.
+    /// In single-player, this typically points to `key_items`. In multiplayer,
+    /// it switches to `multiplay_key_items`.
     pub key_items_accessor: InventoryItemListAccessor,
 
     /// Contains the indices into the item ID mapping list.
@@ -460,61 +483,162 @@ pub struct InventoryItemsData {
 }
 
 impl InventoryItemsData {
-    pub fn normal_items(&self) -> &[EquipInventoryDataListEntry] {
+    /// Returns an iterator over all the non-empty entries in the player's
+    /// inventory.
+    ///
+    /// This iterates over key items first, followed by normal items.
+    pub fn items(&self) -> impl Iterator<Item = &EquipInventoryDataListEntry> {
+        self.current_key_entries()
+            .iter()
+            .chain(self.normal_entries().iter())
+            .non_empty()
+    }
+
+    /// Returns an iterator over all the mutable non-empty entries in the
+    /// player's inventory.
+    ///
+    /// This iterates over key items first, followed by normal items.
+    pub fn items_mut(&self) -> impl Iterator<Item = &mut EquipInventoryDataListEntry> {
+        unsafe {
+            std::slice::from_raw_parts_mut(
+                self.key_items_accessor.head.as_ptr(),
+                *self.key_items_accessor.length.as_ref() as usize,
+            )
+        }
+        .iter_mut()
+        .chain(
+            unsafe {
+                std::slice::from_raw_parts_mut(
+                    self.normal_items_head.as_ptr(),
+                    self.normal_items_capacity as usize,
+                )
+            }
+            .iter_mut(),
+        )
+        .non_empty()
+    }
+
+    /// A slice over all the normal item [EquipInventoryDataListEntry] allocated
+    /// for this [InventoryItemsData], whether or not they're empty or in range
+    /// of [normal_items_len](Self::normal_items_len).
+    pub fn normal_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts(
                 self.normal_items_head.as_ptr(),
-                self.normal_items_count as usize,
+                self.normal_items_capacity as usize,
             )
         }
     }
-    pub fn normal_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+
+    /// A mutable slice over all the normal item [EquipInventoryDataListEntry]
+    /// allocated for this [InventoryItemsData], whether or not they're empty or
+    /// in range of [normal_items_len](Self::normal_items_len).
+    pub fn normal_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(
                 self.normal_items_head.as_ptr(),
-                self.normal_items_count as usize,
+                self.normal_items_len as usize,
             )
         }
     }
+
+    /// Whether there's no more room left in the normal items inventory and
+    /// picking up a new item will fail.
     pub fn is_normal_items_full(&self) -> bool {
-        self.normal_items_count >= self.normal_items_capacity
+        self.normal_items_len >= self.normal_items_capacity
+            && self.normal_entries().iter().all(|e| !e.is_empty())
     }
 
-    pub fn key_items(&self) -> &[EquipInventoryDataListEntry] {
+    /// A slice over all the key item [EquipInventoryDataListEntry] allocated
+    /// for this [InventoryItemsData], whether or not they're empty or in range
+    /// of [key_items_len](Self::key_items_len).
+    pub fn key_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
-            std::slice::from_raw_parts(self.key_items_head.as_ptr(), self.key_items_count as usize)
+            std::slice::from_raw_parts(self.key_items_head.as_ptr(), self.key_items_len as usize)
         }
     }
-    pub fn key_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+
+    /// A mutable slice over all the key item [EquipInventoryDataListEntry]
+    /// allocated for this [InventoryItemsData], whether or not they're empty or
+    /// in range of [key_items_len](Self::key_items_len).
+    pub fn key_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(
                 self.key_items_head.as_ptr(),
-                self.key_items_count as usize,
+                self.key_items_len as usize,
             )
         }
     }
+
+    /// Whether there's no more room left in the key items inventory and picking
+    /// up a new item will fail.
     pub fn is_key_items_full(&self) -> bool {
-        self.key_items_count >= self.key_items_capacity
+        self.key_items_len >= self.key_items_capacity
+            && self.key_entries().iter().all(|e| !e.is_empty())
     }
 
-    pub fn multiplay_key_items(&self) -> &[EquipInventoryDataListEntry] {
+    /// A slice over all the multiplayer key item [EquipInventoryDataListEntry]
+    /// allocated for this [InventoryItemsData], whether or not they're empty or
+    /// in range of [multiplay_key_items_len](Self::multiplay_key_items_len).
+    pub fn multiplay_key_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts(
                 self.multiplay_key_items_head.as_ptr(),
-                self.multiplay_key_items_count as usize,
+                self.multiplay_key_items_len as usize,
             )
         }
     }
-    pub fn multiplay_key_items_mut(&mut self) -> &mut [EquipInventoryDataListEntry] {
+
+    /// A mutable slice over all the multiplayer key item
+    /// [EquipInventoryDataListEntry] allocated for this [InventoryItemsData],
+    /// whether or not they're empty or in range of
+    /// [multiplay_key_items_len](Self::multiplay_key_items_len).
+    pub fn multiplay_key_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
         unsafe {
             std::slice::from_raw_parts_mut(
                 self.multiplay_key_items_head.as_ptr(),
-                self.multiplay_key_items_count as usize,
+                self.multiplay_key_items_len as usize,
             )
         }
     }
+
+    /// Whether there's no more room left in the multiplayer items inventory and
+    /// picking up a new item will fail.
     pub fn is_multiplay_key_items_full(&self) -> bool {
-        self.multiplay_key_items_count >= self.multiplay_key_items_capacity
+        self.multiplay_key_items_len >= self.multiplay_key_items_capacity
+            && self.multiplay_key_entries().iter().all(|e| !e.is_empty())
+    }
+
+    /// A slice over all the key item [EquipInventoryDataListEntry] allocated
+    /// for this [InventoryItemsData], whether or not they're empty or in range
+    /// of the associated length field.
+    ///
+    /// This is equivalent to either [key_entries](Self::key_entries) and
+    /// [multiplay_key_entries](Self::multiplay_key_entries), depending on
+    /// whether the player is currently in a multiplayer session.
+    pub fn current_key_entries(&self) -> &[MaybeEmpty<EquipInventoryDataListEntry>] {
+        unsafe {
+            std::slice::from_raw_parts(
+                self.key_items_accessor.head.as_ptr(),
+                *self.key_items_accessor.length.as_ref() as usize,
+            )
+        }
+    }
+
+    /// A mutable slice over all the key item [EquipInventoryDataListEntry]
+    /// allocated for this [InventoryItemsData], whether or not they're empty or
+    /// in range of the associated length field.
+    ///
+    /// This is equivalent to either [key_entries_mut](Self::key_entries_mut)
+    /// and [multiplay_key_entries_mut](Self::multiplay_key_entries_mut),
+    /// depending on whether the player is currently in a multiplayer session.
+    pub fn current_key_entries_mut(&mut self) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
+        unsafe {
+            std::slice::from_raw_parts_mut(
+                self.key_items_accessor.head.as_ptr(),
+                *self.key_items_accessor.length.as_ref() as usize,
+            )
+        }
     }
 }
 
@@ -575,7 +699,7 @@ pub struct EquipInventoryDataListEntry {
     /// Handle to the gaitem instance which describes additional properties to the inventory item,
     /// like durability and gems in the case of weapons.
     pub gaitem_handle: GaitemHandle,
-    pub item_id: OptionalItemId,
+    pub item_id: ItemId,
     /// Quantity of the item we have.
     pub quantity: u32,
     /// Sort ID used to sort items by acquisition order.
@@ -583,6 +707,13 @@ pub struct EquipInventoryDataListEntry {
     unk10: u8,
     _pad11: [u8; 3],
     pub pot_group: i32,
+}
+
+unsafe impl IsEmpty for EquipInventoryDataListEntry {
+    fn is_empty(value: &MaybeEmpty<EquipInventoryDataListEntry>) -> bool {
+        !OptionalItemId::from(unsafe { *value.as_non_null().cast::<u32>().offset(1).as_ref() })
+            .is_valid()
+    }
 }
 
 #[repr(C)]

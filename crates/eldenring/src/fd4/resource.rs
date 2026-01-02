@@ -72,6 +72,7 @@ where
 /// In the case of a collision on insertion it will make the entry you are
 /// seeking to insert the new head.
 ///
+/// ```ignore
 /// Bucket # = fnv(resource name) % bucket count
 ///
 /// +----------------------------------------------------------------------....
@@ -85,7 +86,7 @@ where
 /// |                  |                  |                 |
 /// |                  |                  |                 |
 /// +------------------+------------------+-----------------+--------------....
-///
+/// ```
 #[repr(C)]
 pub struct FD4ResCapHolder<T>
 where

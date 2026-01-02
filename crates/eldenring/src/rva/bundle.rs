@@ -4,7 +4,8 @@
 
 /// A struct containing offsets (relative to the beginning of the executable) of
 /// various addresses of structures and functions. They can be converted to a
-/// usable address using the [Pe::rva_to_va] trait function of [Program].
+/// usable address using the [Pe::rva_to_va](pelite::Pe::rva_to_va) trait function
+/// of [Program](fromsoftware_shared::Program).
 ///
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
@@ -21,8 +22,12 @@ pub struct RvaBundle {
     pub cs_ez_draw_draw_sphere: u32,
     pub cs_ez_draw_draw_triangle: u32,
     pub cs_ez_draw_draw_wedge: u32,
+    pub cs_ez_state_talk_env_vmt: u32,
+    pub cs_ez_state_talk_event_vmt: u32,
     pub cs_menu_man_imp_display_status_message: u32,
     pub cs_phys_world_cast_ray: u32,
+    pub ez_state_detail_external_event_temp_vmt: u32,
+    pub ez_state_environment_query_impl_vmt: u32,
     pub game_man: u32,
     pub global_hinstance: u32,
     pub initialize_spawn_geometry_request: u32,

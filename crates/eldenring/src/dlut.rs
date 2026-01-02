@@ -44,8 +44,9 @@ bitfield! {
 }
 
 #[repr(C)]
-/// Source of name: dantelion2 leak
-/// https://archive.org/details/dantelion2
+/// Source of name: [dantelion2 leak].
+///
+/// [dantelion2 leak]: https://archive.org/details/dantelion2
 pub struct DLDateTime {
     /// Uses FILETIME on windows
     /// (100-nanosecond intervals since January 1, 1601 UTC)

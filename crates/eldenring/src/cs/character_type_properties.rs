@@ -1,4 +1,6 @@
-use shared::FromStatic;
+use std::borrow::Cow;
+
+use shared::{FromStatic, load_static_direct};
 
 use crate::cs::ChrType;
 
@@ -33,7 +35,7 @@ pub struct CharacterTypePropertiesEntry {
     /// See [`crate::cs::PartyMemberInfo::hostile_phantom_count`]
     pub is_hostile_phantom: bool,
     unkb: u8,
-    /// [DS3] Controls the character type assigned to the character after revival logic.
+    /// \[DS3] Controls the character type assigned to the character after revival logic.
     /// Doesn't do anything in Elden Ring.
     pub post_revival_character_type: ChrType,
     unk10: i32,
@@ -46,16 +48,11 @@ pub struct CharacterTypePropertiesTable {
 }
 
 impl FromStatic for CharacterTypePropertiesTable {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("CharacterTypePropertiesTable")
+    }
+
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
-        use crate::rva;
-        use pelite::pe64::Pe;
-        use shared::Program;
-
-        let target = Program::current()
-            .rva_to_va(rva::get().character_type_properties)
-            .map_err(|_| shared::InstanceError::NotFound)?
-            as *mut CharacterTypePropertiesTable;
-
-        unsafe { Ok(&mut *target) }
+        unsafe { load_static_direct(crate::rva::get().character_type_properties) }
     }
 }
