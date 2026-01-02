@@ -1,9 +1,10 @@
 use std::io;
 
 /// An extension on top of [io::Read] that reads data with length delimiters
-/// that was written using [LengthDelimitedWriteExt]. This is particularly
-/// useful for adding extra data before or after data structures written by FSW
-/// games.
+/// that was written using
+/// [LengthDelimitedWriteExt](super::LengthDelimitedWriteExt). This is
+/// particularly useful for adding extra data before or after data structures
+/// written by FSW games.
 ///
 /// The specific format used by this trait is a little-endian four-byte header
 /// indicating the length of the data in bytes, followed by the data itself.

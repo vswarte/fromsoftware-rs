@@ -29,8 +29,9 @@ pub type InstanceResult<T> = Result<T, InstanceError>;
 /// in memory.
 ///
 /// This is automatically implemented for [FromSingleton]s generated using the
-/// [from_singleton!] macro, and may be manually implemented for other types
-/// that have different ways of looking up their locations in-memory.
+/// [singleton](crate::singleton) attribute macro, and may be manually
+/// implemented for other types that have different ways of looking up their
+/// locations in-memory.
 pub trait FromStatic {
     /// The name of this object. Used for debugging purposes.
     fn name() -> Cow<'static, str>;
@@ -57,7 +58,7 @@ pub trait FromStatic {
 /// aren't necessarily always instanciated and available. Discovered singletons
 /// are cached so invokes after the first will be much faster.
 ///
-/// Note: currently this never returns [GetInstanceError::NotFound], but callers
+/// Note: currently this never returns [InstanceError::NotFound], but callers
 /// shouldn't rely on that being true into the future.
 impl<T: FromSingleton> FromStatic for T {
     fn name() -> Cow<'static, str> {
@@ -78,15 +79,15 @@ impl<T: FromSingleton> FromStatic for T {
     }
 }
 
-/// Loads a static reference to [T] from an [Rva] that points directly to its
+/// Loads a static reference to `T` from an [Rva] that points directly to its
 /// memory. Because this always assumes that the underlying object is
-/// initialized, it can only return [InstanceResult::Null] if [rva] itself is 0.
+/// initialized, it can only return [InstanceError::Null] if `rva` itself is 0.
 ///
 /// ## Safety
 ///
 /// This has all the same safety requirements as [FromStatic::instance]. In
-/// addition, the caller must ensure that [rva] points to a valid, initialized
-/// instance of [T].
+/// addition, the caller must ensure that `rva` points to a valid, initialized
+/// instance of `T`.
 pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
     let target = Program::current()
         .rva_to_va(rva)
@@ -95,14 +96,14 @@ pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'st
     unsafe { target.as_mut().ok_or(InstanceError::Null) }
 }
 
-/// Loads a static reference to [T] from an [Rva] that points to a pointer to
+/// Loads a static reference to `T` from an [Rva] that points to a pointer to
 /// its memory.
 ///
 /// ## Safety
 ///
 /// This has all the same safety requirements as [FromStatic::instance]. In
-/// addition, the caller must ensure that [rva] points to a pointer that is
-/// either null or points to a valid, initialized instance of [T].
+/// addition, the caller must ensure that `rva` points to a pointer that is
+/// either null or points to a valid, initialized instance of `T`.
 pub unsafe fn load_static_indirect<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
     let target = Program::current()
         .rva_to_va(rva)
