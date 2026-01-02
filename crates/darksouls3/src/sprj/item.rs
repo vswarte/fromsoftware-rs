@@ -1,5 +1,5 @@
 use std::alloc::{Layout, LayoutError, alloc_zeroed};
-use std::{fmt, ops, ptr, sync::LazyLock};
+use std::{borrow::Cow, fmt, ops, ptr, sync::LazyLock};
 
 use pelite::pe64::Pe;
 
@@ -14,6 +14,10 @@ pub struct MapItemMan {
 }
 
 impl FromStatic for MapItemMan {
+    fn name() -> Cow<'static, str> {
+        "MapItemMan".into()
+    }
+
     /// Returns the singleton instance of `MapItemMan`.
     unsafe fn instance() -> InstanceResult<&'static mut Self> {
         let target = Program::current()
