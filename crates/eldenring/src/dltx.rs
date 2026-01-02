@@ -383,7 +383,8 @@ impl<T: DLStringKind, const N: usize> Display for DLInplaceStr<T, N> {
 ///
 pub struct DLFixedString<T: DLStringKind, const N: usize> {
     pub allocator: DLFixedStdAllocator<T::CharType, N>,
-    base: T::SSOStringType,
+    // HACK: make private when proper set is implemented
+    pub base: T::SSOStringType,
     pub size: usize,
     pub capacity: usize,
     pub encoding: DLCharacterSet,

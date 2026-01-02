@@ -518,7 +518,20 @@ impl GeometrySpawnRequest {
         // for (i, char) in asset.as_bytes().iter().enumerate() {
         //     self.asset_string[i] = *char as u16;
         // }
-        todo!()
+
+        // HACK: fix until DLFixedString has a proper setter
+        let utf_string = asset.encode_utf16().collect::<Vec<u16>>();
+        if let Ok(data) = self.asset_string.allocator.allocate(utf_string.len() + 1) {
+            unsafe { std::ptr::copy_nonoverlapping(utf_string.as_ptr(), data, utf_string.len()) };
+            unsafe {
+                *data.add(utf_string.len()) = 0;
+            }
+            self.asset_string.capacity = (utf_string.len() + 1) as usize;
+            self.asset_string.size = utf_string.len() as usize;
+            self.asset_string.base.ptr = data;
+        } else {
+            panic!("Failed to allocate memory for GeometrySpawnRequest asset string");
+        }
     }
 }
 
