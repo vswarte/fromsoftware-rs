@@ -1,5 +1,5 @@
 use pelite::pe64::Pe;
-use shared::program::Program;
+use shared::{MutexBearer, program::Program};
 
 use crate::dlkr::DLPlainLightMutex;
 use crate::rva;
@@ -66,5 +66,15 @@ impl CSActionButtonManImp {
                 unk28: 0,
             },
         )
+    }
+}
+
+impl MutexBearer for CSActionButtonManImp {
+    fn lock(&self) {
+        self.mutex.lock();
+    }
+
+    fn unlock(&self) {
+        self.mutex.lock();
     }
 }
