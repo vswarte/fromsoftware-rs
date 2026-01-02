@@ -168,7 +168,8 @@ pub struct WorldBlockInfo {
     pub world_area_info_index: i32,
     unk3c: u32,
     unk40: bool,
-    unk41: [u8; 0x7],
+    /// Whether this block is a skybox block (index 99).
+    pub is_skybox_block: bool,
     msb_res_cap: NonNull<()>,
     unk50: u64,
     unk58: u64,

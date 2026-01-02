@@ -16,7 +16,7 @@ use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
 use crate::cs::world_geom_man::CSMsbPartsEne;
-use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
+use crate::cs::{BlockId, CSEzRabbitTask, CSEzUpdateTask, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
@@ -241,11 +241,14 @@ pub struct ChrIns {
     /// sfx.
     pub mimicry_establishment_param_id: i32,
     unk228: u32,
-    unk22c: u32,
+    /// Light set ID affecting this character in GParams.
+    /// Eg. 1100 for main player or 100 for most enemies.
+    pub gparam_light_set_id: i32,
     // Possibly contains some id related to current gparam and attached to chr geometry
     unk230: u32,
-    // Same as above
-    unk234: u32,
+    /// Fog ID affecting this character in GParams.
+    /// Eg. 1100 for main player or 100 for most enemies.
+    pub gparam_fog_id: i32,
     /// Transparency multiplier for the character
     /// Controlled by TAE Event 193 SetOpacityKeyframe
     pub opacity_keyframes_multiplier: f32,
@@ -1697,6 +1700,10 @@ pub struct CSModelIns {
     pub model_item: OwnedPtr<CSFD4ModelItem>,
     pub model_disp_entity: usize,
     pub location_entity: usize,
+    unk28: usize,
+    draw_param: [u8; 0xd0],
+    pub update_task: CSEzUpdateTask<CSEzRabbitTask, Self>,
+    unk130: [u8; 0x20],
 }
 
 #[repr(C)]
@@ -1890,17 +1897,21 @@ pub enum ChrType {
     Local = 0,
     WhitePhantom = 1,
     Duelist = 2,
-    Ghost = 3,
+    /// Name Source: %s_Wander string
+    WanderGhost = 3,
     Ghost1 = 4,
     Npc = 5,
     Unk6 = 6,
     Unk7 = 7,
     GrayPhantom = 8,
     Unk9 = 9,
-    BloodstainGhost = 10,
-    BonfireGhost = 11,
+    /// Name Source: %s_Replay string
+    ReplayGhost = 10,
+    /// Name Source: %s_Display string
+    DisplayGhost = 11,
     Unk12 = 12,
     Arena = 13,
+    /// Name Source: %s_Message string
     MessageGhost = 14,
     BloodyFinger = 15,
     Recusant = 16,

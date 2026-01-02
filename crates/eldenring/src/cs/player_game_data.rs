@@ -99,18 +99,9 @@ pub struct PlayerGameData {
     unk108: u8,
     pub reached_max_rune_memory: u8,
     unk10a: [u8; 0xE],
-    pub password: [u16; 0x8],
-    unk128: u16,
-    group_password_1: [u16; 0x8],
-    unk13a: u16,
-    group_password_2: [u16; 0x8],
-    unk14c: u16,
-    group_password_3: [u16; 0x8],
-    unk15e: u16,
-    group_password_4: [u16; 0x8],
-    unk170: u16,
-    group_password_5: [u16; 0x8],
-    unk182: [u8; 0x36],
+    pub password: PasswordData,
+    pub group_passwords: [PasswordData; 5],
+    unk184: [u8; 0x34],
     pub sp_effects: [PlayerGameDataSpEffect; 0xD],
     /// Level after any buffs and corrections
     pub effective_vigor: u32,
@@ -241,6 +232,32 @@ pub enum PlayerDataInvasionItemType {
     BloodyFinger = 0,
     FesteringBloodyFinger = 1,
     RecusantFinger = 2,
+}
+
+#[repr(C)]
+pub struct PasswordData {
+    /// Raw wchar_t data with null terminator
+    pub raw: [u16; 9],
+}
+
+impl PasswordData {
+    /// Checks if the password is empty
+    pub fn is_empty(&self) -> bool {
+        self.raw[0] == 0
+    }
+}
+
+impl TryInto<String> for &PasswordData {
+    type Error = std::string::FromUtf16Error;
+
+    fn try_into(self) -> Result<String, Self::Error> {
+        let len = self
+            .raw
+            .iter()
+            .position(|&c| c == 0)
+            .unwrap_or(self.raw.len());
+        String::from_utf16(&self.raw[..len])
+    }
 }
 
 #[repr(C)]

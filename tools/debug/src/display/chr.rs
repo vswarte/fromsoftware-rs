@@ -527,6 +527,7 @@ impl DebugDisplay for ChrIns {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Team: {}", self.team_type));
         ui.text(format!("Chr Type: {:?}", self.chr_type));
+        ui.text(format!("Character ID: {}", self.character_id));
         ui.text(format!("Field Ins Handle: {}", self.field_ins_handle));
         ui.text(format!("P2P Entity Handle: {}", self.p2p_entity_handle));
 
@@ -548,6 +549,9 @@ impl DebugDisplay for ChrIns {
         ui.header("Initial Orientation", || {
             self.initial_orientation_euler.render_debug(ui);
         });
+
+        ui.text(format!("Light Set ID: {}", self.gparam_light_set_id));
+        ui.text(format!("Fog ID: {}", self.gparam_fog_id));
 
         ui.text(format!("Last hit by: {}", self.last_hit_by));
         ui.text(format!("TAE use item: {:?}", self.tae_queued_use_item));

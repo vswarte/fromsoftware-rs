@@ -3,7 +3,7 @@ use std::fmt::Display;
 use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
 
-use crate::dlkr::DLAllocatorRef;
+use crate::dlkr::{DLAllocatorRef, DLFixedStdAllocator};
 
 use encoding_rs;
 
@@ -36,6 +36,8 @@ pub enum DLStringEncodingError {
     EncodeError,
     #[error("Unsupported encoding: {0}")]
     UnsupportedEncoding(u8),
+    #[error("String too long")]
+    StringTooLong,
 }
 
 trait CxxString<CharType> {
@@ -75,6 +77,21 @@ impl_cxx_string!(CxxUtf8String<DLAllocatorRef>, u8);
 impl_cxx_string!(CxxNarrowString<DLAllocatorRef>, u8);
 impl_cxx_string!(CxxUtf32String<DLAllocatorRef>, u32);
 
+#[repr(C)]
+/// Union for small string optimization storage.
+pub union SSOString<T: DLStringKind, const N: usize> {
+    pub inplace: [T::CharType; N],
+    pub ptr: *mut T::CharType,
+}
+
+impl<T: DLStringKind, const N: usize> Default for SSOString<T, N> {
+    fn default() -> Self {
+        Self {
+            inplace: [unsafe { std::mem::zeroed() }; N],
+        }
+    }
+}
+
 trait DLStringKindSeal {}
 
 /// This trait is used to seal the DLStringKind trait, preventing external implementations.
@@ -82,8 +99,12 @@ trait DLStringKindSeal {}
 pub trait DLStringKind: DLStringKindSeal {
     type InnerType: CxxString<Self::CharType>;
     type CharType: Sized + Copy;
+    type SSOStringType: Sized + Default;
+    const SSO_SIZE: usize =
+        std::mem::size_of::<Self::SSOStringType>() / std::mem::size_of::<Self::CharType>();
     const ENCODING: DLCharacterSet;
 
+    /// Padding type for DLFixedString to ensure proper alignment for flags.
     fn encode(s: &str) -> Result<Vec<Self::CharType>, DLStringEncodingError> {
         match Self::ENCODING {
             DLCharacterSet::UTF16 => {
@@ -180,6 +201,7 @@ impl DLStringKindSeal for DLUTF8StringKind {}
 impl DLStringKind for DLUTF8StringKind {
     type InnerType = CxxUtf8String<DLAllocatorRef>;
     type CharType = u8;
+    type SSOStringType = SSOString<Self, 16>;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF8;
 }
 
@@ -188,6 +210,7 @@ impl DLStringKindSeal for DLISO8859_1StringKind {}
 impl DLStringKind for DLISO8859_1StringKind {
     type InnerType = CxxNarrowString<DLAllocatorRef>;
     type CharType = u8;
+    type SSOStringType = SSOString<Self, 16>;
     const ENCODING: DLCharacterSet = DLCharacterSet::Iso8859_1;
 }
 
@@ -196,6 +219,7 @@ impl DLStringKindSeal for DLShiftJisStringKind {}
 impl DLStringKind for DLShiftJisStringKind {
     type InnerType = CxxNarrowString<DLAllocatorRef>;
     type CharType = u8;
+    type SSOStringType = SSOString<Self, 16>;
     const ENCODING: DLCharacterSet = DLCharacterSet::ShiftJis;
 }
 
@@ -204,6 +228,7 @@ impl DLStringKindSeal for DLEucJpStringKind {}
 impl DLStringKind for DLEucJpStringKind {
     type InnerType = CxxNarrowString<DLAllocatorRef>;
     type CharType = u8;
+    type SSOStringType = SSOString<Self, 16>;
     const ENCODING: DLCharacterSet = DLCharacterSet::EucJp;
 }
 
@@ -212,6 +237,7 @@ impl DLStringKindSeal for DLUTF16StringKind {}
 impl DLStringKind for DLUTF16StringKind {
     type InnerType = CxxUtf16String<DLAllocatorRef>;
     type CharType = u16;
+    type SSOStringType = SSOString<Self, 8>;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF16;
 }
 
@@ -220,6 +246,7 @@ impl DLStringKindSeal for DLUTF32StringKind {}
 impl DLStringKind for DLUTF32StringKind {
     type InnerType = CxxUtf32String<DLAllocatorRef>;
     type CharType = u32;
+    type SSOStringType = SSOString<Self, 4>;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF32;
 }
 
@@ -347,5 +374,33 @@ pub struct DLInplaceStr<T: DLStringKind, const N: usize> {
 impl<T: DLStringKind, const N: usize> Display for DLInplaceStr<T, N> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.base.fmt(f)
+    }
+}
+
+#[repr(C)]
+/// Fixed-size string with embedded buffer and allocator.
+/// String itself is stored in either the sso buffer or fixed allocator's buffer.
+///
+pub struct DLFixedString<T: DLStringKind, const N: usize> {
+    pub allocator: DLFixedStdAllocator<T::CharType, N>,
+    base: T::SSOStringType,
+    pub size: usize,
+    pub capacity: usize,
+    pub encoding: DLCharacterSet,
+}
+
+impl<T: DLStringKind, const N: usize> DLFixedString<T, N> {
+    pub fn new() -> Self {
+        Self {
+            capacity: T::SSO_SIZE - 1,
+            encoding: T::ENCODING,
+            ..Default::default()
+        }
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Default for DLFixedString<T, N> {
+    fn default() -> Self {
+        Self::new()
     }
 }

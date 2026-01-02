@@ -1,3 +1,6 @@
+mod fixed_std_allocator;
+
+pub use fixed_std_allocator::*;
 use std::{
     alloc::{GlobalAlloc, Layout},
     ptr::NonNull,

@@ -3,11 +3,11 @@ use std::ptr::NonNull;
 use windows::core::PCWSTR;
 
 use crate::{
-    BasicVector, Vector,
+    cs::{DisplayGhostData, PasswordData},
     dltx::DLString,
     fd4::{FD4StepBaseInterface, FD4Time},
     position::BlockPosition,
-    stl::DoublyLinkedList,
+    stl::{BasicVector, DoublyLinkedList, Vector},
 };
 use shared::OwnedPtr;
 
@@ -62,7 +62,7 @@ pub struct CSNetBloodMessageDb {
     pub entries: DoublyLinkedList<OwnedPtr<CSNetBloodMessageDbItem>>,
     unk20: usize,
     /// Seemingly contains message data for messages created by local user
-    pub created_data: DoublyLinkedList<usize>,
+    pub created_data: DoublyLinkedList<OwnedPtr<CSNetBloodMessageCreatedData>>,
     // Contains ???
     unk40: DoublyLinkedList<usize>,
     unk58: usize,
@@ -73,6 +73,31 @@ pub struct CSNetBloodMessageDb {
     /// Hosts any ongoing jobs for evaluations.
     evaluate_job: usize,
     unk160: usize,
+}
+
+#[repr(C)]
+pub struct CSNetBloodMessageCreatedData {
+    pub player_id: u32,
+    unk4: [u8; 8],
+    pub message_id: u64,
+    pub block_id: BlockId,
+    unk1c: u32,
+    pub position: BlockPosition,
+    pub template1: u16,
+    pub gesture_param: u16,
+    pub part1: u16,
+    pub infix: u16,
+    pub template2: u16,
+    pub part2: u16,
+    unk3c: u16,
+    pub display_ghost: DisplayGhostData,
+    pub character_name: [u16; 20],
+    pub positive_rating: u16,
+    pub negative_rating: u16,
+    unkfc: u16,
+    unkfe: [u8; 2],
+    pub group_passwords: [PasswordData; 5],
+    pub net_blood_message_db_item: OwnedPtr<CSNetBloodMessageDbItem>,
 }
 
 #[repr(C)]

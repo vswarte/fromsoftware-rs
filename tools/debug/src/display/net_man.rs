@@ -25,9 +25,12 @@ impl DebugDisplay for CSNetBloodMessageDb {
         });
 
         ui.header("Created message data", || {
-            self.created_data
-                .iter()
-                .for_each(|f| ui.text(format!("{f} {f:x}")));
+            render_message_table(
+                self.created_data
+                    .iter()
+                    .map(|msg| msg.net_blood_message_db_item.as_ref()),
+                ui,
+            );
         });
 
         ui.header("Discovered messages", || {
