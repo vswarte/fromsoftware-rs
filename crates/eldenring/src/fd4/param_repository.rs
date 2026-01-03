@@ -305,7 +305,12 @@ mod param_layout {
     use std::mem::size_of;
 
     /// Trait for offset size variations in param files.
-    pub trait ParamLayout: Copy {
+    ///
+    /// # Safety
+    ///
+    /// Implementors must assure that the associated `FileOffsetType` correctly
+    /// represents param file row descriptor offset sizes.
+    pub unsafe trait ParamLayout: Copy {
         type FileOffsetType: Into<u64> + Copy;
 
         fn is_64_bit() -> bool {
@@ -317,7 +322,7 @@ mod param_layout {
     #[derive(Clone, Copy)]
     pub struct ParamLayout32;
 
-    impl ParamLayout for ParamLayout32 {
+    unsafe impl ParamLayout for ParamLayout32 {
         type FileOffsetType = u32;
     }
 
@@ -325,7 +330,7 @@ mod param_layout {
     #[derive(Clone, Copy)]
     pub struct ParamLayout64;
 
-    impl ParamLayout for ParamLayout64 {
+    unsafe impl ParamLayout for ParamLayout64 {
         type FileOffsetType = u64;
     }
 }
