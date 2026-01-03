@@ -24,7 +24,10 @@ use crate::position::{BlockPosition, HavokPosition};
 use crate::rotation::Quaternion;
 use crate::rva;
 use shared::program::Program;
-use shared::{Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPtr};
+use shared::{
+    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPtr, Subclass, Superclass,
+    for_all_subclasses,
+};
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -117,6 +120,8 @@ pub enum OmissionMode {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(PlayerIns, EnemyIns))]
 /// Abstract base class to all characters. NPCs, Enemies, Players, Summons, Ghosts, even gesturing
 /// character on bloodmessages inherit from this.
 ///
@@ -319,52 +324,53 @@ pub struct ChrIns {
     unk548: [u8; 0x38],
 }
 
-impl ChrIns {
-    pub fn apply_speffect(&mut self, sp_effect: i32, dont_sync: bool) {
+#[for_all_subclasses]
+pub impl ChrInsExt for Subclass<ChrIns> {
+    fn apply_speffect(&mut self, sp_effect: i32, dont_sync: bool) {
         let rva = Program::current()
             .rva_to_va(rva::get().chr_ins_apply_speffect)
             .unwrap();
 
-        let call = unsafe { transmute::<u64, extern "C" fn(&mut ChrIns, i32, bool) -> u64>(rva) };
+        let call = unsafe { transmute::<u64, extern "C" fn(&mut Self, i32, bool) -> u64>(rva) };
         call(self, sp_effect, dont_sync);
     }
 
-    pub fn remove_speffect(&mut self, sp_effect: i32) {
+    fn remove_speffect(&mut self, sp_effect: i32) {
         let rva = Program::current()
             .rva_to_va(rva::get().chr_ins_remove_speffect)
             .unwrap();
 
-        let call = unsafe { transmute::<u64, extern "C" fn(&mut ChrIns, i32) -> u64>(rva) };
+        let call = unsafe { transmute::<u64, extern "C" fn(&mut Self, i32) -> u64>(rva) };
         call(self, sp_effect);
     }
 
     /// Get the effective Block ID for this character.
-    pub fn block_id(&self) -> BlockId {
-        if self.block_id_override.0 != -1 {
-            self.block_id_override
+    fn block_id(&self) -> BlockId {
+        if self.superclass().block_id_override.0 != -1 {
+            self.superclass().block_id_override
         } else {
-            self.block_id
+            self.superclass().block_id
         }
     }
     /// Get the effective Block ID used for chunk positioning and offsets.
-    pub fn block_id_origin(&self) -> BlockId {
-        if self.block_origin_override.0 != -1 {
-            self.block_origin_override
+    fn block_id_origin(&self) -> BlockId {
+        if self.superclass().block_origin_override.0 != -1 {
+            self.superclass().block_origin_override
         } else {
-            self.block_origin
+            self.superclass().block_origin
         }
     }
 
     /// Calculates the role param ID for this character based on its chr_type, vow_type and
     /// whether this character has same group password in case of a player-like summon.
-    pub fn calculate_role_param_id(
+    fn calculate_role_param_id(
         &self,
         character_type: ChrType,
         vow_type: u8,
         from_group_password: bool,
     ) -> i32 {
-        if self.debug_flags.use_debug_role_param() {
-            self.debug_role_param_id
+        if self.superclass().debug_flags.use_debug_role_param() {
+            self.superclass().debug_role_param_id
         } else {
             let base = (if from_group_password { 100 } else { 0 }) + vow_type as u32;
             base.saturating_mul(10_000)
@@ -1368,6 +1374,7 @@ pub struct CSChrDataModule {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
 pub struct CSPairAnimNode {
     vftable: usize,
@@ -1394,6 +1401,7 @@ pub enum ThrowNodeState {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSThrowNode {
     pub super_pair_anim_node: CSPairAnimNode,
@@ -1690,6 +1698,7 @@ bitfield! {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
 pub struct CSModelIns {
     vftable: usize,
@@ -1737,12 +1746,14 @@ pub struct CSFD4LocationGxModelMatricesAndAabbExporter {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct CSChrModelIns {
     pub model_ins: CSModelIns,
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct PlayerIns {
     pub chr_ins: ChrIns,
@@ -1815,12 +1826,6 @@ pub struct PlayerIns {
     unk718: [u8; 0x27],
 }
 
-impl AsRef<ChrIns> for PlayerIns {
-    fn as_ref(&self) -> &ChrIns {
-        &self.chr_ins
-    }
-}
-
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum HandIndex {
@@ -1855,6 +1860,7 @@ pub struct ReplayRecorder {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 /// Source of name: RTTI
 pub struct EnemyIns {
     pub chr_ins: ChrIns,

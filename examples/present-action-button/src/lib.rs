@@ -2,8 +2,8 @@ use std::time::{Duration, Instant};
 
 use eldenring::{
     cs::{
-        CSActionButtonManImp, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, GeometrySpawnParameters,
-        WorldChrMan,
+        CSActionButtonManImp, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, ChrInsExt,
+        GeometrySpawnParameters, WorldChrMan,
     },
     fd4::FD4TaskData,
     util::system::wait_for_system_init,

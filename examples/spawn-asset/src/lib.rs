@@ -1,7 +1,10 @@
 use std::time::Duration;
 
 use eldenring::{
-    cs::{CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, GeometrySpawnParameters, WorldChrMan},
+    cs::{
+        CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, ChrInsExt, GeometrySpawnParameters,
+        WorldChrMan,
+    },
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };

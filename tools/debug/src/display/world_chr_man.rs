@@ -1,8 +1,10 @@
 use eldenring::cs::{
-    ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, PlayerIns, SummonBuddyGroupEntry,
-    SummonBuddyManager, SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
+    ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, SummonBuddyGroupEntry, SummonBuddyManager,
+    SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
 };
 use hudhook::imgui::{TableColumnSetup, Ui};
+
+use fromsoftware_shared::Subclass;
 
 use super::{DebugDisplay, UiExt};
 
@@ -149,11 +151,15 @@ impl DebugDisplay for NetChrSetSync {
     }
 }
 
-impl DebugDisplay for ChrSet<ChrIns> {
+impl<T> DebugDisplay for ChrSet<T>
+where
+    T: Subclass<ChrIns>,
+{
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Character capacity: {}", self.capacity));
 
         ui.list("Characters", self.characters(), |ui, _i, chr_ins| {
+            let chr_ins = chr_ins.superclass();
             ui.header(
                 &format!(
                     "c{:0>4} - {} FieldInsSelector({}, {})",
@@ -163,7 +169,7 @@ impl DebugDisplay for ChrSet<ChrIns> {
                     chr_ins.field_ins_handle.selector.index()
                 ),
                 || {
-                    chr_ins.render_debug(ui);
+                    chr_ins.superclass().render_debug(ui);
                 },
             );
         });
@@ -183,7 +189,7 @@ impl DebugDisplay for ChrSet<ChrIns> {
                     ui.table_next_column();
                     let chr_ins = unsafe { e.chr_set_entry.as_ref().chr_ins.as_ref() };
                     ui.text(format!("{}", unsafe {
-                        &chr_ins.unwrap().as_ref().field_ins_handle
+                        &chr_ins.unwrap().as_ref().superclass().field_ins_handle
                     }));
                 },
             );
@@ -204,70 +210,7 @@ impl DebugDisplay for ChrSet<ChrIns> {
                     ui.table_next_column();
                     let chr_ins = unsafe { e.chr_set_entry.as_ref().chr_ins.as_ref() };
                     ui.text(format!("{}", unsafe {
-                        &chr_ins.unwrap().as_ref().field_ins_handle
-                    }));
-                },
-            );
-        });
-    }
-}
-
-impl DebugDisplay for ChrSet<PlayerIns> {
-    fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Character capacity: {}", self.capacity));
-
-        ui.list("Characters", self.characters(), |ui, _i, player_ins| {
-            ui.header(
-                &format!(
-                    "c{:0>4} - {} FieldInsSelector({}, {})",
-                    player_ins.chr_ins.character_id,
-                    player_ins.chr_ins.field_ins_handle.block_id,
-                    player_ins.chr_ins.field_ins_handle.selector.container(),
-                    player_ins.chr_ins.field_ins_handle.selector.index()
-                ),
-                || {
-                    player_ins.render_debug(ui);
-                },
-            );
-        });
-
-        ui.header("Character event ID mapping", || {
-            ui.table(
-                "character-event-id-mapping-player",
-                [
-                    TableColumnSetup::new("Event ID"),
-                    TableColumnSetup::new("Field Ins Handle"),
-                ],
-                self.entity_id_mapping.iter(),
-                |ui, _i, e| {
-                    ui.table_next_column();
-                    ui.text(e.entity_id.to_string());
-
-                    ui.table_next_column();
-                    let chr_ins = unsafe { e.chr_set_entry.as_ref().chr_ins.as_ref() };
-                    ui.text(format!("{}", unsafe {
-                        &chr_ins.unwrap().as_ref().chr_ins.field_ins_handle
-                    }));
-                },
-            );
-        });
-
-        ui.header("Group mapping", || {
-            ui.table(
-                "group-mapping-player",
-                [
-                    TableColumnSetup::new("Group"),
-                    TableColumnSetup::new("Field Ins Handle"),
-                ],
-                self.group_id_mapping.iter(),
-                |ui, _i, e| {
-                    ui.table_next_column();
-                    ui.text(e.group_id.to_string());
-
-                    ui.table_next_column();
-                    let chr_ins = unsafe { e.chr_set_entry.as_ref().chr_ins.as_ref() };
-                    ui.text(format!("{}", unsafe {
-                        &chr_ins.unwrap().as_ref().chr_ins.field_ins_handle
+                        &chr_ins.unwrap().as_ref().superclass().field_ins_handle
                     }));
                 },
             );
