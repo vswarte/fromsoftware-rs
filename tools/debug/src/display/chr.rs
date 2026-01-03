@@ -534,17 +534,31 @@ impl DebugDisplay for ChrIns {
 
 fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
     ui.text(format!("Team: {}", chr_ins.team_type));
+    ui.text(format!("Chr Type: {:?}", chr_ins.chr_type));
+    ui.text(format!("Field Ins Handle: {}", chr_ins.field_ins_handle));
+    ui.text(format!("P2P Entity Handle: {}", chr_ins.p2p_entity_handle));
 
-    ui.text(format!("Block ID: {}", chr_ins.block_id_1));
+    ui.text(format!("Block ID: {}", chr_ins.block_id));
+    ui.text(format!("Block ID Override: {}", chr_ins.block_id_override));
+    ui.text(format!("Block ID Origin: {}", chr_ins.block_origin));
+    ui.text(format!(
+        "Block ID Origin Override: {}",
+        chr_ins.block_origin_override
+    ));
+
+    ui.header("Chunk Position", || {
+        chr_ins.chunk_position.render_debug(ui);
+    });
+
+    ui.header("Initial Position", || {
+        chr_ins.initial_position.render_debug(ui);
+    });
+    ui.header("Initial Orientation", || {
+        chr_ins.initial_orientation_euler.render_debug(ui);
+    });
 
     ui.text(format!("Last hit by: {}", chr_ins.last_hit_by));
     ui.text(format!("TAE use item: {:?}", chr_ins.tae_queued_use_item));
-
-    ui.text(format!(
-        "Block center origin 1: {}",
-        chr_ins.block_origin_override
-    ));
-    ui.text(format!("Block center origin 2: {}", chr_ins.block_origin));
 
     ui.header("Special Effect", || {
         ui.table(

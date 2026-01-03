@@ -1,4 +1,5 @@
 use bitfield::bitfield;
+use std::fmt::Display;
 use std::mem::transmute;
 use std::ptr::NonNull;
 
@@ -35,8 +36,56 @@ use shared::{
 /// into block_id (4 bytes) + chr_selector (3 bytes). According to Sekiro's debug asserts the packed
 /// version is referred to as the "whoid".
 pub struct P2PEntityHandle {
-    pub block_id: i32,
-    pub chr_selector: i32,
+    pub block_id: BlockId,
+    pub chr_selector: P2PEntitySelector,
+}
+
+impl P2PEntityHandle {
+    pub fn is_empty(&self) -> bool {
+        self.chr_selector.0 == u32::MAX
+    }
+}
+
+impl Display for P2PEntityHandle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.is_empty() {
+            write!(f, "P2PEntity(None)")
+        } else {
+            write!(
+                f,
+                "P2PEntity({}, {}, {})",
+                self.block_id,
+                self.chr_selector.container(),
+                self.chr_selector.index()
+            )
+        }
+    }
+}
+
+bitfield! {
+    #[repr(C)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    /// Represents a packed ChrSet selector for P2P entity handles.
+    pub struct P2PEntitySelector(u32);
+    impl Debug;
+
+    /// The index within the container.
+    pub index, _: 10, 0;
+    _, set_index: 10, 0;
+
+    /// The container for this P2PEntity, used to determine which ChrSet to use.
+    pub container, _: 18, 11;
+    _, set_container: 18, 11;
+}
+
+impl P2PEntitySelector {
+    /// Create a new P2PEntitySelector from container and index.
+    pub fn from_parts(container: u32, index: u32) -> Self {
+        let mut selector = P2PEntitySelector(0);
+        selector.set_container(container);
+        selector.set_index(index);
+        selector
+    }
 }
 
 #[repr(C)]
@@ -85,9 +134,12 @@ pub struct ChrIns {
     pub backread_state: u32,
     unk24: u32,
     chr_res: usize,
-    pub block_id_1: BlockId,
-    pub block_id_origin_1: i32,
+    pub block_id: BlockId,
+    pub block_id_override: BlockId,
+    /// Override Block ID for [ChrIns::block_origin] will be used if not -1
     pub block_origin_override: BlockId,
+    /// Block ID used for the overworld map chunk positioning [ChrIns::chunk_position] and
+    /// offsets calculations.
     pub block_origin: BlockId,
     pub chr_set_cleanup: u32,
     _pad44: u32,
@@ -180,8 +232,11 @@ pub struct ChrIns {
     unk200: usize,
     /// Amount of coop players currently in the session
     pub coop_players_for_multiplay_correction: u32,
-    /// Changes what phantom param is applied to the character
-    pub phantom_param_override: i32,
+    /// Override for character role param id.
+    /// Will be used when the character joins ceremony.
+    ///
+    /// See [crate::cs::PartyMemberInfo::pseudo_mp_role_param_override]
+    pub role_param_id_override: i32,
     unk210: [u8; 0x8],
     /// Steam ID of the player that created this character if it's a summon
     pub character_creator_steam_id: u64,
@@ -223,7 +278,11 @@ pub struct ChrIns {
     render_group_mask_3: [u8; 0x20],
     unk2bc: [u8; 0x4c],
     chr_slot_sys: [u8; 0x40],
-    unk348: [u8; 0x40],
+    unk348: [u8; 0x1c],
+    /// Whether this character's position has been synchronized over the network.
+    /// Will be set by NetAIManipulator after receiving a position update.
+    pub net_position_synchronized: bool,
+    unk368: [u8; 0x20],
     last_received_packet60: u32,
     unk38c: [u8; 0xc],
     hka_pose_importer: usize,
@@ -261,7 +320,7 @@ pub struct ChrIns {
     /// (e.g. water, lava, etc.), -1 if none.
     pub hit_material_override: i32,
     unk540: u32,
-    pub role_param_id: i32,
+    pub debug_role_param_id: i32,
     unk548: [u8; 0x38],
 }
 
@@ -283,6 +342,40 @@ pub impl ChrInsExt for Subclass<ChrIns> {
 
         let call = unsafe { transmute::<u64, extern "C" fn(&mut Self, i32) -> u64>(rva) };
         call(self, sp_effect);
+    }
+
+    /// Get the effective Block ID for this character.
+    fn block_id(&self) -> BlockId {
+        if self.superclass().block_id_override.0 != -1 {
+            self.superclass().block_id_override
+        } else {
+            self.superclass().block_id
+        }
+    }
+    /// Get the effective Block ID used for chunk positioning and offsets.
+    fn block_id_origin(&self) -> BlockId {
+        if self.superclass().block_origin_override.0 != -1 {
+            self.superclass().block_origin_override
+        } else {
+            self.superclass().block_origin
+        }
+    }
+
+    /// Calculates the role param ID for this character based on its chr_type, vow_type and
+    /// whether this character has same group password in case of a player-like summon.
+    fn calculate_role_param_id(
+        &self,
+        character_type: ChrType,
+        vow_type: u8,
+        from_group_password: bool,
+    ) -> i32 {
+        if self.superclass().debug_flags.use_debug_role_param() {
+            self.superclass().debug_role_param_id
+        } else {
+            let base = (if from_group_password { 100 } else { 0 }) + vow_type as u32;
+            base.saturating_mul(10_000)
+                .saturating_add(character_type as u32) as i32
+        }
     }
 }
 
@@ -410,8 +503,8 @@ bitfield! {
     /// Will disable character entirely (no updates, no rendering, no physics)
     /// Set most of the time on remote character's horses
     pub character_disabled, set_character_disabled:                         12;
-    /// Makes character use ChrIns.role_param_id instead of combination of chr_type and vow_type
-    pub use_role_param, set_use_role_param:                                 13;
+    /// Makes character use [ChrIns::debug_role_param_id] instead of combination of chr_type and vow_type
+    pub use_debug_role_param, set_use_debug_role_param:                                 13;
     /// Enables debug view render of state info 110 speffect (counter attack frames)
     pub state_info_110_debug_view, set_state_info_110_debug_view:           14;
     /// Enables debug view render of state info 434 speffect

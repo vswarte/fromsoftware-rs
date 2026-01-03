@@ -2,8 +2,8 @@ use std::time::{Duration, Instant};
 
 use eldenring::{
     cs::{
-        CSActionButtonManImp, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, GeometrySpawnParameters,
-        WorldChrMan,
+        CSActionButtonManImp, CSTaskGroupIndex, CSTaskImp, CSWorldGeomMan, ChrInsExt,
+        GeometrySpawnParameters, WorldChrMan,
     },
     fd4::FD4TaskData,
     util::system::wait_for_system_init,
@@ -47,7 +47,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
 
                 let Some(block_geom_data) = unsafe { CSWorldGeomMan::instance() }
                     .ok()
-                    .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id_1))
+                    .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id()))
                 else {
                     return;
                 };
