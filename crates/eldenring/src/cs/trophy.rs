@@ -47,7 +47,7 @@ pub struct CSTrophyTitleInfo {
 pub trait CSTrophyTitleInfoVmt {
     fn destructor(&mut self);
 
-    /// Returns the highest achievement ID.
+    /// Returns the highest achievement ID. Used for validating requested achievement IDs.
     fn max_achievement_id(&self) -> u32;
 
     fn unk10(&mut self);
@@ -86,6 +86,7 @@ pub struct CSTrophyPlatformImp_forSteamAchievementItem {
 }
 
 impl CSTrophyPlatformImp_forSteamAchievementItem {
+    /// The achievement's title as shown on the Steam profile achievements page.
     pub fn title(&self) -> String {
         let length = self
             .title
