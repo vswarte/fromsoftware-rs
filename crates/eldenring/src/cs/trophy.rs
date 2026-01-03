@@ -60,7 +60,7 @@ pub trait CSTrophyTitleInfoVmt {
     fn achievement_key_for_id(&self, achievement_id: &u32) -> *const u8;
 }
 
-/// Steam backed implement for achievement granting.
+/// Steam backed implementation for achievement granting.
 #[allow(non_camel_case_types)]
 #[repr(C)]
 pub struct CSTrophyPlatformImp_forSteam {
