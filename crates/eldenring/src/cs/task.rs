@@ -5,14 +5,14 @@ use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
 use crate::dlkr::DLPlainConditionSignal;
-use crate::fd4::{FD4TaskBaseVmt, FD4TaskData};
+use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
 use crate::{
     Vector,
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
     rva,
 };
-use shared::{OwnedPtr, RecurringTask, SharedTaskImp, program::Program};
+use shared::{OwnedPtr, RecurringTask, SharedTaskImp, Subclass, Superclass, program::Program};
 
 #[vtable_rs::vtable]
 pub trait CSEzTaskVmt: FD4TaskBaseVmt {
@@ -30,6 +30,8 @@ pub trait CSEzTaskProxyVmt: FD4TaskBaseVmt {
 }
 
 #[repr(C)]
+#[derive(Subclass, Superclass)]
+#[subclass(base = FD4TaskBase)]
 pub struct CSEzTask {
     pub vftable: VPtr<dyn CSEzTaskVmt, Self>,
     unk8: u32,
@@ -38,6 +40,8 @@ pub struct CSEzTask {
 }
 
 #[repr(C)]
+#[derive(Subclass, Superclass)]
+#[subclass(base = CSEzTask, base = FD4TaskBase)]
 pub struct CSEzRabbitTaskBase {
     pub ez_task: CSEzTask,
     unk18: u32,
@@ -45,6 +49,8 @@ pub struct CSEzRabbitTaskBase {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
+#[subclass(base = CSEzRabbitTaskBase, base = CSEzTask, base = FD4TaskBase)]
 pub struct CSEzRabbitNoUpdateTask {
     pub ez_rabbit_task_base: CSEzRabbitTaskBase,
 }
@@ -62,14 +68,19 @@ pub struct CSEzUpdateTask<TEzTask, TSubject> {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
+#[subclass(base = CSEzRabbitTaskBase, base = CSEzTask, base = FD4TaskBase)]
 pub struct CSEzRabbitTask {
-    pub base: CSEzTask,
-    unk18: u32,
-    unk1c: u32,
+    pub base: CSEzRabbitTaskBase,
 }
 
+// This can't implement Subclass because there's no reliable way to find the
+// correct vtable for any given set of generics.
 #[repr(C)]
-pub struct CSEzVoidTask<TEzTask, TSubject> {
+pub struct CSEzVoidTask<TEzTask, TSubject>
+where
+    TEzTask: Subclass<CSEzTask>,
+{
     pub base_task: TEzTask,
 
     /// Whatever this update task is operating on
@@ -80,6 +91,8 @@ pub struct CSEzVoidTask<TEzTask, TSubject> {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
+#[subclass(base = FD4TaskBase)]
 pub struct CSEzTaskProxy {
     vftable: VPtr<dyn CSEzTaskProxyVmt, Self>,
     unk8: u32,
@@ -95,6 +108,7 @@ pub struct CSTaskGroup {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 pub struct CSTaskGroupIns {
     vftable: usize,
     pub name: FD4BasicHashString,
@@ -102,6 +116,7 @@ pub struct CSTaskGroupIns {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct CSTimeLineTaskGroupIns {
     pub base: CSTaskGroupIns,
     pub step_impl: usize,
@@ -135,6 +150,7 @@ impl SharedTaskImp<CSTaskGroupIndex, FD4TaskData> for CSTaskImp {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 pub struct CSTaskBase {
     vftable: usize,
     allocator: usize,
@@ -151,6 +167,7 @@ pub struct TaskGroupEntry {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct CSTask {
     pub task_base: CSTaskBase,
     allocator: usize,

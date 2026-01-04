@@ -7,6 +7,7 @@ pub mod program;
 pub mod rtti;
 mod r#static;
 pub mod steam;
+mod subclass;
 pub mod task;
 pub mod util;
 
@@ -18,8 +19,9 @@ pub use program::*;
 pub use rtti::*;
 pub use r#static::*;
 pub use steam::*;
+pub use subclass::*;
 pub use task::*;
 pub use util::*;
 
 pub use from_singleton::FromSingleton;
-pub use fromsoftware_shared_macros::singleton;
+pub use fromsoftware_shared_macros::*;
