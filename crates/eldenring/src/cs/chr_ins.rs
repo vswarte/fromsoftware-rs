@@ -7,7 +7,7 @@ use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
-use crate::Vector;
+use crate::{Tree, Vector};
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
 use crate::cs::network_session::PlayerNetworkSession;
 use crate::cs::player_game_data::{ChrAsm, PlayerGameData};
