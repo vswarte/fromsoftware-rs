@@ -1276,7 +1276,6 @@ pub struct CSChrTimeActModule {
 pub struct CSChrBehaviorModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    ///
     pub beh_character: Option<NonNull<BehChara>>,
     beh_chara_proxy_driver: usize,
     beh_raycast_interface: usize,
