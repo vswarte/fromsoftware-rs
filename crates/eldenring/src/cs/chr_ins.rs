@@ -378,6 +378,8 @@ pub impl ChrInsExt for Subclass<ChrIns> {
         }
     }
 
+    /// This function can play animations on ChrInses that have a [BehChara] field.
+    /// It is the responsibility of the caller to ensure that the behavior exists for the ChrIns.
     fn play_animation_by_behavior_name<S: AsRef<str>>(&self, behavior_name: S) -> bool {
         let Some(hkb_character) = self
             .superclass()
@@ -1274,6 +1276,7 @@ pub struct CSChrTimeActModule {
 pub struct CSChrBehaviorModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
+    ///
     pub beh_character: Option<NonNull<BehChara>>,
     beh_chara_proxy_driver: usize,
     beh_raycast_interface: usize,
@@ -1310,6 +1313,7 @@ pub struct BehChara {
     ani_bnd_file_cap: usize,
     hk_beh_script_file_cap: usize,
     hk_beh_script_asset_loader: usize,
+    /// Handles havok behaviors for character instances.
     pub hkb_character: OwnedPtr<HkbCharacter>,
     allocator1: usize,
     unk40: usize,
@@ -1318,6 +1322,7 @@ pub struct BehChara {
     unk58: [u8; 0x8],
     hkb_hand_ik_controls_modifier: usize,
     unk68: [u8; 0x40],
+    /// Seems to be a Tree related to AEG's.
     unkb0: Tree<usize>,
     unkc0: usize,
     unkc8: usize,
@@ -1335,11 +1340,13 @@ pub struct HkbCharacter {
     pub mem_size_and_flags: u16,
     pub ref_count: u16,
     unk18: [u8; 0x10],
+    /// Parent ChrIns.
     pub owner: NonNull<ChrIns>,
     unk30: usize,
     unk38: usize,
     unk40: usize,
     unk48: [u8; 0x18],
+    /// Same proxy as in BehChara
     beh_chara_proxy_driver: usize,
     hkb_foot_ik_driver: usize,
     hkb_hand_ik_driver: usize,
