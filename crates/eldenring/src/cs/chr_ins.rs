@@ -1241,8 +1241,8 @@ pub struct CSChrTimeActModule {
 pub struct CSChrBehaviorModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    pub beh_character: OwnedPtr<BehaviorCharacter>,
-    beh_character_proxy_driver: usize,
+    pub beh_character: OwnedPtr<BehChara>,
+    beh_chara_proxy_driver: usize,
     beh_raycast_interface: usize,
     unk28: usize,
     pub root_motion: F32Vector4,
@@ -1270,25 +1270,72 @@ pub struct CSChrBehaviorModule {
 }
 
 #[repr(C)]
-pub struct BehaviorCharacter {
+pub struct BehChara {
     hk_beh_project_asset_manager: usize,
     unk8: usize,
     beh_bnd_file_cap: usize,
     ani_bnd_file_cap: usize,
     hk_beh_script_file_cap: usize,
     hk_beh_script_asset_loader: usize,
-    pub hkb_character: OwnedPtr<HavokBehaviorCharacter>,
-    //...
+    pub hkb_character: OwnedPtr<HkbCharacter>,
+    allocator1: usize,
+    unk40: usize,
+    unk48: [u8; 0x8],
+    hkb_foot_ik_controls_modifier: usize,
+    unk58: [u8; 0x8],
+    hkb_hand_ik_controls_modifier: usize,
+    unk68: [u8; 0x40],
+    unkb0: Tree<usize>,
+    unkc0: usize,
+    unkc8: usize,
+    havok_anim: usize,
+    allocator2: usize,
+    unke0: usize,
+    unke8: [u8; 0x30],
 }
 
 #[repr(C)]
-pub struct HavokBehaviorCharacter {
+pub struct HkbCharacter {
+    // super_hkReferencedObject
     vftable: usize,
     property_bag: usize,
-    mem_size: u16,
+    pub mem_size_and_flags: u16,
     pub ref_count: u16,
-    //_padding: [u8; 4]
+    unk18: [u8; 0x10],
+    pub owner: NonNull<ChrIns>,
+    unk30: usize,
+    unk38: usize,
+    unk40: usize,
+    unk48: [u8; 0x18],
+    beh_chara_proxy_driver: usize,
+    hkb_foot_ik_driver: usize,
+    hkb_hand_ik_driver: usize,
+    unk78: [u8; 0x18],
+    hkb_character_setup: usize,
+    hkb_behavior_graph: usize,
+    hkb_project_data: usize,
+    unka8: [u8; 0x08],
+    beh_raycast_interface: usize,
+    /// Parent CSHkBehWorld.
+    hk_beh_world: usize,
+    unkc0: [u8; 0x10],
+    unkd0: usize,
+    unkd8: usize,
+    hkb_project_asset_manager: usize,
+    unke8: [u8; 0x08],
+    hkb_global_symbol_linker: usize,
+    hkb_character_symbol_linker: usize,
+    unk100: usize,
+    unk108: [u8; 0x08],
+    unk110: usize,
+    unk118: usize,
+    unk120: f32,
+    unk124: [u8; 4],
+    unk128: usize,
+    hknp_physics_system: usize,
+    unk138: usize,
 }
+
 
 #[repr(C)]
 pub struct CSChrEventModule {
