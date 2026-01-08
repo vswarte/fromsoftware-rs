@@ -3,6 +3,7 @@ use std::ptr::NonNull;
 use bitfield::bitfield;
 
 use crate::fd4::FD4BasicHashString;
+use shared::{Subclass, Superclass};
 
 /// Represents a managed resource.
 /// The data it represents is immediately handed over to
@@ -11,21 +12,19 @@ use crate::fd4::FD4BasicHashString;
 /// parsed, ResCaps (multiple) are created from the FileCap, and the ResCaps
 /// individually post the data they represent to associated sub-systems.
 /// For GParamResCaps that means posting the such data to the gparam blending
-/// system as well as a bunch of other GX structures
+/// system as well as a bunch of other GX structures.
 ///
 /// Source of name: RTTI
 #[repr(C)]
-pub struct FD4ResCap<T>
-where
-    T: AsRef<FD4ResCap<T>>,
-{
+#[derive(Superclass)]
+pub struct FD4ResCap {
     vftable: usize,
     /// Name of the resource contained in the ResCap
     pub name: FD4BasicHashString,
     /// The repository this resource is hosted in.
-    pub owning_repository: Option<NonNull<FD4ResCapHolder<T>>>,
+    pub owning_repository: Option<NonNull<FD4ResCapHolder<FD4ResCap>>>,
     /// Next item in the linked list
-    pub next_item: Option<NonNull<T>>,
+    pub next_item: Option<NonNull<FD4ResCap>>,
     /// Amount of references to this resource.
     pub reference_count: u32,
     unk5c: u32,
@@ -41,24 +40,16 @@ where
 ///
 /// Source of name: RTTI
 #[repr(C)]
+#[derive(Superclass, Subclass)]
 pub struct FD4ResRep<T>
 where
-    T: AsRef<FD4ResCap<T>>,
+    T: Subclass<FD4ResCap>,
 {
     /// Repositories themselves inherit from ResCaps.
-    pub res_cap: FD4ResCap<Self>,
+    pub res_cap: FD4ResCap,
 
     /// Holds a set of ResCaps wrapping T.
     pub res_cap_holder: FD4ResCapHolder<T>,
-}
-
-impl<T> AsRef<FD4ResCap<Self>> for FD4ResRep<T>
-where
-    T: AsRef<FD4ResCap<T>>,
-{
-    fn as_ref(&self) -> &FD4ResCap<Self> {
-        &self.res_cap
-    }
 }
 
 /// Represents a collection of ResCaps/FileCaps.
@@ -72,28 +63,29 @@ where
 /// In the case of a collision on insertion it will make the entry you are
 /// seeking to insert the new head.
 ///
+/// ```ignore
 /// Bucket # = fnv(resource name) % bucket count
 ///
-/// +----------------------------------------------------------------------....
-/// |                        FD4ResCapHolder<T>'s map
-/// +-------------------------------------------------------+--------------....
-/// |  Bucket 0        |  Bucket 1        |  Bucket 2       |  Bucket 3
-/// +------------------+------------------+-----------------+--------------....
-/// |  FD4ResCap<T>    |  FD4ResCap<T>    |                 |  FD4ResCap<T>
-/// |  FD4ResCap<T>    |                  |                 |  FD4ResCap<T>
-/// |  FD4ResCap<T>    |                  |                 |
-/// |                  |                  |                 |
-/// |                  |                  |                 |
-/// +------------------+------------------+-----------------+--------------....
-///
+/// +----------------------------------------------------------....
+/// |               FD4ResCapHolder<T>'s map
+/// +----------------------------------------------+-----------....
+/// |  Bucket 0     |  Bucket 1     |  Bucket 2    |  Bucket 3
+/// +---------------+---------------+--------------+-----------....
+/// |  FD4ResCap    |  FD4ResCap    |              |  FD4ResCap
+/// |  FD4ResCap    |               |              |  FD4ResCap
+/// |  FD4ResCap    |               |              |
+/// |               |               |              |
+/// |               |               |              |
+/// +---------------+---------------+--------------+-----------....
+/// ```
 #[repr(C)]
 pub struct FD4ResCapHolder<T>
 where
-    T: AsRef<FD4ResCap<T>>,
+    T: Subclass<FD4ResCap>,
 {
     vftable: usize,
     allocator: usize,
-    pub owning_repository: Option<NonNull<FD4ResCapHolder<T>>>,
+    pub owning_repository: Option<NonNull<FD4ResCapHolder<FD4ResCap>>>,
     unk18: u32,
     pub bucket_count: u32,
     buckets: NonNull<Option<NonNull<T>>>,
@@ -101,13 +93,13 @@ where
 
 impl<T> FD4ResCapHolder<T>
 where
-    T: AsRef<FD4ResCap<T>>,
+    T: Subclass<FD4ResCap>,
 {
     /// Immutable iterator over entries.
     pub fn entries<'a>(&'a self) -> impl Iterator<Item = &'a T> + 'a {
         // For immutable iteration we can store the current chain pointer (if any)
         // and an index into the bucket array.
-        struct Iter<'a, T: AsRef<FD4ResCap<T>>> {
+        struct Iter<'a, T: Subclass<FD4ResCap>> {
             buckets_ptr: *const Option<NonNull<T>>,
             bucket_count: usize,
             current_bucket: usize,
@@ -115,10 +107,7 @@ where
             _marker: std::marker::PhantomData<&'a T>,
         }
 
-        impl<'a, T> Iterator for Iter<'a, T>
-        where
-            T: AsRef<FD4ResCap<T>>,
-        {
+        impl<'a, T: Subclass<FD4ResCap>> Iterator for Iter<'a, T> {
             type Item = &'a T;
             fn next(&mut self) -> Option<Self::Item> {
                 unsafe {
@@ -134,8 +123,10 @@ where
                     // If we have an element, yield it and update current_ptr from its chain.
                     if let Some(ptr) = self.current_ptr {
                         let item = ptr.as_ref();
-                        // Copy the next pointer (avoiding borrowing the field)
-                        let next = item.as_ref().next_item;
+                        // Copy the next pointer (avoiding borrowing the field).
+                        // It's safe to cast here because we know everything in
+                        // the container is (a subclass of) T.
+                        let next = item.superclass().next_item.map(|p| p.cast());
                         self.current_ptr = next;
                         Some(item)
                     } else {
@@ -155,14 +146,9 @@ where
             _marker: std::marker::PhantomData,
         }
     }
-}
 
-impl<T> FD4ResCapHolder<T>
-where
-    T: AsRef<FD4ResCap<T>> + AsMut<FD4ResCap<T>>,
-{
     pub fn entries_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut T> + 'a {
-        struct IterMut<'a, T: AsMut<FD4ResCap<T>> + AsRef<FD4ResCap<T>>> {
+        struct IterMut<'a, T: Subclass<FD4ResCap>> {
             buckets_ptr: *const Option<NonNull<T>>,
             bucket_count: usize,
             current_bucket: usize,
@@ -170,10 +156,7 @@ where
             _marker: std::marker::PhantomData<&'a mut T>,
         }
 
-        impl<'a, T> Iterator for IterMut<'a, T>
-        where
-            T: AsRef<FD4ResCap<T>> + AsMut<FD4ResCap<T>>,
-        {
+        impl<'a, T: Subclass<FD4ResCap>> Iterator for IterMut<'a, T> {
             type Item = &'a mut T;
             fn next(&mut self) -> Option<Self::Item> {
                 unsafe {
@@ -192,7 +175,7 @@ where
                         // This is safe because our iterator holds unique access.
                         let item = ptr.as_mut();
                         // Copy out the next pointer.
-                        let next = item.as_mut().next_item;
+                        let next = item.superclass_mut().next_item.map(|p| p.cast());
                         self.current_ptr = next;
                         Some(item)
                     } else {
@@ -249,24 +232,13 @@ bitfield! {
 ///
 /// Source of name: RTTI
 #[repr(C)]
-pub struct FD4FileCap<T>
-where
-    T: AsRef<FD4ResCap<T>>,
-{
-    pub res_cap: FD4ResCap<T>,
+#[derive(Superclass, Subclass)]
+pub struct FD4FileCap {
+    pub res_cap: FD4ResCap,
     load_process: usize,
     load_task: usize,
     pub load_state: FD4FileCapState,
     unk89: FD4FileCapUnk89Properties,
     unk8a: FD4FileCapUnk8AProperties,
     unk8c: u32,
-}
-
-impl<T> AsRef<FD4ResCap<T>> for FD4FileCap<T>
-where
-    T: AsRef<FD4ResCap<T>>,
-{
-    fn as_ref(&self) -> &FD4ResCap<T> {
-        &self.res_cap
-    }
 }

@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use shared::{F32Vector4, F32ViewMatrix, OwnedPtr};
+use shared::{F32Vector4, F32ViewMatrix, OwnedPtr, Subclass, Superclass, for_all_subclasses};
 
 use crate::position::{HavokPosition, PositionDelta};
 
@@ -29,6 +29,7 @@ pub struct CSCamera {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
 /// Source of name: RTTI
 pub struct CSCam {
     vftable: usize,
@@ -41,25 +42,42 @@ pub struct CSCam {
     pub far_plane: f32,
 }
 
-impl CSCam {
-    pub fn right(&self) -> PositionDelta {
-        PositionDelta(self.matrix.0.0, self.matrix.0.1, self.matrix.0.2)
+#[for_all_subclasses]
+pub impl CSCamExt for Subclass<CSCam> {
+    fn right(&self) -> PositionDelta {
+        let superclass = self.superclass();
+        PositionDelta(
+            superclass.matrix.0.0,
+            superclass.matrix.0.1,
+            superclass.matrix.0.2,
+        )
     }
 
-    pub fn up(&self) -> PositionDelta {
-        PositionDelta(self.matrix.1.0, self.matrix.1.1, self.matrix.1.2)
+    fn up(&self) -> PositionDelta {
+        let superclass = self.superclass();
+        PositionDelta(
+            superclass.matrix.1.0,
+            superclass.matrix.1.1,
+            superclass.matrix.1.2,
+        )
     }
 
-    pub fn forward(&self) -> PositionDelta {
-        PositionDelta(self.matrix.2.0, self.matrix.2.1, self.matrix.2.2)
+    fn forward(&self) -> PositionDelta {
+        let superclass = self.superclass();
+        PositionDelta(
+            superclass.matrix.2.0,
+            superclass.matrix.2.1,
+            superclass.matrix.2.2,
+        )
     }
 
-    pub fn position(&self) -> HavokPosition {
+    fn position(&self) -> HavokPosition {
+        let superclass = self.superclass();
         HavokPosition(
-            self.matrix.3.0,
-            self.matrix.3.1,
-            self.matrix.3.2,
-            self.matrix.3.3,
+            superclass.matrix.3.0,
+            superclass.matrix.3.1,
+            superclass.matrix.3.2,
+            superclass.matrix.3.3,
         )
     }
 }
@@ -67,6 +85,7 @@ impl CSCam {
 pub type CSPersCam = CSCam;
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct ChrCam {
     pub pers_cam: CSPersCam,
     ex_follow_cam: OwnedPtr<CSPersCam>,

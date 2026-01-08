@@ -1,0 +1,15 @@
+[package]
+name = "invoke-esd"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+eldenring.workspace = true
+fromsoftware-shared.workspace = true
+windows.workspace = true
+
+[lib]
+crate-type = ["cdylib"]

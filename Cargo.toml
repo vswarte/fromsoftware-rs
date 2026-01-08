@@ -10,6 +10,7 @@ members = [
     "tools/param-generator",
     "examples/apply-speffect",
     "examples/debug-line",
+    "examples/invoke-esd",
     "examples/spawn-asset",
     "examples/present-action-button",
 ]
@@ -24,6 +25,7 @@ license = "MIT OR Apache-2.0"
 fromsoftware-shared = { path = "crates/shared", version = "0.11.0", package = "fromsoftware-shared" }
 fromsoftware-shared-macros = { path = "crates/shared/macros", version = "0.11.0", package = "fromsoftware-shared-macros" }
 eldenring = { path = "crates/eldenring", version = "0.11.0", package = "eldenring" }
+darksouls3 = { path = "crates/darksouls3", version = "0.11.0", package = "darksouls3" }
 nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightreign" }
 binary_mapper = { path = "crates/binary-mapper" }
 thiserror = "1"

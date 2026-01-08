@@ -1,32 +1,28 @@
 use eldenring::cs::{CSWorldGeomIns, CSWorldGeomMan, CSWorldGeomManBlockData};
-use hudhook::imgui::{TreeNodeFlags, Ui};
+use hudhook::imgui::Ui;
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSWorldGeomMan {
-    fn render_debug(&self, ui: &&mut Ui) {
-        ui.text(format!("Loaded blocks: {}", self.blocks.len()));
-        if ui.collapsing_header("Loaded blocks", TreeNodeFlags::empty()) {
-            ui.indent();
-            for block in self.blocks.iter() {
-                let label = format!("{}", block.block_id);
-                if ui.collapsing_header(label, TreeNodeFlags::empty()) {
+    fn render_debug(&self, ui: &Ui) {
+        ui.list(
+            &format!("Loaded blocks: {}", self.blocks.len()),
+            self.blocks.iter(),
+            |ui, _i, block| {
+                ui.header(&format!("{}", block.block_id), || {
                     block.data.render_debug(ui);
-                }
-            }
-            ui.unindent();
-        }
+                });
+            },
+        );
 
-        if ui.collapsing_header("Current Unk Block", TreeNodeFlags::empty()) {
-            ui.indent();
+        ui.header("Current Unk Block", || {
             self.curent_99_block_data.render_debug(ui);
-            ui.unindent();
-        }
+        });
     }
 }
 
 impl DebugDisplay for CSWorldGeomManBlockData {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Block ID: {}", self.block_id));
         ui.text(format!("World block info: {:x}", self.world_block_info));
 
@@ -35,10 +31,10 @@ impl DebugDisplay for CSWorldGeomManBlockData {
             self.next_geom_ins_field_ins_index
         ));
 
-        ui.text(format!("Objects in vector: {}", self.geom_ins_vector.len()));
-        if ui.collapsing_header("Geometry Vector", TreeNodeFlags::empty()) {
-            ui.indent();
-            for geometry_ins in self.geom_ins_vector.items() {
+        ui.list(
+            &format!("Geometry Vector ({})", self.geom_ins_vector.len()),
+            self.geom_ins_vector.items(),
+            |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins
                         .info
@@ -50,27 +46,25 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 }
                 .unwrap();
 
-                if ui.collapsing_header(
-                    format!(
+                ui.header(
+                    &format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
                         geometry_ins.field_ins_handle.block_id,
                         geometry_ins.field_ins_handle.selector.container(),
                         geometry_ins.field_ins_handle.selector.index()
                     ),
-                    TreeNodeFlags::empty(),
-                ) {
-                    ui.indent();
-                    geometry_ins.render_debug(ui);
-                    ui.unindent();
-                }
-            }
-            ui.unindent();
-        }
+                    || {
+                        geometry_ins.render_debug(ui);
+                    },
+                );
+            },
+        );
 
-        if ui.collapsing_header("Sign Geometry Vector", TreeNodeFlags::empty()) {
-            ui.indent();
-            for geometry_ins in self.sos_sign_geometry.items() {
+        ui.list(
+            &format!("Sign Geometry Vector ({})", self.sos_sign_geometry.len()),
+            self.sos_sign_geometry.items(),
+            |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins
                         .info
@@ -82,26 +76,23 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 }
                 .unwrap();
 
-                if ui.collapsing_header(
-                    format!(
+                ui.header(
+                    &format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
                         geometry_ins.field_ins_handle.block_id,
                         geometry_ins.field_ins_handle.selector.container(),
                         geometry_ins.field_ins_handle.selector.index()
                     ),
-                    TreeNodeFlags::empty(),
-                ) {
-                    ui.indent();
-                    geometry_ins.render_debug(ui);
-                    ui.unindent();
-                }
-            }
-            ui.unindent();
-        }
+                    || {
+                        geometry_ins.render_debug(ui);
+                    },
+                );
+            },
+        );
     }
 }
 
 impl DebugDisplay for CSWorldGeomIns {
-    fn render_debug(&self, _ui: &&mut Ui) {}
+    fn render_debug(&self, _ui: &Ui) {}
 }

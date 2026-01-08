@@ -4,10 +4,14 @@
 
 /// A struct containing offsets (relative to the beginning of the executable) of
 /// various addresses of structures and functions. They can be converted to a
-/// usable address using the [Pe::rva_to_va] trait function of [Program].
+/// usable address using the [Pe::rva_to_va](pelite::pe64::Pe::rva_to_va) trait
+/// function of [Program](fromsoftware_shared::Program).
 ///
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
+    pub gesture_data_store: u32,
+    pub map_item_man_grant_item: u32,
+    pub map_item_man_ptr: u32,
     pub register_task: u32,
 }

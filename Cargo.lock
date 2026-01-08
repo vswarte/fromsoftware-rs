@@ -385,7 +385,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -404,7 +404,7 @@ dependencies = [
  "memchr",
  "pelite",
  "smallvec",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -425,6 +425,8 @@ dependencies = [
 name = "fromsoftware-shared-macros"
 version = "0.11.0"
 dependencies = [
+ "inflections",
+ "proc-macro2",
  "quote",
  "syn",
 ]
@@ -528,6 +530,21 @@ checksum = "fe4cd85333e22411419a0bcae1297d25e58c9443848b11dc6a86fefe8c78a661"
 dependencies = [
  "equivalent",
  "hashbrown",
+]
+
+[[package]]
+name = "inflections"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
+
+[[package]]
+name = "invoke-esd"
+version = "0.11.0"
+dependencies = [
+ "eldenring",
+ "fromsoftware-shared",
+ "windows",
 ]
 
 [[package]]
@@ -694,7 +711,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -925,7 +942,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -1038,7 +1055,7 @@ dependencies = [
  "getrandom",
  "once_cell",
  "rustix",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

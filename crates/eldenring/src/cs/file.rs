@@ -5,7 +5,7 @@ use vtable_rs::VPtr;
 use crate::DoublyLinkedList;
 use crate::dlkr::DLPlainLightMutex;
 use crate::fd4::{FD4BasicHashString, FD4FileCap, FD4ResCap, FD4ResCapHolder, FD4ResRep};
-use shared::OwnedPtr;
+use shared::{OwnedPtr, Subclass};
 
 #[vtable_rs::vtable]
 pub trait CSFileImpVmt {
@@ -14,21 +14,21 @@ pub trait CSFileImpVmt {
     fn destructor(&mut self, param_2: u32);
 
     /// Retrieves a file cap from the primary file repository.
-    fn get_file_cap(&mut self, name: &FD4BasicHashString) -> Option<NonNull<UntypedFileCap>>;
+    fn get_file_cap(&mut self, name: &FD4BasicHashString) -> Option<NonNull<FD4FileCap>>;
 
     /// Adds a file cap to the primary file repository. The file loading queue parameters indicates
     /// what file loading queue the load events will be handled by.
     fn add_file_cap(
         &mut self,
         name: &FD4BasicHashString,
-        file_cap: &UntypedFileCap,
+        file_cap: &FD4FileCap,
         file_loading_queue: u32,
     );
 
     fn unk_add_file_cap(
         &mut self,
         name: &FD4BasicHashString,
-        file_cap: &UntypedFileCap,
+        file_cap: &FD4FileCap,
         param_4: usize,
         param_5: usize,
         file_loading_queue: u32,
@@ -40,9 +40,9 @@ pub trait CSFileImpVmt {
     fn unload_file_cap_by_name(&mut self, name: &FD4BasicHashString);
 
     /// Unloads the referenced filecap.
-    fn unload_file_cap(&mut self, file_cap: &UntypedFileCap);
+    fn unload_file_cap(&mut self, file_cap: &FD4FileCap);
 
-    fn unk40(&mut self, file_cap: &UntypedFileCap);
+    fn unk40(&mut self, file_cap: &FD4FileCap);
 }
 
 /// Manages files used by the file, both virtual and on-disk.
@@ -55,9 +55,11 @@ pub struct CSFileImp {
 
 /// Manages a set of files as well as keeps track of load state and such.
 #[repr(C)]
+#[derive(Subclass)]
+#[subclass(base = FD4ResRep<FD4FileCap>, base = FD4ResCap)]
 pub struct CSFileRepository {
-    pub res_rep: FD4ResRep<UntypedFileCap>,
-    pub holder2: FD4ResCapHolder<UntypedFileCap>,
+    pub res_rep: FD4ResRep<FD4FileCap>,
+    pub holder2: FD4ResCapHolder<FD4FileCap>,
     unkc8: DoublyLinkedList<()>,
     pub mutexes: [OwnedPtr<CSFileRepositoryMutex>; 5],
     file_load_event_queues: [OwnedPtr<usize>; 5],
@@ -72,16 +74,4 @@ pub struct CSFileRepositoryMutex {
     unk3c: u32,
     unk40: usize,
     unk48: usize,
-}
-
-#[repr(C)]
-/// Used to represent file caps without a concrete type.
-pub struct UntypedFileCap {
-    pub file_cap: FD4FileCap<Self>,
-}
-
-impl AsRef<FD4ResCap<Self>> for UntypedFileCap {
-    fn as_ref(&self) -> &FD4ResCap<Self> {
-        &self.file_cap.res_cap
-    }
 }

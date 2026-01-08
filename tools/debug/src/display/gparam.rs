@@ -1,66 +1,64 @@
 use eldenring::cs::{
     CSGparamIdLerper, CSWorldAreaBlockSceneDrawParam, CSWorldSceneDrawParamManager,
 };
-use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
+use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, UiExt};
 
 impl DebugDisplay for CSWorldSceneDrawParamManager {
-    fn render_debug(&self, ui: &&mut Ui) {
-        ui.text("World Area Blocks");
-        self.world_area_blocks.iter().for_each(|b| {
-            if ui.collapsing_header(format!("{}", b.area), TreeNodeFlags::empty()) {
-                ui.indent();
-                b.render_debug(ui);
-                ui.unindent();
-            }
-        });
+    fn render_debug(&self, ui: &Ui) {
+        ui.list(
+            "World Area Blocks",
+            self.world_area_blocks.iter(),
+            |ui, _i, b| {
+                ui.header(&format!("{}", b.area), || {
+                    b.render_debug(ui);
+                });
+            },
+        );
 
         ui.text("Lerper");
         self.scene_draw_param.lerper.render_debug(ui);
 
-        ui.text("Lerpers");
-        if let Some(_t) = ui.begin_table_header_with_flags(
-            "cs-world-scene-draw-param-manager-lerpers",
-            [
-                TableColumnSetup::new("Unk8"),
-                TableColumnSetup::new("UnkC"),
-                TableColumnSetup::new("Destination ID"),
-                TableColumnSetup::new("Unk14"),
-                TableColumnSetup::new("Begin ID"),
-                TableColumnSetup::new("Unk1C"),
-                TableColumnSetup::new("Timer"),
-                TableColumnSetup::new("Unk24"),
-            ],
-            TableFlags::RESIZABLE
-                | TableFlags::BORDERS
-                | TableFlags::ROW_BG
-                | TableFlags::SIZING_STRETCH_PROP,
-        ) {
-            self.scene_draw_param.lerpers.iter().for_each(|lerper| {
-                ui.table_next_column();
-                ui.text(format!("{:x}", lerper.unk8));
-                ui.table_next_column();
-                ui.text(format!("{:x}", lerper.unkc));
-                ui.table_next_column();
-                ui.text(format!("{:x}", lerper.destination_id));
-                ui.table_next_column();
-                ui.text(format!("{:x}", lerper.unk14));
-                ui.table_next_column();
-                ui.text(format!("{:x}", lerper.begin_id));
-                ui.table_next_column();
-                ui.text(format!("{:x}", lerper.unk1c));
-                ui.table_next_column();
-                ui.text(format!("{}", lerper.timer));
-                ui.table_next_column();
-                ui.text(format!("{}", lerper.unk24));
-            });
-        }
+        ui.header("Lerpers", || {
+            ui.table(
+                "cs-world-scene-draw-param-manager-lerpers",
+                [
+                    TableColumnSetup::new("Unk8"),
+                    TableColumnSetup::new("UnkC"),
+                    TableColumnSetup::new("Destination ID"),
+                    TableColumnSetup::new("Unk14"),
+                    TableColumnSetup::new("Begin ID"),
+                    TableColumnSetup::new("Unk1C"),
+                    TableColumnSetup::new("Timer"),
+                    TableColumnSetup::new("Unk24"),
+                ],
+                self.scene_draw_param.lerpers.iter(),
+                |ui, _i, lerper| {
+                    ui.table_next_column();
+                    ui.text(format!("{:x}", lerper.unk8));
+                    ui.table_next_column();
+                    ui.text(format!("{:x}", lerper.unkc));
+                    ui.table_next_column();
+                    ui.text(format!("{:x}", lerper.destination_id));
+                    ui.table_next_column();
+                    ui.text(format!("{:x}", lerper.unk14));
+                    ui.table_next_column();
+                    ui.text(format!("{:x}", lerper.begin_id));
+                    ui.table_next_column();
+                    ui.text(format!("{:x}", lerper.unk1c));
+                    ui.table_next_column();
+                    ui.text(format!("{}", lerper.timer));
+                    ui.table_next_column();
+                    ui.text(format!("{}", lerper.unk24));
+                },
+            );
+        });
     }
 }
 
 impl DebugDisplay for CSGparamIdLerper {
-    fn render_debug(&self, ui: &&mut Ui) {
+    fn render_debug(&self, ui: &Ui) {
         ui.input_text("Unk8", &mut self.unk8.to_string())
             .read_only(true)
             .build();
@@ -89,5 +87,5 @@ impl DebugDisplay for CSGparamIdLerper {
 }
 
 impl DebugDisplay for CSWorldAreaBlockSceneDrawParam {
-    fn render_debug(&self, _ui: &&mut Ui) {}
+    fn render_debug(&self, _ui: &Ui) {}
 }

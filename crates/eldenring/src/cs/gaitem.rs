@@ -1,10 +1,10 @@
-use std::{fmt::Display, mem::transmute};
+use std::fmt::Display;
 
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::cs::{CSRandXorshift, ItemId};
-use shared::OwnedPtr;
+use crate::cs::{CSRandXorshift, OptionalItemId};
+use shared::{OwnedPtr, Subclass, Superclass};
 
 #[repr(C)]
 #[shared::singleton("CSGaitem")]
@@ -54,62 +54,12 @@ impl CSGaitemImp {
 }
 
 #[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(CSWepGaitemIns, CSGemGaitemIns))]
 pub struct CSGaitemIns {
     vftable: usize,
     pub gaitem_handle: GaitemHandle,
-    pub item_id: ItemId,
-}
-
-impl CSGaitemIns {
-    /// Downcast the CSGaitemIns to the derivant class. Will return None if the requested type
-    /// does not match the gaitem ins's type.
-    pub fn as_wep(&self) -> Option<&CSWepGaitemIns> {
-        Some(match self.gaitem_handle.category() {
-            // Safety: consumers are not allowed to make their own CSGaitemIns and other instances
-            // come from the game. The category can reliably be used to do this downcast.
-            Ok(GaitemCategory::Weapon) => unsafe {
-                transmute::<&CSGaitemIns, &CSWepGaitemIns>(self)
-            },
-            _ => return None,
-        })
-    }
-
-    /// Downcast the CSGaitemIns to the derivant class. Will return None if the requested type
-    /// does not match the gaitem ins's type.
-    pub fn as_wep_mut(&mut self) -> Option<&mut CSWepGaitemIns> {
-        Some(match self.gaitem_handle.category() {
-            // Safety: consumers are not allowed to make their own CSGaitemIns and other instances
-            // come from the game. The category can reliably be used to do this downcast.
-            Ok(GaitemCategory::Weapon) => unsafe {
-                transmute::<&mut CSGaitemIns, &mut CSWepGaitemIns>(self)
-            },
-            _ => return None,
-        })
-    }
-
-    /// Downcast the CSGaitemIns to the derivant class. Will return None if the requested type
-    /// does not match the gaitem ins's type.
-    pub fn as_gem(&self) -> Option<&CSGemGaitemIns> {
-        Some(match self.gaitem_handle.category() {
-            // Safety: consumers are not allowed to make their own CSGaitemIns and other instances
-            // come from the game. The category can reliably be used to do this downcast.
-            Ok(GaitemCategory::Gem) => unsafe { transmute::<&CSGaitemIns, &CSGemGaitemIns>(self) },
-            _ => return None,
-        })
-    }
-
-    /// Downcast the CSGaitemIns to the derivant class. Will return None if the requested type
-    /// does not match the gaitem ins's type.
-    pub fn as_gem_mut(&mut self) -> Option<&mut CSGemGaitemIns> {
-        Some(match self.gaitem_handle.category() {
-            // Safety: consumers are not allowed to make their own CSGaitemIns and other instances
-            // come from the game. The category can reliably be used to do this downcast.
-            Ok(GaitemCategory::Gem) => unsafe {
-                transmute::<&mut CSGaitemIns, &mut CSGemGaitemIns>(self)
-            },
-            _ => return None,
-        })
-    }
+    pub item_id: OptionalItemId,
 }
 
 #[repr(C)]
@@ -209,6 +159,7 @@ impl Display for GaitemHandle {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct CSWepGaitemIns {
     pub gaitem_ins: CSGaitemIns,
     /// Item durability mechanic. Unused in ER.
@@ -234,6 +185,7 @@ pub struct CSGemSlot {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
 pub struct CSGemGaitemIns {
     pub gaitem_ins: CSGaitemIns,
     /// Handle of the weapon this gem is attached to

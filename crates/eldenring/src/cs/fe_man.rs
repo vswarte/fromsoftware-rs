@@ -78,14 +78,14 @@ pub struct CSFeManImp {
     fe_menu_chr_state_data: [u8; 0x168],
     pub summon_msg_queue: SummonMsgQueue,
     unk6530: u32,
-    /// Id of the fmg text entry for the area welcome message
-    /// Can be set by emevd DisplaySubareaWelcomeMessage 2007[13]
+    /// ID of the fmg text entry for the area welcome message. Can be set by
+    /// emevd `DisplaySubareaWelcomeMessage` `2007[13]`.
     pub subarea_name_popup_message_id: i32,
     unk6538: [u8; 4],
     unk653c: u32,
     unk6540: [u8; 8],
-    /// Id of the fmg text entry for the blinking message
-    /// Can be set by emevd DisplayBlinkingMessageWithPriority 2007[12]
+    /// ID of the fmg text entry for the blinking message. Can be set by emevd
+    /// `DisplayBlinkingMessageWithPriority` `2007[12]`.
     pub blinking_message_id: i32,
     /// Priority of the currently displayed blinking message
     pub blinking_message_priority: u8,
@@ -98,7 +98,10 @@ pub struct CSFeManImp {
     pub get_item_log_view_model: [u8; 0x1d48],
     unk82a8: [u8; 8],
     pub clock_view_model: usize,
-    unk82b0: [u8; 16],
+    unk82b0: [u8; 8],
+    /// Don't update intermediate `frontend_values` data each frame in the `CSMenuMan` update task
+    pub disable_updates: bool,
+    unk82c1: [u8; 7],
     /// Tag of the debug player
     pub debug_tag: TagHudData,
     unk83f0: [u8; 48],
@@ -311,9 +314,9 @@ pub struct TagHudData {
     /// Handle to the tag owner character
     pub field_ins_handle: FieldInsHandle,
     /// Position of the tag on the screen - X
-    pub screen_pos_x: f32,
+    pub screen_pos_x: i32,
     /// Position of the tag on the screen - Y
-    pub screen_pos_y: f32,
+    pub screen_pos_y: i32,
     /// Current hp of the character
     pub hp: u32,
     unk1c: [u8; 0x4],
