@@ -46,7 +46,7 @@ impl FD4ParamRepository {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct FD4ParamResCap {
-    inner: FD4ResCap<Self>,
+    inner: FD4ResCap,
     /// Size of data at pointer.
     size: u64,
     /// Raw row data for this param file.
@@ -70,18 +70,6 @@ impl FD4ParamResCap {
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
         unsafe { self.data.get_mut(id) }
-    }
-}
-
-impl AsRef<FD4ResCap<Self>> for FD4ParamResCap {
-    fn as_ref(&self) -> &FD4ResCap<Self> {
-        &self.inner
-    }
-}
-
-impl AsMut<FD4ResCap<Self>> for FD4ParamResCap {
-    fn as_mut(&mut self) -> &mut FD4ResCap<Self> {
-        &mut self.inner
     }
 }
 
