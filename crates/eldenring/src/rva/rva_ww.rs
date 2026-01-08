@@ -80,6 +80,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     msb_repository_vmt: 0x2ba7250,
     multiplay_properties: 0x3b11230,
     open_field_chr_set_vmt: 0x2a485a0,
+    play_animation_by_behavior_name: 0xc14460,
     player_ins_vmt: 0x2a7cb40,
     register_task: 0xeb2000,
     spawn_geometry: 0x6a5150,

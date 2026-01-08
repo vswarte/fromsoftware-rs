@@ -306,6 +306,10 @@ pattern = "48 8b 05 $ { ' } 48 8b 80 90 0d 00 00 c3"
 captures = ["", "crypto_spi_registry"]
 pattern = "e8 $ { 48 89 4c 24 08 55 56 57 48 83 ec 30 } eb ? 33 c0 48 89 05 $ { ' }"
 
+[[patterns]]
+captures = ["play_animation_by_behavior_name"]
+pattern = "40 53 48 83 ec 40 48 83 39 00 48 8b d9 74 ? 48 85 d2 74 ?"
+
 [[vmts]]
 class = "CS::CSEzStateTalkEvent"
 vftable = "cs_ez_state_talk_event_vmt"

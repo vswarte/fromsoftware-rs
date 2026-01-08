@@ -81,6 +81,7 @@ pub struct RvaBundle {
     pub msb_repository_vmt: u32,
     pub multiplay_properties: u32,
     pub open_field_chr_set_vmt: u32,
+    pub play_animation_by_behavior_name: u32,
     pub player_ins_vmt: u32,
     pub register_task: u32,
     pub spawn_geometry: u32,

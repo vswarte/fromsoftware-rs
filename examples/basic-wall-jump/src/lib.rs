@@ -1,16 +1,34 @@
 use eldenring::{
-    cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan},
+    cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan, ChrInsExt},
     fd4::FD4TaskData,
     util::system::wait_for_system_init,
 };
 use fromsoftware_shared::{FromStatic, Program, SharedTaskImpExt};
 use std::time::{Duration, Instant};
 
-mod play_animation;
-use play_animation::ChrInsPlayAnim;
+#[repr(C)]
+struct WallJumpManager {
+    /// Tracks the time for the jump window.
+    /// This is updated when "has_entered_window" is set to true.
+    window_enter_time: Instant,
+    /// Tracks if we entered the time window to jump.
+    has_entered_window: bool,
+    /// Represents wether a wall-jump was activated
+    /// You cannot do another untill the `is_jumping` field in the ChrIns became false.
+    has_jumped: bool,
+}
 
-mod wall_climb;
-use wall_climb::*;
+impl WallJumpManager {
+    pub fn new() -> Self {
+        WallJumpManager {
+            window_enter_time: Instant::now(),
+            has_jumped: true,
+            has_entered_window: false,
+        }
+    }
+}
+
+pub const JUMP_TIME_FRAME: Duration = Duration::from_millis(350);
 
 fn init_wall_jump_task() {
     let mut wj_man = WallJumpManager::new();
@@ -57,10 +75,10 @@ fn init_wall_jump_task() {
                 .action_request
                 .action_requests
                 .jump();
-            
+
             if scaleable_slope && in_jump_window && jump_requested {
                 // If the animation started succesfully the function returns true.
-                wj_man.has_jumped =  main_player.chr_ins.play_animation_by_name("W_Jump_D");
+                wj_man.has_jumped = main_player.chr_ins.play_animation_by_behavior_name("W_Jump_D");
             }
         },
         CSTaskGroupIndex::ChrIns_PostPhysicsSafe,

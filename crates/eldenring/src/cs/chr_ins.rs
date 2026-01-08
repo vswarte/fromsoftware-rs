@@ -377,6 +377,35 @@ pub impl ChrInsExt for Subclass<ChrIns> {
                 .saturating_add(character_type as u32) as i32
         }
     }
+
+    fn play_animation_by_behavior_name<S: AsRef<str>>(&self, behavior_name: S) -> bool {
+        let Some(hkb_character) = self
+            .superclass()
+            .module_container
+            .behavior
+            .beh_character
+            .map(|beh_chara| &unsafe { beh_chara.as_ref() }.hkb_character)
+        else {
+            return false;
+        };
+
+        let Some(va) = Program::current()
+            .rva_to_va(rva::get().play_animation_by_behavior_name)
+            .ok()
+        else {
+            return false;
+        };
+
+        let wide_c_string: Vec<u16> = behavior_name.as_ref().encode_utf16().chain(std::iter::once(0)).collect();
+
+        let play_animation_by_behavior_name = unsafe {
+            transmute::<u64, extern "C" fn(&OwnedPtr<HkbCharacter>, *const u16) -> u32>(va)
+        };
+
+        let result = play_animation_by_behavior_name(&hkb_character, wide_c_string.as_ptr());
+
+        result != u32::MAX
+    }
 }
 
 bitfield! {
@@ -1241,7 +1270,7 @@ pub struct CSChrTimeActModule {
 pub struct CSChrBehaviorModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    pub beh_character: OwnedPtr<BehChara>,
+    pub beh_character: Option<NonNull<BehChara>>,
     beh_chara_proxy_driver: usize,
     beh_raycast_interface: usize,
     unk28: usize,
