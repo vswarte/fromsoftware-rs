@@ -1,5 +1,5 @@
 use eldenring::{
-    cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan, ChrInsExt},
+    cs::{CSTaskGroupIndex, CSTaskImp, ChrInsExt, WorldChrMan},
     fd4::FD4TaskData,
     util::system::wait_for_system_init,
 };
@@ -78,7 +78,9 @@ fn init_wall_jump_task() {
 
             if scaleable_slope && in_jump_window && jump_requested {
                 // If the animation started succesfully the function returns true.
-                wj_man.has_jumped = main_player.chr_ins.play_animation_by_behavior_name("W_Jump_D");
+                wj_man.has_jumped = main_player
+                    .chr_ins
+                    .play_animation_by_behavior_name("W_Jump_D");
             }
         },
         CSTaskGroupIndex::ChrIns_PostPhysicsSafe,

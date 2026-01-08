@@ -396,13 +396,17 @@ pub impl ChrInsExt for Subclass<ChrIns> {
             return false;
         };
 
-        let wide_c_string: Vec<u16> = behavior_name.as_ref().encode_utf16().chain(std::iter::once(0)).collect();
+        let wide_c_string: Vec<u16> = behavior_name
+            .as_ref()
+            .encode_utf16()
+            .chain(std::iter::once(0))
+            .collect();
 
         let play_animation_by_behavior_name = unsafe {
             transmute::<u64, extern "C" fn(&OwnedPtr<HkbCharacter>, *const u16) -> u32>(va)
         };
 
-        let result = play_animation_by_behavior_name(&hkb_character, wide_c_string.as_ptr());
+        let result = play_animation_by_behavior_name(hkb_character, wide_c_string.as_ptr());
 
         result != u32::MAX
     }
