@@ -1,4 +1,4 @@
-use eldenring::cs::CSGaitemImp;
+use eldenring::cs::{CSGaitemImp, CSGaitemInsSubclass};
 use hudhook::imgui::{TableColumnSetup, Ui};
 
 use super::{DebugDisplay, UiExt};
@@ -30,15 +30,17 @@ impl DebugDisplay for CSGaitemImp {
                     ui.text(format!("{:?}", gaitem.gaitem_handle.category()));
 
                     ui.table_next_column();
-                    if let Some(wep) = gaitem.as_wep() {
-                        let gem_handle = wep.gem_slot_table.gem_slots[0].gaitem_handle;
-                        if gem_handle.0 != 0 {
-                            ui.text(format!("Gem: {:?}", gem_handle.index()))
+                    match gaitem.as_ref().into() {
+                        CSGaitemInsSubclass::CSWepGaitemIns(wep) => {
+                            let gem_handle = wep.gem_slot_table.gem_slots[0].gaitem_handle;
+                            if gem_handle.0 != 0 {
+                                ui.text(format!("Gem: {:?}", gem_handle.index()))
+                            }
                         }
-                    } else if let Some(gem) = gaitem.as_gem()
-                        && gem.weapon_handle.0 != 0
-                    {
-                        ui.text(format!("Weapon: {:?}", gem.weapon_handle.index()))
+                        CSGaitemInsSubclass::CSGemGaitemIns(gem) if gem.weapon_handle.0 != 0 => {
+                            ui.text(format!("Weapon: {:?}", gem.weapon_handle.index()))
+                        }
+                        _ => {}
                     }
                 },
             );

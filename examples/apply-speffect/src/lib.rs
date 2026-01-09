@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use eldenring::{
-    cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan},
+    cs::{CSTaskGroupIndex, CSTaskImp, ChrInsExt, WorldChrMan},
     fd4::FD4TaskData,
     util::{input, system::wait_for_system_init},
 };
@@ -38,7 +38,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
 
                 // Check if "o" is pressed
                 if input::is_key_pressed(0x4F) {
-                    main_player.chr_ins.apply_speffect(SP_EFFECT, true);
+                    main_player.apply_speffect(SP_EFFECT, true);
                 }
 
                 // Check if "p" is pressed

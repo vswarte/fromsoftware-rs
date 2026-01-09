@@ -6,6 +6,8 @@ pub mod owned_pointer;
 pub mod program;
 pub mod rtti;
 mod r#static;
+pub mod steam;
+mod subclass;
 pub mod task;
 pub mod util;
 
@@ -16,6 +18,8 @@ pub use owned_pointer::*;
 pub use program::*;
 pub use rtti::*;
 pub use r#static::*;
+pub use steam::*;
+pub use subclass::*;
 pub use task::*;
 pub use util::*;
 

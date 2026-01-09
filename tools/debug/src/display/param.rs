@@ -22,14 +22,14 @@ impl DebugDisplay for FD4ParamRepository {
                 self.res_rep.res_cap_holder.entries(),
                 |ui, _i, res_cap| {
                     ui.table_next_column();
-                    ui.text(res_cap.data.name());
+                    ui.text(res_cap.data.param_name());
 
                     ui.table_next_column();
-                    let row_count = res_cap.data.header.row_count;
+                    let row_count = res_cap.data.row_count();
                     ui.text(format!("{row_count:?}"));
 
                     ui.table_next_column();
-                    let paramdef_version = res_cap.data.header.paramdef_version;
+                    let paramdef_version = res_cap.data.paramdef_version();
                     ui.text(format!("{paramdef_version:?}"));
 
                     ui.table_next_column();
