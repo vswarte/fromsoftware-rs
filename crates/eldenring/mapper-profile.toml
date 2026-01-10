@@ -123,6 +123,10 @@ class = "CS::CSThrowNode"
 vftable = "csthrow_node_vmt"
 
 [[vmts]]
+class = "CS::CSRideNode"
+vftable = "csride_node_vmt"
+
+[[vmts]]
 class = "CS::CSTimeLineTaskGroupIns"
 vftable = "cstime_line_task_group_ins_vmt"
 

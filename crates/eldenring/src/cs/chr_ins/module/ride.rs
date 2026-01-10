@@ -1,6 +1,12 @@
-use shared::{F32ModelMatrix, OwnedPtr};
+use shared::{F32ModelMatrix, OwnedPtr, Subclass};
 
-use crate::{Vector, cs::{CSPairAnimNode, ChrIns}, dltx::{DLString, DLUTF8StringKind}, position::{HavokPosition, PositionDelta}, rotation::{EulerAngles, Quaternion}};
+use crate::{
+    Vector,
+    cs::{CSPairAnimNode, ChrIns},
+    dltx::{DLString, DLUTF8StringKind},
+    position::{HavokPosition, PositionDelta},
+    rotation::{EulerAngles, Quaternion},
+};
 use std::ptr::NonNull;
 
 #[repr(C)]
@@ -12,7 +18,7 @@ pub struct CSChrRideModule {
     /// Gets populated when mounting another `ChrIns`.
     /// Note: This will be null if you load into the world and you've already mounted a `ChrIns`
     /// during the previous session. This is not populated on the receiving `ChrIns`.
-    pub last_mounted: NonNull<ChrIns>,
+    pub last_mounted: Option<NonNull<ChrIns>>,
     unk20: i32,
     unk24: i32,
     unk28: i32,
@@ -75,6 +81,8 @@ pub struct CSChrRideModuleMountData {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
+#[subclass(base = CSPairAnimNode)]
 /// Source of name: RTTI
 pub struct CSRideNode {
     pub pair_anim_node: CSPairAnimNode,

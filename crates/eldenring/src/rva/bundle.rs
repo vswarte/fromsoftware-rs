@@ -61,6 +61,7 @@ pub struct RvaBundle {
     pub csteam_type_neutral_vmt: u32,
     pub csteam_type_rival_vmt: u32,
     pub csthrow_node_vmt: u32,
+    pub csride_node_vmt: u32,
     pub cstime_line_task_group_ins_vmt: u32,
     pub cswep_gaitem_ins_vmt: u32,
     pub dlbuffered_input_stream_vmt: u32,

@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use super::FieldInsHandle;
 use crate::{
     Vector,
-    cs::{CSThrowNode, ChrIns},
+    cs::{CSRideNode, CSThrowNode, ChrIns},
     dlkr::DLPlainLightMutex,
     position::HavokPosition,
     rotation::EulerAngles,
@@ -43,7 +43,7 @@ pub struct CSPairAnimManager20Entry {
 /// receiver. One such example is riding torrent, another would be backstabs.
 /// Both parties will have one of these.
 #[derive(Superclass)]
-#[superclass(children(CSThrowNode))]
+#[superclass(children(CSThrowNode, CSRideNode))]
 pub struct CSPairAnimNode {
     vftable: VPtr<dyn CSPairAnimNodeVmt, Self>,
     unk8: isize,
@@ -76,8 +76,8 @@ pub trait CSPairAnimNodeVmt {
     /// an entry in `CSPairAnimManager->0x20` as well. Called as part of the CSThrowNode destructor
     /// as well as the torrent dismount procedure.
     fn reset(&mut self);
-    /// Updates the start position with an offset. Might be the worldshift being applied?
-    fn displace_start_position(&mut self, position: F32Vector4);
+    /// Displaces the start position by some world shift delta.
+    fn apply_world_shift(&mut self, position: F32Vector4);
     // Returns 0 in base class.
     fn unk20(&mut self);
     // Returns 1 in base class.
@@ -88,8 +88,8 @@ pub trait CSPairAnimNodeVmt {
     fn unk38(&mut self);
     // Sets everything to empty.
     fn unk40(&mut self);
-    // Returns 0 in base class.
-    fn unk48(&mut self);
+    // Sends out a packet 18 describing the new start for remote CSPairAnimNodes
+    fn broadcast_start(&mut self, counter_party: &CSPairAnimNode);
     // Returns immediately in base class.
     fn unk50(&mut self);
 }

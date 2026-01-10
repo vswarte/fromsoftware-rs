@@ -51,6 +51,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     csrand_sfmt_vmt: 0x2a7f038,
     csrand_vmt: 0x2a25040,
     csrand_xorshift_vmt: 0x29cae60,
+    csride_node_vmt: 0x2a3a428,
     cstask_base_vmt: 0x329a118,
     cstask_group_ins_vmt: 0x2c05b88,
     cstask_vmt: 0x32997f0,
