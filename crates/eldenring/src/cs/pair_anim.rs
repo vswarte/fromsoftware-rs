@@ -35,7 +35,7 @@ pub struct CSPairAnimManager20Entry {
     pub party_b: Option<NonNull<ChrIns>>,
     unk10: isize,
     // Might be clear request? Set to true when clearing a `CSPairAnimNode`.
-    pub unk18: bool,
+    unk18: bool,
 }
 
 #[repr(C)]
@@ -53,7 +53,8 @@ pub struct CSPairAnimNode {
     /// The position of the pair anim dummy poly when entering the pair anim session.
     /// Set when entering a pair anim session. Updates with the world shift so it can be
     /// safely used to measure distance when crossing chunks. Becomes identity (0.0, 0.0, 0.0, 1.0)
-    /// once the paired anim ends.
+    /// once the paired anim ends but will still apply world shift on the stored position despite
+    /// being inactive.
     pub start_position: HavokPosition,
     /// The rotation of the pair anim dummy poly when entering the pair anim session.
     /// Populated when entering a pair anim "session". Becomes all zeroes once the paired anim ends.
@@ -70,8 +71,8 @@ pub struct CSPairAnimNode {
 #[vtable_rs::vtable]
 pub trait CSPairAnimNodeVmt {
     fn destructor(&mut self);
-    /// Seems to be some kind of disengage?
-    fn unk8(&mut self);
+    /// Updates the module. Called every frame by game.
+    fn update(&mut self, delta: f32);
     /// Sets all properties back to the initial state. If `unk40` is set it will do something with
     /// an entry in `CSPairAnimManager->0x20` as well. Called as part of the CSThrowNode destructor
     /// as well as the torrent dismount procedure.

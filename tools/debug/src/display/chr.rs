@@ -1,8 +1,5 @@
 use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule, ChrAsm,
-    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass,
-    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
-    PlayerGameData, PlayerIns,
+    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData, PlayerIns
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 use hudhook::imgui::{TableColumnSetup, Ui};
@@ -674,6 +671,10 @@ impl DebugDisplay for CSChrTimeActModule {
 
 impl DebugDisplay for CSChrRideModule {
     fn render_debug(&self, ui: &Ui) {
+        ui.header("CSRideNode", || {
+            self.ride_node.render_debug(ui);
+        });
+
         ui.text(format!("Last mounted: {:?}", self.last_mounted));
         ui.text(format!("Has ride param: {}", self.has_ride_param));
         ui.text(format!("Is ridden character: {}", self.is_ride_character));
@@ -701,5 +702,22 @@ impl DebugDisplay for CSChrRideModule {
         ui.text(format!("Is sliding: {}", self.mount_data.is_sliding));
         ui.text(format!("Is mounting: {}", self.is_mounting));
         ui.text(format!("Is mounted: {}", self.is_mounted));
+    }
+}
+
+impl DebugDisplay for CSPairAnimNode {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Counter party: {}", self.counter_party));
+        ui.text(format!("Start position: {}", self.start_position));
+        ui.text(format!("Start rotation: {}", self.start_rotation));
+    }
+}
+
+impl DebugDisplay for CSRideNode {
+    fn render_debug(&self, ui: &Ui) {
+        self.pair_anim_node.render_debug(ui);
+        ui.text(format!("Ride state: {}", self.ride_state));
+        ui.text(format!("Ride param ID: {}", self.ride_param_id));
+        ui.text(format!("Camera mount control: {}", self.camera_mount_control));
     }
 }
