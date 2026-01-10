@@ -1,5 +1,5 @@
-use std::ptr::NonNull;
 use crate::cs::ChrIns;
+use std::ptr::NonNull;
 
 #[repr(C)]
 /// Source of name: RTTI

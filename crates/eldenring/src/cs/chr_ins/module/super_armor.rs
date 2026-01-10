@@ -21,5 +21,3 @@ pub struct CSChrSuperArmorModule {
     unk23: u8,
     unk24: u32,
 }
-
-

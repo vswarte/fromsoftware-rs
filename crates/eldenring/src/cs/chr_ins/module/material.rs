@@ -14,4 +14,3 @@ pub struct CSChrMaterialModule {
     pub disable_fall_damage: bool,
     unk1c: [u8; 0x4],
 }
-

@@ -1,6 +1,6 @@
+use crate::cs::ChrIns;
 use bitfield::bitfield;
 use std::ptr::NonNull;
-use crate::cs::ChrIns;
 
 #[repr(C)]
 /// Source of name: RTTI

@@ -1,8 +1,8 @@
 use std::ptr::NonNull;
 
-use vtable_rs::VPtr;
 use crate::{cs::ChrIns, dlrf::DLRuntimeClass};
 use shared::F32Vector4;
+use vtable_rs::VPtr;
 
 #[repr(C)]
 pub struct ChrManipulator {
@@ -35,8 +35,6 @@ pub trait ChrManipulatorVmt {
     fn destructor(&mut self);
 
     fn manipulator_type(&self) -> &ManipulatorType;
-
-
 }
 
 #[repr(u32)]

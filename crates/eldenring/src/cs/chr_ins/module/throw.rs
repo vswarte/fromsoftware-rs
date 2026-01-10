@@ -1,6 +1,6 @@
-use std::ptr::NonNull;
 use bitfield::bitfield;
 use shared::{OwnedPtr, Subclass};
+use std::ptr::NonNull;
 
 use crate::cs::{CSPairAnimNode, ChrIns, P2PEntityHandle};
 

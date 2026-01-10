@@ -35,4 +35,3 @@ pub struct CSChrBehaviorModule {
     pub animation_speed: f32,
     unk17cc: [u8; 0x1f4],
 }
-

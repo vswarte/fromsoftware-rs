@@ -9,4 +9,3 @@ pub struct CSChrWetModule {
     pub owner: NonNull<ChrIns>,
     unk10: [u8; 0x60],
 }
-

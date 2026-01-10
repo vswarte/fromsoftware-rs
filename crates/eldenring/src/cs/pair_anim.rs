@@ -2,13 +2,13 @@ use std::ptr::NonNull;
 
 use super::FieldInsHandle;
 use crate::{
+    Vector,
     cs::{CSThrowNode, ChrIns},
     dlkr::DLPlainLightMutex,
     position::HavokPosition,
     rotation::EulerAngles,
-    Vector,
 };
-use shared::{F32Vector4, Superclass, Subclass};
+use shared::{F32Vector4, Subclass, Superclass};
 use vtable_rs::VPtr;
 
 #[repr(C)]

@@ -2,7 +2,12 @@ use bitfield::bitfield;
 use shared::{F32ModelMatrix, F32Vector4};
 use std::ptr::NonNull;
 
-use crate::{cs::{CSChrDataModule, ChrIns, PlayerGameData}, fd4::FD4Time, position::HavokPosition, rotation::Quaternion};
+use crate::{
+    cs::{CSChrDataModule, ChrIns, PlayerGameData},
+    fd4::FD4Time,
+    position::HavokPosition,
+    rotation::Quaternion,
+};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -186,4 +191,3 @@ pub struct ChrPhysicsSlideInfo {
     /// When true use smoothed/interpolated slide updates; when false use immediate additive updates
     pub enable_slide_interpolation: bool,
 }
-

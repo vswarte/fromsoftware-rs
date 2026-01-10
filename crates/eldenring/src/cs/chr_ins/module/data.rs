@@ -1,6 +1,9 @@
 use std::ptr::NonNull;
 
-use crate::{cs::{CSMsbPartsEne, ChrIns, WorldBlockChr}, dltx::DLString};
+use crate::{
+    cs::{CSMsbPartsEne, ChrIns, WorldBlockChr},
+    dltx::DLString,
+};
 
 #[repr(C)]
 /// Source of name: RTTI

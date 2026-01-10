@@ -45,5 +45,3 @@ pub struct CSChrModelParamModifierModuleEntryValue {
     pub value4: f32,
     unk14: u32,
 }
-
-
