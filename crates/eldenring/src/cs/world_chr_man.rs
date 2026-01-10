@@ -702,6 +702,6 @@ mod test {
         assert_eq!(0x38, size_of::<SummonBuddyWarpManager>());
         assert_eq!(0x110, size_of::<SummonBuddyManager>());
         assert_eq!(0x18, size_of::<IChrFinder>());
-        assert_eq!(0x40, size_of::<NearbyEnemyFinder>());
+        assert_eq!(0x40, size_of::<NearEnemyFinder>());
     }
 }
