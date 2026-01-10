@@ -50,10 +50,12 @@ pub struct CSPairAnimNode {
     pub owner: NonNull<ChrIns>,
     /// Field ins handle of the `FieldIns` on the other end of this pair anim session.
     pub counter_party: FieldInsHandle,
-    /// Set when entering a pair anim "session". Updates with the world shift so it can be
+    /// The position of the pair anim dummy poly when entering the pair anim session.
+    /// Set when entering a pair anim session. Updates with the world shift so it can be
     /// safely used to measure distance when crossing chunks. Becomes identity (0.0, 0.0, 0.0, 1.0)
     /// once the paired anim ends.
     pub start_position: HavokPosition,
+    /// The rotation of the pair anim dummy poly when entering the pair anim session.
     /// Populated when entering a pair anim "session". Becomes all zeroes once the paired anim ends.
     pub start_rotation: EulerAngles,
     // occupied? if true it also potentially removes an entry from CSPairAnimManager->0x20
