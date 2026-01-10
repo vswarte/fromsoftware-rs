@@ -78,6 +78,8 @@ pub struct RvaBundle {
     pub global_hinstance: u32,
     pub initialize_spawn_geometry_request: u32,
     pub msb_file_cap_vmt: u32,
+    pub ichr_finder_vmt: u32,
+    pub near_enemy_finder_vmt: u32,
     pub msb_repository_vmt: u32,
     pub multiplay_properties: u32,
     pub open_field_chr_set_vmt: u32,

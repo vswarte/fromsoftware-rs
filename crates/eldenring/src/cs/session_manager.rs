@@ -198,8 +198,12 @@ pub struct SessionManagerPlayerEntry {
     pub character_event_id: u32,
     unkd8: usize,
     pub horse_entity_handle: P2PEntityHandle,
+    /// Is this entry for the host of the session?
     pub is_host: bool,
-    unke9: u8,
+    /// Is this entry for the local player?
+    /// Gets checked in a bunch of places to see if it should use the local PlayerGameData
+    /// instead of a remote one by the game data index.
+    pub is_local_player: bool,
     pub join_wait: bool,
     pub check: bool,
     unkec: u8,

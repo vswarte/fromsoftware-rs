@@ -194,6 +194,14 @@ vftable = "dlbuffered_input_stream_vmt"
 class = "DLIO::DLPseudoAsyncInputStream"
 vftable = "dlpseudo_async_input_stream_vmt"
 
+[[vmts]]
+class = "CS::IChrFinder"
+vftable = "ichr_finder_vmt"
+
+[[vmts]]
+class = "CS::NearEnemyFinder"
+vftable = "near_enemy_finder_vmt"
+
 [[patterns]]
 pattern = "48 8d 05 $ { ' } 48 89 4f 68 88 4f 70 48 89 4f 78 48 89 07 48 8b 43 18"
 captures = ["", "fd4file_cap_vmt"]
