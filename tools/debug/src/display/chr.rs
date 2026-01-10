@@ -1,5 +1,9 @@
 use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData, PlayerIns
+    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule,
+    CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns,
+    ChrInsModuleContainer, ChrInsSubclass, ChrPhysicsMaterialInfo, EquipGameData,
+    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
+    PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 use hudhook::imgui::{TableColumnSetup, Ui};
@@ -616,6 +620,16 @@ impl DebugDisplay for CSChrPhysicsModule {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Position: {}", self.position));
         ui.text(format!("Orientation: {}", self.orientation));
+
+        ui.header("Physics material", || {
+            unsafe { self.slide_info.material_info.as_ref() }.render_debug(ui);
+        });
+    }
+}
+
+impl DebugDisplay for ChrPhysicsMaterialInfo {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Ground normal vector: {:?}", self.normal_vector));
     }
 }
 
@@ -718,6 +732,9 @@ impl DebugDisplay for CSRideNode {
         self.pair_anim_node.render_debug(ui);
         ui.text(format!("Ride state: {}", self.ride_state));
         ui.text(format!("Ride param ID: {}", self.ride_param_id));
-        ui.text(format!("Camera mount control: {}", self.camera_mount_control));
+        ui.text(format!(
+            "Camera mount control: {}",
+            self.camera_mount_control
+        ));
     }
 }
