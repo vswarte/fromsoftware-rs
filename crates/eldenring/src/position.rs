@@ -124,10 +124,24 @@ impl Display for HavokPosition {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PositionDelta(pub f32, pub f32, pub f32);
 
+impl Display for PositionDelta {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Self(x, y, z) = self;
+        write!(f, "PositionDelta({x}, {y}, {z})")
+    }
+}
+
 /// A (potentially non-normal) directional vector.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DirectionalVector(pub f32, pub f32, pub f32, pub f32);
+
+impl Display for DirectionalVector {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Self(x, y, z, w) = self;
+        write!(f, "DirectionalVector({x}, {y}, {z}, {w})")
+    }
+}
 
 #[cfg(test)]
 mod test {

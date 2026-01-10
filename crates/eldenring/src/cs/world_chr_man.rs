@@ -640,6 +640,52 @@ pub struct CSBuddyStoneEliminateTargetCalc {
     pub range_check_counter: u32,
 }
 
+#[repr(C)]
+#[derive(Superclass)]
+#[superclass(children(NearEnemyFinder))]
+/// Interface describing a generic `ChrIns` finder.
+/// Source of name: RTTI
+pub struct IChrFinder {
+    vtable: VPtr<dyn IChrFinderVmt, Self>,
+    /// Contains the ChrIns matching the hueristics. Populated by `IChrFinder::run`.
+    pub found: NonNull<ChrIns>,
+    /// Depending on the implementation this could cap the search radius and for some
+    /// implementations this'll be populated by the distance to the result pointed to in `found`.
+    /// f32::MAX (0x7F7FFFFF) is used in case we don't want a max search radius.
+    pub distance: f32,
+}
+
+#[vtable_rs::vtable]
+trait IChrFinderVmt {
+    fn destructor(&mut self);
+
+    /// Returns true when the finder has passed the highest chr set index for a potential match.
+    /// Returning true will prevent further invokes of `IChrFinder::run`.
+    fn reached_end(&mut self, chr_set_index: u32) -> bool;
+
+    /// Runs the IChrFinder against a given ChrIns.
+    fn run(&mut self, chr_ins: &ChrIns);
+}
+
+#[repr(C)]
+#[derive(Subclass)]
+/// Implementation of `IChrFinder` for locating a hostile `ChrIns` from some arbitrary origin.
+///
+/// Source of name: RTTI
+pub struct NearEnemyFinder {
+    pub chr_finder: IChrFinder,
+    /// Position to start looking from
+    pub search_origin: HavokPosition,
+    /// Team type to be hostile against.
+    pub team_type: u8,
+    // Somehow used in some Y coordinate comparison.
+    // (0.0 <= param_1->field5_0x34) && (bVar1 = true, param_1->field5_0x34 < distanceY)
+    unk34: f32,
+    // Somehow used in some Y coordinate comparison.
+    // (((param_1->field6_0x38 < 0.0) || (param_1->field6_0x38 <= distanceY)) && (bVar1))
+    unk38: f32,
+}
+
 #[cfg(test)]
 mod test {
     use std::mem::size_of;
@@ -655,5 +701,7 @@ mod test {
         assert_eq!(0x70, size_of::<SummonBuddyWarpEntry>());
         assert_eq!(0x38, size_of::<SummonBuddyWarpManager>());
         assert_eq!(0x110, size_of::<SummonBuddyManager>());
+        assert_eq!(0x18, size_of::<IChrFinder>());
+        assert_eq!(0x40, size_of::<NearEnemyFinder>());
     }
 }
