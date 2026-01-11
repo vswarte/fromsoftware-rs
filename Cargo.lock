@@ -63,7 +63,7 @@ dependencies = [
 
 [[package]]
 name = "apply-speffect"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "eldenring",
  "fromsoftware-shared",
@@ -93,7 +93,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "binary-mapper"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "clap",
  "fromsoftware-shared",
@@ -269,7 +269,7 @@ dependencies = [
 
 [[package]]
 name = "darksouls3"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "bitfield",
  "cxx-stl",
@@ -295,7 +295,7 @@ dependencies = [
 
 [[package]]
 name = "debug"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "eldenring",
  "fromsoftware-shared",
@@ -311,7 +311,7 @@ dependencies = [
 
 [[package]]
 name = "debug-line"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "eldenring",
  "fromsoftware-shared",
@@ -341,7 +341,7 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
 name = "eldenring"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "bitfield",
  "cxx-stl",
@@ -404,7 +404,7 @@ dependencies = [
 
 [[package]]
 name = "fromsoftware-shared"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "from-singleton",
  "fromsoftware-shared-macros",
@@ -418,7 +418,7 @@ dependencies = [
 
 [[package]]
 name = "fromsoftware-shared-macros"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "inflections",
  "proc-macro2",
@@ -535,7 +535,7 @@ checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
 
 [[package]]
 name = "invoke-esd"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "eldenring",
  "fromsoftware-shared",
@@ -686,7 +686,7 @@ checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
 
 [[package]]
 name = "nightreign"
-version = "0.11.0"
+version = "0.12.0"
 
 [[package]]
 name = "no-std-compat"
@@ -738,7 +738,7 @@ checksum = "a4895175b425cb1f87721b59f0f286c2092bd4af812243672510e1ac53e2e0ad"
 
 [[package]]
 name = "param-generator"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "clap",
  "quick-xml",
@@ -807,7 +807,7 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
 name = "present-action-button"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "eldenring",
  "fromsoftware-shared",
@@ -998,7 +998,7 @@ checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
 name = "spawn-asset"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "eldenring",
  "fromsoftware-shared",
