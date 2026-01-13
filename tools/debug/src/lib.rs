@@ -9,6 +9,7 @@ use eldenring::cs::CSBulletManager;
 use eldenring::cs::CSCamera;
 use eldenring::cs::CSEventFlagMan;
 use eldenring::cs::CSEventManImp;
+use eldenring::cs::CSEventRegionMan;
 use eldenring::cs::CSFade;
 use eldenring::cs::CSFeManImp;
 use eldenring::cs::CSGaitemImp;
@@ -169,6 +170,7 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
                 render_debug_static::<CSBulletManager>(ui);
                 render_debug_static::<CSEventManImp>(ui);
                 render_debug_static::<CSAutoInvadePoint>(ui);
+                render_debug_static::<CSEventRegionMan>(ui);
                 item.end();
             }
 
