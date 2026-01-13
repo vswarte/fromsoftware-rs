@@ -1,7 +1,7 @@
 use std::{fmt, ops::Deref, ptr::NonNull};
 
-/// Pointer to a structure that is safe to consume as long as the safety rules of the
-/// containing type is upheld.
+/// Pointer with read-only access to a structure that is safe to use as long as
+/// the safety rules of the containing type is upheld.
 ///
 /// This type should not be used outside of types that mirror a type from the game.
 ///
