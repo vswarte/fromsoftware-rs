@@ -17,17 +17,17 @@ members = [
 ]
 
 [workspace.package]
-version = "0.11.0"
+version = "0.12.0"
 edition = "2024"
 repository = "https://github.com/vswarte/eldenring-rs"
 license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
-fromsoftware-shared = { path = "crates/shared", version = "0.11.0", package = "fromsoftware-shared" }
-fromsoftware-shared-macros = { path = "crates/shared/macros", version = "0.11.0", package = "fromsoftware-shared-macros" }
-eldenring = { path = "crates/eldenring", version = "0.11.0", package = "eldenring" }
-darksouls3 = { path = "crates/darksouls3", version = "0.11.0", package = "darksouls3" }
-nightreign = { path = "crates/nightreign", version = "0.11.0", package = "nightreign" }
+fromsoftware-shared = { path = "crates/shared", version = "0.12.0", package = "fromsoftware-shared" }
+fromsoftware-shared-macros = { path = "crates/shared/macros", version = "0.12.0", package = "fromsoftware-shared-macros" }
+eldenring = { path = "crates/eldenring", version = "0.12.0", package = "eldenring" }
+darksouls3 = { path = "crates/darksouls3", version = "0.12.0", package = "darksouls3" }
+nightreign = { path = "crates/nightreign", version = "0.12.0", package = "nightreign" }
 binary_mapper = { path = "crates/binary-mapper" }
 thiserror = "1"
 tracing = "0.1"

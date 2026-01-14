@@ -29,7 +29,7 @@ impl EventFlag {
             (29, 0) => 4,
             (29, 1) => 5,
             (29, 2) => 6,
-            _ => return None
+            _ => return None,
         })
     }
 }

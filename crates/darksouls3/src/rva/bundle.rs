@@ -10,7 +10,10 @@
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
+    pub game_data_man_ptr: u32,
     pub gesture_data_store: u32,
+    pub lua_event_man_give_item_directly: u32,
+    pub lua_event_man_remove_item: u32,
     pub map_item_man_grant_item: u32,
     pub map_item_man_ptr: u32,
     pub register_task: u32,

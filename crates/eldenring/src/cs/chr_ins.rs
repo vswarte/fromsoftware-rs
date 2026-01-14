@@ -5,7 +5,6 @@ use std::ptr::NonNull;
 
 use pelite::pe64::Pe;
 use vtable_rs::VPtr;
-use windows::core::PCWSTR;
 
 use crate::cs::field_ins::{FieldInsBaseVmt, FieldInsHandle};
 use crate::cs::network_session::PlayerNetworkSession;
@@ -13,14 +12,12 @@ use crate::cs::player_game_data::{ChrAsm, PlayerGameData};
 use crate::cs::session_manager::SessionManagerPlayerEntryBase;
 use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
-use crate::cs::world_chr_man::{ChrSetEntry, WorldBlockChr};
-use crate::cs::world_geom_man::CSMsbPartsEne;
+use crate::cs::world_chr_man::ChrSetEntry;
 use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
 use crate::position::{BlockPosition, HavokPosition};
-use crate::rotation::Quaternion;
 use crate::rva;
 use crate::{Tree, Vector};
 use shared::program::Program;
@@ -28,6 +25,9 @@ use shared::{
     Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPtr, Subclass, Superclass,
     for_all_subclasses,
 };
+
+mod module;
+pub use module::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -2023,16 +2023,4 @@ pub enum ChrType {
     BloodyFingerNpc = 20,
     RecusantNpc = 21,
     Unk22 = 22,
-}
-
-#[repr(C)]
-/// Source of name: RTTI
-pub struct CSChrFallModule {
-    vftable: usize,
-    pub owner: NonNull<ChrIns>,
-    unk10: i64,
-    pub fall_timer: f32,
-    hamari_fall_death_checked: bool,
-    pub force_max_fall_height: bool,
-    pub disable_fall_motion: bool,
 }

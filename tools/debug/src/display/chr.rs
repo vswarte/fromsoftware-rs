@@ -1,8 +1,9 @@
 use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrTimeActModule, ChrAsm,
-    ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass,
-    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
-    PlayerGameData, PlayerIns,
+    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule,
+    CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns,
+    ChrInsModuleContainer, ChrInsSubclass, ChrPhysicsMaterialInfo, EquipGameData,
+    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
+    PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 use hudhook::imgui::{TableColumnSetup, Ui};
@@ -608,6 +609,10 @@ impl DebugDisplay for ChrInsModuleContainer {
         ui.header("Time Act", || {
             self.time_act.render_debug(ui);
         });
+
+        ui.header("Ride", || {
+            self.ride.render_debug(ui);
+        });
     }
 }
 
@@ -615,6 +620,16 @@ impl DebugDisplay for CSChrPhysicsModule {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Position: {}", self.position));
         ui.text(format!("Orientation: {}", self.orientation));
+
+        ui.header("Physics material", || {
+            unsafe { self.slide_info.material_info.as_ref() }.render_debug(ui);
+        });
+    }
+}
+
+impl DebugDisplay for ChrPhysicsMaterialInfo {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Ground normal vector: {:?}", self.normal_vector));
     }
 }
 
@@ -665,5 +680,61 @@ impl DebugDisplay for CSChrTimeActModule {
             ui.text(format!("Play Time: {}", current_anim_info.play_time));
             ui.text(format!("Anim Length: {}", current_anim_info.anim_length));
         });
+    }
+}
+
+impl DebugDisplay for CSChrRideModule {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("CSRideNode", || {
+            self.ride_node.render_debug(ui);
+        });
+
+        ui.text(format!("Last mounted: {:?}", self.last_mounted));
+        ui.text(format!("Has ride param: {}", self.has_ride_param));
+        ui.text(format!("Is ridden character: {}", self.is_ride_character));
+        ui.text(format!("Mount rotation: {}", self.mount_data.rotation));
+        ui.text(format!(
+            "Mount position: {}",
+            self.mount_data.mount_position
+        ));
+        ui.text(format!("Mount velocity: {}", self.mount_data.velocity));
+        ui.text(format!(
+            "Attack direction: {}",
+            self.mount_data.attack_direction
+        ));
+        ui.text(format!(
+            "Attack received damage type: {}",
+            self.mount_data.received_damage_type
+        ));
+        ui.text(format!("Mount health: {}", self.mount_data.mount_health));
+        ui.text(format!("Fall height: {}", self.mount_data.fall_height));
+        ui.text(format!(
+            "Is touching solid ground: {}",
+            self.mount_data.is_touching_solid_ground
+        ));
+        ui.text(format!("Is falling: {}", self.mount_data.is_falling));
+        ui.text(format!("Is sliding: {}", self.mount_data.is_sliding));
+        ui.text(format!("Is mounting: {}", self.is_mounting));
+        ui.text(format!("Is mounted: {}", self.is_mounted));
+    }
+}
+
+impl DebugDisplay for CSPairAnimNode {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Counter party: {}", self.counter_party));
+        ui.text(format!("Start position: {}", self.start_position));
+        ui.text(format!("Start rotation: {}", self.start_rotation));
+    }
+}
+
+impl DebugDisplay for CSRideNode {
+    fn render_debug(&self, ui: &Ui) {
+        self.pair_anim_node.render_debug(ui);
+        ui.text(format!("Ride state: {}", self.ride_state));
+        ui.text(format!("Ride param ID: {}", self.ride_param_id));
+        ui.text(format!(
+            "Camera mount control: {}",
+            self.camera_mount_control
+        ));
     }
 }

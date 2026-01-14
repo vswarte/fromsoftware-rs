@@ -3,10 +3,12 @@ use std::fmt::{self, Display};
 
 #[repr(C, align(16))]
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Rotation as a Quanternion in format XYZW.
 pub struct Quaternion(pub f32, pub f32, pub f32, pub f32);
 
 #[repr(C, align(16))]
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Rotation described by axis angles (pitch, yaw, roll).
 pub struct EulerAngles(pub f32, pub f32, pub f32);
 
 impl Display for Quaternion {

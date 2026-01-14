@@ -10,6 +10,7 @@ Rust bindings to facilitate mod creation for From Software games.
 
 ## Project structure (crates)
 
+- `crates/darksouls3` Contains the definitions for the Dark Souls 3 structures. [![Crates.io](https://img.shields.io/crates/v/darksouls3.svg?label=darksouls3)](https://crates.io/crates/darksouls3) [![Documentation](https://docs.rs/darksouls3/badge.svg)](https://docs.rs/darksouls3)
 - `crates/eldenring` Contains the definitions for the Elden Ring structures. [![Crates.io](https://img.shields.io/crates/v/eldenring.svg?label=eldenring)](https://crates.io/crates/eldenring) [![Documentation](https://docs.rs/eldenring/badge.svg)](https://docs.rs/eldenring)
 - `crates/nightreign` Contains the definitions for the Elden Ring: Nightreign structures. [![Crates.io](https://img.shields.io/crates/v/nightreign.svg?label=nightreign)](https://crates.io/crates/nightreign) [![Documentation](https://docs.rs/nightreign/badge.svg)](https://docs.rs/nightreign)
 - `crates/shared` Defines structures and utilities that are shared across multiple From Software games. [![Crates.io](https://img.shields.io/crates/v/fromsoftware-shared.svg?label=shared)](https://crates.io/crates/fromsoftware-shared)  [![Documentation](https://docs.rs/fromsoftware-shared/badge.svg)](https://docs.rs/fromsoftware-shared)

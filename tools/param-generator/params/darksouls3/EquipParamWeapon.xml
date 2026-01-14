@@ -23,12 +23,12 @@
     <Field Def="f32 magGuardCutRate" />
     <Field Def="f32 fireGuardCutRate" />
     <Field Def="f32 thunGuardCutRate" />
+    <Field Def="s32 spEffectBehaviorId0 = -1" />
     <Field Def="s32 spEffectBehaviorId1 = -1" />
     <Field Def="s32 spEffectBehaviorId2 = -1" />
-    <Field Def="s32 spEffectBehaviorId3 = -1" />
+    <Field Def="s32 residentSpEffectId0 = -1" />
     <Field Def="s32 residentSpEffectId1 = -1" />
     <Field Def="s32 residentSpEffectId2 = -1" />
-    <Field Def="s32 residentSpEffectId3 = -1" />
     <Field Def="s32 materialSetId" />
     <Field Def="s32 originEquipWep0 = -1" />
     <Field Def="s32 originEquipWep1 = -1" />
@@ -51,7 +51,7 @@
     <Field Def="f32 weakC_DamageRate" />
     <Field Def="f32 weakD_DamageRate" />
     <Field Def="s32 vagrantItemLotId = 100700" />
-    <Field Def="s32 vagrantBonusEneDropItemLotId = 100710" />
+    <Field Def="s32 vagrantBonuseneDropItemLotId = 100710" />
     <Field Def="s32 vagrantItemEneDropItemLotId = 100720" />
     <Field Def="s16 equipModelId" />
     <Field Def="s16 iconId" />

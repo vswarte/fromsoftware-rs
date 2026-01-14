@@ -10,11 +10,9 @@ description = "Raw structures and bindings for From Software's title Dark Souls 
 [dependencies]
 bitfield.workspace = true
 encoding_rs.workspace = true
-glam.workspace = true
 pelite.workspace = true
 fromsoftware-shared.workspace = true
 thiserror.workspace = true
-tracing.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
 cxx-stl = { version = "3.4", features = ["msvc2012"] }
