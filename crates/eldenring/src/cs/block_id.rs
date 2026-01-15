@@ -3,6 +3,7 @@ use std::fmt::Display;
 use bitfield::bitfield;
 
 bitfield! {
+    #[repr(C)]
     #[derive(Copy, Clone, PartialEq, Eq, Hash)]
     pub struct BlockId(i32);
     impl Debug;
