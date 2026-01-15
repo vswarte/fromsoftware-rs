@@ -314,7 +314,8 @@ pub struct ChrIns {
     pub debug_flags: ChrDebugFlags,
     /// Amount of stamina points recovered per tick.
     pub stamina_recovery: u32,
-    unk538: u32,
+    /// [crate::param::PHANTOM_PARAM_ST] ID for this character, -1 if no override.
+    pub phantom_param_override: i32,
     /// Param ID of the current material character standing on
     /// (e.g. water, lava, etc.), -1 if none.
     pub hit_material_override: i32,
