@@ -10,6 +10,7 @@ use super::RvaBundle;
 /// using `tools/binary-generator`.
 pub const RVAS: RvaBundle = RvaBundle {
     chr_ins_vmt: 0x284f478,
+    field_area_ptr: 0x475abd0,
     game_data_man_ptr: 0x47572b8,
     gesture_data_store: 0x45672e0,
     global_hinstance: 0x489d5a0,
