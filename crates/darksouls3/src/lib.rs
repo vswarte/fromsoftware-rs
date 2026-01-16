@@ -10,4 +10,6 @@ pub mod fd4;
 pub mod param;
 pub mod rva;
 pub mod sprj;
+pub mod util;
+
 pub use cxx_stl::*;
