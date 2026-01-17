@@ -54,55 +54,60 @@ impl TalkScriptDemo {
             }
             TalkScriptDemoState::EnterMainMenu => {
                 // ClearTalkListData()
-                talk_script.event([EzStateValue::Int32(CLEAR_TALK_LIST_DATA)])?;
+                talk_script.event(CLEAR_TALK_LIST_DATA)?;
 
                 // AddTalkListData(1, 20000010, -1) // "Purchase"
-                talk_script.event([
-                    EzStateValue::Int32(ADD_TALK_LIST_DATA),
-                    EzStateValue::Int32(1),
-                    EzStateValue::Int32(20000010),
-                    EzStateValue::Int32(-1),
-                ])?;
+                talk_script.event((
+                    ADD_TALK_LIST_DATA,
+                    [
+                        EzStateValue::Int32(1),
+                        EzStateValue::Int32(20000010),
+                        EzStateValue::Int32(-1),
+                    ],
+                ))?;
 
                 // AddTalkListData(2, 20000011, -1) // "Sell"
-                talk_script.event([
-                    EzStateValue::Int32(ADD_TALK_LIST_DATA),
-                    EzStateValue::Int32(2),
-                    EzStateValue::Int32(20000011),
-                    EzStateValue::Int32(-1),
-                ])?;
+                talk_script.event((
+                    ADD_TALK_LIST_DATA,
+                    [
+                        EzStateValue::Int32(2),
+                        EzStateValue::Int32(20000011),
+                        EzStateValue::Int32(-1),
+                    ],
+                ))?;
 
                 // AddTalkListData(3, 20000009, -1) // "Leave"
-                talk_script.event([
-                    EzStateValue::Int32(ADD_TALK_LIST_DATA),
-                    EzStateValue::Int32(3),
-                    EzStateValue::Int32(20000009),
-                    EzStateValue::Int32(-1),
-                ])?;
+                talk_script.event((
+                    ADD_TALK_LIST_DATA,
+                    [
+                        EzStateValue::Int32(3),
+                        EzStateValue::Int32(20000009),
+                        EzStateValue::Int32(-1),
+                    ],
+                ))?;
 
                 // ShowShopMessage(1)
-                talk_script.event([
-                    EzStateValue::Int32(SHOW_SHOP_MESSAGE),
-                    EzStateValue::Int32(1),
-                ])?;
+                talk_script.event((SHOW_SHOP_MESSAGE, [EzStateValue::Int32(1)]))?;
 
                 TalkScriptDemoState::WhileMainMenu
             }
             TalkScriptDemoState::WhileMainMenu => {
                 // not (CheckSpecificPersonMenuIsOpen(1, 0) == 1 and not CheckSpecificPersonGenericDialogIsOpen(0))
                 let specific_person_menu_is_open: i32 = talk_script
-                    .env([
-                        EzStateValue::Int32(CHECK_SPECIFIC_PERSON_MENU_IS_OPEN),
-                        EzStateValue::Int32(MenuType::TalkList as i32),
-                        EzStateValue::Int32(0),
-                    ])?
+                    .env((
+                        CHECK_SPECIFIC_PERSON_MENU_IS_OPEN,
+                        [
+                            EzStateValue::Int32(MenuType::TalkList as i32),
+                            EzStateValue::Int32(0),
+                        ],
+                    ))?
                     .into();
 
                 let specific_person_generic_dialog_is_open: i32 = talk_script
-                    .env([
-                        EzStateValue::Int32(CHECK_SPECIFIC_PERSON_GENERIC_DIALOG_IS_OPEN),
-                        EzStateValue::Int32(0),
-                    ])?
+                    .env((
+                        CHECK_SPECIFIC_PERSON_GENERIC_DIALOG_IS_OPEN,
+                        [EzStateValue::Int32(0)],
+                    ))?
                     .into();
 
                 if !(specific_person_menu_is_open == 1
@@ -110,26 +115,24 @@ impl TalkScriptDemo {
                 {
                     // GetTalkListMenuResult()
                     match talk_script
-                        .env([EzStateValue::Int32(GET_TALK_LIST_MENU_RESULT)])
+                        .env(GET_TALK_LIST_MENU_RESULT)
                         .map(|v| v.into())?
                     {
                         1 => {
                             // OpenRegularShop(100500, 100524)
-                            talk_script.event([
-                                EzStateValue::Int32(OPEN_REGULAR_SHOP),
-                                EzStateValue::Int32(100500),
-                                EzStateValue::Int32(100524),
-                            ])?;
+                            talk_script.event((
+                                OPEN_REGULAR_SHOP,
+                                [EzStateValue::Int32(100500), EzStateValue::Int32(100524)],
+                            ))?;
 
                             TalkScriptDemoState::WhilePurchase
                         }
                         2 => {
                             // OpenSellShop(-1, -1)
-                            talk_script.event([
-                                EzStateValue::Int32(OPEN_SELL_SHOP),
-                                EzStateValue::Int32(-1),
-                                EzStateValue::Int32(-1),
-                            ])?;
+                            talk_script.event((
+                                OPEN_SELL_SHOP,
+                                [EzStateValue::Int32(-1), EzStateValue::Int32(-1)],
+                            ))?;
 
                             TalkScriptDemoState::WhileSell
                         }
@@ -142,18 +145,20 @@ impl TalkScriptDemo {
             TalkScriptDemoState::WhilePurchase => {
                 // not (CheckSpecificPersonMenuIsOpen(5, 0) == 1 and not CheckSpecificPersonGenericDialogIsOpen(0))
                 let specific_person_menu_is_open: i32 = talk_script
-                    .env([
-                        EzStateValue::Int32(CHECK_SPECIFIC_PERSON_MENU_IS_OPEN),
-                        EzStateValue::Int32(MenuType::RegularShop as i32),
-                        EzStateValue::Int32(0),
-                    ])?
+                    .env((
+                        CHECK_SPECIFIC_PERSON_MENU_IS_OPEN,
+                        [
+                            EzStateValue::Int32(MenuType::RegularShop as i32),
+                            EzStateValue::Int32(0),
+                        ],
+                    ))?
                     .into();
 
                 let specific_person_generic_dialog_is_open: i32 = talk_script
-                    .env([
-                        EzStateValue::Int32(CHECK_SPECIFIC_PERSON_GENERIC_DIALOG_IS_OPEN),
-                        EzStateValue::Int32(0),
-                    ])?
+                    .env((
+                        CHECK_SPECIFIC_PERSON_GENERIC_DIALOG_IS_OPEN,
+                        [EzStateValue::Int32(0)],
+                    ))?
                     .into();
 
                 if !(specific_person_menu_is_open == 1
@@ -167,18 +172,20 @@ impl TalkScriptDemo {
             TalkScriptDemoState::WhileSell => {
                 // not (CheckSpecificPersonMenuIsOpen(5, 0) == 1 and not CheckSpecificPersonGenericDialogIsOpen(0))
                 let specific_person_menu_is_open: i32 = talk_script
-                    .env([
-                        EzStateValue::Int32(CHECK_SPECIFIC_PERSON_MENU_IS_OPEN),
-                        EzStateValue::Int32(MenuType::SellShop as i32),
-                        EzStateValue::Int32(0),
-                    ])?
+                    .env((
+                        CHECK_SPECIFIC_PERSON_MENU_IS_OPEN,
+                        [
+                            EzStateValue::Int32(MenuType::SellShop as i32),
+                            EzStateValue::Int32(0),
+                        ],
+                    ))?
                     .into();
 
                 let specific_person_generic_dialog_is_open: i32 = talk_script
-                    .env([
-                        EzStateValue::Int32(CHECK_SPECIFIC_PERSON_GENERIC_DIALOG_IS_OPEN),
-                        EzStateValue::Int32(0),
-                    ])?
+                    .env((
+                        CHECK_SPECIFIC_PERSON_GENERIC_DIALOG_IS_OPEN,
+                        [EzStateValue::Int32(0)],
+                    ))?
                     .into();
 
                 if !(specific_person_menu_is_open == 1
