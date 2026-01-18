@@ -14,7 +14,7 @@ pub trait CSFileImpVmt {
     fn destructor(&mut self, param_2: u32);
 
     /// Retrieves a file cap from the primary file repository.
-    fn get_file_cap(&mut self, name: &FD4BasicHashString) -> Option<NonNull<FD4FileCap>>;
+    fn get_file_cap(&self, name: &FD4BasicHashString) -> Option<NonNull<FD4FileCap>>;
 
     /// Adds a file cap to the primary file repository. The file loading queue parameters indicates
     /// what file loading queue the load events will be handled by.

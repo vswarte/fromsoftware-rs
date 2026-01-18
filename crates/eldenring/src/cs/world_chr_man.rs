@@ -116,11 +116,18 @@ pub struct WorldChrMan {
 }
 
 impl WorldChrMan {
-    pub fn chr_ins_by_handle(&mut self, handle: &FieldInsHandle) -> Option<&mut ChrIns> {
+    pub fn chr_ins_by_handle(&self, handle: &FieldInsHandle) -> Option<&ChrIns> {
+        let chr_set_index = handle.selector.container() as usize;
+        let chr_set = self.chr_sets.get(chr_set_index)?.as_ref()?;
+
+        chr_set.chr_ins_by_handle(handle)
+    }
+
+    pub fn chr_ins_by_handle_mut(&mut self, handle: &FieldInsHandle) -> Option<&mut ChrIns> {
         let chr_set_index = handle.selector.container() as usize;
         let chr_set = self.chr_sets.get_mut(chr_set_index)?.as_mut()?;
 
-        chr_set.chr_ins_by_handle(handle)
+        chr_set.chr_ins_by_handle_mut(handle)
     }
 
     pub fn spawn_debug_character(&mut self, request: &ChrDebugSpawnRequest) {
@@ -269,29 +276,29 @@ trait ChrSetVmt {
 
     /// Wrapped version of get_chr_ins_by_index which also validates the
     /// index against the ChrSet capacity.
-    fn safe_get_chr_ins_by_index(&mut self, index: u32) -> Option<&mut ChrIns>;
+    fn safe_get_chr_ins_by_index(&self, index: u32) -> Option<NonNull<ChrIns>>;
 
     /// Retrieves a ChrIns from the ChrSet by its index. Avoid using this.
     /// Prefer using safe_get_chr_ins_by_index.
-    fn get_chr_ins_by_index(&mut self, index: u32) -> Option<&mut ChrIns>;
+    fn get_chr_ins_by_index(&self, index: u32) -> Option<NonNull<ChrIns>>;
 
     /// Retrieves a ChrIns from the ChrSet by its FieldIns handle.
-    fn get_chr_ins_by_handle(&mut self, handle: FieldInsHandle) -> Option<&mut ChrIns>;
+    fn get_chr_ins_by_handle(&self, handle: FieldInsHandle) -> Option<NonNull<ChrIns>>;
 
     /// Wrapped version of get_chr_ins_by_index which also validates the
     /// index against the ChrSet capacity.
-    fn safe_get_chr_set_entry_by_index(&mut self, index: u32) -> Option<&mut ChrSetEntry<ChrIns>>;
+    fn safe_get_chr_set_entry_by_index(&self, index: u32) -> Option<NonNull<ChrSetEntry<ChrIns>>>;
 
     /// Retrieves a ChrSetEntry from the ChrSet by its index. Avoid using this.
     /// Prefer using safe_get_chr_ins_by_index.
-    fn get_chr_set_entry_by_index(&mut self, index: u32) -> Option<&mut ChrSetEntry<ChrIns>>;
+    fn get_chr_set_entry_by_index(&self, index: u32) -> Option<NonNull<ChrSetEntry<ChrIns>>>;
 
     /// Retrieves a ChrSetEntry from the ChrSet by its index. Avoid using this.
     /// Prefer using safe_get_chr_ins_by_index.
     fn get_chr_set_entry_by_handle(
-        &mut self,
+        &self,
         handle: FieldInsHandle,
-    ) -> Option<&mut ChrSetEntry<ChrIns>>;
+    ) -> Option<NonNull<ChrSetEntry<ChrIns>>>;
 
     /// Retrieves a ChrSetEntry from the ChrSet by its index. Avoid using this.
     /// Prefer using safe_get_chr_ins_by_index.
@@ -362,9 +369,14 @@ where
         (self.vftable.get_capacity)(self)
     }
 
-    pub fn chr_ins_by_handle(&mut self, field_ins_handle: &FieldInsHandle) -> Option<&mut T> {
+    pub fn chr_ins_by_handle(&self, field_ins_handle: &FieldInsHandle) -> Option<&T> {
         (self.vftable.get_chr_ins_by_handle)(self, field_ins_handle.to_owned())
-            .and_then(|chr_ins| chr_ins.as_subclass_mut())
+            .and_then(|chr_ins| unsafe { chr_ins.as_ref() }.as_subclass())
+    }
+
+    pub fn chr_ins_by_handle_mut(&mut self, field_ins_handle: &FieldInsHandle) -> Option<&mut T> {
+        (self.vftable.get_chr_ins_by_handle)(self, field_ins_handle.to_owned())
+            .and_then(|mut chr_ins| unsafe { chr_ins.as_mut() }.as_subclass_mut())
     }
 
     pub fn characters(&self) -> impl Iterator<Item = &mut T> {
