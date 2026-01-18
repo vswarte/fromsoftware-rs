@@ -48,16 +48,22 @@ pub unsafe trait Superclass: Sized {
     ///
     /// **Note:** Because this just checks the address of the virtual method
     /// table, it will return `false` for *subclasses* of `T` even though C++
-    /// considers them to be of type `T`.
+    /// considers them to be of type `T`. As a special case, if `T` is `Self`,
+    /// this will return `true` even for subclasses.
     fn is_subclass<T: Subclass<Self>>(&self) -> bool {
-        self.vmt() == Self::vmt_va()
+        // If T is Self (which we can check by comparing their VMTs), then we
+        // know this is a subclass without checking its VMT. This allows us to
+        // always return `true` for the trivial case of the root class.
+        let t_vmt = T::vmt_va();
+        t_vmt == Self::vmt_va() || t_vmt == self.vmt()
     }
 
     /// Returns this as a `T` if it is one. Otherwise, returns `None`.
     ///
     /// **Note:** Because this just checks the address of the virtual method
     /// table, it will return `None` for *subclasses* of `T` even though C++
-    /// considers them to be of type `T`.
+    /// considers them to be of type `T`. As a special case, if `T` is `Self`,
+    /// this will return `true` even for subclasses.
     fn as_subclass<T: Subclass<Self>>(&self) -> Option<&T> {
         if self.is_subclass::<T>() {
             // Safety: We require that VMTs indicate object type.
@@ -71,7 +77,8 @@ pub unsafe trait Superclass: Sized {
     ///
     /// **Note:** Because this just checks the address of the virtual method
     /// table, it will return `None` for *subclasses* of `T` even though C++
-    /// considers them to be of type `T`.
+    /// considers them to be of type `T`. As a special case, if `T` is `Self`,
+    /// this will return `true` even for subclasses.
     fn as_subclass_mut<T: Subclass<Self>>(&mut self) -> Option<&mut T> {
         if self.is_subclass::<T>() {
             // Safety: We require that VMTs indicate object type.
