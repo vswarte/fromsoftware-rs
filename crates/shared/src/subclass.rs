@@ -1,9 +1,9 @@
 use std::ptr::NonNull;
 
-use pelite::pe64::{Pe, Rva, Va};
+use pelite::pe64::{Pe, Rva, Va, msvc::RTTICompleteObjectLocator};
 use thiserror::Error;
 
-use crate::Program;
+use crate::{Program, is_base_class};
 
 /// The error type returend when a superclass isn't an instance of a subclass.
 #[derive(Error, Debug)]
@@ -15,6 +15,18 @@ impl TryFromSuperclassError {
     pub fn new(subclass: String) -> Self {
         TryFromSuperclassError(subclass)
     }
+}
+
+/// Gets the MSVC RTTI complete object locator for the given vftable
+///
+/// # Safety
+///
+/// The vftable must point to a valid MSVC virtual method table with RTTI in the current program
+unsafe fn complete_object_locator(vmt: Va) -> &'static RTTICompleteObjectLocator {
+    // A pointer to the complete object locator is located in the address immediately before the vmt
+    // https://www.lukaszlipski.dev/post/rtti-msvc/
+    let va = vmt - size_of::<Va>() as Va;
+    unsafe { &**(va as *const *const _) }
 }
 
 /// A trait for C++ types that have multiple different subclasses. Implementing
@@ -45,12 +57,19 @@ pub unsafe trait Superclass: Sized {
     }
 
     /// Returns whether this is an instance of `T`.
-    ///
-    /// **Note:** Because this just checks the address of the virtual method
-    /// table, it will return `false` for *subclasses* of `T` even though C++
-    /// considers them to be of type `T`.
     fn is_subclass<T: Subclass<Self>>(&self) -> bool {
-        self.vmt() == Self::vmt_va()
+        let instance_vmt = self.vmt();
+        let subclass_vmt = T::vmt_va();
+
+        // Short circuit to handle the common case where self is direct instance of Subclass
+        if subclass_vmt == instance_vmt {
+            return true;
+        }
+
+        // Otherwise, dynamically check using RTTI data
+        let instance_col = unsafe { complete_object_locator(instance_vmt) };
+        let subclass_col = unsafe { complete_object_locator(subclass_vmt) };
+        is_base_class(&Program::current(), subclass_col, instance_col)
     }
 
     /// Returns this as a `T` if it is one. Otherwise, returns `None`.

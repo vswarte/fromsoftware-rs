@@ -1,6 +1,9 @@
 use std::ptr::NonNull;
 
-use pelite::pe64::{Pe, Rva, Va, msvc::RTTICompleteObjectLocator};
+use pelite::pe64::{
+    Pe, Rva, Va,
+    msvc::{RTTIBaseClassDescriptor, RTTIClassHierarchyDescriptor, RTTICompleteObjectLocator},
+};
 use undname::Flags;
 
 use crate::program::Program;
@@ -111,6 +114,36 @@ pub fn vftable_classname(program: &Program, vftable_va: usize) -> Option<String>
         .ok()?;
 
     Some(demangled)
+}
+
+/// Returns true if an object with the first COL is an instance of the class with the second COL
+pub fn is_base_class(
+    program: &Program,
+    base_class_col: &RTTICompleteObjectLocator,
+    class_col: &RTTICompleteObjectLocator,
+) -> bool {
+    let class_hierarchy_descriptor: &RTTIClassHierarchyDescriptor = program
+        .derva(class_col.class_descriptor)
+        .expect("Class descriptor not in executable");
+
+    let base_class_array: &[Rva] = program
+        .derva_slice(
+            class_hierarchy_descriptor.base_class_array,
+            class_hierarchy_descriptor.num_base_classes as usize,
+        )
+        .expect("Base class array not in executable");
+
+    for base_class_rva in base_class_array {
+        let base_class_descriptor: &RTTIBaseClassDescriptor = program
+            .derva(*base_class_rva)
+            .expect("Base class descriptor not in executable");
+
+        if base_class_descriptor.type_descriptor == base_class_col.type_descriptor {
+            return true;
+        }
+    }
+
+    false
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
