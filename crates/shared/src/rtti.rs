@@ -133,17 +133,13 @@ pub fn is_base_class(
         )
         .expect("Base class array not in executable");
 
-    for base_class_rva in base_class_array {
+    base_class_array.iter().any(|base_class_rva| {
         let base_class_descriptor: &RTTIBaseClassDescriptor = program
             .derva(*base_class_rva)
             .expect("Base class descriptor not in executable");
 
-        if base_class_descriptor.type_descriptor == base_class_col.type_descriptor {
-            return true;
-        }
-    }
-
-    false
+        base_class_descriptor.type_descriptor == base_class_col.type_descriptor
+    })
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]

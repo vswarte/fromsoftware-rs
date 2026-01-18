@@ -38,7 +38,7 @@ unsafe fn complete_object_locator(vmt: Va) -> &'static RTTICompleteObjectLocator
 /// In order to implement this for a struct, you must guarantee:
 ///
 /// * The struct uses C-style layout.
-/// * The first element of the struct is a pointer to a C++-style vtable.
+/// * The first element of the struct is a pointer to a vtable for a class with MSVC RTTI.
 /// * There's a 1-to-1 correspondence between vtable address and C++ class.
 pub unsafe trait Superclass: Sized {
     /// The RVA of this class's virtual method table.
@@ -73,10 +73,6 @@ pub unsafe trait Superclass: Sized {
     }
 
     /// Returns this as a `T` if it is one. Otherwise, returns `None`.
-    ///
-    /// **Note:** Because this just checks the address of the virtual method
-    /// table, it will return `None` for *subclasses* of `T` even though C++
-    /// considers them to be of type `T`.
     fn as_subclass<T: Subclass<Self>>(&self) -> Option<&T> {
         if self.is_subclass::<T>() {
             // Safety: We require that VMTs indicate object type.
@@ -87,10 +83,6 @@ pub unsafe trait Superclass: Sized {
     }
 
     /// Returns this as a mutable `T` if it is one. Otherwise, returns `None`.
-    ///
-    /// **Note:** Because this just checks the address of the virtual method
-    /// table, it will return `None` for *subclasses* of `T` even though C++
-    /// considers them to be of type `T`.
     fn as_subclass_mut<T: Subclass<Self>>(&mut self) -> Option<&mut T> {
         if self.is_subclass::<T>() {
             // Safety: We require that VMTs indicate object type.
@@ -110,7 +102,8 @@ pub unsafe trait Superclass: Sized {
 /// In order to implement this for a struct, you must guarantee:
 ///
 /// * The struct uses C-style layout.
-/// * An initial subsequence of the struct is a valid isntance of `T`.
+/// * The first element of the struct is a pointer to a vtable for a class with MSVC RTTI.
+/// * An initial subsequence of the struct is a valid instance of `T`.
 pub unsafe trait Subclass<T: Superclass> {
     /// The RVA of this class's virtual method table.
     fn vmt_rva() -> Rva;
