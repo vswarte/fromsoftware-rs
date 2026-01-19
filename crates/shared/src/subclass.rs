@@ -69,7 +69,7 @@ pub unsafe trait Superclass: Sized {
         // Otherwise, dynamically check using RTTI data
         let instance_col = unsafe { complete_object_locator(instance_vmt) };
         let subclass_col = unsafe { complete_object_locator(subclass_vmt) };
-        is_base_class(&Program::current(), subclass_col, instance_col)
+        is_base_class(&Program::current(), subclass_col, instance_col).unwrap_or(false)
     }
 
     /// Returns this as a `T` if it is one. Otherwise, returns `None`.
@@ -102,7 +102,6 @@ pub unsafe trait Superclass: Sized {
 /// In order to implement this for a struct, you must guarantee:
 ///
 /// * The struct uses C-style layout.
-/// * The first element of the struct is a pointer to a vtable for a class with MSVC RTTI.
 /// * An initial subsequence of the struct is a valid instance of `T`.
 pub unsafe trait Subclass<T: Superclass> {
     /// The RVA of this class's virtual method table.
