@@ -16,12 +16,13 @@ use crate::{
 pub struct EzStateEnvironmentQuery {
     vftable: usize,
     arity: u32,
-    values: [EzStateRawValue; 8],
+    id: EzStateRawValue,
+    args: [EzStateRawValue; 7],
 }
 
 impl EzStateEnvironmentQuery {
     pub fn id(&self) -> i32 {
-        let value: EzStateValue = self.values[0].into();
+        let value: EzStateValue = self.id.into();
         value.into()
     }
 
@@ -29,7 +30,7 @@ impl EzStateEnvironmentQuery {
         if index >= self.arity {
             None
         } else {
-            Some(self.values[(index + 1) as usize].into())
+            Some(self.args[index as usize].into())
         }
     }
 
@@ -44,8 +45,9 @@ impl Default for EzStateEnvironmentQuery {
             vftable: Program::current()
                 .rva_to_va(rva::get().ez_state_environment_query_impl_vmt)
                 .unwrap() as usize,
-            arity: 0,
-            values: [EzStateValue::Int32(0).into(); 8],
+            arity: 1,
+            id: EzStateValue::Int32(0).into(),
+            args: [EzStateValue::Int32(0).into(); 7],
         }
     }
 }
@@ -53,21 +55,32 @@ impl Default for EzStateEnvironmentQuery {
 impl Debug for EzStateEnvironmentQuery {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str("EzStateEnvironmentQuery(")?;
-        self.values[..self.arity as usize].fmt(f)?;
+        self.id.fmt(f)?;
+        f.write_str(", ")?;
+        self.args[..self.arity as usize].fmt(f)?;
         f.write_str(")")
     }
 }
 
-impl<I> From<I> for EzStateEnvironmentQuery
+impl From<i32> for EzStateEnvironmentQuery {
+    fn from(id: i32) -> Self {
+        Self {
+            id: EzStateValue::Int32(id).into(),
+            ..Self::default()
+        }
+    }
+}
+
+impl<I> From<(i32, I)> for EzStateEnvironmentQuery
 where
     I: IntoIterator<Item = EzStateValue>,
 {
-    fn from(args: I) -> Self {
-        let mut new = Self::default();
+    fn from((id, args): (i32, I)) -> Self {
+        let mut new = Self::from(id);
         for arg in args {
-            new.values[new.arity as usize] = arg.into();
+            new.args[new.arg_count() as usize] = arg.into();
             new.arity += 1;
-            if new.values.len() == new.arity as usize {
+            if new.arg_count() as usize == new.args.len() {
                 break;
             }
         }
