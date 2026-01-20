@@ -1,5 +1,7 @@
 mod chr_ins;
 mod chr_module;
+mod event_flag;
+mod field_area;
 mod field_ins;
 mod game_data_man;
 mod item;
@@ -13,6 +15,8 @@ mod world_info;
 
 pub use chr_ins::*;
 pub use chr_module::*;
+pub use event_flag::*;
+pub use field_area::*;
 pub use field_ins::*;
 pub use game_data_man::*;
 pub use item::*;

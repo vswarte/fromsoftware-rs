@@ -11,6 +11,10 @@ class = "NS_SPRJ::ReplayGhostIns"
 vftable = "replay_ghost_ins_vmt"
 
 [[patterns]]
+pattern = "48 8b 0d ${ ' } 48 85 c9 74 ? 44 8b 41 20 48 8b 49 10 48 8d 54 24 40 e8"
+captures = ["", "field_area_ptr"]
+
+[[patterns]]
 pattern = "45 33 c0 89 11 85 d2 78 1d 48 63 c2 48 83 f8 2b 73 14 48 c1 e0 04 4c 8d 05 $ { ' }"
 captures = ["", "gesture_data_store"]
 
