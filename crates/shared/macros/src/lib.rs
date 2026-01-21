@@ -95,6 +95,31 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
 ///     }
 /// }
 /// ```rs
+///
+/// ## Enums
+///
+/// Each trait also generates two enums, one mutable and one immutable, which
+/// can be used in contexts where it's relevant *which* param type in particular
+/// you have. These enums have a variant for each defined parameter type. The
+/// above example would define:
+///
+/// ```rs
+/// pub enum EquipParamStruct<'a> {
+///   EQUIP_PARAM_ACCESSORY_ST(&'a EQUIP_PARAM_ACCESSORY_ST),
+///   EQUIP_PARAM_GOODS_ST(&'a EQUIP_PARAM_GOODS_ST),
+///   EQUIP_PARAM_PROTECTOR_ST(&'a EQUIP_PARAM_PROTECTOR_ST),
+///   EQUIP_PARAM_WEAPON_ST(&'a EQUIP_PARAM_WEAPON_ST),
+/// }
+///
+/// pub enum EquipParamStructMut<'a> {
+///   EQUIP_PARAM_ACCESSORY_ST(&'a mut EQUIP_PARAM_ACCESSORY_ST),
+///   EQUIP_PARAM_GOODS_ST(&'a mut EQUIP_PARAM_GOODS_ST),
+///   EQUIP_PARAM_PROTECTOR_ST(&'a mut EQUIP_PARAM_PROTECTOR_ST),
+///   EQUIP_PARAM_WEAPON_ST(&'a mut EQUIP_PARAM_WEAPON_ST),
+/// }
+/// ```
+///
+/// You can access these using the `as_enum()` and `as_enum_mut()` methods.
 #[proc_macro_attribute]
 pub fn multi_param(args: TokenStream, input: TokenStream) -> TokenStream {
     match multi_param::multi_param_helper(args, input) {

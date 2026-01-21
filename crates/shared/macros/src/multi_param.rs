@@ -33,15 +33,47 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
         })?);
     }
 
+    let trait_name = &input_trait.ident;
+    let enum_ = format_ident!("{}Struct", trait_name);
+    let enum_mut = format_ident!("{}StructMut", trait_name);
+
     let impls = structs
-        .into_iter()
-        .map(|struct_| generate_impl(&input_trait.ident, struct_, &fields))
+        .iter()
+        .map(|struct_| generate_impl(&trait_name, struct_, &fields))
         .collect::<Result<Vec<_>>>()?;
+
+    input_trait.items.push(syn::parse2(quote! {
+        /// Returns an [#enum_] representing the type of this parameter
+        /// struct.
+        fn as_enum(&self) -> #enum_<'_>;
+    })?);
+
+    input_trait.items.push(syn::parse2(quote! {
+        /// Returns an [#enum_mut] representing the type of this parameter
+        /// struct.
+        fn as_enum_mut(&mut self) -> #enum_mut<'_>;
+    })?);
 
     Ok(TokenStream::from(quote! {
         #input_trait
 
         #(#impls)*
+
+        /// An enum of possible structs that [#trait_name] can be.
+        pub enum #enum_<'a> {
+            #(
+                #[allow(non_camel_case_types)]
+                #structs(&'a #structs)
+            ),*
+        }
+
+        /// A mutable enum of possible structs that [#trait_name] can be.
+        pub enum #enum_mut<'a> {
+            #(
+                #[allow(non_camel_case_types)]
+                #structs(&'a mut #structs)
+            ),*
+        }
     }))
 }
 
@@ -185,15 +217,28 @@ fn parse_field_attribute(meta: ParseNestedMeta<'_>) -> Result<FieldAttribute> {
     }
 }
 
-/// Generates an implementation of [trait_] for [target] which forwards getters
-/// and setters for all fields in [fields] to methods of the same name.
+/// Generates an implementation of `trait_` for `target` which forwards getters
+/// and setters for all fields in `fields` to methods of the same name.
+///
+/// Generates an `as_enum()` method that returns the given [enum_].
 fn generate_impl<'a>(
     trait_: &Ident,
-    target: TypePath,
+    target: &TypePath,
     fields: impl IntoIterator<Item = &'a MultiParamField>,
 ) -> Result<ItemImpl> {
+    let enum_ = format_ident!("{}Struct", trait_);
+    let enum_mut = format_ident!("{}StructMut", trait_);
+
     let mut result: ItemImpl = syn::parse2(quote! {
-        impl #trait_ for #target {}
+        impl #trait_ for #target {
+            fn as_enum(&self) -> #enum_<'_> {
+                #enum_::#target(self)
+            }
+
+            fn as_enum_mut(&mut self) -> #enum_mut<'_> {
+                #enum_mut::#target(self)
+            }
+        }
     })?;
 
     for MultiParamField {
