@@ -271,6 +271,14 @@ pattern = "8b 01 89 85 d8 00 00 00 48 8d 55 00 49 8b ce e8 $ { ' }"
 captures = ["", "spawn_geometry"]
 
 [[patterns]]
+pattern = "f3 0f 11 44 24 78 f3 0f 11 44 24 70 f3 0f 11 44 24 68 f3 0f 11 44 24 60 f3 0f 11 44 24 58 f3 0f 11 44 24 50 f3 0f 11 44 24 48 f3 0f 11 44 24 40 f3 0f 11 44 24 38 f3 0f 10 84 24 d0 00 00 00 f3 0f 11 44 24 30 f3 0f 10 84 24 c0 00 00 00 f3 0f 11 4c 24 28 f3 0f 11 44 24 20 e8 $ { ' }"
+captures = ["", "goal_ins_add_sub_goal"]
+
+[[patterns]]
+pattern = "e8 $ {} 84 c0 75 36 48 8b cf e8 $ {} 84 c0 75 2a 48 8b cb e8 $ { 48 8b 49 08 e9 $ { ' } }"
+captures = ["", "goal_ins_clear_sub_goal"]
+
+[[patterns]]
 pattern = "ba 58 00 00 02 e8 $ { ' }"
 captures = ["", "cs_phys_world_cast_ray"]
 

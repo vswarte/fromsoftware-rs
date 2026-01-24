@@ -12,6 +12,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ai-goal"
+version = "0.12.0"
+dependencies = [
+ "eldenring",
+ "fromsoftware-shared",
+ "vtable-rs",
+]
+
+[[package]]
 name = "anstream"
 version = "0.6.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"

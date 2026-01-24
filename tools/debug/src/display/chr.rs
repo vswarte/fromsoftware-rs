@@ -1,11 +1,11 @@
-use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule,
-    CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns,
-    ChrInsModuleContainer, ChrInsSubclass, ChrPhysicsMaterialInfo, EquipGameData,
-    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
-    PlayerIns,
+use pelite::pe::Pe;
+use eldenring::{
+    cs::{
+        AiFollowPath, AiIns, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule, CSGoalBase, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass, ChrManipulator, ChrPhysicsMaterialInfo, ComManipulator, EnemyIns, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, GoalIns, ItemReplenishStateTracker, PlayerGameData, PlayerIns, WorldChrMan
+    },
+    position::HavokPosition,
 };
-use fromsoftware_shared::NonEmptyIteratorExt;
+use fromsoftware_shared::{FromStatic, NonEmptyIteratorExt, OwnedPtr, Program, vftable_classname};
 use hudhook::imgui::{TableColumnSetup, Ui};
 
 use super::{DebugDisplay, UiExt};
@@ -32,6 +32,16 @@ impl DebugDisplay for PlayerIns {
         ));
         ui.text(format!("Locked on enemy: {}", self.locked_on_enemy));
         ui.text(format!("Block position: {}", self.block_position));
+    }
+}
+
+impl DebugDisplay for EnemyIns {
+    fn render_debug(&self, ui: &Ui) {
+        chr_ins_common_debug(&self.chr_ins, ui);
+
+        ui.header("ComManipulator", || {
+            self.com_manipulator.as_ref().render_debug(ui);
+        });
     }
 }
 
@@ -527,6 +537,7 @@ impl DebugDisplay for EquipInventoryData {
 impl DebugDisplay for ChrIns {
     fn render_debug(&self, ui: &Ui) {
         match ChrInsSubclass::from(self) {
+            ChrInsSubclass::EnemyIns(enemy) => enemy.render_debug(ui),
             ChrInsSubclass::PlayerIns(player) => player.render_debug(ui),
             _ => chr_ins_common_debug(self, ui),
         }
@@ -557,6 +568,10 @@ fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
     ui.header("Initial Orientation", || {
         chr_ins.initial_orientation_euler.render_debug(ui);
     });
+
+    if ui.button("Warp to ChrIns") {
+        warp_to(&chr_ins.module_container.physics.position);
+    }
 
     ui.text(format!("Last hit by: {}", chr_ins.last_hit_by));
     ui.text(format!("TAE use item: {:?}", chr_ins.tae_queued_use_item));
@@ -736,5 +751,430 @@ impl DebugDisplay for CSRideNode {
             "Camera mount control: {}",
             self.camera_mount_control
         ));
+    }
+}
+
+impl DebugDisplay for ChrManipulator {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Motion multiplier: {:?}", self.motion_multiplier));
+        ui.text(format!(
+            "Network warp distance: {}",
+            self.network_warp_distance
+        ));
+        ui.text(format!("Weight type: {}", self.weight_type));
+    }
+}
+
+impl DebugDisplay for ComManipulator {
+    fn render_debug(&self, ui: &Ui) {
+        self.manipulator.render_debug(ui);
+
+        ui.text(format!("NpcParam ID: {:?}", self.npc_param_id));
+        ui.text(format!("NpcThinkParam ID: {:?}", self.npc_think_param_id));
+        ui.text(format!("AI Ins {:?}", self.ai_ins));
+
+        if let Some(ai_ins) = self.ai_ins.map(|ai| unsafe { ai.as_ref() }) {
+            ui.header("AiIns", || {
+                ai_ins.render_debug(ui);
+            });
+        }
+    }
+}
+
+impl DebugDisplay for AiFollowPath {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Target: {:?}", self.target));
+        ui.text(format!(
+            "Orientation from target: {:?}",
+            self.orientation_from_target
+        ));
+        ui.text(format!(
+            "Stop distance: {:?}",
+            self.stop_distance
+        ));
+        ui.text(format!(
+            "Directional distance: {:?}",
+            self.directional_distance
+        ));
+        ui.text(format!(
+            "Hit radius: {:?}",
+            self.hit_radius
+        ));
+        ui.text(format!(
+            "XZ distance only: {:?}",
+            self.xz_distance_only
+        ));
+    }
+}
+
+impl DebugDisplay for AiIns {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Force battle goal: {}", self.force_battle_goal));
+        ui.text(format!("Damage last frame: {}", self.damage_last_frame));
+        ui.text(format!("Wants to move to: {}", self.want_to_move_to));
+        ui.text(format!("Walk type: {}", self.walk_type));
+        ui.text(format!("Is dashing: {}", self.is_dashing));
+        ui.text(format!("Is in battle: {}", self.is_in_battle));
+        ui.text(format!("Has new path data: {}", self.has_new_path_data));
+        ui.text(format!("Is on ladder: {}", self.is_on_ladder));
+        ui.text(format!("Turn target: {:?}", self.turn_target));
+        ui.text(format!("Emergency turn: {}", self.emergency_turn));
+        ui.text(format!(
+                "Executing attack in attack goal: {}",
+                self.executing_attack_in_attack_goal
+        ));
+
+        ui.header("Interrupts", || {
+            ui.text(format!("{:#?}", self.interrupts));
+        });
+
+        ui.header("Goal", || {
+            ui.text(format!("Logic ID: {}", self.goal.logic_id));
+            ui.text(format!("Battle goal ID: {}", self.goal.battle_goal_id));
+
+            ui.header("Goals", || {
+                for goal in unsafe { self.goal.goals.as_ref() }.iter() {
+                    if goal.goal_id == -1 {
+                        continue;
+                    }
+
+                    let goal_name = goal
+                        .goal_strategy
+                        .map(|g| {
+                            let goal_strategy = unsafe { g.as_ref() };
+                            let vtable_va =
+                                unsafe { std::mem::transmute::<_, _>(goal_strategy.vftable) };
+                            vftable_classname(&Program::current(), vtable_va)
+                        })
+                    .flatten()
+                        .unwrap_or("unknown".to_string());
+
+                    ui.header(&format!("{} - {}", goal.goal_id, goal_name), || {
+                        goal.render_debug(ui);
+                    });
+                }
+            });
+        });
+
+        ui.header("Lua", || {
+            ui.header("Timers", || {
+                ui.table(
+                    "ai-ins-lua-float-timers",
+                    [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("Value"),
+                    ],
+                    self.lua_timers,
+                    |ui, i, timer| {
+                        ui.table_next_column();
+                        ui.text(i.to_string());
+
+                        ui.table_next_column();
+                        ui.text(timer.to_string());
+                    },
+                );
+            });
+
+            ui.header("ID Timers", || {
+                ui.table(
+                    "ai-ins-lua-id-timers",
+                    [
+                    TableColumnSetup::new("ID"),
+                    TableColumnSetup::new("Start offset"),
+                    TableColumnSetup::new("Elapsed"),
+                    ],
+                    &self.lua_id_timers,
+                    |ui, _i, timer| {
+                        ui.table_next_column();
+                        ui.text(timer.id.to_string());
+
+                        ui.table_next_column();
+                        ui.text(timer.start_offset.to_string());
+
+                        ui.table_next_column();
+                        ui.text(timer.elapsed.to_string());
+                    },
+                );
+            });
+
+            ui.header("Numbers", || {
+                ui.table(
+                    "ai-ins-lua-numbers",
+                    [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("Value"),
+                    ],
+                    self.lua_numbers,
+                    |ui, i, number| {
+                        ui.table_next_column();
+                        ui.text(i.to_string());
+
+                        ui.table_next_column();
+                        ui.text(number.to_string());
+                    },
+                );
+            });
+        });
+
+
+        // if ui.button("Attack?") {
+        //     let request_attack = unsafe {
+        //         std::mem::transmute::<u64, extern "C" fn(*const AiIns, u32)>(
+        //             Program::current().rva_to_va(0x2c6390).unwrap(),
+        //         )
+        //     };
+        //
+        //     request_attack(self, 3000);
+        //
+        //     let mut ai_ins: OwnedPtr<AiIns> = unsafe { std::mem::transmute(self) };
+        //     ai_ins.is_in_battle = true;
+        // }
+
+        ui.header("Action request", || {
+            ui.text(format!("Action ID: {}", self.action_request.ez_action_id));
+            ui.text(format!("Is request: {}", self.action_request.is_request));
+            ui.text(format!("Is finished: {}", self.action_request.is_finished));
+            ui.text(format!("Requested action ID 1: {}", self.action_request.request_ez_action_id_1));
+            ui.text(format!("Requested action ID 2: {}", self.action_request.request_ez_action_id_2));
+        });
+
+
+        ui.header("Target velocity", || {
+            ui.text(format!(
+                    "Previous position: {:?}",
+                    self.target_velocity
+                    .target_velocity_recorder
+                    .previous_position
+            ));
+            ui.text(format!(
+                    "Current position: {:?}",
+                    self.target_velocity
+                    .target_velocity_recorder
+                    .current_position
+            ));
+
+            ui.header("Sampled deltas", || {
+                ui.table(
+                    "target-velocity-entries",
+                    [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("X"),
+                    TableColumnSetup::new("Y"),
+                    TableColumnSetup::new("Z"),
+                    ],
+                    self.target_velocity
+                    .target_velocity_recorder
+                    .deltas
+                    .iter()
+                    .rev(),
+                    |ui, i, entry| {
+                        ui.table_next_column();
+                        ui.text(i.to_string());
+
+                        ui.table_next_column();
+                        ui.text(entry.0.to_string());
+
+                        ui.table_next_column();
+                        ui.text(entry.1.to_string());
+
+                        ui.table_next_column();
+                        ui.text(entry.2.to_string());
+                    },
+                    );
+            });
+        });
+
+        ui.header("Fixed target pos 1", || {
+            ui.text(format!("Position: {:?}", self.fixed_pos_target_1.position));
+            ui.text(format!(
+                    "Hit radius: {:?}",
+                    self.fixed_pos_target_1.hit_radius
+            ));
+        });
+
+        ui.header("Follow path params", || {
+            self.follow_path.render_debug(ui);
+        });
+
+        ui.header("Mesh data", || {
+            ui.text(format!(
+                    "Normal direction: {:?}",
+                    self.mesh.normal_direction
+            ));
+            ui.text(format!(
+                    "Target position: {:?}",
+                    self.mesh.target_position
+            ));
+            ui.text(format!(
+                    "Starting position: {:?}",
+                    self.mesh.starting_position
+            ));
+            ui.text(format!(
+                    "Ending position: {:?}",
+                    self.mesh.ending_position
+            ));
+            ui.text(format!(
+                    "Line thickness: {:?}",
+                    self.mesh.line_thickness
+            ));
+        });
+
+        ui.header("Pathing data", || {
+            ui.text(format!(
+                    "Unk0: {:?}",
+                    self.path.unk0,
+            ));
+
+            ui.text(format!(
+                    "Unk10: {:?}",
+                    self.path.unk10,
+            ));
+
+            ui.text(format!(
+                    "Pathing result: {:?}",
+                    self.path.pathing_result,
+            ));
+
+            ui.text(format!(
+                    "Is not on ladder: {:?}",
+                    self.path.is_not_on_ladder,
+            ));
+
+            ui.text(format!(
+                    "Use path: {:?}",
+                    self.path.use_path,
+            ));
+
+            ui.header("Follow path 1", || {
+                self.path.follow_path_1.render_debug(ui);
+            });
+
+            ui.header("Follow path 2", || {
+                self.path.follow_path_2.render_debug(ui);
+            });
+        });
+
+        ui.header("Fixed target pos 2", || {
+            ui.text(format!("Position: {:?}", self.fixed_pos_target_2.position));
+            ui.text(format!(
+                    "Hit radius: {:?}",
+                    self.fixed_pos_target_2.hit_radius
+            ));
+        });
+
+        ui.header("Area observe", || {
+            ui.text(format!("Has entered an area: {:?}", self.area_observer.has_entered_an_area));
+            ui.text(format!("Has left an area: {:?}", self.area_observer.has_left_an_area));
+
+            ui.table(
+                "ai-area-observe",
+                [
+                    TableColumnSetup::new("Slot"),
+                    TableColumnSetup::new("Type"),
+                ],
+                self.area_observer.entries.iter(),
+                |ui, _, e| {
+                    ui.table_next_column();
+                    ui.text(format!("{}", e.observe_slot));
+
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", e.observe_type));
+                },
+            );
+
+        });
+
+        ui.header("Special effect observer", || {
+            ui.table(
+                "ai-special-effect-observe",
+                [
+                    TableColumnSetup::new("Target"),
+                    TableColumnSetup::new("SpEffect ID"),
+                    TableColumnSetup::new("Status"),
+                ],
+                self.special_effect_observer.entries.iter(),
+                |ui, _, e| {
+                    ui.table_next_column();
+                    ui.text(format!("{}", e.target));
+
+                    ui.table_next_column();
+                    ui.text(format!("{}", e.sp_effect_id));
+
+                    ui.table_next_column();
+                    ui.text(format!("{}", e.observed_status));
+                },
+            );
+
+        });
+
+    }
+}
+
+impl DebugDisplay for GoalIns {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Ai owner: {:?}", self.ai_owner));
+        ui.text(format!("Parent goal: {:?}", self.parent_goal));
+        ui.text(format!("Latest subgoal: {:?}", self.latest_sub_goal));
+        ui.text(format!("Life: {:?}", self.life));
+        ui.text(format!("Goal ID: {:?}", self.goal_id));
+        ui.text(format!("Goal type: {:?}", self.goal_type));
+        ui.text(format!("Tick delta: {:?}", self.tick_delta));
+        ui.text(format!("Result: {:?}", self.result));
+        ui.text(format!("Subgoal result: {:?}", self.subgoal_result));
+
+        if let Some(mut strategy) = self.goal_strategy.map(|mut s| unsafe { s.as_mut() }) {
+            ui.text(format!("No update: {}", strategy.no_update));
+            ui.text(format!("No interrupt: {}", strategy.no_interrupt));
+            ui.text(format!("No subgoals: {}", strategy.no_subgoal));
+        };
+
+        ui.header("Subgoals", || {
+            for goal in self.subgoals.iter().map(|s| unsafe { s.as_ref() }) {
+                if goal.goal_id == -1 {
+                    continue;
+                }
+
+                let goal_name = goal
+                    .goal_strategy
+                    .map(|g| {
+                        let goal_strategy = unsafe { g.as_ref() };
+                        let vtable_va =
+                            unsafe { std::mem::transmute::<_, _>(goal_strategy.vftable) };
+                        vftable_classname(&Program::current(), vtable_va)
+                    })
+                    .flatten()
+                    .unwrap_or("unknown".to_string());
+
+                ui.header(&format!("{} - {}", goal.goal_id, goal_name), || {
+                    goal.render_debug(ui);
+                });
+            }
+        });
+
+        ui.header("Parameters", || {
+            for (i, value) in self.params_basic.iter().enumerate() {
+                ui.text(format!("{i}: {value}"));
+            }
+        });
+
+        ui.header("Timers", || {
+            for (i, value) in self.timers.iter().enumerate() {
+                ui.text(format!("{i}: {value}"));
+            }
+        });
+
+        ui.header("Numbers", || {
+            for (i, value) in self.numbers.iter().enumerate() {
+                ui.text(format!("{i}: {value}"));
+            }
+        });
+    }
+}
+
+fn warp_to(target: &HavokPosition) {
+    if let Ok(world_chr_man) = unsafe { WorldChrMan::instance() }
+        && let Some(ref mut main_player) = world_chr_man.main_player
+    {
+        main_player.module_container.physics.position = target.clone();
     }
 }

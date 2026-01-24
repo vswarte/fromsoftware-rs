@@ -13,6 +13,7 @@ members = [
     "examples/invoke-esd",
     "examples/spawn-asset",
     "examples/present-action-button",
+    "examples/eldenring/ai-goal",
 ]
 
 [workspace.package]
@@ -56,3 +57,4 @@ lto = true
 codegen-units = 1
 panic = "abort"
 opt-level = "z"
+

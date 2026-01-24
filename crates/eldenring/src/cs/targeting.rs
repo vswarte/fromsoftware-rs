@@ -1,19 +1,13 @@
 use std::ptr::NonNull;
 use vtable_rs::VPtr;
 
+use crate::cs::{AiIns, BlockId, ChrSetEntry, NpcThinkParamLookupResult};
+use crate::dlut::DLFixedVector;
 use crate::position::HavokPosition;
 use crate::rotation::Quaternion;
 use shared::F32Vector4;
 
 use super::{CSBulletIns, ChrIns, FieldInsHandle, SpecialEffect};
-
-#[repr(C)]
-pub struct NpcThinkParamLookupResult {
-    pub row_id: u32,
-    pub param_row: usize,
-    pub battle_goal_id: i32,
-    pub logic_id: i32,
-}
 
 #[vtable_rs::vtable]
 pub trait CSTargetingSystemOwnerVmt {
@@ -156,8 +150,8 @@ pub struct CSBulletTargetingSystemOwner {
 /// Source of name: RTTI
 pub struct CSAiTargetingSystemOwner {
     pub base: CSTargetingSystemOwner,
-    pub ai: usize,
-    pub owner: NonNull<ChrIns>,
+    pub owner: NonNull<AiIns>,
+    pub owner_chr: NonNull<ChrIns>,
 }
 
 #[repr(C)]
@@ -183,16 +177,182 @@ pub struct CSTargetSearchSys {
     unk95: [u8; 0xB],
 }
 
-#[allow(unused)]
-enum SearchSlotIndex {
-    Enemy = 0,
-    Friend = 1,
-    Sound = 2,
-    LastSight = 5,
-    LastTarget = 6,
-    LowFriend = 7,
-    Corpse = 8,
-    LastMemory = 11,
+#[vtable_rs::vtable]
+pub trait CSTargetAccessorVmt {
+    fn destructor(&mut self);
+    /// Get target characters team type.
+    fn get_team_type(&self) -> i32;
+    /// Checks if the target character is friendly to the main player.
+    fn is_friendly_to_main_player(&self) -> i32;
+    /// Checks if the target character is guarding.
+    fn is_guarding(&self) -> bool;
+    /// Checks if the target is alive.
+    fn is_alive(&self) -> bool;
+    /// Checks if the target character is two handing their weapon.
+    fn is_two_handing(&self) -> bool;
+    /// Checks if the target character has a paralysis speffect.
+    fn is_paralyzed(&self) -> bool;
+    /// Checks if the target character has a specific speffect by state info.
+    fn has_speffect_with_state_info(&self, state_info: i32) -> bool;
+    /// Checks if the target character has a specific speffect by category.
+    fn has_speffect_with_category(&self, category: i16) -> bool;
+    /// Checks if the target character has a specific speffect by ID.
+    fn has_speffect(&self, id: i32) -> bool;
+    fn has_sleep_speffect(&self) -> bool;
+    fn get_aware_points_correction(&self) -> f32;
+    /// Get the target characters HP.
+    fn get_hp(&self) -> i32;
+    /// Get the target characters HP as a fraction of the total.
+    fn get_hp_rate(&self) -> f32;
+    /// Get the target characters super armor durability as a fraction of the total.
+    fn get_super_armor_durability_rate(&self) -> f32;
+    /// Get the target characters FP.
+    fn get_fp(&self) -> i32;
+    /// Get the target characters stamina.
+    fn get_stamina(&self) -> i32;
+    /// Get the target characters super armor durability.
+    fn get_super_armor_durability(&self) -> i32;
+    /// Get the target characters HP as a fraction of the total.
+    fn get_hp_rate_2(&self) -> f32;
+    /// Get the target position. Writes the result to the out parameter.
+    fn get_position<'a>(&self, out: &'a mut F32Vector4) -> &'a mut F32Vector4;
+    /// Get the target position and hit radius. Writes the result to the out parameters.
+    fn get_position_and_hit_radius<'a>(
+        &self,
+        position_out: &'a mut F32Vector4,
+        param_3: u8,
+        param_4: i32,
+        hit_radius_out: &'a mut f32,
+    );
+    fn get_unk_position<'a>(&self, out: &'a mut F32Vector4) -> &'a mut F32Vector4;
+    /// Gets the current orientation and rotates a forward vector by it. Result is written to the out
+    /// parameter.
+    fn get_forward<'a>(&self, out: &'a mut Quaternion) -> &'a mut Quaternion;
+    /// Gets the current orientation and rotates a right vector by it. Result is written to the out
+    /// parameter.
+    fn get_right<'a>(&self, out: &'a mut Quaternion) -> &'a mut Quaternion;
+    fn get_hit_capsule_data<'a>(&self, out: &'a mut HitCapsuleData) -> &'a mut HitCapsuleData;
+    fn get_map_hit_radius(&self) -> f32;
+    fn get_map_hit_height(&self) -> f32;
+    /// Get the targets FieldInsHandle. Writes result to out parameter.
+    fn get_field_ins_handle<'a>(&self, out: &'a mut FieldInsHandle) -> &'a mut FieldInsHandle;
+    /// Get the targets event entity ID. Writes result to out parameter.
+    fn get_event_entity_id<'a>(&self, out: &'a mut i32) -> &'a mut i32;
+    /// Sums up the target priority of all the speffects.
+    fn get_target_priority(&self) -> f32;
+    /// Gets the targets currently equipped spell.
+    fn get_currently_equipped_magic(&self) -> i32;
+    fn is_riding(&self) -> bool;
+    fn is_in_battle(&self) -> bool;
+    fn unk108(&self);
+    fn get_chr_ins(&self) -> Option<NonNull<ChrIns>>;
+    fn unk118(&self);
+    fn get_offset_y(&self) -> f32;
+    fn unk128(&self);
+    fn get_look_at_target_position_offset(&self) -> f32;
+    fn unk138(&self);
+    fn unk140(&self);
+    fn unk148(&self);
+    fn unk150(&self);
+    fn unk158(&self);
+    fn unk160(&self);
+    fn unk168(&self);
+    fn is_climbing_ladder(&self) -> bool;
+    fn is_player_summon(&self) -> bool;
+    /// Checks the equipped weapon category. Seemingly maps only special weapon types?
+    /// - Torch (12) -> 1
+    /// - Bow (10) -> 2
+    /// - Crossbow (11) -> 2
+    /// - Staff (8) -> 3
+    /// - Everything else -> 0
+    fn get_special_weapon_category(&self, side: u32) -> i32;
+    /// Gets the targets MSB block ID.
+    fn get_msb_block_id<'a>(&self, out: &'a mut BlockId) -> &'a mut BlockId;
+    fn unk190(&self);
+    fn unk198(&self);
+    fn unk1a0(&self);
+    fn unk1a8(&self);
+    /// Get a weapon by its side and slot from the targets ChrAsm.
+    fn get_equipped_weapon(&self, side: u32, slot: u32) -> i32;
+    /// Get the targets currently "active" weapon.
+    fn get_currently_equipped_weapon(&self, side: u32) -> i32;
+    /// Get the targets weight type.
+    fn get_weight_type(&self, side: u32) -> i32;
+    /// Get the targets magic param ID by slot.
+    fn get_equipped_magic(&self, slot: u32) -> i32;
+    /// Get the targets goods param ID by slot in a specific slot type.
+    /// Slot type 0 = Quick slots.
+    /// Slot type 1 = Pouch.
+    fn get_equipped_goods(&self, slot: u32, slot_type: u32) -> i32;
+    /// Get the targets equipped arrows/bolts.
+    /// - Type 0 = Arrow.
+    /// - Type 1 = Bolt.
+    fn get_equipped_projectile(&self, r#type: u32, slot: u32) -> i32;
+    /// Condenses "both" state of both sides to a single value.
+    /// - No side has both hands = -1
+    /// - Both hands left = 0
+    /// - Both hands right = 1
+    fn get_weapon_both_hand_state(&self) -> i32;
+    /// Distinguishes the accessor types.
+    /// - CS::CSChrInsHandleTargetAccessor = 2
+    fn get_accessor_type(&self) -> i32;
+    /// Applies a havok world shift to any contained coordinates.
+    fn apply_worldshift(&self, shift: &F32Vector4) -> i32;
+}
+
+#[vtable_rs::vtable]
+pub trait CSChrInsTargetAccessorBaseVmt: CSTargetAccessorVmt {
+    fn get_chr_ins(&self) -> Option<NonNull<ChrIns>>;
+
+    fn get_chr_set_entry(&self) -> Option<NonNull<ChrSetEntry<ChrIns>>>;
+}
+
+#[repr(C)]
+pub struct CSChrInsHandleTargetAccessor {
+    vftable: VPtr<dyn CSChrInsTargetAccessorBaseVmt, Self>,
+    pub chr_ins_handle: FieldInsHandle,
+    unk10: u8,
+    unk20: F32Vector4,
+    unk30: F32Vector4,
+    unk40: u32,
+    unk44: i32,
+    unk48: i32,
+    unk50: F32Vector4,
+}
+
+pub struct HitCapsuleData {
+    pub map_hit_radius: f32,
+    pub map_hit_height: f32,
+    pub chr_hit_radius: f32,
+    pub chr_hit_height: f32,
+}
+
+#[repr(C)]
+pub struct CSFixedPosTarget {
+    vftable: VPtr<dyn CSTargetAccessorVmt, Self>,
+    pub position: HavokPosition,
+    unk20: F32Vector4,
+    pub hit_radius: f32,
+}
+
+#[repr(C)]
+pub struct CSRelativePosTarget {
+    vftable: VPtr<dyn CSTargetAccessorVmt, Self>,
+    unk4: u32,
+    unk10: HavokPosition,
+    unk20: f32,
+}
+
+#[repr(C)]
+pub struct CSTargetVelocityRecorder {
+    vtable: isize,
+    /// A list of all the previously sampled deltas.
+    pub deltas: DLFixedVector<F32Vector4, 240>,
+    /// Targets position last frame.
+    pub previous_position: HavokPosition,
+    /// Targets position current frame.
+    pub current_position: HavokPosition,
+    unkf40: F32Vector4,
 }
 
 #[cfg(test)]

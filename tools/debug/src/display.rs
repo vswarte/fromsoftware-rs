@@ -21,6 +21,7 @@ pub(crate) mod session_manager;
 pub(crate) mod sfx;
 pub(crate) mod shared;
 pub(crate) mod task;
+pub(crate) mod world_ai_man;
 pub(crate) mod world_chr_man;
 
 pub trait DebugDisplay {

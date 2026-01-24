@@ -25,7 +25,10 @@ use shared::{
     for_all_subclasses,
 };
 
+mod manipulator;
 mod module;
+
+pub use manipulator::*;
 pub use module::*;
 
 #[repr(C)]
@@ -928,7 +931,7 @@ pub struct ReplayRecorder {
 /// Source of name: RTTI
 pub struct EnemyIns {
     pub chr_ins: ChrIns,
-    pub com_manipulator: usize,
+    pub com_manipulator: OwnedPtr<ComManipulator>,
     pub net_ai_manipulator: usize,
     pub ride_manipulator: usize,
     unk598: usize,

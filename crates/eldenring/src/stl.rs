@@ -404,3 +404,87 @@ impl AllocationHeader {
         std::ptr::eq(self.self_ptr.as_ptr(), self)
     }
 }
+
+#[repr(C)]
+pub struct Deque<T> {
+    pub allocator: usize,
+
+    /// Seemingly has something to do with iterators?
+    pub proxy: *const std::ffi::c_void,
+
+    /// Array of pointers to blocks with pointers to T
+    pub blocks: *mut *mut T,
+
+    /// Number of blocks
+    pub block_count: usize,
+
+    // Logical offset of the first element
+    pub offset: usize,
+
+    /// Number of T actually contained.
+    pub element_count: usize,
+}
+
+impl<T> Deque<T> {
+    pub fn iter(&self) -> DequeIter<'_, T> {
+        DequeIter {
+            deque: self,
+            current: 0,
+        }
+    }
+
+    // Emulate whatever MSVC does to determine the number of pointers to T in every block.
+    const fn block_size() -> usize {
+        let size = std::mem::size_of::<T>();
+        if size < 8 {
+            16
+        } else if size <= 64 {
+            16 / size
+        } else {
+            1
+        }
+    }
+}
+
+pub struct DequeIter<'a, T> {
+    deque: &'a Deque<T>,
+    current: usize,
+}
+
+impl<'a, T> Iterator for DequeIter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.current >= self.deque.element_count {
+            return None;
+        }
+
+        let block_size = Deque::<T>::block_size();
+
+        // Calculate the absolute offset from the start of the map
+        let total_offset = self.deque.offset + self.current;
+
+        // Identify which block and which index within that block
+        // MSVC uses a circular buffer for the map
+        let block_idx = (total_offset / block_size) % self.deque.block_count;
+        let local_idx = total_offset % block_size;
+
+        unsafe {
+            // Navigate the map to find the block pointer
+            let block_ptr_ptr = self.deque.blocks.add(block_idx);
+            let block_ptr = *block_ptr_ptr;
+
+            // Offset into the data block
+            let element_ptr = block_ptr.add(local_idx);
+
+            self.current += 1;
+            Some(&*element_ptr)
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let remaining = self.deque.element_count - self.current;
+
+        (remaining, Some(remaining))
+    }
+}

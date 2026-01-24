@@ -115,7 +115,7 @@ fn main() {
                 generate_rust_instance(&map_results(&profile, &args.jp_exe)),
             )
             .unwrap();
-            cargo_fmt(&er);
+            // cargo_fmt(&er);
         }
         BinaryMapper::DarkSoulsIII(args) => {
             let ds3 = args

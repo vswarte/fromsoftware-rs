@@ -1,0 +1,15 @@
+[package]
+name = "ai-goal"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+fromsoftware-shared.workspace = true
+eldenring.workspace = true
+vtable-rs.workspace = true
+
+[lib]
+crate-type = ["cdylib"]

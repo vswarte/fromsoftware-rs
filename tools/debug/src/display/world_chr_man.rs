@@ -51,8 +51,8 @@ impl DebugDisplay for WorldChrMan {
         ui.list(
             "All ChrSets",
             self.chr_sets.iter().filter_map(|entry| entry.as_ref()),
-            |ui, i, chr_set| {
-                ui.header(&format!("ChrSet {i}"), || {
+            |ui, _i, chr_set| {
+                ui.header(&format!("ChrSet {}", chr_set.index), || {
                     chr_set.render_debug(ui);
                 });
             },

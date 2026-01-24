@@ -1,5 +1,7 @@
 use std::ffi::c_void;
+use std::sync::LazyLock;
 use std::sync::Once;
+use std::sync::RwLock;
 use std::time::Duration;
 
 use display::DebugDisplay;
@@ -18,6 +20,7 @@ use eldenring::cs::CSSfxImp;
 use eldenring::cs::CSTaskGroup;
 use eldenring::cs::CSTaskImp;
 use eldenring::cs::CSWindowImp;
+use eldenring::cs::CSWorldAiManagerImp;
 use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::CSWorldSceneDrawParamManager;
 use eldenring::cs::FieldArea;
@@ -46,6 +49,8 @@ use display::render_debug_static;
 use rva::RVA_GLOBAL_FIELD_AREA;
 use tracing_panic::panic_hook;
 use windows::Win32::System::SystemServices::DLL_PROCESS_ATTACH;
+
+use crate::display::UiExt;
 
 mod display;
 mod rva;
@@ -136,6 +141,14 @@ impl ImguiRenderLoop for EldenRingDebugGui {
     }
 }
 
+#[derive(Default)]
+struct InputState {
+    pub group: String,
+    pub state: String,
+}
+
+const INPUT_STATE: LazyLock<RwLock<InputState>> = LazyLock::new(|| RwLock::default());
+
 #[libhotpatch::hotpatch]
 unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
     let program = Program::current();
@@ -161,6 +174,38 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
                     ui.unindent();
                 }
 
+                ui.header("Wwise", || {
+                    if let Ok(mut input) = INPUT_STATE.write() {
+                        ui.input_text("Custom state FNV", &mut create_hash("c7600").to_string())
+                            .read_only(false)
+                            .build();
+
+                        if ui.button("Set state (custom)") {
+                            let set_state = unsafe {
+                                std::mem::transmute::<u64, extern "C" fn(u32, u32) -> u32>(
+                                    Program::current().rva_to_va(0x223f690).unwrap(),
+                                )
+                            };
+
+                            set_state(create_hash("BgmEnemyType"), create_hash("c7600"));
+
+                            set_state(create_hash("BossBattleState"), create_hash("Battle"));
+                        }
+
+                        if ui.button("Set state (Astel)") {
+                            let set_state = unsafe {
+                                std::mem::transmute::<u64, extern "C" fn(u32, u32) -> u32>(
+                                    Program::current().rva_to_va(0x223f690).unwrap(),
+                                )
+                            };
+
+                            set_state(create_hash("BgmEnemyType"), create_hash("MidBoss_Aster"));
+
+                            set_state(create_hash("BossBattleState"), create_hash("Battle"));
+                        }
+                    };
+                });
+
                 // render_debug_static::<FieldArea>(ui);
                 render_debug_static::<CSEventFlagMan>(ui);
                 render_debug_static::<WorldChrMan>(ui);
@@ -169,6 +214,7 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
                 render_debug_static::<CSBulletManager>(ui);
                 render_debug_static::<CSEventManImp>(ui);
                 render_debug_static::<CSAutoInvadePoint>(ui);
+                render_debug_static::<CSWorldAiManagerImp>(ui);
                 item.end();
             }
 
@@ -216,4 +262,22 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
 unsafe fn forward_imgui_context_on_reload(ctx: *mut imgui_sys::ImGuiContext) {
     static ONCE: Once = Once::new();
     ONCE.call_once(|| unsafe { imgui_sys::igSetCurrentContext(ctx) });
+}
+
+use std::num::Wrapping;
+
+const FNV_BASE: Wrapping<u32> = Wrapping(2166136261);
+const FNV_PRIME: Wrapping<u32> = Wrapping(16777619);
+
+pub fn create_hash(input: &str) -> u32 {
+    let input_lower = input.to_ascii_lowercase();
+    let input_buffer = input_lower.as_bytes();
+
+    let mut result = FNV_BASE;
+    for byte in input_buffer {
+        result *= FNV_PRIME;
+        result ^= *byte as u32;
+    }
+
+    result.0
 }
