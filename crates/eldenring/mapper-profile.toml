@@ -1,335 +1,335 @@
-[[vmts]]
-class = "CS::ChrCam"
-vftable = "chr_cam_vmt"
-
-[[vmts]]
-class = "CS::ChrIns"
-vftable = "chr_ins_vmt"
-
-[[vmts]]
-class = "CS::ChrSet"
-vftable = "chr_set_vmt"
-
-[[vmts]]
-class = "CS::CSBulletExplosionState"
-vftable = "csbullet_explosion_state_vmt"
-
-[[vmts]]
-class = "CS::CSBulletFlyState"
-vftable = "csbullet_fly_state_vmt"
-
-[[vmts]]
-class = "CS::CSBulletNULLState"
-vftable = "csbullet_nullstate_vmt"
-
-[[vmts]]
-class = "CS::CSBulletState"
-vftable = "csbullet_state_vmt"
-
-[[vmts]]
-class = "CS::CSBulletWaitState"
-vftable = "csbullet_wait_state_vmt"
-
-[[vmts]]
-class = "CS::CSCam"
-vftable = "cscam_vmt"
-
-[[vmts]]
-class = "CS::CSChrModelIns"
-vftable = "cschr_model_ins_vmt"
-
-[[vmts]]
-class = "CS::CSEzTask"
-vftable = "csez_task_vmt"
-
-[[vmts]]
-class = "CS::CSEzRabbitNoUpdateTask"
-vftable = "csez_rabbit_no_update_task_vmt"
-
-[[vmts]]
-class = "CS::CSEzRabbitTask"
-vftable = "csez_rabbit_task_vmt"
-
-[[vmts]]
-class = "CS::CSEzRabbitTaskBase"
-vftable = "csez_rabbit_task_base_vmt"
-
-[[vmts]]
-class = "CS::CSEzTaskProxy"
-vftable = "csez_task_proxy_vmt"
-
-[[vmts]]
-class = "CS::CSFileRepository"
-vftable = "csfile_repository_vmt"
-
-[[vmts]]
-class = "CS::CSGaitemIns"
-vftable = "csgaitem_ins_vmt"
-
-[[vmts]]
-class = "CS::CSGemGaitemIns"
-vftable = "csgem_gaitem_ins_vmt"
-
-[[vmts]]
-class = "CS::CSModelIns"
-vftable = "csmodel_ins_vmt"
-
-[[vmts]]
-class = "CS::CSPairAnimNode"
-vftable = "cspair_anim_node_vmt"
-
-[[vmts]]
-class = "CS::CSRand"
-vftable = "csrand_vmt"
-
-[[vmts]]
-class = "CS::CSRandSfmt"
-vftable = "csrand_sfmt_vmt"
-
-[[vmts]]
-class = "CS::CSRandXorshift"
-vftable = "csrand_xorshift_vmt"
-
-[[vmts]]
-class = "CS::CSTaskGroupIns"
-vftable = "cstask_group_ins_vmt"
-
-# The executable doesn't include RTTI for the base team type, and it doesn't
-# really matter since there's no reason to instantiate it directly, but we
-# still need a valid pointer for it to make `Superclass` work.
-[[vmts]]
-class = "CSTeamTypeNeutral"
-vftable = "csteam_type_base_vmt"
-
-[[vmts]]
-class = "CSTeamTypeEnemy"
-vftable = "csteam_type_enemy_vmt"
-
-[[vmts]]
-class = "CSTeamTypeFriend"
-vftable = "csteam_type_friend_vmt"
-
-[[vmts]]
-class = "CSTeamTypeNeutral"
-vftable = "csteam_type_neutral_vmt"
-
-[[vmts]]
-# This typo is in the original RTTI.
-class = "CSTemaTypeRival"
-vftable = "csteam_type_rival_vmt"
-
-[[vmts]]
-class = "CS::CSThrowNode"
-vftable = "csthrow_node_vmt"
-
-[[vmts]]
-class = "CS::CSRideNode"
-vftable = "csride_node_vmt"
-
-[[vmts]]
-class = "CS::CSTimeLineTaskGroupIns"
-vftable = "cstime_line_task_group_ins_vmt"
-
-[[vmts]]
-class = "CS::CSWepGaitemIns"
-vftable = "cswep_gaitem_ins_vmt"
-
-[[vmts]]
-class = "CS::EnemyIns"
-vftable = "enemy_ins_vmt"
-
-[[vmts]]
-class = "CS::MsbFileCap"
-vftable = "msb_file_cap_vmt"
-
-[[vmts]]
-class = "CS::CSMsbParts"
-vftable = "csmsb_parts_vmt"
-
-[[vmts]]
-class = "CS::CSMsbPartsEne"
-vftable = "csmsb_parts_ene_vmt"
-
-[[vmts]]
-class = "CS::CSMsbPartsGeom"
-vftable = "csmsb_parts_geom_vmt"
-
-[[vmts]]
-class = "CS::MsbRepositoryImp"
-vftable = "msb_repository_vmt"
-
-[[vmts]]
-class = "CS::OpenFieldChrSet"
-vftable = "open_field_chr_set_vmt"
-
-[[vmts]]
-class = "CS::PlayerIns"
-vftable = "player_ins_vmt"
-
-[[vmts]]
-class = "CS::WorldAreaChr"
-vftable = "world_area_chr_vmt"
-
-[[vmts]]
-class = "CS::WorldAreaChrBase"
-vftable = "world_area_chr_base_vmt"
-
-[[vmts]]
-class = "CS::WorldAreaInfoBase"
-vftable = "world_area_info_base_vmt"
-
-[[vmts]]
-class = "CS::WorldAreaInfo"
-vftable = "world_area_info_vmt"
-
-[[vmts]]
-class = "CS::WorldGridAreaChr"
-vftable = "world_grid_area_chr_vmt"
-
-[[vmts]]
-class = "CS::WorldGridAreaInfo"
-vftable = "world_grid_area_info_vmt"
-
-[[vmts]]
-class = "DLIO::DLBufferedInputStream"
-vftable = "dlbuffered_input_stream_vmt"
-
-[[vmts]]
-class = "DLIO::DLPseudoAsyncInputStream"
-vftable = "dlpseudo_async_input_stream_vmt"
-
-[[vmts]]
-class = "CS::IChrFinder"
-vftable = "ichr_finder_vmt"
-
-[[vmts]]
-class = "CS::NearEnemyFinder"
-vftable = "near_enemy_finder_vmt"
-
-[[patterns]]
-pattern = "48 8d 05 $ { ' } 48 89 4f 68 88 4f 70 48 89 4f 78 48 89 07 48 8b 43 18"
-captures = ["", "fd4file_cap_vmt"]
-
-[[patterns]]
-pattern = "48 8d 05 $ { ' } 48 89 06 48 8b 07 48 8b cf ff 50 38 48 8b d8"
-captures = ["", "fd4param_repository_vmt"]
-
-[[patterns]]
-pattern = "48 8d 05 $ { ' } 48 89 07 48 89 77 78 48 89 b7 80 00 00 00 48 89 b7 88 00 00 00"
-captures = ["", "fd4param_res_cap_vmt"]
-
-[[patterns]]
-pattern = "e8 $ { 48 8d 05 $ { ' } } 90 48 8d 05 ? ? ? ? 48 89 06 ? ? ? ? 7b 76 02 48 89 06 48 89 5e 10 48 8b"
-captures = ["", "fd4task_base_vmt"]
-
-[[patterns]]
-pattern = "48 8d 05 $ { ' } 48 89 07 33 c9 33 c0 48 89 4f 40 48 89 47 48 33 d2"
-captures = ["", "cstask_vmt"]
-
-[[patterns]]
-pattern = "e8 $ { [36] 48 8d 05 ${ ' } } 48 89 5f 38 48 8d 05 ? ? ? ? 48 89 07 33 c9 33 c0 48 89 4f 40 48 89 47 48 33 d2"
-captures = ["", "cstask_base_vmt"]
-
-[[patterns]]
-pattern = "48 8d 05 $ { ' } c6 47 60 00 48 89 07 0f b6 43 10 48 8b 5c 24 30 88 47 61 48 8b c7 48 c7 47 68 00 00 00 00"
-captures = ["", "fd4res_cap_vmt"]
-
-[[patterns]]
-pattern = "e8 ? ? ? ? 66 c7 43 60 00 00 48 c7 43 68 00 00 00 00 c6 43 70 00 48 8d 05 ${ ' }"
-captures = ["", "fd4res_rep_vmt"]
-
-[[patterns]]
-pattern = "40 57 48 83 ec 40 48 c7 44 24 20 fe ff ff ff 48 89 5c 24 50 48 89 6c 24 58 48 89 74 24 60 49 8b f0 48 8b fa 48 8b d9 48 8d 69 28"
-captures = ["cs_ez_draw_draw_line"]
-
-[[patterns]]
-pattern = "48 8b c4 55 48 8d 68 88 48 81 ec 70 01 00 00 0f 29 70 e8 0f 28 35 $ {} 0f 29 78 d8"
-captures = ["cs_ez_draw_draw_capsule"]
-
-[[patterns]]
-pattern = "48 8b c4 55 48 8d 68 a1 48 81 ec b0 00 00 00 0f 28 2d $ {} 0f 28 25 $ {} 0f 28 1d $ {}"
-captures = ["cs_ez_draw_draw_sphere"]
-
-[[patterns]]
-pattern = "f3 44 0f 11 6c 24 20 41 0f 28 df 4c 8d 45 e0 48 8d 55 90 48 8b cb e8 $ { ' }"
-captures = ["", "cs_ez_draw_draw_wedge"]
-
-[[patterns]]
-pattern = "0f c6 c4 e8 0f c6 d0 d4 0f 29 55 20 ? 8d 55 00 ? 8b ce e8 $ { ' }"
-captures = ["", "cs_ez_draw_draw_triangle"]
-
-[[patterns]]
-pattern = "0f 28 df ? 8d 45 07 ? 8d 55 f7 ? 8b cb e8 $ { ' }"
-captures = ["", "cs_ez_draw_draw_dodecadron"]
-
-[[patterns]]
-pattern = "b2 08 48 8d 4d 00 e8 $ { ' }"
-captures = ["", "initialize_spawn_geometry_request"]
-
-[[patterns]]
-pattern = "8b 01 89 85 d8 00 00 00 48 8d 55 00 49 8b ce e8 $ { ' }"
-captures = ["", "spawn_geometry"]
-
-[[patterns]]
-pattern = "ba 58 00 00 02 e8 $ { ' }"
-captures = ["", "cs_phys_world_cast_ray"]
-
-[[patterns]]
-pattern = "40 53 55 56 57 48 81 ec 98 07 00 00 48 c7 44 24 50 fe ff ff ff"
-captures = ["cs_bullet_manager_spawn_bullet"]
-
-[[patterns]]
-pattern = "48 8b c8 45 33 c0 ba 7f 14 00 00 e8 $ { ' }"
-captures = ["", "chr_ins_apply_speffect"]
-
-[[patterns]]
-pattern = "ba 1c 00 00 00 48 8b ce 84 c0 74 ? e8 $ { ' } eb ?"
-captures = ["", "chr_ins_remove_speffect"]
-
-[[patterns]]
-pattern = "88 44 24 28 0f b6 84 24 c0 00 00 00 88 44 24 20 e8 $ { ' }"
-captures = ["", "cs_action_button_man_execute_action_button"]
-
-[[patterns]]
-pattern = "ba d0 07 00 00 48 83 c4 28 e9 $ { ' }"
-captures = ["", "cs_menu_man_imp_display_status_message"]
-
-[[patterns]]
-captures = ["", "global_hinstance"]
-pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
-
-[[patterns]]
-captures = ["", "register_task"]
-pattern = "e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }"
-
-[[patterns]]
-captures = ["", "multiplay_properties"]
-pattern = "c7 44 ? ? 01 00 00 00 e9 ? ? ? ? ? 8b cc e8 $ { 48 0f be 01 48 8d 0d $ { ' } }"
-
-[[patterns]]
-captures = ["", "character_type_properties"]
-pattern = "48 8d 0c 80 48 8d 05 $ { ' } 0f b6 04 88"
-
-[[patterns]]
-captures = ["", "game_man"]
-pattern = "48 8b 05 $ { ' } 48 8b 80 90 0d 00 00 c3"
-
-[[patterns]]
-captures = ["", "crypto_spi_registry"]
-pattern = "e8 $ { 48 89 4c 24 08 55 56 57 48 83 ec 30 } eb ? 33 c0 48 89 05 $ { ' }"
-
-[[vmts]]
-class = "CS::CSEzStateTalkEvent"
-vftable = "cs_ez_state_talk_event_vmt"
-
-[[vmts]]
-class = "CS::CSEzStateTalkEnv"
-vftable = "cs_ez_state_talk_env_vmt"
-
-[[vmts]]
-class = "EzState::detail::EzStateExternalEventTemp"
-vftable = "ez_state_detail_external_event_temp_vmt"
-
-[[vmts]]
-class = "EzState::EzStateEnvironmentQueryImpl"
-vftable = "ez_state_environment_query_impl_vmt"
+# [[vmts]]
+# class = "CS::ChrCam"
+# vftable = "chr_cam_vmt"
+#
+# [[vmts]]
+# class = "CS::ChrIns"
+# vftable = "chr_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::ChrSet"
+# vftable = "chr_set_vmt"
+#
+# [[vmts]]
+# class = "CS::CSBulletExplosionState"
+# vftable = "csbullet_explosion_state_vmt"
+#
+# [[vmts]]
+# class = "CS::CSBulletFlyState"
+# vftable = "csbullet_fly_state_vmt"
+#
+# [[vmts]]
+# class = "CS::CSBulletNULLState"
+# vftable = "csbullet_nullstate_vmt"
+#
+# [[vmts]]
+# class = "CS::CSBulletState"
+# vftable = "csbullet_state_vmt"
+#
+# [[vmts]]
+# class = "CS::CSBulletWaitState"
+# vftable = "csbullet_wait_state_vmt"
+#
+# [[vmts]]
+# class = "CS::CSCam"
+# vftable = "cscam_vmt"
+#
+# [[vmts]]
+# class = "CS::CSChrModelIns"
+# vftable = "cschr_model_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::CSEzTask"
+# vftable = "csez_task_vmt"
+#
+# [[vmts]]
+# class = "CS::CSEzRabbitNoUpdateTask"
+# vftable = "csez_rabbit_no_update_task_vmt"
+#
+# [[vmts]]
+# class = "CS::CSEzRabbitTask"
+# vftable = "csez_rabbit_task_vmt"
+#
+# [[vmts]]
+# class = "CS::CSEzRabbitTaskBase"
+# vftable = "csez_rabbit_task_base_vmt"
+#
+# [[vmts]]
+# class = "CS::CSEzTaskProxy"
+# vftable = "csez_task_proxy_vmt"
+#
+# [[vmts]]
+# class = "CS::CSFileRepository"
+# vftable = "csfile_repository_vmt"
+#
+# [[vmts]]
+# class = "CS::CSGaitemIns"
+# vftable = "csgaitem_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::CSGemGaitemIns"
+# vftable = "csgem_gaitem_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::CSModelIns"
+# vftable = "csmodel_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::CSPairAnimNode"
+# vftable = "cspair_anim_node_vmt"
+#
+# [[vmts]]
+# class = "CS::CSRand"
+# vftable = "csrand_vmt"
+#
+# [[vmts]]
+# class = "CS::CSRandSfmt"
+# vftable = "csrand_sfmt_vmt"
+#
+# [[vmts]]
+# class = "CS::CSRandXorshift"
+# vftable = "csrand_xorshift_vmt"
+#
+# [[vmts]]
+# class = "CS::CSTaskGroupIns"
+# vftable = "cstask_group_ins_vmt"
+#
+# # The executable doesn't include RTTI for the base team type, and it doesn't
+# # really matter since there's no reason to instantiate it directly, but we
+# # still need a valid pointer for it to make `Superclass` work.
+# [[vmts]]
+# class = "CSTeamTypeNeutral"
+# vftable = "csteam_type_base_vmt"
+#
+# [[vmts]]
+# class = "CSTeamTypeEnemy"
+# vftable = "csteam_type_enemy_vmt"
+#
+# [[vmts]]
+# class = "CSTeamTypeFriend"
+# vftable = "csteam_type_friend_vmt"
+#
+# [[vmts]]
+# class = "CSTeamTypeNeutral"
+# vftable = "csteam_type_neutral_vmt"
+#
+# [[vmts]]
+# # This typo is in the original RTTI.
+# class = "CSTemaTypeRival"
+# vftable = "csteam_type_rival_vmt"
+#
+# [[vmts]]
+# class = "CS::CSThrowNode"
+# vftable = "csthrow_node_vmt"
+#
+# [[vmts]]
+# class = "CS::CSRideNode"
+# vftable = "csride_node_vmt"
+#
+# [[vmts]]
+# class = "CS::CSTimeLineTaskGroupIns"
+# vftable = "cstime_line_task_group_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::CSWepGaitemIns"
+# vftable = "cswep_gaitem_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::EnemyIns"
+# vftable = "enemy_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::MsbFileCap"
+# vftable = "msb_file_cap_vmt"
+#
+# [[vmts]]
+# class = "CS::CSMsbParts"
+# vftable = "csmsb_parts_vmt"
+#
+# [[vmts]]
+# class = "CS::CSMsbPartsEne"
+# vftable = "csmsb_parts_ene_vmt"
+#
+# [[vmts]]
+# class = "CS::CSMsbPartsGeom"
+# vftable = "csmsb_parts_geom_vmt"
+#
+# [[vmts]]
+# class = "CS::MsbRepositoryImp"
+# vftable = "msb_repository_vmt"
+#
+# [[vmts]]
+# class = "CS::OpenFieldChrSet"
+# vftable = "open_field_chr_set_vmt"
+#
+# [[vmts]]
+# class = "CS::PlayerIns"
+# vftable = "player_ins_vmt"
+#
+# [[vmts]]
+# class = "CS::WorldAreaChr"
+# vftable = "world_area_chr_vmt"
+#
+# [[vmts]]
+# class = "CS::WorldAreaChrBase"
+# vftable = "world_area_chr_base_vmt"
+#
+# [[vmts]]
+# class = "CS::WorldAreaInfoBase"
+# vftable = "world_area_info_base_vmt"
+#
+# [[vmts]]
+# class = "CS::WorldAreaInfo"
+# vftable = "world_area_info_vmt"
+#
+# [[vmts]]
+# class = "CS::WorldGridAreaChr"
+# vftable = "world_grid_area_chr_vmt"
+#
+# [[vmts]]
+# class = "CS::WorldGridAreaInfo"
+# vftable = "world_grid_area_info_vmt"
+#
+# [[vmts]]
+# class = "DLIO::DLBufferedInputStream"
+# vftable = "dlbuffered_input_stream_vmt"
+#
+# [[vmts]]
+# class = "DLIO::DLPseudoAsyncInputStream"
+# vftable = "dlpseudo_async_input_stream_vmt"
+#
+# [[vmts]]
+# class = "CS::IChrFinder"
+# vftable = "ichr_finder_vmt"
+#
+# [[vmts]]
+# class = "CS::NearEnemyFinder"
+# vftable = "near_enemy_finder_vmt"
+#
+# [[patterns]]
+# pattern = "48 8d 05 $ { ' } 48 89 4f 68 88 4f 70 48 89 4f 78 48 89 07 48 8b 43 18"
+# captures = ["", "fd4file_cap_vmt"]
+#
+# [[patterns]]
+# pattern = "48 8d 05 $ { ' } 48 89 06 48 8b 07 48 8b cf ff 50 38 48 8b d8"
+# captures = ["", "fd4param_repository_vmt"]
+#
+# [[patterns]]
+# pattern = "48 8d 05 $ { ' } 48 89 07 48 89 77 78 48 89 b7 80 00 00 00 48 89 b7 88 00 00 00"
+# captures = ["", "fd4param_res_cap_vmt"]
+#
+# [[patterns]]
+# pattern = "e8 $ { 48 8d 05 $ { ' } } 90 48 8d 05 ? ? ? ? 48 89 06 ? ? ? ? 7b 76 02 48 89 06 48 89 5e 10 48 8b"
+# captures = ["", "fd4task_base_vmt"]
+#
+# [[patterns]]
+# pattern = "48 8d 05 $ { ' } 48 89 07 33 c9 33 c0 48 89 4f 40 48 89 47 48 33 d2"
+# captures = ["", "cstask_vmt"]
+#
+# [[patterns]]
+# pattern = "e8 $ { [36] 48 8d 05 ${ ' } } 48 89 5f 38 48 8d 05 ? ? ? ? 48 89 07 33 c9 33 c0 48 89 4f 40 48 89 47 48 33 d2"
+# captures = ["", "cstask_base_vmt"]
+#
+# [[patterns]]
+# pattern = "48 8d 05 $ { ' } c6 47 60 00 48 89 07 0f b6 43 10 48 8b 5c 24 30 88 47 61 48 8b c7 48 c7 47 68 00 00 00 00"
+# captures = ["", "fd4res_cap_vmt"]
+#
+# [[patterns]]
+# pattern = "e8 ? ? ? ? 66 c7 43 60 00 00 48 c7 43 68 00 00 00 00 c6 43 70 00 48 8d 05 ${ ' }"
+# captures = ["", "fd4res_rep_vmt"]
+#
+# [[patterns]]
+# pattern = "40 57 48 83 ec 40 48 c7 44 24 20 fe ff ff ff 48 89 5c 24 50 48 89 6c 24 58 48 89 74 24 60 49 8b f0 48 8b fa 48 8b d9 48 8d 69 28"
+# captures = ["cs_ez_draw_draw_line"]
+#
+# [[patterns]]
+# pattern = "48 8b c4 55 48 8d 68 88 48 81 ec 70 01 00 00 0f 29 70 e8 0f 28 35 $ {} 0f 29 78 d8"
+# captures = ["cs_ez_draw_draw_capsule"]
+#
+# [[patterns]]
+# pattern = "48 8b c4 55 48 8d 68 a1 48 81 ec b0 00 00 00 0f 28 2d $ {} 0f 28 25 $ {} 0f 28 1d $ {}"
+# captures = ["cs_ez_draw_draw_sphere"]
+#
+# [[patterns]]
+# pattern = "f3 44 0f 11 6c 24 20 41 0f 28 df 4c 8d 45 e0 48 8d 55 90 48 8b cb e8 $ { ' }"
+# captures = ["", "cs_ez_draw_draw_wedge"]
+#
+# [[patterns]]
+# pattern = "0f c6 c4 e8 0f c6 d0 d4 0f 29 55 20 ? 8d 55 00 ? 8b ce e8 $ { ' }"
+# captures = ["", "cs_ez_draw_draw_triangle"]
+#
+# [[patterns]]
+# pattern = "0f 28 df ? 8d 45 07 ? 8d 55 f7 ? 8b cb e8 $ { ' }"
+# captures = ["", "cs_ez_draw_draw_dodecadron"]
+#
+# [[patterns]]
+# pattern = "b2 08 48 8d 4d 00 e8 $ { ' }"
+# captures = ["", "initialize_spawn_geometry_request"]
+#
+# [[patterns]]
+# pattern = "8b 01 89 85 d8 00 00 00 48 8d 55 00 49 8b ce e8 $ { ' }"
+# captures = ["", "spawn_geometry"]
+#
+# [[patterns]]
+# pattern = "ba 58 00 00 02 e8 $ { ' }"
+# captures = ["", "cs_phys_world_cast_ray"]
+#
+# [[patterns]]
+# pattern = "40 53 55 56 57 48 81 ec 98 07 00 00 48 c7 44 24 50 fe ff ff ff"
+# captures = ["cs_bullet_manager_spawn_bullet"]
+#
+# [[patterns]]
+# pattern = "48 8b c8 45 33 c0 ba 7f 14 00 00 e8 $ { ' }"
+# captures = ["", "chr_ins_apply_speffect"]
+#
+# [[patterns]]
+# pattern = "ba 1c 00 00 00 48 8b ce 84 c0 74 ? e8 $ { ' } eb ?"
+# captures = ["", "chr_ins_remove_speffect"]
+#
+# [[patterns]]
+# pattern = "88 44 24 28 0f b6 84 24 c0 00 00 00 88 44 24 20 e8 $ { ' }"
+# captures = ["", "cs_action_button_man_execute_action_button"]
+#
+# [[patterns]]
+# pattern = "ba d0 07 00 00 48 83 c4 28 e9 $ { ' }"
+# captures = ["", "cs_menu_man_imp_display_status_message"]
+#
+# [[patterns]]
+# captures = ["", "global_hinstance"]
+# pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
+#
+# [[patterns]]
+# captures = ["", "register_task"]
+# pattern = "e8 ? ? ? ? 48 8b 0d ? ? ? ? 4c 8b c7 8b d3 e8 $ { ' }"
+#
+# [[patterns]]
+# captures = ["", "multiplay_properties"]
+# pattern = "c7 44 ? ? 01 00 00 00 e9 ? ? ? ? ? 8b cc e8 $ { 48 0f be 01 48 8d 0d $ { ' } }"
+#
+# [[patterns]]
+# captures = ["", "character_type_properties"]
+# pattern = "48 8d 0c 80 48 8d 05 $ { ' } 0f b6 04 88"
+#
+# [[patterns]]
+# captures = ["", "game_man"]
+# pattern = "48 8b 05 $ { ' } 48 8b 80 90 0d 00 00 c3"
+#
+# [[patterns]]
+# captures = ["", "crypto_spi_registry"]
+# pattern = "e8 $ { 48 89 4c 24 08 55 56 57 48 83 ec 30 } eb ? 33 c0 48 89 05 $ { ' }"
+#
+# [[vmts]]
+# class = "CS::CSEzStateTalkEvent"
+# vftable = "cs_ez_state_talk_event_vmt"
+#
+# [[vmts]]
+# class = "CS::CSEzStateTalkEnv"
+# vftable = "cs_ez_state_talk_env_vmt"
+#
+# [[vmts]]
+# class = "EzState::detail::EzStateExternalEventTemp"
+# vftable = "ez_state_detail_external_event_temp_vmt"
+#
+# [[vmts]]
+# class = "EzState::EzStateEnvironmentQueryImpl"
+# vftable = "ez_state_environment_query_impl_vmt"
