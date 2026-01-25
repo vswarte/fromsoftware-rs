@@ -1,4 +1,4 @@
-use std::{fmt, iter::FusedIterator, mem::MaybeUninit, ptr::NonNull};
+use std::{fmt, iter::FusedIterator, mem::MaybeUninit, ops::Drop, ptr::NonNull};
 
 /// A wrapper type to represent an instance of a type `T` that may be in a
 /// well-known "empty" state where its usual guarantees aren't upheld.
@@ -26,7 +26,8 @@ where
 ///
 /// Implementors must guarantee that if [is_empty](Self::is_empty) returns true
 /// for a given `MaybeEmpty<T>`, that value meets all the requirements for a
-/// value of type `T`.
+/// value of type `T`. They must also guarantee that no code needs to be run to
+/// drop an empty `MaybeEmpty<T>`.
 pub unsafe trait IsEmpty: Sized {
     /// Returns whether the given `value` is "empty" according to its own
     /// internal logic.
@@ -37,6 +38,11 @@ impl<T> MaybeEmpty<T>
 where
     T: IsEmpty,
 {
+    /// Creates a new [MaybeEmpty] initialized with the given value.
+    pub fn new(value: T) -> MaybeEmpty<T> {
+        MaybeEmpty(MaybeUninit::new(value))
+    }
+
     /// Returns whether this struct is "empty" according to its own internal
     /// logic.
     pub fn is_empty(&self) -> bool {
@@ -80,6 +86,26 @@ where
             value.fmt(f)
         } else {
             write!(f, "<empty>")
+        }
+    }
+}
+
+impl<T> From<T> for MaybeEmpty<T>
+where
+    T: IsEmpty,
+{
+    fn from(value: T) -> MaybeEmpty<T> {
+        MaybeEmpty(MaybeUninit::new(value))
+    }
+}
+
+impl<T> Drop for MaybeEmpty<T>
+where
+    T: IsEmpty,
+{
+    fn drop(&mut self) {
+        if self.is_empty() {
+            unsafe { self.0.assume_init_drop() };
         }
     }
 }

@@ -142,7 +142,38 @@ fn build_subclass_enums(superclass_struct: &mut ItemStruct) -> Result<TokenStrea
                 // Safety: We require that VMTs indicate object type.
                 unsafe {
                     #(
-                        if rva == #subclasses::vmt_rva() {
+                        if rva == <#subclasses as ::fromsoftware_shared::Subclass<#superclass>>::vmt_rva() {
+                            #enum_name::#subclasses(
+                                ::std::ptr::NonNull::from_ref(subclass)
+                                    .cast::<#subclasses>()
+                                    .as_ref()
+                            )
+                        }
+                    )else*
+                    else {
+                        #enum_name::#superclass(subclass.superclass())
+                    }
+                }
+            }
+        }
+
+        impl #impl_generics_with_subclass From<&#lifetime mut __Subclass> for #enum_name
+            #ty_generics_with_lifetime #where_clause
+        {
+            fn from(subclass: &#lifetime mut __Subclass) -> #enum_name #ty_generics_with_lifetime {
+                use ::fromsoftware_shared::Program;
+                use ::pelite::pe64::Pe;
+
+                // Converting the runtime VMT to an RVA saves a few pointer
+                // calculations relative to converting each static RVA to a VA.
+                let rva = ::fromsoftware_shared::Program::current()
+                    .va_to_rva(subclass.superclass().vmt())
+                    .unwrap_or(0);
+
+                // Safety: We require that VMTs indicate object type.
+                unsafe {
+                    #(
+                        if rva == <#subclasses as ::fromsoftware_shared::Subclass<#superclass>>::vmt_rva() {
                             #enum_name::#subclasses(
                                 ::std::ptr::NonNull::from_ref(subclass)
                                     .cast::<#subclasses>()
@@ -173,7 +204,7 @@ fn build_subclass_enums(superclass_struct: &mut ItemStruct) -> Result<TokenStrea
                 // Safety: We require that VMTs indicate object type.
                 unsafe {
                     #(
-                        if rva == #subclasses::vmt_rva() {
+                        if rva == <#subclasses as ::fromsoftware_shared::Subclass<#superclass>>::vmt_rva() {
                             #mut_enum_name::#subclasses(
                                 ::std::ptr::NonNull::from_ref(subclass)
                                     .cast::<#subclasses>()
