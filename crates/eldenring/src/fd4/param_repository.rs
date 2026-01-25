@@ -1,5 +1,6 @@
 use std::ffi::CStr;
 
+use crate::fd4::FD4ResCapHolder;
 use crate::param::ParamDef;
 use shared::{OwnedPtr, Subclass};
 
@@ -11,9 +12,11 @@ use param_layout::{ParamLayout, ParamLayout32, ParamLayout64};
 #[repr(C)]
 #[shared::singleton("FD4ParamRepository")]
 #[derive(Subclass)]
-#[subclass(base = FD4ResRep<FD4ParamResCap>, base = FD4ResCap)]
+#[subclass(base = FD4ResRep, base = FD4ResCap)]
 pub struct FD4ParamRepository {
-    pub res_rep: FD4ResRep<FD4ParamResCap>,
+    /// Resource repository holding the actual param data.
+    pub res_rep: FD4ResRep,
+    pub res_cap_holder: FD4ResCapHolder<FD4ParamResCap>,
     allocator: usize,
 }
 
@@ -29,15 +32,13 @@ impl FD4ParamRepository {
     }
 
     fn get_rescap<P: ParamDef>(&self) -> Option<&FD4ParamResCap> {
-        self.res_rep
-            .res_cap_holder
+        self.res_cap_holder
             .entries()
             .find(|e| e.param_name() == P::NAME)
     }
 
     fn get_rescap_mut<P: ParamDef>(&mut self) -> Option<&mut FD4ParamResCap> {
-        self.res_rep
-            .res_cap_holder
+        self.res_cap_holder
             .entries_mut()
             .find(|e| e.param_name() == P::NAME)
     }

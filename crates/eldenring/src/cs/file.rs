@@ -56,9 +56,10 @@ pub struct CSFileImp {
 /// Manages a set of files as well as keeps track of load state and such.
 #[repr(C)]
 #[derive(Subclass)]
-#[subclass(base = FD4ResRep<FD4FileCap>, base = FD4ResCap)]
+#[subclass(base = FD4ResRep, base = FD4ResCap)]
 pub struct CSFileRepository {
-    pub res_rep: FD4ResRep<FD4FileCap>,
+    pub res_rep: FD4ResRep,
+    pub res_cap_holder: FD4ResCapHolder<FD4FileCap>,
     pub holder2: FD4ResCapHolder<FD4FileCap>,
     unkc8: DoublyLinkedList<()>,
     pub mutexes: [OwnedPtr<CSFileRepositoryMutex>; 5],
