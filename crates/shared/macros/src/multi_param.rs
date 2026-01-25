@@ -39,7 +39,7 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
 
     let impls = structs
         .iter()
-        .map(|struct_| generate_impl(&trait_name, struct_, &fields))
+        .map(|struct_| generate_impl(trait_name, struct_, &fields))
         .collect::<Result<Vec<_>>>()?;
 
     input_trait.items.push(syn::parse2(quote! {
@@ -248,7 +248,7 @@ fn generate_impl<'a>(
         renames,
     } in fields
     {
-        let target_ident = renames.get(&target).unwrap_or(ident);
+        let target_ident = renames.get(target).unwrap_or(ident);
 
         result.items.push(syn::parse2(quote_spanned! { *span =>
             fn #ident(&self) -> #ty {
