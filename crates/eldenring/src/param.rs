@@ -21,6 +21,78 @@ pub trait EquipParam {
         rarity: u8,
         sale_value: i32,
     }
+
+    /// Returns this as an [EQUIP_PARAM_ACCESSORY_ST], if it is one.
+    fn as_accessory(&self) -> Option<&EQUIP_PARAM_ACCESSORY_ST> {
+        if let EquipParamStruct::EQUIP_PARAM_ACCESSORY_ST(s) = self.as_enum() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as a mutable [EQUIP_PARAM_ACCESSORY_ST], if it is one.
+    fn as_accessory_mut(&mut self) -> Option<&mut EQUIP_PARAM_ACCESSORY_ST> {
+        if let EquipParamStructMut::EQUIP_PARAM_ACCESSORY_ST(s) = self.as_enum_mut() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as an [EQUIP_PARAM_GOODS_ST], if it is one.
+    fn as_goods(&self) -> Option<&EQUIP_PARAM_GOODS_ST> {
+        if let EquipParamStruct::EQUIP_PARAM_GOODS_ST(s) = self.as_enum() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as a mutable [EQUIP_PARAM_GOODS_ST], if it is one.
+    fn as_goods_mut(&mut self) -> Option<&mut EQUIP_PARAM_GOODS_ST> {
+        if let EquipParamStructMut::EQUIP_PARAM_GOODS_ST(s) = self.as_enum_mut() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as an [EQUIP_PARAM_PROTECTOR_ST], if it is one.
+    fn as_protector(&self) -> Option<&EQUIP_PARAM_PROTECTOR_ST> {
+        if let EquipParamStruct::EQUIP_PARAM_PROTECTOR_ST(s) = self.as_enum() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as a mutable [EQUIP_PARAM_PROTECTOR_ST], if it is one.
+    fn as_protector_mut(&mut self) -> Option<&mut EQUIP_PARAM_PROTECTOR_ST> {
+        if let EquipParamStructMut::EQUIP_PARAM_PROTECTOR_ST(s) = self.as_enum_mut() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as an [EQUIP_PARAM_WEAPON_ST], if it is one.
+    fn as_weapon(&self) -> Option<&EQUIP_PARAM_WEAPON_ST> {
+        if let EquipParamStruct::EQUIP_PARAM_WEAPON_ST(s) = self.as_enum() {
+            Some(s)
+        } else {
+            None
+        }
+    }
+
+    /// Returns this as a mutable [EQUIP_PARAM_WEAPON_ST], if it is one.
+    fn as_weapon_mut(&mut self) -> Option<&mut EQUIP_PARAM_WEAPON_ST> {
+        if let EquipParamStructMut::EQUIP_PARAM_WEAPON_ST(s) = self.as_enum_mut() {
+            Some(s)
+        } else {
+            None
+        }
+    }
 }
 
 /// A trait that contains the fields shared across all equipment parameters that
