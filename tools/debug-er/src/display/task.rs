@@ -1,7 +1,9 @@
-use eldenring::cs::{CSTaskGroup, CSTaskImp};
 use hudhook::imgui::*;
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::cs::{CSTaskGroup, CSTaskImp};
+
+use super::DebugDisplay;
 
 impl DebugDisplay for CSTaskGroup {
     fn render_debug(&self, ui: &Ui) {

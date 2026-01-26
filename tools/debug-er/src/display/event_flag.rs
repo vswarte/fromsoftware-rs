@@ -1,8 +1,10 @@
-use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
-use fromsoftware_shared::FromStatic;
 use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
+use fromsoftware_shared::FromStatic;
+
+use super::DebugDisplay;
 
 impl DebugDisplay for CSEventFlagMan {
     fn render_debug(&self, ui: &Ui) {

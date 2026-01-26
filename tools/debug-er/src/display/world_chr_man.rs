@@ -1,15 +1,31 @@
-use eldenring::cs::{
-    ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, SummonBuddyGroupEntry, SummonBuddyManager,
-    SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
-};
 use hudhook::imgui::{TableColumnSetup, Ui};
 
+use debug::{StateMap, UiExt};
+use eldenring::cs::{
+    ChrIns, ChrSet, FieldInsHandle, NetChrSetSync, SummonBuddyGroupEntry, SummonBuddyManager,
+    SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
+};
 use fromsoftware_shared::Subclass;
 
-use super::{DebugDisplay, UiExt};
+use super::{DebugDisplay, StatefulDebugDisplay, chr::ChrInsState};
 
-impl DebugDisplay for WorldChrMan {
-    fn render_debug(&self, ui: &Ui) {
+#[derive(Default)]
+pub struct WorldChrManState {
+    chr_ins_states: StateMap<FieldInsHandle, ChrInsState>,
+    player_chr_set_state: ChrSetState,
+    ghost_chr_set_state: ChrSetState,
+    summon_buddy_chr_set_state: ChrSetState,
+    debug_chr_set_state: ChrSetState,
+    open_field_chr_set_state: ChrSetState,
+    chr_set_states: StateMap<usize, ChrSetState>,
+}
+
+impl StatefulDebugDisplay for WorldChrMan {
+    type State = WorldChrManState;
+
+    fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
+        state.chr_ins_states.track_reads();
+
         let world_area_chr_list_count = self.world_area_chr_list_count;
         ui.text(format!(
             "World Area Chr List Count: {world_area_chr_list_count}"
@@ -29,39 +45,47 @@ impl DebugDisplay for WorldChrMan {
         ui.text(format!("World Area List Count: {world_area_list_count}"));
 
         ui.header("Player ChrSet", || {
-            self.player_chr_set.render_debug(ui);
+            self.player_chr_set
+                .render_debug_mut(ui, &mut state.player_chr_set_state);
         });
 
         ui.header("Ghost ChrSet", || {
-            self.ghost_chr_set.render_debug(ui);
+            self.ghost_chr_set
+                .render_debug_mut(ui, &mut state.ghost_chr_set_state);
         });
 
         ui.header("SummonBuddy ChrSet", || {
-            self.summon_buddy_chr_set.render_debug(ui);
+            self.summon_buddy_chr_set
+                .render_debug_mut(ui, &mut state.summon_buddy_chr_set_state);
         });
 
         ui.header("Debug ChrSet", || {
-            self.debug_chr_set.render_debug(ui);
+            self.debug_chr_set
+                .render_debug_mut(ui, &mut state.debug_chr_set_state);
         });
 
         ui.header("OpenField ChrSet", || {
-            self.open_field_chr_set.render_debug(ui);
+            self.open_field_chr_set
+                .superclass_mut()
+                .render_debug_mut(ui, &mut state.open_field_chr_set_state);
         });
 
         ui.list(
             "All ChrSets",
-            self.chr_sets.iter().filter_map(|entry| entry.as_ref()),
+            self.chr_sets.iter_mut().filter_map(|entry| entry.as_mut()),
             |ui, i, chr_set| {
-                ui.header(&format!("ChrSet {i}"), || {
-                    chr_set.render_debug(ui);
+                ui.header(format!("ChrSet {i}"), || {
+                    let state = state.chr_set_states.get(i);
+                    chr_set.render_debug_mut(ui, state);
                 });
             },
         );
 
-        match self.main_player.as_ref() {
+        match self.main_player.as_mut() {
             Some(p) => {
                 ui.header("Main player", || {
-                    p.render_debug(ui);
+                    let state = state.chr_ins_states.get(p.field_ins_handle);
+                    p.render_debug_mut(ui, state);
                 });
             }
             None => ui.text("No Main player instance"),
@@ -78,7 +102,7 @@ impl DebugDisplay for WorldChrMan {
                 .iter()
                 .filter_map(|s| s.as_ref()),
             |ui, i, entry| {
-                ui.header(&format!("NetChrSetSync {i}"), || {
+                ui.header(format!("NetChrSetSync {i}"), || {
                     entry.render_debug(ui);
                 });
             },
@@ -96,17 +120,25 @@ impl DebugDisplay for WorldChrMan {
         // We can't use .list here because it relies on entries being stable across frames
         // and these are constantly changing, making it hard to keep track of which collapsing header is closed or open.
         ui.header("ChrInses by distance", || {
-            self.chr_inses_by_distance.items().iter().for_each(|entry| {
-                let distance = entry.distance;
-                let chr_ins = unsafe { entry.chr_ins.as_ref() };
-                let label = format!("ChrIns {}", chr_ins.field_ins_handle);
-                let _id = ui.push_id(&label);
-                ui.header(&label, || {
-                    ui.text(format!("Distance: {}", distance));
-                    chr_ins.render_debug(ui);
+            self.chr_inses_by_distance
+                .items_mut()
+                .iter_mut()
+                .for_each(|entry| {
+                    let distance = entry.distance;
+                    let chr_ins = unsafe { entry.chr_ins.as_mut() };
+                    let label = format!("ChrIns {}", chr_ins.field_ins_handle);
+                    let _id = ui.push_id(&label);
+                    ui.header(&label, || {
+                        ui.text(format!("Distance: {}", distance));
+                        chr_ins.render_debug_mut(
+                            ui,
+                            state.chr_ins_states.get(chr_ins.field_ins_handle),
+                        );
+                    });
                 });
-            });
         });
+
+        state.chr_ins_states.remove_unread();
     }
 }
 
@@ -119,7 +151,7 @@ impl DebugDisplay for NetChrSetSync {
             self.update_flags().iter(),
             |ui, i, flags| {
                 let placement = &self.placement_updates()[i];
-                ui.header(&format!("Index {i}"), || {
+                ui.header(format!("Index {i}"), || {
                     ui.text(format!(
                         "Has Placement Update: {}",
                         flags.has_placement_update()
@@ -141,7 +173,7 @@ impl DebugDisplay for NetChrSetSync {
             self.update_flags().iter(),
             |ui, i, flags| {
                 let health = &self.health_updates()[i];
-                ui.header(&format!("Index {i}"), || {
+                ui.header(format!("Index {i}"), || {
                     ui.text(format!("Has Health Update: {}", flags.has_health_update()));
                     ui.text(format!("Current HP: {}", health.current_hp));
                     ui.text(format!("Damage Taken: {}", health.damage_taken));
@@ -151,17 +183,24 @@ impl DebugDisplay for NetChrSetSync {
     }
 }
 
-impl<T> DebugDisplay for ChrSet<T>
+#[derive(Default)]
+pub struct ChrSetState {
+    chr_ins_states: StateMap<FieldInsHandle, ChrInsState>,
+}
+
+impl<T> StatefulDebugDisplay for ChrSet<T>
 where
     T: Subclass<ChrIns>,
 {
-    fn render_debug(&self, ui: &Ui) {
+    type State = ChrSetState;
+
+    fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
         ui.text(format!("Character capacity: {}", self.capacity));
 
         ui.list("Characters", self.characters(), |ui, _i, chr_ins| {
-            let chr_ins = chr_ins.superclass();
+            let chr_ins = chr_ins.superclass_mut();
             ui.header(
-                &format!(
+                format!(
                     "c{:0>4} - {} FieldInsSelector({}, {})",
                     chr_ins.character_id,
                     chr_ins.field_ins_handle.block_id,
@@ -169,7 +208,8 @@ where
                     chr_ins.field_ins_handle.selector.index()
                 ),
                 || {
-                    chr_ins.superclass().render_debug(ui);
+                    let state = state.chr_ins_states.get(chr_ins.field_ins_handle);
+                    chr_ins.superclass_mut().render_debug_mut(ui, state);
                 },
             );
         });
@@ -218,12 +258,6 @@ where
     }
 }
 
-impl DebugDisplay for OpenFieldChrSet {
-    fn render_debug(&self, ui: &Ui) {
-        self.base.render_debug(ui)
-    }
-}
-
 impl DebugDisplay for SummonBuddyWarpEntry {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Handle: {}", self.handle));
@@ -239,7 +273,7 @@ impl DebugDisplay for SummonBuddyWarpEntry {
 impl DebugDisplay for SummonBuddyWarpManager {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Warp Entries", self.entries.iter(), |ui, index, entry| {
-            ui.header(&format!("Warp Entry {index}"), || {
+            ui.header(format!("Warp Entry {index}"), || {
                 entry.render_debug(ui);
             });
         });
@@ -339,9 +373,9 @@ impl DebugDisplay for SummonBuddyManager {
         });
 
         ui.list("Groups", self.groups.iter(), |ui, _i, group| {
-            ui.header(&format!("Group {}", group.owner_event_id), || {
+            ui.header(format!("Group {}", group.owner_event_id), || {
                 ui.list("Entries", group.entries.iter(), |ui, index, v| {
-                    ui.header(&format!("Entry {index}"), || {
+                    ui.header(format!("Entry {index}"), || {
                         v.render_debug(ui);
                     });
                 });
@@ -352,7 +386,7 @@ impl DebugDisplay for SummonBuddyManager {
             "Eliminate Target Entries",
             self.eliminate_target_entries.iter(),
             |ui, index, entry| {
-                ui.header(&format!("Entry {index}"), || {
+                ui.header(format!("Entry {index}"), || {
                     ui.text(format!(
                         "Buddy field ins handle: {}",
                         entry.buddy_field_ins_handle

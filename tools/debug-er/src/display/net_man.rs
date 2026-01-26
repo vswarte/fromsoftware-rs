@@ -1,10 +1,12 @@
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::cs::{
     CSBattleRoyalContext, CSNetBloodMessageDb, CSNetBloodMessageDbItem, CSNetMan,
     CSQuickMatchingCtrl, QuickmatchManager,
 };
-use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use super::DebugDisplay;
 
 impl DebugDisplay for CSNetMan {
     fn render_debug(&self, ui: &Ui) {

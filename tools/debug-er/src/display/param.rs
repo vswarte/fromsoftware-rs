@@ -1,7 +1,9 @@
-use eldenring::fd4::FD4ParamRepository;
 use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::fd4::FD4ParamRepository;
+
+use super::DebugDisplay;
 
 impl DebugDisplay for FD4ParamRepository {
     fn render_debug(&self, ui: &Ui) {

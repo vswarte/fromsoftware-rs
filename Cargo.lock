@@ -297,6 +297,21 @@ dependencies = [
 name = "debug"
 version = "0.12.0"
 dependencies = [
+ "fromsoftware-shared",
+ "hudhook",
+ "libhotpatch",
+ "tracing",
+ "tracing-appender",
+ "tracing-panic",
+ "tracing-subscriber",
+ "windows",
+]
+
+[[package]]
+name = "debug-er"
+version = "0.12.0"
+dependencies = [
+ "debug",
  "eldenring",
  "fromsoftware-shared",
  "hudhook",

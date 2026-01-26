@@ -1,9 +1,11 @@
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::cs::{
     CSGparamIdLerper, CSWorldAreaBlockSceneDrawParam, CSWorldSceneDrawParamManager,
 };
-use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use super::DebugDisplay;
 
 impl DebugDisplay for CSWorldSceneDrawParamManager {
     fn render_debug(&self, ui: &Ui) {
@@ -11,7 +13,7 @@ impl DebugDisplay for CSWorldSceneDrawParamManager {
             "World Area Blocks",
             self.world_area_blocks.iter(),
             |ui, _i, b| {
-                ui.header(&format!("{}", b.area), || {
+                ui.header(format!("{}", b.area), || {
                     b.render_debug(ui);
                 });
             },

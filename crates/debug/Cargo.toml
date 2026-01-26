@@ -1,0 +1,19 @@
+# Note: this is not intended to be released to Crates.io
+[package]
+name = "debug"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+readme = false
+description = "Helpers for writing debug tools for From Software games"
+
+[dependencies]
+fromsoftware-shared.workspace = true
+hudhook.workspace = true
+libhotpatch.workspace = true
+tracing-appender.workspace = true
+tracing-panic.workspace = true
+tracing-subscriber.workspace = true
+tracing.workspace = true
+windows.workspace = true
