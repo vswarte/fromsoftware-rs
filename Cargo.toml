@@ -5,7 +5,7 @@ members = [
     "crates/darksouls3",
     "crates/eldenring",
     "crates/nightreign",
-    "tools/debug",
+    "tools/debug-er",
     "tools/binary-mapper",
     "tools/param-generator",
     "examples/apply-speffect",
