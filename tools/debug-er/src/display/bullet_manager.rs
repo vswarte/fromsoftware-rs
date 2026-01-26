@@ -1,12 +1,14 @@
-use eldenring::cs::{CSBulletIns, CSBulletManager};
 use hudhook::imgui::Ui;
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::cs::{CSBulletIns, CSBulletManager};
+
+use super::DebugDisplay;
 
 impl DebugDisplay for CSBulletManager {
     fn render_debug(&self, ui: &Ui) {
         ui.list("BulletInses", self.bullets(), |ui, _i, bullet| {
-            ui.header(&format!("{}", bullet.field_ins_handle), || {
+            ui.header(format!("{}", bullet.field_ins_handle), || {
                 bullet.render_debug(ui);
             });
         });

@@ -1,10 +1,12 @@
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::{
     cs::CSSfxImp,
     gxffx::{FxrListNode, FxrWrapper, GXFfxGraphicsResourceManager, GXFfxSceneCtrl},
 };
-use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use super::DebugDisplay;
 
 impl DebugDisplay for CSSfxImp {
     fn render_debug(&self, ui: &Ui) {

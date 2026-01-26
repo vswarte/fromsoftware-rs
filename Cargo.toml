@@ -5,6 +5,7 @@ members = [
     "crates/darksouls3",
     "crates/eldenring",
     "crates/nightreign",
+    "crates/debug",
     "tools/debug-er",
     "tools/binary-mapper",
     "tools/param-generator",
@@ -27,15 +28,20 @@ fromsoftware-shared-macros = { path = "crates/shared/macros", version = "0.12.0"
 eldenring = { path = "crates/eldenring", version = "0.12.0", package = "eldenring" }
 darksouls3 = { path = "crates/darksouls3", version = "0.12.0", package = "darksouls3" }
 nightreign = { path = "crates/nightreign", version = "0.12.0", package = "nightreign" }
+debug = { path = "crates/debug", version = "0.12.0", package = "debug" }
 binary_mapper = { path = "crates/binary-mapper" }
 thiserror = "1"
 tracing = "0.1"
+tracing-subscriber = "0.3"
+tracing-appender = "0.2.3"
+tracing-panic = "0.1"
 glam = ">= 0.30"
 byteorder = "1"
 pelite = "0.10"
 vtable-rs = "0.1.4"
 bitfield = "0.19.2"
 encoding_rs = "0.8.35"
+libhotpatch = "1.1.0"
 
 [workspace.dependencies.windows]
 version = "0.54"
@@ -49,6 +55,10 @@ features = [
 	"Win32_System_LibraryLoader",
     "Win32_System_Memory",
 ]
+
+[workspace.dependencies.hudhook]
+git = "https://github.com/veeenu/hudhook"
+features = ["imgui-tables-api"]
 
 [profile.release]
 strip = true

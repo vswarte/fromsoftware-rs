@@ -1,11 +1,11 @@
 use eldenring::cs::{
     CSFeManImp, ChrEnemyTagEntry, ChrFriendTagEntry, FrontEndViewValues, TagHudData,
 };
+
+use debug::UiExt;
 use hudhook::imgui::Ui;
 
-use crate::display::UiExt;
-
-use super::DebugDisplay;
+use crate::display::DebugDisplay;
 
 impl DebugDisplay for CSFeManImp {
     fn render_debug(&self, ui: &Ui) {
@@ -19,7 +19,7 @@ impl DebugDisplay for CSFeManImp {
             "Enemy Character Tags",
             self.enemy_chr_tag_displays.iter(),
             |ui, i, tag| {
-                ui.header(&format!("Enemy Tag {i}"), || {
+                ui.header(format!("Enemy Tag {i}"), || {
                     tag.render_debug(ui);
                 });
             },
@@ -29,7 +29,7 @@ impl DebugDisplay for CSFeManImp {
             "Friendly Character Tags",
             self.friendly_chr_tag_displays.iter(),
             |ui, i, tag| {
-                ui.header(&format!("Friendly Tag {i}"), || {
+                ui.header(format!("Friendly Tag {i}"), || {
                     tag.render_debug(ui);
                 });
             },
@@ -39,7 +39,7 @@ impl DebugDisplay for CSFeManImp {
             "Boss Health Displays",
             self.boss_health_displays.iter(),
             |ui, i, boss| {
-                ui.header(&format!("Boss {i}"), || {
+                ui.header(format!("Boss {i}"), || {
                     ui.text(format!("FMG ID: {}", boss.fmg_id));
                     ui.text(format!("Handle: {:?}", boss.field_ins_handle));
                     ui.text(format!("Damage Taken: {}", boss.damage_taken));
@@ -190,7 +190,7 @@ impl DebugDisplay for FrontEndViewValues {
             "Enemy Tags",
             self.enemy_chr_tag_data.iter(),
             |ui, i, tag| {
-                ui.header(&format!("Enemy Tag {i}"), || {
+                ui.header(format!("Enemy Tag {i}"), || {
                     tag.render_debug(ui);
                 });
             },
@@ -200,7 +200,7 @@ impl DebugDisplay for FrontEndViewValues {
             "Boss List Tags",
             self.boss_list_tag_data.iter(),
             |ui, i, tag| {
-                ui.header(&format!("Boss {i}"), || {
+                ui.header(format!("Boss {i}"), || {
                     tag.render_debug(ui);
                 });
             },
@@ -210,7 +210,7 @@ impl DebugDisplay for FrontEndViewValues {
             "Friendly Tags",
             self.friendly_chr_tag_data.iter(),
             |ui, i, tag| {
-                ui.header(&format!("Friendly {i}"), || {
+                ui.header(format!("Friendly {i}"), || {
                     tag.render_debug(ui);
                 });
             },
@@ -235,7 +235,7 @@ impl DebugDisplay for FrontEndViewValues {
                 "Spirit Ash Displays",
                 self.spirit_ash_display.iter(),
                 |ui, i, spirit| {
-                    ui.header(&format!("Spirit Ash {i}"), || {
+                    ui.header(format!("Spirit Ash {i}"), || {
                         ui.text(format!(
                             "HP: {}/{} (Max Uncapped: {})",
                             spirit.hp,

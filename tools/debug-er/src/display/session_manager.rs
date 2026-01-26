@@ -1,10 +1,12 @@
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::cs::{
     CSSessionManager, CSStayInMultiplayAreaWarpData, SessionManagerPlayerEntry,
     SessionManagerPlayerEntryBase,
 };
-use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use super::DebugDisplay;
 
 impl DebugDisplay for CSSessionManager {
     fn render_debug(&self, ui: &Ui) {

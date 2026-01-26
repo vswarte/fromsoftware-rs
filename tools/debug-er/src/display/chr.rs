@@ -1,3 +1,6 @@
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::cs::{
     CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule,
     CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns,
@@ -6,9 +9,8 @@ use eldenring::cs::{
     PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
-use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use crate::display::DebugDisplay;
 
 impl DebugDisplay for PlayerIns {
     fn render_debug(&self, ui: &Ui) {

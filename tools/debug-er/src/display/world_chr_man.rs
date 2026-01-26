@@ -1,12 +1,13 @@
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::cs::{
     ChrIns, ChrSet, NetChrSetSync, OpenFieldChrSet, SummonBuddyGroupEntry, SummonBuddyManager,
     SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
 };
-use hudhook::imgui::{TableColumnSetup, Ui};
-
 use fromsoftware_shared::Subclass;
 
-use super::{DebugDisplay, UiExt};
+use super::DebugDisplay;
 
 impl DebugDisplay for WorldChrMan {
     fn render_debug(&self, ui: &Ui) {
@@ -52,7 +53,7 @@ impl DebugDisplay for WorldChrMan {
             "All ChrSets",
             self.chr_sets.iter().filter_map(|entry| entry.as_ref()),
             |ui, i, chr_set| {
-                ui.header(&format!("ChrSet {i}"), || {
+                ui.header(format!("ChrSet {i}"), || {
                     chr_set.render_debug(ui);
                 });
             },
@@ -78,7 +79,7 @@ impl DebugDisplay for WorldChrMan {
                 .iter()
                 .filter_map(|s| s.as_ref()),
             |ui, i, entry| {
-                ui.header(&format!("NetChrSetSync {i}"), || {
+                ui.header(format!("NetChrSetSync {i}"), || {
                     entry.render_debug(ui);
                 });
             },
@@ -119,7 +120,7 @@ impl DebugDisplay for NetChrSetSync {
             self.update_flags().iter(),
             |ui, i, flags| {
                 let placement = &self.placement_updates()[i];
-                ui.header(&format!("Index {i}"), || {
+                ui.header(format!("Index {i}"), || {
                     ui.text(format!(
                         "Has Placement Update: {}",
                         flags.has_placement_update()
@@ -141,7 +142,7 @@ impl DebugDisplay for NetChrSetSync {
             self.update_flags().iter(),
             |ui, i, flags| {
                 let health = &self.health_updates()[i];
-                ui.header(&format!("Index {i}"), || {
+                ui.header(format!("Index {i}"), || {
                     ui.text(format!("Has Health Update: {}", flags.has_health_update()));
                     ui.text(format!("Current HP: {}", health.current_hp));
                     ui.text(format!("Damage Taken: {}", health.damage_taken));
@@ -161,7 +162,7 @@ where
         ui.list("Characters", self.characters(), |ui, _i, chr_ins| {
             let chr_ins = chr_ins.superclass();
             ui.header(
-                &format!(
+                format!(
                     "c{:0>4} - {} FieldInsSelector({}, {})",
                     chr_ins.character_id,
                     chr_ins.field_ins_handle.block_id,
@@ -239,7 +240,7 @@ impl DebugDisplay for SummonBuddyWarpEntry {
 impl DebugDisplay for SummonBuddyWarpManager {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Warp Entries", self.entries.iter(), |ui, index, entry| {
-            ui.header(&format!("Warp Entry {index}"), || {
+            ui.header(format!("Warp Entry {index}"), || {
                 entry.render_debug(ui);
             });
         });
@@ -339,9 +340,9 @@ impl DebugDisplay for SummonBuddyManager {
         });
 
         ui.list("Groups", self.groups.iter(), |ui, _i, group| {
-            ui.header(&format!("Group {}", group.owner_event_id), || {
+            ui.header(format!("Group {}", group.owner_event_id), || {
                 ui.list("Entries", group.entries.iter(), |ui, index, v| {
-                    ui.header(&format!("Entry {index}"), || {
+                    ui.header(format!("Entry {index}"), || {
                         v.render_debug(ui);
                     });
                 });
@@ -352,7 +353,7 @@ impl DebugDisplay for SummonBuddyManager {
             "Eliminate Target Entries",
             self.eliminate_target_entries.iter(),
             |ui, index, entry| {
-                ui.header(&format!("Entry {index}"), || {
+                ui.header(format!("Entry {index}"), || {
                     ui.text(format!(
                         "Buddy field ins handle: {}",
                         entry.buddy_field_ins_handle
