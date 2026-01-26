@@ -63,14 +63,14 @@ impl FD4ParamResCap {
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get<P: ParamDef>(&self, id: u32) -> Option<&P> {
-        unsafe { self.data.get(id) }
+        unsafe { self.data.get_row_by_id(id) }
     }
 
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
-        unsafe { self.data.get_mut(id) }
+        unsafe { self.data.get_row_by_id_mut(id) }
     }
 }
 
@@ -78,20 +78,20 @@ impl FD4ParamResCap {
 ///
 /// Memory layout:
 /// ```text
-/// [RuntimeMetadata]              <- file_ptr-0x10
+/// [ParamHeaderMetadata]              <- file_ptr-0x10
 /// [ParamFile]                    <- file_ptr (FD4ParamResCap.file points here)
 /// [row data...]
 /// [aligned padding to 0x10]
 /// [RowLookupEntry * row_count]   <- sorted by param ID lookup table
 /// ```
 #[repr(C)]
-struct RuntimeMetadata {
+pub struct ParamHeaderMetadata {
     file_size: u32,
     row_count: u32,
     _reserved: u64,
 }
 
-impl RuntimeMetadata {
+impl ParamHeaderMetadata {
     const ALIGNMENT: u32 = 0x10;
     const SIZE: usize = size_of::<Self>();
 
@@ -107,7 +107,7 @@ impl RuntimeMetadata {
         }
     }
 
-    fn find_index(&self, param_id: u32) -> Option<usize> {
+    pub fn find_index(&self, param_id: u32) -> Option<usize> {
         let table = self.lookup_table();
         let target_index = self
             .lookup_table()
@@ -168,7 +168,7 @@ impl ParamFile {
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
-    unsafe fn get<P: ParamDef>(&self, id: u32) -> Option<&P> {
+    pub unsafe fn get_row_by_id<P: ParamDef>(&self, id: u32) -> Option<&P> {
         let row_index = self.metadata().find_index(id)?;
         let data_offset = self.row_data_offset(row_index);
         Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
@@ -177,16 +177,32 @@ impl ParamFile {
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
-    unsafe fn get_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
+    pub unsafe fn get_row_by_id_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
         let row_index = self.metadata().find_index(id)?;
         let data_offset = self.row_data_offset(row_index);
         Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
     }
 
-    const fn metadata(&self) -> &RuntimeMetadata {
+    /// # Safety
+    ///
+    /// Type `P` must match the actual row data structure for this param file.
+    pub unsafe fn get_by_row_index<P: ParamDef>(&self, row_index: usize) -> Option<&P> {
+        let data_offset = self.row_data_offset(row_index);
+        Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
+    }
+
+    /// # Safety
+    ///
+    /// Type `P` must match the actual row data structure for this param file.
+    pub unsafe fn get_by_row_index_mut<P: ParamDef>(&mut self, row_index: usize) -> Option<&mut P> {
+        let data_offset = self.row_data_offset(row_index);
+        Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
+    }
+
+    pub const fn metadata(&self) -> &ParamHeaderMetadata {
         unsafe {
-            let metadata_ptr =
-                (self as *const Self).byte_sub(RuntimeMetadata::SIZE) as *const RuntimeMetadata;
+            let metadata_ptr = (self as *const Self).byte_sub(ParamHeaderMetadata::SIZE)
+                as *const ParamHeaderMetadata;
             &*metadata_ptr
         }
     }
