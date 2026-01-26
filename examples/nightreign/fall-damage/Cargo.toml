@@ -1,0 +1,14 @@
+[package]
+name = "nr-fall-damage"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+fromsoftware-shared.workspace = true
+nightreign.workspace = true
+
+[lib]
+crate-type = ["cdylib"]

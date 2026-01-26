@@ -8,6 +8,14 @@ readme = false
 description = "Raw structures and bindings for From Software's title Elden Ring: Nightreign"
 
 [dependencies]
+fromsoftware-shared.workspace = true
+bitfield.workspace = true
+windows.workspace = true
+pelite.workspace = true
+vtable-rs.workspace = true
+thiserror.workspace = true
+encoding_rs.workspace = true
+cxx-stl.workspace = true
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"

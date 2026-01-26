@@ -13,6 +13,7 @@ members = [
     "examples/invoke-esd",
     "examples/spawn-asset",
     "examples/present-action-button",
+    "examples/nightreign/fall-damage",
 ]
 
 [workspace.package]
@@ -36,6 +37,7 @@ pelite = "0.10"
 vtable-rs = "0.1.4"
 bitfield = "0.19.2"
 encoding_rs = "0.8.35"
+cxx-stl = "3.4"
 
 [workspace.dependencies.windows]
 version = "0.54"
