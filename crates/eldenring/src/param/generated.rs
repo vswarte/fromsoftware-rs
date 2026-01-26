@@ -9118,9 +9118,16 @@ impl CHR_ACTIVATE_CONDITION_PARAM_ST {
 #[allow(non_camel_case_types)]
 #[repr(C)]
 pub struct CHR_EQUIP_MODEL_PARAM_ST {
-    unknown_0x0: i32,
-    unknown_0x4: i32,
-    unknown_0x8: i32,
+    equip_model_category: u8,
+    equip_model_gender: u8,
+    unknown0x2: u8,
+    unknown0x3: u8,
+    unknown0x4: u8,
+    unknown0x5: u8,
+    unknown0x6: u8,
+    unknown0x7: u8,
+    equip_model_id: u16,
+    unknown0xa: u16,
 }
 
 impl ParamDef for CHR_EQUIP_MODEL_PARAM_ST {
@@ -9128,7 +9135,31 @@ impl ParamDef for CHR_EQUIP_MODEL_PARAM_ST {
     const INDEX: usize = 83;
 }
 
-impl CHR_EQUIP_MODEL_PARAM_ST {}
+impl CHR_EQUIP_MODEL_PARAM_ST {
+    pub fn equip_model_category(&self) -> u8 {
+        self.equip_model_category
+    }
+
+    pub fn set_equip_model_category(&mut self, value: u8) {
+        self.equip_model_category = value;
+    }
+
+    pub fn equip_model_gender(&self) -> u8 {
+        self.equip_model_gender
+    }
+
+    pub fn set_equip_model_gender(&mut self, value: u8) {
+        self.equip_model_gender = value;
+    }
+
+    pub fn equip_model_id(&self) -> u16 {
+        self.equip_model_id
+    }
+
+    pub fn set_equip_model_id(&mut self, value: u16) {
+        self.equip_model_id = value;
+    }
+}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
