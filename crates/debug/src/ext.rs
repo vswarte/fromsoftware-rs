@@ -37,7 +37,6 @@ pub trait UiExt {
         render_row: impl FnMut(&Self, usize, T),
     ) where
         I: IntoIterator<Item = T>,
-        T: std::borrow::Borrow<T>,
         Name: std::convert::AsRef<str>;
 }
 
@@ -77,7 +76,6 @@ impl UiExt for Ui {
         mut render_row: impl FnMut(&Self, usize, T),
     ) where
         I: IntoIterator<Item = T>,
-        T: std::borrow::Borrow<T>,
         Name: AsRef<str>,
     {
         if let Some(_t) = self.begin_table_header_with_flags(

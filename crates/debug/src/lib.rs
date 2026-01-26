@@ -4,8 +4,10 @@ use windows::Win32::{Foundation::HINSTANCE, System::SystemServices::DLL_PROCESS_
 
 mod display;
 mod ext;
+mod state_map;
 
 pub use ext::*;
+pub use state_map::*;
 
 /// Initializes the debug tool as a DLL plugin, setting up a panic handler,
 /// tracing, and the basic hooks into the underlying rendering system.
