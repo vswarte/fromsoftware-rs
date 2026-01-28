@@ -170,7 +170,7 @@ impl ParamFile {
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_row_by_id<P: ParamDef>(&self, id: u32) -> Option<&P> {
         let row_index = self.metadata().find_index(id)?;
-        let data_offset = self.row_data_offset(row_index);
+        let data_offset = self.row_data_offset(row_index)?;
         Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
     }
 
@@ -179,7 +179,7 @@ impl ParamFile {
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_row_by_id_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
         let row_index = self.metadata().find_index(id)?;
-        let data_offset = self.row_data_offset(row_index);
+        let data_offset = self.row_data_offset(row_index)?;
         Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
     }
 
@@ -187,7 +187,7 @@ impl ParamFile {
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_by_row_index<P: ParamDef>(&self, row_index: usize) -> Option<&P> {
-        let data_offset = self.row_data_offset(row_index);
+        let data_offset = self.row_data_offset(row_index)?;
         Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
     }
 
@@ -195,7 +195,7 @@ impl ParamFile {
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_by_row_index_mut<P: ParamDef>(&mut self, row_index: usize) -> Option<&mut P> {
-        let data_offset = self.row_data_offset(row_index);
+        let data_offset = self.row_data_offset(row_index)?;
         Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
     }
 
@@ -240,7 +240,10 @@ impl ParamFile {
         HEADER_SIZE
     }
 
-    fn row_data_offset(&self, row_index: usize) -> usize {
+    fn row_data_offset(&self, row_index: usize) -> Option<usize> {
+        if row_index >= self.row_count() {
+            return None;
+        }
         let base = self.row_descriptors_offset();
 
         unsafe {
@@ -249,13 +252,13 @@ impl ParamFile {
                     .as_ptr()
                     .add(base + row_index * size_of::<RowDescriptor<ParamLayout64>>())
                     as *const RowDescriptor<ParamLayout64>);
-                desc.data_offset()
+                Some(desc.data_offset())
             } else {
                 let desc = &*(self
                     .as_ptr()
                     .add(base + row_index * size_of::<RowDescriptor<ParamLayout32>>())
                     as *const RowDescriptor<ParamLayout32>);
-                desc.data_offset()
+                Some(desc.data_offset())
             }
         }
     }
