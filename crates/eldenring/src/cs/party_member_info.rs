@@ -119,7 +119,9 @@ pub struct PartyMemberInfo {
     unk19e: u8,
     unk19f: u8,
     pub needs_update: bool,
-    unk1a1: u8,
+    /// Set by CSLuaEventScriptImitation when npc's should be disconnected
+    /// during next [PartyMemberInfo] update
+    pub npc_disconnect_requested: bool,
     unk1a2: u8,
     unk1a3: u8,
     unk1a4: u8,
