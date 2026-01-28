@@ -190,6 +190,20 @@ pub struct SoloParamRepository {
 }
 
 impl SoloParamRepository {
+    pub fn get_chr_equip_model_param_by_key(
+        &self,
+        equip_type: u8,
+        gender: u8,
+        model_id: u16,
+    ) -> Option<&crate::param::CHR_EQUIP_MODEL_PARAM_ST> {
+        let key = ((equip_type as u32) << 24) | ((gender as u32) << 16) | (model_id as u32);
+        let entry = self
+            .chr_equip_model_tree
+            .filtered_iter(|e| e.key.cmp(&key))
+            .next()?;
+        self.get_by_row_index::<ChrEquipModelParam>(entry.param_row_index as usize)
+    }
+
     pub fn get_by_buddy_stone_param_by_entity_id(
         &self,
         talk_chr_entity_id: u32,
