@@ -78,7 +78,7 @@ impl FD4ParamResCap {
 ///
 /// Memory layout:
 /// ```text
-/// [ParamHeaderMetadata]              <- file_ptr-0x10
+/// [ParamHeaderMetadata]          <- file_ptr-0x10
 /// [ParamFile]                    <- file_ptr (FD4ParamResCap.file points here)
 /// [row data...]
 /// [aligned padding to 0x10]
