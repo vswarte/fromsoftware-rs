@@ -4,7 +4,7 @@ use windows::Win32::Foundation::FILETIME;
 
 use crate::{
     DoublyLinkedList, Vector,
-    cs::CSRandXorshift,
+    cs::{CSRandXorshift, MultiplayRole},
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
     dltx::{DLInplaceStr, DLUTF16StringKind},
@@ -208,10 +208,12 @@ pub struct SessionManagerPlayerEntry {
     pub check: bool,
     unkec: u8,
     pub rebreak_in: bool,
-    unkee: [u8; 0xe],
-    /// Team type this player had before starting a pseudo multiplayer ceremony.
-    /// Used to restore the team type after the ceremony ends.
-    pub pre_ceremony_team_type: u8,
+    /// If true, prevents host sending emevd event sync packets (104) to this player.
+    pub disable_emk_sync: bool,
+    unkef: [u8; 0xd],
+    /// [MultiplayRole] this player had before starting a pseudo multiplayer ceremony.
+    /// Used to restore the [MultiplayRole] after the ceremony ends.
+    pub pre_ceremony_multiplay_role: MultiplayRole,
 }
 
 #[repr(C)]
