@@ -186,7 +186,7 @@ impl ParamFile {
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
-    pub unsafe fn get_by_row_index<P: ParamDef>(&self, row_index: usize) -> Option<&P> {
+    pub unsafe fn get_row_by_index<P: ParamDef>(&self, row_index: usize) -> Option<&P> {
         let data_offset = self.row_data_offset(row_index)?;
         Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
     }
@@ -194,7 +194,7 @@ impl ParamFile {
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
-    pub unsafe fn get_by_row_index_mut<P: ParamDef>(&mut self, row_index: usize) -> Option<&mut P> {
+    pub unsafe fn get_row_by_index_mut<P: ParamDef>(&mut self, row_index: usize) -> Option<&mut P> {
         let data_offset = self.row_data_offset(row_index)?;
         Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
     }
