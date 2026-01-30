@@ -1,4 +1,5 @@
 use std::ptr::NonNull;
+use std::sync::atomic::AtomicI32;
 
 use shared::{OwnedPtr, Subclass, Superclass, UnknownStruct};
 
@@ -31,11 +32,11 @@ type GridControl = UnknownStruct<0x638>;
 #[repr(C)]
 // Source of name: debug text
 pub struct GaitemSelectBaseMenuBG {
-    pub small: [u8; 0x60],
-    pub large: [u8; 0x60],
-    pub item_status: [u8; 0x60],
-    pub item_detail_status: [u8; 0x60],
-    pub player_status: [u8; 0x60],
+    _small: [u8; 0x60],
+    _large: [u8; 0x60],
+    _item_status: [u8; 0x60],
+    _item_detail_status: [u8; 0x60],
+    _player_status: [u8; 0x60],
 }
 
 #[repr(C)]
@@ -93,7 +94,7 @@ impl GaitemSelectMenu {
 // Source of name: RTTI
 pub struct ItemSelectDialog {
     _vftable: usize,
-    pub ref_count: i32,
+    pub ref_count: AtomicI32,
     _unk10: u64,
     _unk18: [u8; 0x10],
     _unk28: u64,
@@ -118,7 +119,7 @@ impl ItemSelectDialog {
 // Source of name: RTTI
 pub struct MenuGaitemList {
     _vftable: usize,
-    pub ref_count: i32,
+    pub ref_count: AtomicI32,
 
     /// The items in this list.
     pub items: CxxVec<MenuGaitem>,
