@@ -109,7 +109,6 @@ pub struct ChrEquipModelMapEntry {
 
 #[repr(C)]
 #[derive(Subclass)]
-#[subclass(base = FD4ResCap)]
 pub struct ParamResCap {
     pub res_cap: FD4ResCap,
     /// Type of ParamResCap, should correspond to where you got it from.
@@ -201,7 +200,7 @@ impl SoloParamRepository {
             .chr_equip_model_tree
             .filtered_iter(|e| e.key.cmp(&key))
             .next()?;
-        self.get_by_row_index::<ChrEquipModelParam>(entry.param_row_index as usize)
+        self.get_row_by_index::<ChrEquipModelParam>(entry.param_row_index as usize)
     }
 
     pub fn get_by_buddy_stone_param_by_entity_id(
@@ -214,7 +213,7 @@ impl SoloParamRepository {
             .binary_search_by_key(&talk_chr_entity_id, |e| e.talk_chr_entity_id)
             .ok()?;
         let entry = &self.buddy_stone_entity_ids.items()[entry_index];
-        self.get_by_row_index::<BuddyStoneParam>(entry.buddy_stone_param_index as usize)
+        self.get_row_by_index::<BuddyStoneParam>(entry.buddy_stone_param_index as usize)
     }
 
     pub fn get_by_bonfire_warp_param_by_entity_id(
@@ -227,7 +226,7 @@ impl SoloParamRepository {
             .binary_search_by_key(&bonfire_entity_id, |e| e.bonfire_entity_id)
             .ok()?;
         let entry = &self.bonfire_warp_list.items()[entry_index];
-        self.get_by_row_index::<BonfireWarpParam>(entry.bonfire_warp_param_index as usize)
+        self.get_row_by_index::<BonfireWarpParam>(entry.bonfire_warp_param_index as usize)
     }
 
     pub fn weather_asset_replace_params_by_block_id(
@@ -237,7 +236,7 @@ impl SoloParamRepository {
         self.weather_asset_replace_tree
             .filtered_iter(move |e| e.block_id.0.cmp(&block_id.0))
             .filter_map(|e| {
-                self.get_by_row_index::<WeatherAssetReplaceParam>(e.param_row_index as usize)
+                self.get_row_by_index::<WeatherAssetReplaceParam>(e.param_row_index as usize)
             })
     }
 
@@ -280,7 +279,7 @@ impl SoloParamRepository {
     ///
     /// **IMPORTANT**: row index is NOT the same as param ID, use this when you already know the index with mapping like
     /// [SoloParamRepository::wep_reinforce_tree] or [SoloParamRepository::buddy_stone_entity_ids].
-    pub fn get_by_row_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::UnderlyingType> {
+    pub fn get_row_by_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::UnderlyingType> {
         let holder = self.solo_param_holders.get(P::INDEX as usize)?;
         let res_cap = holder.get_res_cap(0)?;
         // SAFETY: we shouldn't run into invalid casts because of the code gen dictating underlying type.
@@ -289,7 +288,7 @@ impl SoloParamRepository {
                 .param_res_cap
                 .as_ref()
                 .data
-                .get_by_row_index::<P::UnderlyingType>(row_index)
+                .get_row_by_index::<P::UnderlyingType>(row_index)
         }
     }
 
@@ -302,7 +301,7 @@ impl SoloParamRepository {
     ///
     /// [SoloParamRepository], technically, doesn't own underlying param data,
     /// but it owns the [ParamResCap] which is tied to the [FD4ParamResCap] lifetime.
-    pub unsafe fn get_by_row_index_mut<P: SoloParam>(
+    pub unsafe fn get_row_by_index_mut<P: SoloParam>(
         &mut self,
         row_index: usize,
     ) -> Option<&mut P::UnderlyingType> {
@@ -314,7 +313,7 @@ impl SoloParamRepository {
                 .param_res_cap
                 .as_mut()
                 .data
-                .get_by_row_index_mut::<P::UnderlyingType>(row_index)
+                .get_row_by_index_mut::<P::UnderlyingType>(row_index)
         }
     }
 
