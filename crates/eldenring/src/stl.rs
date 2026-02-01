@@ -1,4 +1,4 @@
-use std::ptr::NonNull;
+use std::{cmp::Ordering, ptr::NonNull};
 
 use crate::dlkr::DLAllocatorBase;
 use shared::OwnedPtr;
@@ -156,6 +156,60 @@ impl<T> Tree<T> {
                 current = Self::next_inorder(node, self.head);
 
                 Some(value_ref)
+            }
+        })
+    }
+
+    /// Iterates over all entries that compare Equal against `cmp`,
+    /// using a lower-bound search to start in O(log n) time.
+    pub fn filtered_iter<'a, F>(&'a self, mut cmp: F) -> impl Iterator<Item = &'a T> + 'a
+    where
+        F: FnMut(&T) -> Ordering + 'a,
+    {
+        let head = self.head;
+
+        let mut current = unsafe {
+            let mut node = head.as_ref().parent;
+            let mut candidate: Option<NonNull<TreeNode<T>>> = None;
+
+            if node == head {
+                None
+            } else {
+                while node != head && node.as_ref().is_nil == 0 {
+                    match cmp(&node.as_ref().value) {
+                        Ordering::Less => {
+                            node = node.as_ref().right;
+                        }
+                        Ordering::Equal | Ordering::Greater => {
+                            candidate = Some(node);
+                            node = node.as_ref().left;
+                        }
+                    }
+                }
+                candidate
+            }
+        };
+
+        std::iter::from_fn(move || {
+            let mut node = current?;
+            unsafe {
+                loop {
+                    match cmp(&node.as_ref().value) {
+                        Ordering::Equal => {
+                            let value_ref = &node.as_ref().value;
+                            current = Self::next_inorder(node, head);
+                            return Some(value_ref);
+                        }
+                        Ordering::Greater => {
+                            current = None;
+                            return None;
+                        }
+                        Ordering::Less => {
+                            current = Self::next_inorder(node, head);
+                            node = current?;
+                        }
+                    }
+                }
             }
         })
     }
