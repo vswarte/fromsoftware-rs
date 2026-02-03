@@ -143,6 +143,11 @@ impl Display for DirectionalVector {
     }
 }
 
+/// XZ Coordinates on the world map.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct MapPosition(pub f32, pub f32);
+
 #[cfg(test)]
 mod test {
     use crate::position::{BlockPosition, PositionDelta};

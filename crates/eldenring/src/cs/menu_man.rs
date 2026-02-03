@@ -1,11 +1,13 @@
 use std::ptr::NonNull;
 
+use vtable_rs::VPtr;
+
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::program::Program;
+use shared::{F32Vector2, F32Vector3, program::Program};
 
 use super::{CSEzTask, CSEzUpdateTask, OptionalItemId};
-use crate::rva;
+use crate::{Tree, Vector, cs::{BlockId, MenuString}, dlut::DLFixedVector, position::{BlockPosition, MapPosition}, rva};
 
 pub const STATUS_MESSAGE_DEMIGOD_FELLED: i32 = 1;
 pub const STATUS_MESSAGE_LEGEND_FELLED: i32 = 2;
@@ -110,9 +112,121 @@ pub struct CSPopupMenu {
     current_top_menu_job: usize,
     unkb8: [u8; 0xb0],
     input_data: u64,
-    unk170: [u8; 0x120],
+    unk170: [u8; 0xe0],
+    pub world_map_view_model: Option<NonNull<WorldMapViewModel>>,
+    unk258: [u8; 0x38],
     pub show_failed_to_save: bool,
-    unkb91: [u8; 0x8f],
+    unk291: [u8; 0x8f],
+}
+
+#[repr(C)]
+pub struct WorldMapViewModel {
+    vftable: usize,
+    /// Currently open map dialog. Is only Some when the map is actually being viewed.
+    dialog: Option<NonNull<()>>,
+    /// Disables the players marker on the map.
+    pub disable_main_player_marker: bool,
+    /// The current block the player is in.
+    pub main_player_block: BlockId,
+    /// Players position inside of the current block.
+    pub main_player_block_position: BlockPosition,
+    /// Players position on the map.
+    pub main_player_map_position: F32Vector2,
+    /// Are we in a m12_xx_xx_xx map?
+    pub main_player_is_underground: bool,
+    /// Players yaw rotation from 0 to 360.
+    pub main_player_orientation: f32,
+    unk38: u64,
+    unk40: u64,
+    unk48: u32,
+    unk50: WorldMapViewModelUnk50,
+    unk70: u8,
+    unk74: u32,
+    pub remote_player_data: WorlMapRemotePlayerDataList,
+    unka0: F32Vector2,
+    unka8: u16,
+    unkac: u32,
+    unkb0: u32,
+    unkb4: i32,
+    unkb8: u8,
+    /// Used to convert legacy dungeon (non m_6x maps) coords to overworld map coords.
+    pub legacy_converter: WorldMapLegacyConverter,
+    unkf0: u64,
+    pub map_converters: DLFixedVector<WorldMapAreaConverter, 8>,
+    unk288: [u8; 0x48],
+    unk2d0: u64,
+    pub warp_pins: WorldMapPinDataList<WorldMapWarpPinData>,
+    // unkf0: [u8; 0x360],
+}
+
+#[repr(C)]
+pub struct WorldMapAreaConverter {
+    vftable: usize,
+    pub block: BlockId,
+    pub origin_x: f32,
+    unk10: u32,
+    pub origin_z: f32,
+    pub offset_x: f32,
+    pub offset_z: f32,
+    pub scale: f32,
+    pub legacy_converter: Option<NonNull<WorldMapLegacyConverter>>,
+}
+
+#[repr(C)]
+pub struct WorldMapViewModelUnk50 {
+    unk0: u64,
+    unk8: u64,
+    unk10: u64,
+    unk18: u32,
+}
+
+#[repr(C)]
+pub struct WorlMapRemotePlayerDataList {
+    vftable: usize,
+    entries: Vector<()>,
+}
+
+#[repr(C)]
+pub struct WorldMapLegacyConverter {
+    vftable: usize,
+    pub entries: Tree<WorldMapLegacyConverterBlockEntry>,
+    unk20: usize,
+    unk28: usize,
+}
+
+#[repr(C)]
+pub struct WorldMapLegacyConverterBlockEntry {
+    pub block_id: BlockId,
+    pub override_block_id: BlockId,
+    pub position: F32Vector3,
+}
+
+#[repr(C)]
+pub struct WorldMapPinDataList<T> {
+    vftable: usize,
+    pub items: Vector<T>,
+}
+
+#[repr(C)]
+pub struct WorldMapPinDataBase {
+    vftable: usize,
+    unk8: u32,
+}
+
+#[repr(C)]
+pub struct WorldMapPinData {
+    pub base: WorldMapPinDataBase,
+    /// Pin's position on the world map.
+    pub position: MapPosition,
+    menu_string: MenuString,
+    /// Entity ID for the entity this pin is for.
+    pub entity_id: i32,
+    pub cleared_event_flag_id: i32,
+}
+
+#[repr(C)]
+pub struct WorldMapWarpPinData {
+    pub pin: WorldMapPinData,
 }
 
 #[repr(C)]
@@ -172,12 +286,32 @@ pub struct FeSystemAnnounceViewModelMessageQueue {
     count: usize,
 }
 
+#[vtable_rs::vtable]
+pub trait MenuViewItemListBaseVmt {
+    fn destructor(&mut self);
+
+    /// Retrieve the amount of elements in this list.
+    fn count(&self) -> usize;
+
+    /// Retrieve an item from the list its index.
+    fn get(&self, index: usize) -> NonNull<usize>;
+
+    fn unk18(&self, index: usize) -> NonNull<usize>;
+}
+
+#[vtable_rs::vtable]
+pub trait MenuViewItemListVmt : MenuViewItemListBaseVmt {
+    fn unk20(&self, index: usize) -> NonNull<usize>;
+
+    fn unk28(&self, index: usize) -> NonNull<usize>;
+}
+
 #[cfg(test)]
 mod test {
     use crate::cs::{
         BackScreenData, CSMenuData, CSMenuGaitemUseState, CSMenuManImp, CSPlayerMenuCtrl,
         CSPopupMenu, FeSystemAnnounceViewModel, FeSystemAnnounceViewModelMessageQueue,
-        LoadingScreenData,
+        LoadingScreenData, WorldMapViewModel,
     };
 
     #[test]
@@ -191,5 +325,6 @@ mod test {
         assert_eq!(0x28, size_of::<LoadingScreenData>());
         assert_eq!(0x40, size_of::<FeSystemAnnounceViewModel>());
         assert_eq!(0x30, size_of::<FeSystemAnnounceViewModelMessageQueue>());
+        assert_eq!(0x450, size_of::<WorldMapViewModel>());
     }
 }
