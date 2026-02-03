@@ -2,10 +2,10 @@ use std::ptr::NonNull;
 
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::program::Program;
+use shared::{F32Vector2, F32Vector3, program::Program};
 
 use super::{CSEzTask, CSEzUpdateTask, OptionalItemId};
-use crate::rva;
+use crate::{Tree, cs::BlockId, position::BlockPosition, rva};
 
 pub const STATUS_MESSAGE_DEMIGOD_FELLED: i32 = 1;
 pub const STATUS_MESSAGE_LEGEND_FELLED: i32 = 2;
@@ -110,9 +110,52 @@ pub struct CSPopupMenu {
     current_top_menu_job: usize,
     unkb8: [u8; 0xb0],
     input_data: u64,
-    unk170: [u8; 0x120],
+    unk170: [u8; 0xe0],
+    pub world_map_view_model: Option<NonNull<WorldMapViewModel>>,
+    unk258: [u8; 0x38],
     pub show_failed_to_save: bool,
-    unkb91: [u8; 0x8f],
+    unk291: [u8; 0x8f],
+}
+
+#[repr(C)]
+pub struct WorldMapViewModel {
+    vftable: usize,
+    /// Currently open map dialog. Is only Some when the map is actually being viewed.
+    world_map_dialog: Option<NonNull<()>>,
+    /// Disables the players marker on the map.
+    pub disable_player_marker: bool,
+    /// The current block the player is in.
+    pub player_block: BlockId,
+    /// Players position inside of the current block.
+    pub player_block_position: BlockPosition,
+    /// Players position on the map.
+    pub player_map_position: F32Vector2,
+    /// Are we in a m12_xx_xx_xx map?
+    pub is_underground: bool,
+    /// Players yaw rotation from 0 to 360.
+    pub player_orientation: f32,
+    unk38: [u8; 0x40],
+    world_map_remote_player_data: [u8; 0x28],
+    unka0: F32Vector2,
+    unka8: bool,
+    unka9: [u8; 0x17],
+    pub world_map_legacy_converter: WorldMapLegacyConverter,
+    unkf0: [u8; 0x360],
+}
+
+#[repr(C)]
+pub struct WorldMapLegacyConverter {
+    vftable: usize,
+    pub entries: Tree<WorldMapLegacyConverterBlockEntry>,
+    unk20: usize,
+    unk28: usize,
+}
+
+#[repr(C)]
+pub struct WorldMapLegacyConverterBlockEntry {
+    pub block_id: BlockId,
+    pub override_block_id: BlockId,
+    pub position: F32Vector3,
 }
 
 #[repr(C)]
@@ -177,7 +220,7 @@ mod test {
     use crate::cs::{
         BackScreenData, CSMenuData, CSMenuGaitemUseState, CSMenuManImp, CSPlayerMenuCtrl,
         CSPopupMenu, FeSystemAnnounceViewModel, FeSystemAnnounceViewModelMessageQueue,
-        LoadingScreenData,
+        LoadingScreenData, WorldMapViewModel,
     };
 
     #[test]
@@ -191,5 +234,6 @@ mod test {
         assert_eq!(0x28, size_of::<LoadingScreenData>());
         assert_eq!(0x40, size_of::<FeSystemAnnounceViewModel>());
         assert_eq!(0x30, size_of::<FeSystemAnnounceViewModelMessageQueue>());
+        assert_eq!(0x450, size_of::<WorldMapViewModel>());
     }
 }

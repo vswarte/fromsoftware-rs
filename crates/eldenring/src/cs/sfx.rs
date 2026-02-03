@@ -1,6 +1,6 @@
 use crate::gxffx::GXFfxSceneCtrl;
 use crate::{Tree, Vector};
-use shared::OwnedPtr;
+use shared::{F32Vector3, OwnedPtr};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -34,7 +34,7 @@ pub struct CSSfxImp {
     unkac: u32,
     unkb0: Tree<()>,
     unkc8: usize,
-    unkd0: Vector<usize>,
+    unkd0: Vector<F32Vector3>,
     unkf0: Vector<usize>,
     unk110: usize,
     unk118: usize,

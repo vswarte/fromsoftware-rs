@@ -12,6 +12,7 @@ use eldenring::cs::CSEventManImp;
 use eldenring::cs::CSFade;
 use eldenring::cs::CSFeManImp;
 use eldenring::cs::CSGaitemImp;
+use eldenring::cs::CSMenuManImp;
 use eldenring::cs::CSNetMan;
 use eldenring::cs::CSSessionManager;
 use eldenring::cs::CSSfxImp;
@@ -199,6 +200,7 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
             }
 
             if let Some(item) = ui.tab_item("Front End") {
+                render_debug_static::<CSMenuManImp>(ui);
                 render_debug_static::<CSFeManImp>(ui);
                 item.end();
             }
