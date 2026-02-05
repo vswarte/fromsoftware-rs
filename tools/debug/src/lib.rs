@@ -21,6 +21,7 @@ use eldenring::cs::CSWindowImp;
 use eldenring::cs::CSWorldGeomMan;
 use eldenring::cs::CSWorldSceneDrawParamManager;
 use eldenring::cs::FieldArea;
+use eldenring::cs::GameDataMan;
 use eldenring::cs::WorldAreaTime;
 use eldenring::cs::WorldChrMan;
 use eldenring::fd4::FD4ParamRepository;
@@ -172,8 +173,9 @@ unsafe fn render_live_reload(gui_size: [f32; 2], gui_scale: f32, ui: &mut Ui) {
                 item.end();
             }
 
-            if let Some(item) = ui.tab_item("Inventory") {
+            if let Some(item) = ui.tab_item("Game Data") {
                 render_debug_static::<CSGaitemImp>(ui);
+                render_debug_static::<GameDataMan>(ui);
                 item.end();
             }
 

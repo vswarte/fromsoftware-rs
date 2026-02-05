@@ -3,7 +3,10 @@ use std::fmt::Display;
 use bitfield::bitfield;
 use thiserror::Error;
 
-use crate::cs::{CSRandXorshift, OptionalItemId};
+use crate::{
+    cs::{CSRandXorshift, OptionalItemId},
+    dlut::DLFixedVector,
+};
 use shared::{OwnedPtr, Subclass, Superclass};
 
 #[repr(C)]
@@ -181,7 +184,6 @@ pub struct CSGemSlot {
     vtable: usize,
     /// Refers to the actual gem entry in the CSGaitemImp.
     pub gaitem_handle: GaitemHandle,
-    // _padc: [u8; 0x4],
 }
 
 #[repr(C)]
@@ -190,7 +192,18 @@ pub struct CSGemGaitemIns {
     pub gaitem_ins: CSGaitemIns,
     /// Handle of the weapon this gem is attached to
     pub weapon_handle: GaitemHandle,
-    // _pad14: [u8; 0x4],
+}
+
+#[repr(C)]
+pub struct CSGaitemGameDataEntry {
+    pub item_id: OptionalItemId,
+    pub already_acquired: bool,
+}
+
+#[repr(C)]
+pub struct CSGaitemGameData {
+    pub igame_data_elem_vftable: usize,
+    pub gaitem_entries: DLFixedVector<CSGaitemGameDataEntry, 14000>,
 }
 
 #[cfg(test)]

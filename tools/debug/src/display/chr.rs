@@ -230,9 +230,13 @@ impl DebugDisplay for PlayerGameData {
             self.equipment.render_debug(ui);
         });
 
-        ui.header("Storage Box EquipInventoryData", || {
-            self.storage.render_debug(ui);
-        });
+        if let Some(storage) = self.storage.as_ref() {
+            ui.header("Storage Box EquipInventoryData", || {
+                storage.render_debug(ui);
+            });
+        } else {
+            ui.text("Storage Box EquipInventoryData: None");
+        }
     }
 }
 
@@ -250,28 +254,11 @@ impl DebugDisplay for EquipGameData {
             self.equip_item_data.render_debug(ui);
         });
 
-        ui.header("Item Replenish State Tracker", || {
-            ui.table(
-                "equip-game-data-item-replenish-state-tracker",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("Item ID"),
-                    TableColumnSetup::new("Auto Replenish"),
-                ],
-                self.item_replenish_state_tracker.entries().iter(),
-                |ui, index, item| {
-                    ui.table_next_column();
-                    ui.text(index.to_string());
-
-                    ui.table_next_column();
-                    ui.text(format!("{:?}", item.item_id));
-
-                    ui.table_next_column();
-                    ui.text(item.auto_replenish.to_string());
-                },
-            );
-        });
-        self.item_replenish_state_tracker.render_debug(ui);
+        if let Some(item_replenish_state_tracker) = self.item_replenish_state_tracker.as_ref() {
+            item_replenish_state_tracker.render_debug(ui);
+        } else {
+            ui.text("Item Replenish State Tracker: None");
+        }
     }
 }
 
@@ -419,6 +406,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Item ID"),
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
+                    TableColumnSetup::new("Is New"),
                 ],
                 normal_items.iter(),
                 |ui, index, item| {
@@ -436,6 +424,9 @@ impl DebugDisplay for EquipInventoryData {
 
                     ui.table_next_column();
                     ui.text(item.sort_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(item.is_new.to_string());
                 },
             );
         });
@@ -460,6 +451,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Item ID"),
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
+                    TableColumnSetup::new("Is New"),
                 ],
                 key_items.iter(),
                 |ui, index, item| {
@@ -477,6 +469,9 @@ impl DebugDisplay for EquipInventoryData {
 
                     ui.table_next_column();
                     ui.text(item.sort_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(item.is_new.to_string());
                 },
             );
         });
