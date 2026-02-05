@@ -10,6 +10,7 @@ use crate::{
     param::ParamDef,
     stl::Tree,
 };
+use bitfield::bitfield;
 
 #[repr(C)]
 /// Entry in the weapon upgrade index map.
@@ -99,10 +100,43 @@ pub struct AssetReplacementParamMapEntry {
     pub param_row_index: u32,
 }
 
+bitfield! {
+    #[repr(C)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    pub struct ChrEquipModelKey(u32);
+    impl Debug;
+
+    u8;
+    /// Equipment type (high 8 bits)
+    pub equip_type, _: 31, 24;
+    _, set_equip_type: 31, 24;
+
+    u8;
+    /// Gender (next 8 bits)
+    pub gender, _: 23, 16;
+    _, set_gender: 23, 16;
+
+    u16;
+    /// Model id (low 16 bits)
+    pub model_id, _: 15, 0;
+    _, set_model_id: 15, 0;
+}
+
+impl ChrEquipModelKey {
+    /// Construct a packed key from separate fields.
+    pub fn from_parts(equip_type: u8, gender: u8, model_id: u16) -> Self {
+        let mut k = ChrEquipModelKey(0);
+        k.set_equip_type(equip_type);
+        k.set_gender(gender);
+        k.set_model_id(model_id);
+        k
+    }
+}
+
 #[repr(C)]
 pub struct ChrEquipModelMapEntry {
     /// Packed key = (equip_type << 24) | (gender << 16) | model_id
-    pub key: u32,
+    pub key: ChrEquipModelKey,
     /// Row index in [CHR_EQUIP_MODEL_PARAM_ST] (not param ID)
     pub param_row_index: u32,
 }
@@ -195,10 +229,10 @@ impl SoloParamRepository {
         gender: u8,
         model_id: u16,
     ) -> Option<&crate::param::CHR_EQUIP_MODEL_PARAM_ST> {
-        let key = ((equip_type as u32) << 24) | ((gender as u32) << 16) | (model_id as u32);
+        let key = ChrEquipModelKey::from_parts(equip_type, gender, model_id);
         let entry = self
             .chr_equip_model_tree
-            .filtered_iter(|e| e.key.cmp(&key))
+            .filtered_iter(|e| e.key.0.cmp(&key.0))
             .next()?;
         self.get_row_by_index::<ChrEquipModelParam>(entry.param_row_index as usize)
     }
@@ -770,3 +804,20 @@ solo_params!(
     (ChrEquipModelParam, CHR_EQUIP_MODEL_PARAM_ST, 192),
     (HitEffectSeParam, HIT_EFFECT_SE_PARAM_ST, 193),
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::cs::ChrEquipModelKey;
+
+    #[test]
+    fn chr_equip_model_key_packing() {
+        let mut k = ChrEquipModelKey(0);
+        k.set_equip_type(3);
+        k.set_gender(2);
+        k.set_model_id(0xABCD);
+        assert_eq!(k.equip_type(), 3);
+        assert_eq!(k.gender(), 2);
+        assert_eq!(k.model_id(), 0xABCD);
+        assert_eq!(k.0, (3u32 << 24) | (2u32 << 16) | 0xABCDu32);
+    }
+}
