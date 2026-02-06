@@ -202,7 +202,7 @@ pub struct SoloParamRepository {
     /// Structure for fast weapon reinforcement lookups.
     /// Uses param row of WeaponEquipParam as index
     /// and allows traversal of the upgrade tree.
-    pub wep_reinforce_tree: CSWepReinforceTree,
+    pub wep_reinforces: CSWepReinforceTree,
     /// Ordered list of buddy stone entity IDs and their associated buddy stone param indices.
     ///
     /// Can be used to search [crate::param::BUDDY_STONE_PARAM_ST] rows based on chr entity ID.
@@ -210,14 +210,14 @@ pub struct SoloParamRepository {
     /// Ordered list of bonfire entity IDs and their associated bonfire warp param indices.
     ///
     /// Can be used to search [crate::param::BONFIRE_WARP_PARAM_ST] rows based on bonfire entity ID.
-    pub bonfire_warp_list: Vector<BonfireEntityId>,
+    pub bonfire_warps: Vector<BonfireEntityId>,
     /// Tree groupping [WEATHER_ASSET_REPLACE_PARAM_ST] param rows by [BlockId].
-    pub weather_asset_replace_tree: Tree<AssetReplacementParamMapEntry>,
+    pub weather_asset_replaces: Tree<AssetReplacementParamMapEntry>,
     /// Tree groupping [LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM] param rows by [BlockId].
-    pub legacy_distant_view_parts_replace_tree: Tree<AssetReplacementParamMapEntry>,
+    pub legacy_distant_view_parts_replaces: Tree<AssetReplacementParamMapEntry>,
     /// Tree mapping for the [CHR_EQUIP_MODEL_PARAM_ST] param rows.
     /// The usage of this param is unknown.
-    pub chr_equip_model_tree: Tree<ChrEquipModelMapEntry>,
+    pub chr_equip_models: Tree<ChrEquipModelMapEntry>,
     /// Map of all area IDs to their multiplay event flag limits.
     pub match_area_limits: Tree<MatchAreaLimit>,
 }
@@ -231,7 +231,7 @@ impl SoloParamRepository {
     ) -> Option<&crate::param::CHR_EQUIP_MODEL_PARAM_ST> {
         let key = ChrEquipModelKey::from_parts(equip_type, gender, model_id);
         let entry = self
-            .chr_equip_model_tree
+            .chr_equip_models
             .filtered_iter(|e| e.key.0.cmp(&key.0))
             .next()?;
         self.get_row_by_index::<ChrEquipModelParam>(entry.param_row_index as usize)
@@ -255,11 +255,11 @@ impl SoloParamRepository {
         bonfire_entity_id: u32,
     ) -> Option<&crate::param::BONFIRE_WARP_PARAM_ST> {
         let entry_index = self
-            .bonfire_warp_list
+            .bonfire_warps
             .items()
             .binary_search_by_key(&bonfire_entity_id, |e| e.bonfire_entity_id)
             .ok()?;
-        let entry = &self.bonfire_warp_list.items()[entry_index];
+        let entry = &self.bonfire_warps.items()[entry_index];
         self.get_row_by_index::<BonfireWarpParam>(entry.bonfire_warp_param_index as usize)
     }
 
@@ -267,7 +267,7 @@ impl SoloParamRepository {
         &self,
         block_id: BlockId,
     ) -> impl Iterator<Item = &crate::param::WEATHER_ASSET_REPLACE_PARAM_ST> {
-        self.weather_asset_replace_tree
+        self.weather_asset_replaces
             .filtered_iter(move |e| e.block_id.0.cmp(&block_id.0))
             .filter_map(|e| {
                 self.get_row_by_index::<WeatherAssetReplaceParam>(e.param_row_index as usize)
