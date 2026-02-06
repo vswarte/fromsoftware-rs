@@ -6,7 +6,7 @@ members = [
     "crates/eldenring",
     "crates/nightreign",
     "crates/debug",
-    "tools/debug-er",
+    "tools/debug-eldenring",
     "tools/binary-mapper",
     "tools/param-generator",
     "examples/apply-speffect",
