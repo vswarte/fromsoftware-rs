@@ -1,9 +1,9 @@
 use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule,
-    CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns,
-    ChrInsModuleContainer, ChrInsSubclass, ChrPhysicsMaterialInfo, EquipGameData,
-    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
-    PlayerIns,
+    CSChrBehaviorDataModule, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule,
+    CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment,
+    ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass, ChrPhysicsMaterialInfo,
+    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
+    PlayerGameData, PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 use hudhook::imgui::{TableColumnSetup, Ui};
@@ -602,6 +602,10 @@ impl DebugDisplay for ChrInsModuleContainer {
             self.physics.render_debug(ui);
         });
 
+        ui.header("Behavior Data", || {
+            self.behavior_data.render_debug(ui);
+        });
+
         ui.header("Model param modifier", || {
             self.model_param_modifier.render_debug(ui);
         });
@@ -623,6 +627,68 @@ impl DebugDisplay for CSChrPhysicsModule {
 
         ui.header("Physics material", || {
             unsafe { self.slide_info.material_info.as_ref() }.render_debug(ui);
+        });
+    }
+}
+
+impl DebugDisplay for CSChrBehaviorDataModule {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Has twist modifier: {}", self.has_twist_modifier));
+        ui.text(format!(
+            "Fixed rotation direction: {}",
+            self.fixed_rotation_direction
+        ));
+        ui.text(format!("Min twist rank: {}", self.min_twist_rank));
+        ui.text(format!(
+            "HKS root motion multiplier: {}",
+            self.hks_root_motion_mult
+        ));
+        ui.text(format!("Turn speed: {}", self.turn_speed));
+        ui.text(format!(
+            "HKS animation speed multiplier: {}",
+            self.hks_animation_speed_multiplier
+        ));
+
+        ui.header("Twist modifiers", || {
+            ui.table(
+                "behavior-data-twist-modifiers",
+                [
+                    TableColumnSetup::new("ID"),
+                    TableColumnSetup::new("Target"),
+                    TableColumnSetup::new("Rank"),
+                    TableColumnSetup::new("Limits (U/D/L/R)"),
+                    TableColumnSetup::new("Minimums (U/D/L/R)"),
+                ],
+                self.twist_modifiers.iter(),
+                |ui, _i, modifier| {
+                    ui.table_next_column();
+                    ui.text(modifier.modifier_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(modifier.target_type.to_string());
+
+                    ui.table_next_column();
+                    ui.text(modifier.rank.to_string());
+
+                    ui.table_next_column();
+                    ui.text(format!(
+                        "{:.2}/{:.2}/{:.2}/{:.2}",
+                        modifier.up_limit_angle,
+                        modifier.down_limit_angle,
+                        modifier.left_limit_angle,
+                        modifier.right_limit_angle
+                    ));
+
+                    ui.table_next_column();
+                    ui.text(format!(
+                        "{:.2}/{:.2}/{:.2}/{:.2}",
+                        modifier.up_minimum_angle,
+                        modifier.down_minimum_angle,
+                        modifier.left_minimum_angle,
+                        modifier.right_minimum_angle
+                    ));
+                },
+            );
         });
     }
 }
