@@ -51,6 +51,14 @@ pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 captures = ["", "global_hinstance"]
 
 [[patterns]]
+pattern = "74 ? 41 8b 16 8b c2 25 ff ff ff 0f c1 ea 1c 48 8b 35 $ { ' }"
+captures = ["", "item_get_menu_man_ptr"]
+
+[[patterns]]
+pattern = "8b d0 41 0f b6 46 08 88 44 24 20 45 8b 4e 04 44 8b c7 48 8b ce e8 $ { ' }"
+captures = ["", "item_get_menu_man_show_item"]
+
+[[patterns]]
 pattern = "[16] 48 8d 6c 24 d9 48 81 ec 00 01 00 00 48 c7 45 cf fe ff ff ff"
 captures = ["map_item_man_grant_item"]
 

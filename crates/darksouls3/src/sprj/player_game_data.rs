@@ -5,7 +5,7 @@ use bitfield::bitfield;
 use shared::{FromStatic, InstanceResult, OwnedPtr, empty::*};
 
 use crate::CxxVec;
-use crate::sprj::{ItemId, OptionalItemId, PlayerIns};
+use crate::sprj::{ItemGetMenuMan, ItemId, OptionalItemId, PlayerIns};
 
 mod gesture;
 
@@ -35,6 +35,16 @@ pub struct PlayerGameData {
     _menu_ref_special_effect_1: usize,
     _menu_ref_special_effect_2: usize,
     _unk930: [u8; 0x20],
+}
+
+impl PlayerGameData {
+    /// Grants the player a gesture, similarly to the `AwardGesture` EMEVD command.
+    pub fn grant_gesture(&mut self, gesture_index: u32, item_id: ItemId) {
+        self.gesture_data.set_gesture_acquired(gesture_index, true);
+        if let Ok(menu_man) = unsafe { ItemGetMenuMan::instance() } {
+            menu_man.show_item(item_id, 1, false);
+        }
+    }
 }
 
 impl FromStatic for PlayerGameData {
