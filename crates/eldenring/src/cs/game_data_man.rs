@@ -1,9 +1,10 @@
 use crate::{
-    cs::{ChrType, PlayerGameData},
+    Vector,
+    cs::{CSGaitemGameData, ChrType, PlayerGameData},
     fd4::FD4Time,
 };
-use shared::OwnedPtr;
-use std::ptr::NonNull;
+use shared::{FromStatic, OwnedPtr, load_static_indirect};
+use std::{borrow::Cow, ptr::NonNull};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -22,10 +23,11 @@ pub enum RemotePlayerDataSlotState {
     FullySynced = 0xF,
 }
 
-#[repr(u32)]
+#[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 /// Source of name: global_event.lua from DS3
 pub enum DeathState {
+    None = -1,
     Normal = 0,
     /// DS3 tears of denial style resurrection
     MagicResurrection = 1,
@@ -40,10 +42,12 @@ pub struct GameDataMan {
     trophy_equip_data: usize,
     pub main_player_game_data: OwnedPtr<PlayerGameData>,
     pub player_game_data_list: OwnedPtr<[PlayerGameData; 5]>,
-    pub host_game_data: Option<NonNull<PlayerGameData>>,
+    /// Pointer to the game data of the player used for the baseline
+    /// for the arena match multiplay scaling in active match.
+    pub quickmatch_scaling_baseline_game_data: Option<NonNull<PlayerGameData>>,
     pub remote_game_data_states: OwnedPtr<[RemotePlayerDataSlotState; 5]>,
     pub session_player_game_data_list: OwnedPtr<[Option<OwnedPtr<PlayerGameData>>; 40]>,
-    gaitem_game_data: usize,
+    pub gaitem_game_data: OwnedPtr<CSGaitemGameData>,
     tutorial_data: usize,
     unk40: [u8; 0x18],
     pub game_settings: OwnedPtr<GameSettings>,
@@ -63,7 +67,11 @@ pub struct GameDataMan {
     /// Will be true for some time during loading when the player is invading someone else's world
     pub award_rebreak_in_item_requested: bool,
     pub death_count: u32,
-    pub chr_type: ChrType,
+    /// Character type to switch to after loading a map
+    /// [ChrType::None] if no switch is requested
+    ///
+    /// Set by `CS::CSLuaEventProxy::SetChrTypeDataGreyNext`
+    pub post_map_load_chr_type: ChrType,
     unk9c: [u8; 0x4],
     /// Play time as milliseconds
     /// will be maxed out at 999:59:59.999
@@ -88,13 +96,41 @@ pub struct GameDataMan {
     /// Leave request status for each player slot
     /// Used by lua script imitation to track on leave events
     pub leave_requests: [bool; 5],
-    unkdf: [u8; 0x39],
-    pub net_penalty_forgive_item_cooldown_active: bool,
+    pub game_version_data: GameVersionData,
+    unkf0: bool,
+    /// Whether the DLC list is up to date and any pending DLCs have been applied ([`pending_dlc_list`] is empty)
+    ///
+    /// [`pending_dlc_list`]: Self::pending_dlc_list
+    pub dlc_list_up_to_date: bool,
+    /// Vector of indecies into `CSDlc` that are not applied to this game data yet
+    pub pending_dlc_list: Vector<u32>,
+    pub is_net_penalized: bool,
     pub net_penalty_requested: bool,
     pub net_penalty_points: u16,
     pub net_penalty_forgive_item_limit_time: f32,
     pub ng_lvl: u32,
     unk124: [u8; 0x34],
+}
+
+impl FromStatic for GameDataMan {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("GameDataMan")
+    }
+
+    unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
+        unsafe { load_static_indirect(crate::rva::get().game_data_man) }
+    }
+}
+
+#[repr(C)]
+pub struct GameVersionData {
+    /// Current version of the game data structure
+    pub game_data_version: u32,
+    /// Version of the game data read from the last save
+    pub last_saved_game_data_version: u32,
+    /// Whether the saved game data version is the latest
+    pub saved_game_data_version_is_the_latest: bool,
+    pub unused: u32,
 }
 
 #[repr(u8)]

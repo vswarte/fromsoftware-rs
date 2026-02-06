@@ -21,11 +21,11 @@ pub struct GameMan {
     /// See [crate::cs::WorldAreaTime::clock].
     pub world_area_time: DLDateTime,
     unk30: [u8; 0xc],
-    /// Set by emevd `2003[14]` [`WarpPlayer`].
+    /// Set by EMEVD `2003[14]` [`WarpPlayer`].
     ///
     /// [`WarpPlayer`]: https://soulsmods.github.io/emedf/er-emedf.html#WarpPlayer
     pub initial_area_entity_id: u32,
-    /// Set by emevd `2008[1]` [`ChangeCamera`]. Overrides default camera
+    /// Set by EMEVD `2008[1]` [`ChangeCamera`]. Overrides default camera
     /// parameters in area. See [crate::param::LOCK_CAM_PARAM_ST].
     ///
     /// [`ChangeCamera`]: https://soulsmods.github.io/emedf/er-emedf.html#ChangeCamera
@@ -111,7 +111,9 @@ pub struct GameMan {
     /// [EquipGameData::qm_item_backup_vector]: crate::cs::EquipGameData::qm_item_backup_vector
     pub item_restore_after_qmrequested: bool,
     unkb5c: u8,
-    unkb5d: u8,
+    /// Whether or not the player is currently "afk" and should not be summoned as hunter anymore.
+    /// Set after certain time of inactivity while in someone else's world as a hunter.
+    pub is_inactive: bool,
     unkb5e: u8,
     unkb5f: u8,
     unkb60: u32,
@@ -137,7 +139,8 @@ pub struct GameMan {
     unkbc0: u32,
     unkbc4: u32,
     pub is_in_online_mode: bool,
-    unkbc9: u8,
+    /// True when connection to EOS server is lost and error should be shown.
+    pub disconnect_eos_server: bool,
     pub event_world_type: EventWorldType,
     unkbcb: u8,
     unkbcc: u8,
@@ -145,7 +148,16 @@ pub struct GameMan {
     unkbce: u8,
     unkbcf: [u8; 0x19],
     unkbe8: u64,
-    unkbf0: [u8; 0x10],
+    unkbf0: [u8; 0x4],
+    /// Makes so that player does not play the map enter animation when
+    /// warping/loading into a map.
+    pub disable_map_enter_anim: bool,
+    /// Enables a simple loading screen without any text or images.
+    /// Set by EMEVD `2003[80]` [`ShowTextOnLoadingScreen`].
+    ///
+    /// [`ShowTextOnLoadingScreen`]: https://soulsmods.github.io/emedf/er-emedf.html#ShowTextOnLoadingScreen
+    pub simple_loading_screen: bool,
+    unkbf6: [u8; 0x4],
     /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).
     pub stay_in_multiplay_area_saved_position: F32Vector3,
     /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).

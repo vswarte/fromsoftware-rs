@@ -78,14 +78,18 @@ pub struct CSFeManImp {
     fe_menu_chr_state_data: [u8; 0x168],
     pub summon_msg_queue: SummonMsgQueue,
     unk6530: u32,
-    /// ID of the fmg text entry for the area welcome message. Can be set by
-    /// emevd `DisplaySubareaWelcomeMessage` `2007[13]`.
+    /// ID of the fmg text entry for the area welcome message.
+    /// Set by EMEVD `2003[13]` [`DisplaySubareaWelcomeMessage`].
+    ///
+    /// [`DisplaySubareaWelcomeMessage`]: https://soulsmods.github.io/emedf/er-emedf.html#DisplaySubareaWelcomeMessage
     pub subarea_name_popup_message_id: i32,
     unk6538: [u8; 4],
     unk653c: u32,
     unk6540: [u8; 8],
-    /// ID of the fmg text entry for the blinking message. Can be set by emevd
-    /// `DisplayBlinkingMessageWithPriority` `2007[12]`.
+    /// ID of the fmg text entry for the blinking message.
+    /// Set by EMEVD `2007[12]` [`DisplayBlinkingMessageWithPriority`].
+    ///
+    /// [`DisplayBlinkingMessageWithPriority`]: https://soulsmods.github.io/emedf/er-emedf.html#DisplayBlinkingMessageWithPriority
     pub blinking_message_id: i32,
     /// Priority of the currently displayed blinking message
     pub blinking_message_priority: u8,

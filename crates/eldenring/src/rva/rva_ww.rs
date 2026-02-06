@@ -74,6 +74,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     fd4res_cap_vmt: 0x32936b8,
     fd4res_rep_vmt: 0x3295e70,
     fd4task_base_vmt: 0x3293a68,
+    game_data_man: 0x3d5df38,
     game_man: 0x3d69918,
     global_hinstance: 0x3d85688,
     ichr_finder_vmt: 0x29cdd98,

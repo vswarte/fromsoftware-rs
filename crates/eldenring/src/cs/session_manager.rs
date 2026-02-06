@@ -194,7 +194,7 @@ pub struct SessionManagerPlayerEntry {
     pub base: SessionManagerPlayerEntryBase,
     /// Index in networked player game data list, will be -1 for host.
     pub game_data_index: i32,
-    /// Character id for all emevd and other character related stuff.
+    /// Character id for all EMEVD and other character related stuff.
     pub character_event_id: u32,
     unkd8: usize,
     pub horse_entity_handle: P2PEntityHandle,
