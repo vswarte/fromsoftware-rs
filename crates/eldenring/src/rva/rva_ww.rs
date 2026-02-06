@@ -84,6 +84,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     multiplay_properties: 0x3b11230,
     near_enemy_finder_vmt: 0x2a252c0,
     open_field_chr_set_vmt: 0x2a485a0,
+    param_res_cap_vmt: 0x2baf908,
     player_ins_vmt: 0x2a7cb40,
     register_task: 0xeb2000,
     spawn_geometry: 0x6a5150,

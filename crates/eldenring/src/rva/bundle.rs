@@ -85,6 +85,7 @@ pub struct RvaBundle {
     pub multiplay_properties: u32,
     pub near_enemy_finder_vmt: u32,
     pub open_field_chr_set_vmt: u32,
+    pub param_res_cap_vmt: u32,
     pub player_ins_vmt: u32,
     pub register_task: u32,
     pub spawn_geometry: u32,
