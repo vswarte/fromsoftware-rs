@@ -47,8 +47,9 @@ struct EldenRingDebugGui {
     event: StaticDebugger<CSEventManImp>,
     auto_invade_point: StaticDebugger<CSAutoInvadePoint>,
 
-    // Inventory
+    // Game Data
     gaitem: StaticDebugger<CSGaitemImp>,
+    game_data: StaticDebugger<GameDataMan>,
 
     // Networking
     session: StaticDebugger<CSSessionManager>,
@@ -146,8 +147,9 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
                 item.end();
             }
 
-            if let Some(item) = ui.tab_item("Inventory") {
+            if let Some(item) = ui.tab_item("Game Data") {
                 gui.gaitem.render_debug(ui);
+                gui.game_data.render_debug(ui);
                 item.end();
             }
 

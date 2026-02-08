@@ -4,11 +4,11 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::UiExt;
 use eldenring::cs::{
-    CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule,
-    CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns,
-    ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut, ChrPhysicsMaterialInfo, EquipGameData,
-    EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData,
-    PlayerIns,
+    CSChrBehaviorDataModule, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule,
+    CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment,
+    ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut,
+    ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData,
+    ItemReplenishStateTracker, PlayerGameData, PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 
@@ -241,9 +241,13 @@ impl DebugDisplay for PlayerGameData {
             self.equipment.render_debug(ui);
         });
 
-        ui.header("Storage Box EquipInventoryData", || {
-            self.storage.render_debug(ui);
-        });
+        if let Some(storage) = self.storage.as_ref() {
+            ui.header("Storage Box EquipInventoryData", || {
+                storage.render_debug(ui);
+            });
+        } else {
+            ui.text("Storage Box EquipInventoryData: None");
+        }
     }
 }
 
@@ -261,28 +265,11 @@ impl DebugDisplay for EquipGameData {
             self.equip_item_data.render_debug(ui);
         });
 
-        ui.header("Item Replenish State Tracker", || {
-            ui.table(
-                "equip-game-data-item-replenish-state-tracker",
-                [
-                    TableColumnSetup::new("Index"),
-                    TableColumnSetup::new("Item ID"),
-                    TableColumnSetup::new("Auto Replenish"),
-                ],
-                self.item_replenish_state_tracker.entries().iter(),
-                |ui, index, item| {
-                    ui.table_next_column();
-                    ui.text(index.to_string());
-
-                    ui.table_next_column();
-                    ui.text(format!("{:?}", item.item_id));
-
-                    ui.table_next_column();
-                    ui.text(item.auto_replenish.to_string());
-                },
-            );
-        });
-        self.item_replenish_state_tracker.render_debug(ui);
+        if let Some(item_replenish_state_tracker) = self.item_replenish_state_tracker.as_ref() {
+            item_replenish_state_tracker.render_debug(ui);
+        } else {
+            ui.text("Item Replenish State Tracker: None");
+        }
     }
 }
 
@@ -430,6 +417,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Item ID"),
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
+                    TableColumnSetup::new("Is New"),
                 ],
                 normal_items.iter(),
                 |ui, index, item| {
@@ -447,6 +435,9 @@ impl DebugDisplay for EquipInventoryData {
 
                     ui.table_next_column();
                     ui.text(item.sort_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(item.is_new.to_string());
                 },
             );
         });
@@ -471,6 +462,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Item ID"),
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
+                    TableColumnSetup::new("Is New"),
                 ],
                 key_items.iter(),
                 |ui, index, item| {
@@ -488,6 +480,9 @@ impl DebugDisplay for EquipInventoryData {
 
                     ui.table_next_column();
                     ui.text(item.sort_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(item.is_new.to_string());
                 },
             );
         });
@@ -637,6 +632,10 @@ impl DebugDisplay for ChrInsModuleContainer {
             self.physics.render_debug(ui);
         });
 
+        ui.header("Behavior Data", || {
+            self.behavior_data.render_debug(ui);
+        });
+
         ui.header("Model param modifier", || {
             self.model_param_modifier.render_debug(ui);
         });
@@ -658,6 +657,68 @@ impl DebugDisplay for CSChrPhysicsModule {
 
         ui.header("Physics material", || {
             unsafe { self.slide_info.material_info.as_ref() }.render_debug(ui);
+        });
+    }
+}
+
+impl DebugDisplay for CSChrBehaviorDataModule {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Has twist modifier: {}", self.has_twist_modifier));
+        ui.text(format!(
+            "Fixed rotation direction: {}",
+            self.fixed_rotation_direction
+        ));
+        ui.text(format!("Min twist rank: {}", self.min_twist_rank));
+        ui.text(format!(
+            "HKS root motion multiplier: {}",
+            self.hks_root_motion_mult
+        ));
+        ui.text(format!("Turn speed: {}", self.turn_speed));
+        ui.text(format!(
+            "HKS animation speed multiplier: {}",
+            self.hks_animation_speed_multiplier
+        ));
+
+        ui.header("Twist modifiers", || {
+            ui.table(
+                "behavior-data-twist-modifiers",
+                [
+                    TableColumnSetup::new("ID"),
+                    TableColumnSetup::new("Target"),
+                    TableColumnSetup::new("Rank"),
+                    TableColumnSetup::new("Limits (U/D/L/R)"),
+                    TableColumnSetup::new("Minimums (U/D/L/R)"),
+                ],
+                self.twist_modifiers.iter(),
+                |ui, _i, modifier| {
+                    ui.table_next_column();
+                    ui.text(modifier.modifier_id.to_string());
+
+                    ui.table_next_column();
+                    ui.text(modifier.target_type.to_string());
+
+                    ui.table_next_column();
+                    ui.text(modifier.rank.to_string());
+
+                    ui.table_next_column();
+                    ui.text(format!(
+                        "{:.2}/{:.2}/{:.2}/{:.2}",
+                        modifier.up_limit_angle,
+                        modifier.down_limit_angle,
+                        modifier.left_limit_angle,
+                        modifier.right_limit_angle
+                    ));
+
+                    ui.table_next_column();
+                    ui.text(format!(
+                        "{:.2}/{:.2}/{:.2}/{:.2}",
+                        modifier.up_minimum_angle,
+                        modifier.down_minimum_angle,
+                        modifier.left_minimum_angle,
+                        modifier.right_minimum_angle
+                    ));
+                },
+            );
         });
     }
 }

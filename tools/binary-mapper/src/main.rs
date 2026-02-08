@@ -212,7 +212,7 @@ fn generate_rust_struct(profile: &MapperProfile) -> String {
         \n\
         /// A struct containing offsets (relative to the beginning of the executable) of\n\
         /// various addresses of structures and functions. They can be converted to a\n\
-        /// usable address using the [Pe::rva_to_va](pelite::Pe::rva_to_va) trait function\n\
+        /// usable address using the [Pe::rva_to_va](pelite::pe64::Pe::rva_to_va) trait function\n\
         /// of [Program](fromsoftware_shared::Program).\n\
         ///\n\
         /// These are populated from `mapper-profile.toml` in the root of this package\n\

@@ -10,6 +10,7 @@ pub(crate) mod fade;
 pub(crate) mod fe_man;
 pub(crate) mod field_area;
 pub(crate) mod gaitem;
+pub(crate) mod game_data_man;
 pub(crate) mod geometry;
 pub(crate) mod gparam;
 pub(crate) mod net_man;

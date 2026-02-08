@@ -9,8 +9,8 @@ use crate::CxxVec;
 use crate::fd4::FD4BasicHashString;
 use crate::param::{
     ATK_PARAM_ST, BEHAVIOR_PARAM_ST, EQUIP_PARAM_ACCESSORY_ST, EQUIP_PARAM_GOODS_ST,
-    EQUIP_PARAM_PROTECTOR_ST, EQUIP_PARAM_WEAPON_ST, EquipParam, LOD_BANK,
-    MULTI_ESTUS_FLASK_BONUS_PARAM_ST, ParamDef,
+    EQUIP_PARAM_PROTECTOR_ST, EQUIP_PARAM_WEAPON_ST, EquipParam, EquipParamStruct,
+    EquipParamStructMut, LOD_BANK, MULTI_ESTUS_FLASK_BONUS_PARAM_ST, ParamDef,
 };
 use crate::sprj::{ItemCategory, ItemId};
 
@@ -217,7 +217,7 @@ impl CSRegulationManager {
 
     /// Returns a dynamically-dispatched equipment parameter row for the given
     /// item ID, or `None` if the row doesn't exit.
-    pub fn get_equip_param(&self, id: ItemId) -> Option<&dyn EquipParam> {
+    pub fn get_equip_param(&self, id: ItemId) -> Option<EquipParamStruct<'_>> {
         use ItemCategory::*;
         match id.category() {
             Weapon => self
@@ -225,25 +225,25 @@ impl CSRegulationManager {
                 // Round to the nearest 100 in case the ID is for an upgraded
                 // weapon.
                 .get((u64::from(id.param_id()) / 100) * 100)
-                .map(|p| p as &dyn EquipParam),
+                .map(|p| p.as_enum()),
             Protector => self
                 .get_param::<EQUIP_PARAM_PROTECTOR_ST>()
                 .get(id.param_id().into())
-                .map(|p| p as &dyn EquipParam),
+                .map(|p| p.as_enum()),
             Accessory => self
                 .get_param::<EQUIP_PARAM_ACCESSORY_ST>()
                 .get(id.param_id().into())
-                .map(|p| p as &dyn EquipParam),
+                .map(|p| p.as_enum()),
             Goods => self
                 .get_param::<EQUIP_PARAM_GOODS_ST>()
                 .get(id.param_id().into())
-                .map(|p| p as &dyn EquipParam),
+                .map(|p| p.as_enum()),
         }
     }
 
     /// Returns a dynamically-dispatched mutable equipment parameter row for the
     /// given item ID, or `None` if the row doesn't exit.
-    pub fn get_equip_param_mut(&mut self, id: ItemId) -> Option<&mut dyn EquipParam> {
+    pub fn get_equip_param_mut(&mut self, id: ItemId) -> Option<EquipParamStructMut<'_>> {
         use ItemCategory::*;
         match id.category() {
             Weapon => self
@@ -251,19 +251,19 @@ impl CSRegulationManager {
                 // Round to the nearest 100 in case the ID is for an upgraded
                 // weapon.
                 .get_mut((u64::from(id.param_id()) / 100) * 100)
-                .map(|p| p as &mut dyn EquipParam),
+                .map(|p| p.as_enum_mut()),
             Protector => self
                 .get_mut_param::<EQUIP_PARAM_PROTECTOR_ST>()
                 .get_mut(id.param_id().into())
-                .map(|p| p as &mut dyn EquipParam),
+                .map(|p| p.as_enum_mut()),
             Accessory => self
                 .get_mut_param::<EQUIP_PARAM_ACCESSORY_ST>()
                 .get_mut(id.param_id().into())
-                .map(|p| p as &mut dyn EquipParam),
+                .map(|p| p.as_enum_mut()),
             Goods => self
                 .get_mut_param::<EQUIP_PARAM_GOODS_ST>()
                 .get_mut(id.param_id().into())
-                .map(|p| p as &mut dyn EquipParam),
+                .map(|p| p.as_enum_mut()),
         }
     }
 }

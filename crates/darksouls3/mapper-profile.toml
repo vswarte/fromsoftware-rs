@@ -1,4 +1,16 @@
 [[vmts]]
+class = "AppMenu::GaitemSelectBaseMenu"
+vftable = "gaitem_select_base_menu_vmt"
+
+[[vmts]]
+class = "AppMenu::GaitemSelectMenu"
+vftable = "gaitem_select_menu_vmt"
+
+[[vmts]]
+class = "AppMenu::MenuWindow"
+vftable = "menu_window_vmt"
+
+[[vmts]]
 class = "NS_SPRJ::ChrIns"
 vftable = "chr_ins_vmt"
 
@@ -9,6 +21,10 @@ vftable = "player_ins_vmt"
 [[vmts]]
 class = "NS_SPRJ::ReplayGhostIns"
 vftable = "replay_ghost_ins_vmt"
+
+[[patterns]]
+pattern = "48 8b 05 $ { ' } 48 85 c0 74 ? 80 b8 ? ? ? ? ? 0f 95 c0 c3"
+captures = ["", "app_menu_new_menu_system_ptr"]
 
 [[patterns]]
 pattern = "48 8b 0d ${ ' } 48 85 c9 74 ? 44 8b 41 20 48 8b 49 10 48 8d 54 24 40 e8"
@@ -35,6 +51,14 @@ pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 captures = ["", "global_hinstance"]
 
 [[patterns]]
+pattern = "74 ? 41 8b 16 8b c2 25 ff ff ff 0f c1 ea 1c 48 8b 35 $ { ' }"
+captures = ["", "item_get_menu_man_ptr"]
+
+[[patterns]]
+pattern = "8b d0 41 0f b6 46 08 88 44 24 20 45 8b 4e 04 44 8b c7 48 8b ce e8 $ { ' }"
+captures = ["", "item_get_menu_man_show_item"]
+
+[[patterns]]
 pattern = "[16] 48 8d 6c 24 d9 48 81 ec 00 01 00 00 48 c7 45 cf fe ff ff ff"
 captures = ["map_item_man_grant_item"]
 
@@ -45,3 +69,7 @@ captures = ["", "map_item_man_ptr"]
 [[patterns]]
 pattern = "45 33 c0 41 8d ? ? 48 83 c4 ? 5b e9 $ { ' }"
 captures = ["", "register_task"]
+ 
+[[patterns]]
+pattern = "48 8B 0D $ { ' } 33 C0 48 39 81 ? ? ? ? 0F 95 C0 C3"
+captures = ["", "sprj_menu_man_ptr"]

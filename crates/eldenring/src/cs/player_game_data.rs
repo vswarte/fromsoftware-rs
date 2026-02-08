@@ -134,7 +134,7 @@ pub struct PlayerGameData {
     pub equipment: EquipGameData,
     pub face_data: FaceData,
     /// Describes the storage box contents.
-    pub storage: OwnedPtr<EquipInventoryData>,
+    pub storage: Option<OwnedPtr<EquipInventoryData>>,
     gesture_game_data: usize,
     ride_game_data: usize,
     unk8e8: usize,
@@ -349,24 +349,34 @@ pub struct EquipGameData {
     unk60: usize,
     unk68: u32,
     pub chr_asm: ChrAsm,
-    _pad154: u32,
     pub equip_inventory_data: EquipInventoryData,
     pub equip_magic_data: OwnedPtr<EquipMagicData>,
     pub equip_item_data: EquipItemData,
     equip_gesture_data: usize,
     /// Tracker for the item replenishing from the chest
-    pub item_replenish_state_tracker: OwnedPtr<ItemReplenishStateTracker>,
+    pub item_replenish_state_tracker: Option<OwnedPtr<ItemReplenishStateTracker>>,
     pub qm_item_backup_vector: OwnedPtr<Vector<QMItemBackupVectorItem>>,
     pub equipment_entries: ChrAsmEquipEntries,
     unk3e0: usize,
     unk3e8: usize,
     pub player_game_data: NonNull<PlayerGameData>,
-    unk3f8: [u8; 0x8],
+    /// Whether this equipment data belongs to the main (local) player.
+    pub is_main_player: bool,
+    /// Result of the last attempt to add an item to the inventory
+    pub last_add_item_result: LastAddItemResult,
     /// Bitfield tracking which equipment slots have fully broken equipment
     /// Used to sync visuals of broken equipment in multiplayer
     /// (DS3 leftover)
     pub broken_equipment_slots: BrokenEquipmentSlots,
     unk404: [u8; 0xac],
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum LastAddItemResult {
+    Success = 0,
+    UniqueItemDuplicate = 2,
+    InventoryFull = 4,
 }
 
 bitfield! {
@@ -704,8 +714,12 @@ pub struct EquipInventoryDataListEntry {
     pub quantity: u32,
     /// Sort ID used to sort items by acquisition order.
     pub sort_id: u32,
-    unk10: u8,
-    _pad11: [u8; 3],
+    /// Whether the item is newly acquired and should be highlighted in the UI if
+    /// "Mark New Items" option is enabled.
+    pub is_new: bool,
+    /// [pot group] of the item, or -1 if not a pot item.
+    ///
+    /// [pot group]: crate::param::EQUIP_PARAM_GOODS_ST::pot_group_id
     pub pot_group: i32,
 }
 
