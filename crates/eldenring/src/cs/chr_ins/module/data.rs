@@ -36,7 +36,8 @@ pub struct CSChrDataModule {
     pub stamina: i32,
     pub max_stamina: i32,
     pub base_stamina: i32,
-    recoverable_hp_1: f32,
+    /// The amount of HP that can be regained using the rally effect.
+    pub recoverable_hp: f32,
     recoverable_hp_2: f32,
     pub recoverable_hp_time: f32,
     unk16c: f32,
