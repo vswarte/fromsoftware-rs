@@ -4,11 +4,7 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::UiExt;
 use eldenring::cs::{
-    CSChrBehaviorDataModule, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule,
-    CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment,
-    ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut,
-    ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData,
-    ItemReplenishStateTracker, PlayerGameData, PlayerIns,
+    CSChrBehaviorDataModule, CSChrLadderModule, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut, ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData, PlayerIns
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 
@@ -640,6 +636,10 @@ impl DebugDisplay for ChrInsModuleContainer {
             self.model_param_modifier.render_debug(ui);
         });
 
+        ui.header("Ladder", || {
+            self.ladder.render_debug(ui);
+        });
+
         ui.header("Time Act", || {
             self.time_act.render_debug(ui);
         });
@@ -647,6 +647,15 @@ impl DebugDisplay for ChrInsModuleContainer {
         ui.header("Ride", || {
             self.ride.render_debug(ui);
         });
+    }
+}
+
+impl DebugDisplay for CSChrLadderModule {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Ladder handle: {:?}", self.ladder_handle));
+        ui.text(format!("Ladder state: {:?}", self.ladder_state));
+        ui.text(format!("Top: {:?}", self.top));
+        ui.text(format!("Bottom: {:?}", self.bottom));
     }
 }
 
