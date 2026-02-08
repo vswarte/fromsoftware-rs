@@ -1,5 +1,4 @@
 use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
-use fromsoftware_shared::FromStatic;
 use hudhook::imgui::{TableColumnSetup, Ui};
 
 use super::{DebugDisplay, UiExt};
