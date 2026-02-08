@@ -1,18 +1,29 @@
+use std::str::FromStr;
+
+use hudhook::imgui::{TableColumnSetup, Ui};
+
+use debug::UiExt;
 use eldenring::cs::{
     CSChrBehaviorDataModule, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule,
     CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment,
-    ChrAsmSlot, ChrIns, ChrInsModuleContainer, ChrInsSubclass, ChrPhysicsMaterialInfo,
-    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
-    PlayerGameData, PlayerIns,
+    ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut,
+    ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData,
+    ItemReplenishStateTracker, PlayerGameData, PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
-use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use crate::display::{DebugDisplay, StatefulDebugDisplay};
 
-impl DebugDisplay for PlayerIns {
-    fn render_debug(&self, ui: &Ui) {
-        chr_ins_common_debug(&self.chr_ins, ui);
+#[derive(Default)]
+pub struct ChrInsState {
+    new_speffect: String,
+}
+
+impl StatefulDebugDisplay for PlayerIns {
+    type State = ChrInsState;
+
+    fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
+        chr_ins_common_debug(&mut self.chr_ins, ui, state);
 
         ui.header("ChrAsm", || {
             self.chr_asm.render_debug(ui);
@@ -519,16 +530,18 @@ impl DebugDisplay for EquipInventoryData {
     }
 }
 
-impl DebugDisplay for ChrIns {
-    fn render_debug(&self, ui: &Ui) {
-        match ChrInsSubclass::from(self) {
-            ChrInsSubclass::PlayerIns(player) => player.render_debug(ui),
-            _ => chr_ins_common_debug(self, ui),
+impl StatefulDebugDisplay for ChrIns {
+    type State = ChrInsState;
+
+    fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
+        match ChrInsSubclassMut::from(self) {
+            ChrInsSubclassMut::PlayerIns(player) => player.render_debug_mut(ui, state),
+            mut chr_ins => chr_ins_common_debug(chr_ins.superclass_mut(), ui, state),
         }
     }
 }
 
-fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
+fn chr_ins_common_debug(chr_ins: &mut ChrIns, ui: &Ui, state: &mut ChrInsState) {
     ui.text(format!("Team: {}", chr_ins.team_type));
     ui.text(format!("Chr Type: {:?}", chr_ins.chr_type));
     ui.text(format!("Field Ins Handle: {}", chr_ins.field_ins_handle));
@@ -557,6 +570,16 @@ fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
     ui.text(format!("TAE use item: {:?}", chr_ins.tae_queued_use_item));
 
     ui.header("Special Effect", || {
+        ui.input_text("", &mut state.new_speffect).build();
+        ui.same_line();
+        let id = i32::from_str(&state.new_speffect);
+        ui.disabled(id.is_err(), || {
+            if ui.button("Apply") {
+                chr_ins.apply_speffect(id.unwrap(), false);
+            }
+        });
+
+        let mut remove = None;
         ui.table(
             "chr-ins-special-effects",
             [
@@ -565,6 +588,7 @@ fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
                 TableColumnSetup::new("Removal timer"),
                 TableColumnSetup::new("Duration"),
                 TableColumnSetup::new("Interval Timer"),
+                TableColumnSetup::new(""),
             ],
             chr_ins.special_effect.entries(),
             |ui, _i, entry| {
@@ -582,8 +606,19 @@ fn chr_ins_common_debug(chr_ins: &ChrIns, ui: &Ui) {
 
                 ui.table_next_column();
                 ui.text(format!("{}", entry.interval_timer));
+
+                ui.table_next_column();
+                if ui.button("Remove") {
+                    // We can't directly call `chr_ins.remove_speffect` here
+                    // because `chr_ins` is already borrowed for the iteration.
+                    remove = Some(entry.param_id);
+                }
             },
         );
+
+        if let Some(speffect) = remove {
+            chr_ins.remove_speffect(speffect);
+        }
     });
 
     ui.header("Modules", || {

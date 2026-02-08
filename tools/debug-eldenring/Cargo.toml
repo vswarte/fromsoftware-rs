@@ -1,5 +1,5 @@
 [package]
-name = "debug"
+name = "debug-eldenring"
 version.workspace = true
 edition.workspace = true
 repository.workspace = true
@@ -7,15 +7,16 @@ license.workspace = true
 publish = false
 
 [dependencies]
+debug.workspace = true
 fromsoftware-shared.workspace = true
 eldenring.workspace = true
 windows.workspace = true
 pelite.workspace = true
 tracing.workspace = true
-tracing-subscriber = "0.3.20"
-tracing-appender = "0.2.3"
-tracing-panic = "0.1"
-libhotpatch = "1.1.0"
+libhotpatch.workspace = true
+tracing-appender.workspace = true
+tracing-panic.workspace = true
+tracing-subscriber.workspace = true
 
 [dependencies.hudhook]
 git = "https://github.com/veeenu/hudhook"

@@ -1,15 +1,17 @@
-use eldenring::cs::{CSWorldGeomIns, CSWorldGeomMan, CSWorldGeomManBlockData};
 use hudhook::imgui::Ui;
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::cs::{CSWorldGeomIns, CSWorldGeomMan, CSWorldGeomManBlockData};
+
+use super::DebugDisplay;
 
 impl DebugDisplay for CSWorldGeomMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list(
-            &format!("Loaded blocks: {}", self.blocks.len()),
+            format!("Loaded blocks: {}", self.blocks.len()),
             self.blocks.iter(),
             |ui, _i, block| {
-                ui.header(&format!("{}", block.block_id), || {
+                ui.header(format!("{}", block.block_id), || {
                     block.data.render_debug(ui);
                 });
             },
@@ -32,7 +34,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
         ));
 
         ui.list(
-            &format!("Geometry Vector ({})", self.geom_ins_vector.len()),
+            format!("Geometry Vector ({})", self.geom_ins_vector.len()),
             self.geom_ins_vector.items(),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
@@ -47,7 +49,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 .unwrap();
 
                 ui.header(
-                    &format!(
+                    format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
                         geometry_ins.field_ins_handle.block_id,
@@ -62,7 +64,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
         );
 
         ui.list(
-            &format!("Sign Geometry Vector ({})", self.sos_sign_geometry.len()),
+            format!("Sign Geometry Vector ({})", self.sos_sign_geometry.len()),
             self.sos_sign_geometry.items(),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
@@ -77,7 +79,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 .unwrap();
 
                 ui.header(
-                    &format!(
+                    format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
                         geometry_ins.field_ins_handle.block_id,

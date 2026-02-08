@@ -1,7 +1,9 @@
-use eldenring::cs::{CSCam, CSCamera};
 use hudhook::imgui::Ui;
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::cs::{CSCam, CSCamera};
+
+use crate::display::DebugDisplay;
 
 impl DebugDisplay for CSCamera {
     fn render_debug(&self, ui: &Ui) {

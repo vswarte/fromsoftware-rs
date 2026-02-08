@@ -1,0 +1,24 @@
+pub(crate) mod area_time;
+pub(crate) mod auto_invade_point;
+pub(crate) mod bullet_manager;
+pub(crate) mod camera;
+pub(crate) mod chr;
+pub(crate) mod dlio;
+pub(crate) mod event_flag;
+pub(crate) mod event_man;
+pub(crate) mod fade;
+pub(crate) mod fe_man;
+pub(crate) mod field_area;
+pub(crate) mod gaitem;
+pub(crate) mod game_data_man;
+pub(crate) mod geometry;
+pub(crate) mod gparam;
+pub(crate) mod net_man;
+pub(crate) mod param;
+pub(crate) mod session_manager;
+pub(crate) mod sfx;
+pub(crate) mod shared;
+pub(crate) mod task;
+pub(crate) mod world_chr_man;
+
+debug::define_debug_display!();

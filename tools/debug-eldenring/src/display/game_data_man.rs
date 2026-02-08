@@ -1,7 +1,9 @@
-use eldenring::cs::{CSGaitemGameData, GameDataMan, GameSettings, GameVersionData};
 use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::cs::{CSGaitemGameData, GameDataMan, GameSettings, GameVersionData};
+
+use super::DebugDisplay;
 
 impl DebugDisplay for GameDataMan {
     fn render_debug(&self, ui: &Ui) {
@@ -113,7 +115,7 @@ impl DebugDisplay for GameDataMan {
             "Player Game Data List",
             self.player_game_data_list.iter(),
             |ui, i, item| {
-                ui.header(&format!("Slot {}", i), || {
+                ui.header(format!("Slot {}", i), || {
                     item.render_debug(ui);
                 });
             },
@@ -158,7 +160,7 @@ impl DebugDisplay for GameDataMan {
             self.session_player_game_data_list.iter(),
             |ui, i, item| {
                 if let Some(data) = item {
-                    ui.header(&format!("Slot {}", i), || {
+                    ui.header(format!("Slot {}", i), || {
                         data.render_debug(ui);
                     });
                 }

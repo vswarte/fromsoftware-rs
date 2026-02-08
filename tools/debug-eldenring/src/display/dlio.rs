@@ -1,7 +1,9 @@
-use eldenring::dlio::DLFileDeviceManager;
 use hudhook::imgui::{TableColumnSetup, Ui};
 
-use super::{DebugDisplay, UiExt};
+use debug::UiExt;
+use eldenring::dlio::DLFileDeviceManager;
+
+use crate::display::DebugDisplay;
 
 impl DebugDisplay for DLFileDeviceManager {
     fn render_debug(&self, ui: &Ui) {

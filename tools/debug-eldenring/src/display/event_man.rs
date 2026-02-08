@@ -1,12 +1,13 @@
+use hudhook::imgui::Ui;
+
+use debug::UiExt;
 use eldenring::cs::CSEventManImp;
 use eldenring::cs::CSSosSignMan;
 use eldenring::cs::DisplayGhostData;
 use eldenring::cs::PhantomJoinData;
 use eldenring::cs::SosSignData;
 
-use hudhook::imgui::Ui;
-
-use super::{DebugDisplay, UiExt};
+use super::DebugDisplay;
 
 impl DebugDisplay for CSEventManImp {
     fn render_debug(&self, ui: &Ui) {
@@ -24,7 +25,7 @@ impl DebugDisplay for CSEventManImp {
 impl DebugDisplay for CSSosSignMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Signs", self.signs.iter(), |ui, _i, entry| {
-            ui.header(&format!("Sign {}", entry.sign_id), || {
+            ui.header(format!("Sign {}", entry.sign_id), || {
                 entry.sign_data.render_debug(ui);
             });
         });
@@ -43,7 +44,7 @@ impl DebugDisplay for CSSosSignMan {
             "Join Data",
             self.join_data.iter().map(|e| unsafe { e.as_ref() }),
             |ui, _i, entry| {
-                ui.header(&format!("Join Data (Sign ID: {})", entry.sign_id), || {
+                ui.header(format!("Join Data (Sign ID: {})", entry.sign_id), || {
                     entry.render_debug(ui);
                 });
             },
