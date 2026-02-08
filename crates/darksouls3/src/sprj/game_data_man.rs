@@ -13,7 +13,12 @@ pub struct GameDataMan {
     _trophy_equip_data: usize,
     pub main_player_game_data: OwnedPtr<PlayerGameData>,
     pub network_players: OwnedPtr<[PlayerGameData; 5]>,
-    _unk20: [u8; 0x38],
+    _unk20: [u8; 0x20],
+
+    /// Information about the player's current bloodstain.
+    pub bloodstain: OwnedPtr<GameDataManBloodstain>,
+
+    _unk48: [u8; 0x10],
     _game_settings: usize,
     _menu_system_save_load: usize,
     _profile_summary: usize,
@@ -67,12 +72,44 @@ impl FromStatic for GameDataMan {
     }
 }
 
+#[repr(C)]
+pub struct GameDataManBloodstain {
+    /// The coordinates of the bloodstain.
+    pub coordinates: [f32; 3],
+
+    _unk0c: f32,
+    _unk10: f32,
+    _unk14: f32,
+    _unk18: f32,
+    _unk1c: f32,
+    _unk20: f32,
+    _unk24: f32,
+    _unk28: f32,
+    _unk2c: f32,
+    _unk30: i32,
+    _unk34: i32,
+
+    /// The number of souls in the bloodstain, or -1 if there is no bloodstain.
+    pub souls: i32,
+
+    _unk3c: i32,
+    _unk40: u8,
+}
+
+impl GameDataManBloodstain {
+    /// Whether there's currently a collectable bloodstain in the world.
+    pub fn exists(&self) -> bool {
+        self.souls > -1
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn proper_sizes() {
+        assert_eq!(0x44, size_of::<GameDataManBloodstain>());
         assert_eq!(0x130, size_of::<GameDataMan>());
     }
 }
