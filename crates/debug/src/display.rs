@@ -63,7 +63,7 @@ macro_rules! define_debug_display {
                         ::debug::UiExt::header(ui, &T::name(), || {
                             // Render this as a text input so it's easy to
                             // copy/paste the address into a debugger.
-                            let mut address = format!("{self:p}");
+                            let mut address = format!("{instance:p}");
                             let label = format!("{} address", T::name());
                             ui.input_text(&label, &mut address).read_only(true).build();
 
