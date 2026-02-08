@@ -687,6 +687,16 @@ checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
 [[package]]
 name = "nightreign"
 version = "0.12.0"
+dependencies = [
+ "bitfield",
+ "cxx-stl",
+ "encoding_rs",
+ "fromsoftware-shared",
+ "pelite",
+ "thiserror",
+ "vtable-rs",
+ "windows",
+]
 
 [[package]]
 name = "no-std-compat"
@@ -699,6 +709,14 @@ name = "nonmax"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "610a5acd306ec67f907abe5567859a3c693fb9886eb1f012ab8f2a47bef3db51"
+
+[[package]]
+name = "nr-fall-damage"
+version = "0.12.0"
+dependencies = [
+ "fromsoftware-shared",
+ "nightreign",
+]
 
 [[package]]
 name = "nu-ansi-term"

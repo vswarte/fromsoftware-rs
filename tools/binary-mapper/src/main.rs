@@ -28,6 +28,8 @@ enum BinaryMapper {
     EldenRing(EldenRingArgs),
     #[command(name = "ds3")]
     DarkSoulsIII(DarkSoulsIIIArgs),
+    #[command(name = "nr")]
+    Nightreign(NightreignArgs),
 }
 
 /// Maps a single EXE to a single output and prints it to stdout.
@@ -68,6 +70,22 @@ struct DarkSoulsIIIArgs {
 
     /// Root for the project folder.
     #[arg(long, env("MAPPER_DS3_PROJECT_ROOT"))]
+    project_root: Option<PathBuf>,
+}
+
+/// Shortcut to map all files for Elden Ring.
+#[derive(Args)]
+struct NightreignArgs {
+    /// Path to the worldwide EXE.
+    #[arg(long, env("MAPPER_NR_WW_EXE"))]
+    ww_exe: PathBuf,
+
+    // /// Path to the Japanese EXE.
+    // #[arg(long, env("MAPPER_NR_JP_EXE"))]
+    // jp_exe: PathBuf,
+
+    /// Root for the project folder.
+    #[arg(long, env("MAPPER_ER_PROJECT_ROOT"))]
     project_root: Option<PathBuf>,
 }
 
@@ -136,6 +154,27 @@ fn main() {
             )
             .unwrap();
             cargo_fmt(&ds3);
+        }
+        BinaryMapper::Nightreign(args) => {
+            let nr = args
+                .project_root
+                .inspect(|r| {
+                    assert!(r.exists(), "Project root does not exist: {}", r.display());
+                })
+                .unwrap_or_else(|| game_crate_path("nightreign"));
+            let profile = read_profile(nr.join("mapper-profile.toml"));
+            fs::write(nr.join("src/rva/bundle.rs"), generate_rust_struct(&profile)).unwrap();
+            fs::write(
+                nr.join("src/rva/rva_ww.rs"),
+                generate_rust_instance(&map_results(&profile, &args.ww_exe)),
+            )
+            .unwrap();
+            // fs::write(
+            //     nr.join("src/rva/rva_jp.rs"),
+            //     generate_rust_instance(&map_results(&profile, &args.jp_exe)),
+            // )
+            // .unwrap();
+            cargo_fmt(&nr);
         }
     }
 }
