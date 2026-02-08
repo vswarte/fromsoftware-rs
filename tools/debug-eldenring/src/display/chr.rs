@@ -4,7 +4,11 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::UiExt;
 use eldenring::cs::{
-    CSChrBehaviorDataModule, CSChrLadderModule, CSChrModelParamModifierModule, CSChrPhysicsModule, CSChrRideModule, CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut, ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker, PlayerGameData, PlayerIns
+    CSChrBehaviorDataModule, CSChrLadderModule, CSChrModelParamModifierModule, CSChrPhysicsModule,
+    CSChrRideModule, CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries,
+    ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut,
+    ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData,
+    ItemReplenishStateTracker, PlayerGameData, PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 
