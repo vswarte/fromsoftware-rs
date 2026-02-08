@@ -51,6 +51,12 @@ unsafe impl IsEmpty for WorldBlockChr {
 }
 
 impl WorldBlockChr {
+    /// Returns this information about this block.
+    pub fn info(&self) -> &WorldBlockInfo {
+        // Safety: The game ensures this outlives [self].
+        unsafe { self.world_block_info.as_ref() }
+    }
+
     /// Returns a slice over all the mappings in this block.
     pub fn mappings(&self) -> &[WorldBlockMapping] {
         unsafe { slice::from_raw_parts(self.mappings.as_ptr(), self.mappings_length as usize) }

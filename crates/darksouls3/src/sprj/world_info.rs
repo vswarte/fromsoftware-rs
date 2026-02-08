@@ -136,7 +136,7 @@ impl WorldAreaInfo {
 
 bitfield! {
     /// An ID that contains information about the block's event locations.
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
     pub struct BlockId(u32);
     impl Debug;
 

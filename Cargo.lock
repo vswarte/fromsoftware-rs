@@ -66,7 +66,7 @@ name = "apply-speffect"
 version = "0.12.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
 ]
 
 [[package]]
@@ -96,7 +96,7 @@ name = "binary-mapper"
 version = "0.12.0"
 dependencies = [
  "clap",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "memmap",
  "pelite",
  "rayon",
@@ -132,9 +132,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "bitflags"
-version = "2.9.2"
+version = "2.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a65b545ab31d687cff52899d4890855fec459eb6afe0da6417b8a18da87aa29"
+checksum = "812e12b5285cc515a9c72a5c1d3b6d46a19dac5acfef5265968c166106e31dd3"
 
 [[package]]
 name = "bumpalo"
@@ -274,13 +274,47 @@ dependencies = [
  "bitfield",
  "cxx-stl",
  "encoding_rs",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "pelite",
  "regex",
  "serde",
  "serde_derive",
  "thiserror",
  "vtable-rs",
+ "windows",
+]
+
+[[package]]
+name = "darksouls3"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "46d3df52b6a59631a6032d09b76637c8b0ef9b289596c8a174bba1badf450020"
+dependencies = [
+ "bitfield",
+ "cxx-stl",
+ "encoding_rs",
+ "fromsoftware-shared 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pelite",
+ "regex",
+ "serde",
+ "serde_derive",
+ "thiserror",
+ "vtable-rs",
+ "windows",
+]
+
+[[package]]
+name = "darksouls3-extra"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f8fec68c565cd9e94073f1c3f13754001dc937737f0bb54820e2cebf54c301d8"
+dependencies = [
+ "bitflags 2.10.0",
+ "darksouls3 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fromsoftware-shared 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ilhook",
+ "pelite",
+ "thiserror",
  "windows",
 ]
 
@@ -297,9 +331,27 @@ dependencies = [
 name = "debug"
 version = "0.12.0"
 dependencies = [
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "hudhook",
  "libhotpatch",
+ "tracing",
+ "tracing-appender",
+ "tracing-panic",
+ "tracing-subscriber",
+ "windows",
+]
+
+[[package]]
+name = "debug-darksouls3"
+version = "0.12.0"
+dependencies = [
+ "darksouls3 0.12.0",
+ "darksouls3-extra",
+ "debug",
+ "fromsoftware-shared 0.12.0",
+ "hudhook",
+ "libhotpatch",
+ "pelite",
  "tracing",
  "tracing-appender",
  "tracing-panic",
@@ -313,7 +365,7 @@ version = "0.12.0"
 dependencies = [
  "debug",
  "eldenring",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "hudhook",
  "libhotpatch",
  "pelite",
@@ -329,7 +381,7 @@ name = "debug-line"
 version = "0.12.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "glam",
 ]
 
@@ -361,7 +413,7 @@ dependencies = [
  "bitfield",
  "cxx-stl",
  "encoding_rs",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "glam",
  "pelite",
  "regex",
@@ -422,7 +474,23 @@ name = "fromsoftware-shared"
 version = "0.12.0"
 dependencies = [
  "from-singleton",
- "fromsoftware-shared-macros",
+ "fromsoftware-shared-macros 0.12.0",
+ "glam",
+ "pelite",
+ "thiserror",
+ "undname",
+ "vtable-rs",
+ "windows",
+]
+
+[[package]]
+name = "fromsoftware-shared"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c175c296b9d827c839de32a0d9107d6420d1e145175189a7f6957ce4d1506348"
+dependencies = [
+ "from-singleton",
+ "fromsoftware-shared-macros 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "glam",
  "pelite",
  "thiserror",
@@ -434,6 +502,18 @@ dependencies = [
 [[package]]
 name = "fromsoftware-shared-macros"
 version = "0.12.0"
+dependencies = [
+ "inflections",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "fromsoftware-shared-macros"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83a0ee48757ea237db11eeb52b1814493422ec5304eb569a82271df9f8eccf30"
 dependencies = [
  "inflections",
  "proc-macro2",
@@ -496,7 +576,7 @@ name = "hudhook"
 version = "0.8.1"
 source = "git+https://github.com/veeenu/hudhook#142348c081e78cd0a37b0a78b7437f9c9078ca4f"
 dependencies = [
- "bitflags 2.9.2",
+ "bitflags 2.10.0",
  "cc",
  "gl_generator",
  "imgui",
@@ -505,6 +585,29 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "windows",
+]
+
+[[package]]
+name = "iced-x86"
+version = "1.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c447cff8c7f384a7d4f741cfcff32f75f3ad02b406432e8d6c878d56b1edf6b"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
+name = "ilhook"
+version = "2.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c40cf69be52a2e8e2a375673ecfde90b7790aa9d8aa55dd463dc7e8faacb89c9"
+dependencies = [
+ "bitflags 2.10.0",
+ "iced-x86",
+ "libc",
+ "regex",
+ "thiserror",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -553,7 +656,7 @@ name = "invoke-esd"
 version = "0.12.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
  "windows",
 ]
 
@@ -825,7 +928,7 @@ name = "present-action-button"
 version = "0.12.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
 ]
 
 [[package]]
@@ -888,7 +991,7 @@ version = "0.5.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5407465600fb0548f1442edf71dd20683c6ed326200ace4b1ef0763521bb3b77"
 dependencies = [
- "bitflags 2.9.2",
+ "bitflags 2.10.0",
 ]
 
 [[package]]
@@ -948,7 +1051,7 @@ version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd15f8a2c5551a84d56efdc1cd049089e409ac19a3072d5037a17fd70719ff3e"
 dependencies = [
- "bitflags 2.9.2",
+ "bitflags 2.10.0",
  "errno",
  "libc",
  "linux-raw-sys",
@@ -1016,7 +1119,7 @@ name = "spawn-asset"
 version = "0.12.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared",
+ "fromsoftware-shared 0.12.0",
 ]
 
 [[package]]
@@ -1241,7 +1344,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39c24bc2141770ebc4a3703143f0cbdf275ed8d03cf7f5dda754c2f60c758ed4"
 dependencies = [
  "arrayvec",
- "bitflags 2.9.2",
+ "bitflags 2.10.0",
  "bumpalo",
  "nonmax",
  "smallvec",
