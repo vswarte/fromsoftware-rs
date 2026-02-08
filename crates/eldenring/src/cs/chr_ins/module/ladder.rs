@@ -11,7 +11,8 @@ pub struct CSChrLadderModule {
     pub owner: NonNull<ChrIns>,
     /// FieldInsHandle of the ladders GeomIns.
     pub ladder_handle: FieldInsHandle,
-    pub ladder_state: LadderState,
+    /// Animation and control state for the currently ongoing ladder interaction. 
+    pub state: LadderState,
     /// Havok coordinates of the ladders top.
     pub top: F32Vector4,
     /// Havok coordinates of the ladders bottom.
