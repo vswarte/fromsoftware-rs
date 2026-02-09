@@ -172,21 +172,21 @@ pub struct SoloParamHolder {
     pub res_cap_count: u32,
     /// The list can hold up to 8 param res caps, but the game only seems to use first.
     /// Supposedly this is used for some versioning.
-    res_cap_list: [Option<OwnedPtr<ParamResCap>>; 8],
+    res_caps: [Option<OwnedPtr<ParamResCap>>; 8],
 }
 
 impl SoloParamHolder {
     pub fn get_res_cap(&self, index: usize) -> Option<&ParamResCap> {
-        self.res_cap_list.get(index)?.as_deref()
+        self.res_caps.get(index)?.as_deref()
     }
     pub fn get_res_cap_mut(&mut self, index: usize) -> Option<&mut ParamResCap> {
-        self.res_cap_list.get_mut(index)?.as_deref_mut()
+        self.res_caps.get_mut(index)?.as_deref_mut()
     }
     pub fn get_res_caps(&self) -> impl Iterator<Item = &ParamResCap> {
-        self.res_cap_list.iter().filter_map(|opt| opt.as_deref())
+        self.res_caps.iter().filter_map(|opt| opt.as_deref())
     }
     pub fn get_res_caps_mut(&mut self) -> impl Iterator<Item = &mut ParamResCap> {
-        self.res_cap_list
+        self.res_caps
             .iter_mut()
             .filter_map(|opt| opt.as_deref_mut())
     }
