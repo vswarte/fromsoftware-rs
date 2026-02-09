@@ -1,0 +1,28 @@
+[package]
+name = "debug-darksouls3"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+debug.workspace = true
+fromsoftware-shared.workspace = true
+darksouls3.workspace = true
+windows.workspace = true
+libhotpatch.workspace = true
+pelite.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tracing-appender.workspace = true
+tracing-panic.workspace = true
+darksouls3-extra = "0.1.0"
+
+[dependencies.hudhook]
+git = "https://github.com/veeenu/hudhook"
+features = [
+    "imgui-tables-api"
+]
+
+[lib]
+crate-type = ["cdylib"]
