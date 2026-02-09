@@ -67,12 +67,38 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
             ),*
         }
 
+        impl #enum_<'_> {
+            /// Converts an enum into a dynamically-dispatched reference to the
+            /// underlying parameter, so that its shared members can be accessed
+            /// without knowing its specific type.
+            pub fn as_dyn(&self) -> &dyn #trait_name {
+                match self {
+                    #(
+                        #enum_::#structs(param) => *param
+                    ),*
+                }
+            }
+        }
+
         /// A mutable enum of possible structs that [#trait_name] can be.
         pub enum #enum_mut<'a> {
             #(
                 #[allow(non_camel_case_types)]
                 #structs(&'a mut #structs)
             ),*
+        }
+
+        impl #enum_mut<'_> {
+            /// Converts an enum into a dynamically-dispatched reference to the
+            /// underlying parameter, so that its shared members can be accessed
+            /// without knowing its specific type.
+            pub fn as_dyn(&mut self) -> &mut dyn #trait_name {
+                match self {
+                    #(
+                        #enum_mut::#structs(param) => *param
+                    ),*
+                }
+            }
         }
     }))
 }

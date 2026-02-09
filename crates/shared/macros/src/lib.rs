@@ -111,11 +111,19 @@ pub fn singleton(args: TokenStream, input: TokenStream) -> TokenStream {
 ///   EQUIP_PARAM_WEAPON_ST(&'a EQUIP_PARAM_WEAPON_ST),
 /// }
 ///
+/// impl EquipParamStruct<'_> {
+///   pub fn as_dyn(&self) -> &dyn EquipParam;
+/// }
+///
 /// pub enum EquipParamStructMut<'a> {
 ///   EQUIP_PARAM_ACCESSORY_ST(&'a mut EQUIP_PARAM_ACCESSORY_ST),
 ///   EQUIP_PARAM_GOODS_ST(&'a mut EQUIP_PARAM_GOODS_ST),
 ///   EQUIP_PARAM_PROTECTOR_ST(&'a mut EQUIP_PARAM_PROTECTOR_ST),
 ///   EQUIP_PARAM_WEAPON_ST(&'a mut EQUIP_PARAM_WEAPON_ST),
+/// }
+///
+/// impl EquipParamStructMut<'_> {
+///   pub fn as_dyn(&mut self) -> &mut dyn EquipParam;
 /// }
 /// ```
 ///
