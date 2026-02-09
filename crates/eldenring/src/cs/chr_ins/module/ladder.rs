@@ -13,7 +13,7 @@ pub struct CSChrLadderModule {
     pub ladder_handle: FieldInsHandle,
     /// Animation and control state for the currently ongoing ladder interaction. 
     pub state: LadderState,
-    /// Havok coordinates of the ladders top.
+    /// Havok coordinates of the ladder's top.
     pub top: F32Vector4,
     /// Havok coordinates of the ladders bottom.
     pub bottom: F32Vector4,
