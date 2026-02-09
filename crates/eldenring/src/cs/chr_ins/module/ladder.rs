@@ -15,7 +15,7 @@ pub struct CSChrLadderModule {
     pub state: LadderState,
     /// Havok coordinates of the ladder's top.
     pub top: F32Vector4,
-    /// Havok coordinates of the ladders bottom.
+    /// Havok coordinates of the ladder's bottom.
     pub bottom: F32Vector4,
     unk40: u8,
     unk44: u32,
