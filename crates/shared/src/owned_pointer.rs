@@ -53,5 +53,11 @@ impl<T> fmt::Debug for OwnedPtr<T> {
     }
 }
 
+impl<T> fmt::Pointer for OwnedPtr<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        fmt::Pointer::fmt(&self.0, f)
+    }
+}
+
 unsafe impl<T> Send for OwnedPtr<T> {}
 unsafe impl<T> Sync for OwnedPtr<T> where T: Sync {}
