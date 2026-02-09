@@ -312,7 +312,7 @@ impl SoloParamRepository {
     /// Get solo param (regulation.bin) row by param type and row index.
     ///
     /// **IMPORTANT**: row index is NOT the same as param ID, use this when you already know the index with mapping like
-    /// [SoloParamRepository::wep_reinforce_tree] or [SoloParamRepository::buddy_stone_entity_ids].
+    /// [SoloParamRepository::wep_reinforces] or [SoloParamRepository::buddy_stone_entity_ids].
     pub fn get_row_by_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::UnderlyingType> {
         let holder = self.solo_param_holders.get(P::INDEX as usize)?;
         let res_cap = holder.get_res_cap(0)?;
@@ -329,7 +329,7 @@ impl SoloParamRepository {
     /// Get mutable solo param (regulation.bin) row by param type and row index.
     ///
     /// **IMPORTANT**: row index is NOT the same as param ID, use this when you already know the index with mapping like
-    /// [SoloParamRepository::wep_reinforce_tree] or [SoloParamRepository::buddy_stone_entity_ids].
+    /// [SoloParamRepository::wep_reinforces] or [SoloParamRepository::buddy_stone_entity_ids].
     ///
     /// # Safety
     ///
