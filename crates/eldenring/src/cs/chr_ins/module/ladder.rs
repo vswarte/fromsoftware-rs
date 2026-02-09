@@ -22,8 +22,8 @@ pub struct CSChrLadderModule {
     flags: u8,
 }
 
-/// Left and right are viewed from the ladders perspective (characters front) rather than
-/// from the characters back.
+/// Left and right are viewed from the ladder's perspective (character's front) rather than
+/// from the character's back.
 /// When moving up or down the ladder your character starts alternating between left and right with
 /// every step.
 ///
