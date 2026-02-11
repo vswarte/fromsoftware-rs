@@ -8,6 +8,7 @@ mod data;
 mod event;
 mod fall;
 mod grass_hit;
+mod ladder;
 mod material;
 mod model_param_modifier;
 mod physics;
@@ -26,6 +27,7 @@ pub use data::*;
 pub use event::*;
 pub use fall::*;
 pub use grass_hit::*;
+pub use ladder::*;
 pub use material::*;
 pub use model_param_modifier::*;
 pub use physics::*;
@@ -54,7 +56,7 @@ pub struct ChrInsModuleContainer {
     /// Describes the characters physics-related properties.
     pub physics: OwnedPtr<CSChrPhysicsModule>,
     pub fall: OwnedPtr<CSChrFallModule>,
-    ladder: usize,
+    pub ladder: OwnedPtr<CSChrLadderModule>,
     pub action_request: OwnedPtr<CSChrActionRequestModule>,
     pub throw: OwnedPtr<CSChrThrowModule>,
     hitstop: usize,
