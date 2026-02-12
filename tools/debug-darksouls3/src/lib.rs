@@ -49,6 +49,7 @@ struct DarkSouls3DebugGui {
 
     // Resource
     params: StaticDebugger<CSRegulationManager>,
+    solo_params: StaticDebugger<SoloParamRepository>,
 }
 
 impl DarkSouls3DebugGui {
@@ -64,6 +65,7 @@ impl DarkSouls3DebugGui {
             new_menu_system: Default::default(),
             item_get_menu_man: Default::default(),
             params: Default::default(),
+            solo_params: Default::default(),
         }
     }
 }
@@ -132,6 +134,7 @@ unsafe fn render_live_reload(gui: &mut DarkSouls3DebugGui, ui: &mut Ui) {
 
             if let Some(item) = ui.tab_item("Resource") {
                 gui.params.render_debug(ui);
+                gui.solo_params.render_debug(ui);
                 item.end();
             }
 
