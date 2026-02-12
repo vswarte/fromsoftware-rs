@@ -163,6 +163,10 @@ class = "CS::OpenFieldChrSet"
 vftable = "open_field_chr_set_vmt"
 
 [[vmts]]
+class = "CS::ParamResCap"
+vftable = "param_res_cap_vmt"
+
+[[vmts]]
 class = "CS::PlayerIns"
 vftable = "player_ins_vmt"
 

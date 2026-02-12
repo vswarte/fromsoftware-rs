@@ -41,15 +41,9 @@ pub struct FD4ResCap {
 /// Source of name: RTTI
 #[repr(C)]
 #[derive(Superclass, Subclass)]
-pub struct FD4ResRep<T>
-where
-    T: Subclass<FD4ResCap>,
-{
+pub struct FD4ResRep {
     /// Repositories themselves inherit from ResCaps.
     pub res_cap: FD4ResCap,
-
-    /// Holds a set of ResCaps wrapping T.
-    pub res_cap_holder: FD4ResCapHolder<T>,
 }
 
 /// Represents a collection of ResCaps/FileCaps.
