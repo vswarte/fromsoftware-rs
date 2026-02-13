@@ -10,7 +10,7 @@ use shared::OwnedPtr;
 
 #[repr(C)]
 /// Source of name: RTTI
-pub struct CSSosSignMan {
+pub struct SosSignMan {
     vftable: usize,
     /// Tree of the sign entries
     pub signs: Tree<SignTreeEntry>,
@@ -26,7 +26,9 @@ pub struct CSSosSignMan {
     pub join_data: DoublyLinkedList<NonNull<PhantomJoinData>>,
     /// Completely unused, no reads or writes other then initialization and destruction
     unk70: DoublyLinkedList<[u8; 0x28]>,
-    unk88: [u8; 0x8],
+    unk88: u8,
+    /// Whether the player is currently in the rescue by red hunter or not.
+    pub is_in_resque: bool,
     display_ghost: usize,
     timer: FD4Time,
     /// Param ID for [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST], incremented with each level and capped at 10

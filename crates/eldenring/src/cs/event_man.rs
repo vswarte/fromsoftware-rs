@@ -1,10 +1,13 @@
 use std::ptr::NonNull;
 
-use shared::{FromStatic, OwnedPtr};
+use shared::{F32Vector3, FromStatic, OwnedPtr};
 
-use crate::cs::WorldAreaTime;
+use crate::{
+    DoublyLinkedList,
+    cs::{BlockId, MultiplayType, SummonParamType, WorldAreaTime},
+};
 
-use super::CSSosSignMan;
+use super::SosSignMan;
 
 #[shared::singleton("CSEventMan")]
 #[repr(C)]
@@ -26,7 +29,7 @@ pub struct CSEventManImp {
     obj_act_exec: usize,
     unk78: usize,
     bloodstain: usize,
-    script: usize,
+    pub script: OwnedPtr<CSEventScriptEventInfo>,
     corpse: usize,
     unk98: usize,
     generator: usize,
@@ -43,12 +46,39 @@ pub struct CSEventManImp {
 }
 
 #[repr(C)]
+pub struct CSEventScriptEventInfo {
+    vftable: usize,
+    pub event_info_by_block_id: DoublyLinkedList<OwnedPtr<EventInfoEntry>>,
+}
+
+#[repr(C)]
+pub struct EventInfoEntry {
+    pub block_id: BlockId,
+    pub event_ids: DoublyLinkedList<u32>,
+}
+#[repr(C)]
+pub struct CSEventSosSignData {
+    pub sign_position: F32Vector3,
+    pub sign_rotation: F32Vector3,
+    pub multiplay_type: MultiplayType,
+    unk19: u8,
+    pub is_sign_active: bool,
+    pub is_match_area_sign: bool,
+    pub is_near_far_sign: bool,
+    unk20: usize,
+    unk28: usize,
+}
+
+#[repr(C)]
 pub struct CSEventSosSignCtrl {
     vftable: usize,
-    unk8: [u8; 0x40],
-    pub sos_sign_man: Option<NonNull<CSSosSignMan>>,
-    unk50: u32,
-    unk54: u32,
+    unk8: [u8; 0x8],
+    pub data: CSEventSosSignData,
+    sign_sfx: usize,
+    pub sos_sign_man: Option<NonNull<SosSignMan>>,
+    /// Character current summon param type
+    pub summon_param_type: SummonParamType,
+    unk54: i32,
 }
 
 #[repr(C)]

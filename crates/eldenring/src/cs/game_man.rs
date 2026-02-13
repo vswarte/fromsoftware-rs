@@ -14,7 +14,8 @@ pub struct GameMan {
     vftable: usize,
     unk8: usize,
     pub warp_requested: bool,
-    unk14: BlockId,
+    /// Target block ID for `MoveMapStep` to load/warp to.
+    pub move_map_target: BlockId,
     unk18: BlockId,
     unk1c: [u8; 0x4],
     /// Backup of local time when player is in someone else's world.
