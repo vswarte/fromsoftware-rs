@@ -25,6 +25,8 @@ pub struct FD4StepTemplateBase<TStates: StepperStates, TSubject> {
     unk60: i8,
     unk61: bool,
     unk68: DLString,
+    /// State label seemingly used for debug tooling.
+    /// Examples: "NotExecuting", "State Finished.(No StepMethod is Executing.)"
     pub debug_state_label: PCWSTR,
     unka0: bool,
     unka4: i32,
