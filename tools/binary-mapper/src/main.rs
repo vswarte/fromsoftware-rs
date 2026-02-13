@@ -28,6 +28,8 @@ enum BinaryMapper {
     EldenRing(EldenRingArgs),
     #[command(name = "ds3")]
     DarkSoulsIII(DarkSoulsIIIArgs),
+    #[command(name = "sdt")]
+    Sekiro(SekiroArgs),
 }
 
 /// Maps a single EXE to a single output and prints it to stdout.
@@ -68,6 +70,18 @@ struct DarkSoulsIIIArgs {
 
     /// Root for the project folder.
     #[arg(long, env("MAPPER_DS3_PROJECT_ROOT"))]
+    project_root: Option<PathBuf>,
+}
+
+/// Shortcut to map all files for Sekiro.
+#[derive(Args)]
+struct SekiroArgs {
+    /// The EXE for patch ??? (Japenese or worldwide, either workds).
+    #[arg(long, env("MAPPER_SDT_EXE"))]
+    exe: PathBuf,
+
+    /// Root for the project folder.
+    #[arg(long, env("MAPPER_SDT_PROJECT_ROOT"))]
     project_root: Option<PathBuf>,
 }
 
@@ -136,6 +150,26 @@ fn main() {
             )
             .unwrap();
             cargo_fmt(&ds3);
+        }
+        BinaryMapper::Sekiro(args) => {
+            let sdt = args
+                .project_root
+                .inspect(|r| {
+                    assert!(r.exists(), "Project root does not exist: {}", r.display());
+                })
+                .unwrap_or_else(|| game_crate_path("sekiro"));
+            let profile = read_profile(sdt.join("mapper-profile.toml"));
+            fs::write(
+                sdt.join("src/rva/bundle.rs"),
+                generate_rust_struct(&profile),
+            )
+            .unwrap();
+            fs::write(
+                sdt.join("src/rva/rva_data.rs"),
+                generate_rust_instance(&map_results(&profile, &args.exe)),
+            )
+            .unwrap();
+            cargo_fmt(&sdt);
         }
     }
 }
