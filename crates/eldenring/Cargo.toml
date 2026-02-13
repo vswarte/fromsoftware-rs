@@ -17,6 +17,7 @@ vtable-rs.workspace = true
 windows.workspace = true
 bitfield.workspace = true
 encoding_rs.workspace = true
+num_enum.workspace = true
 cxx-stl = "3.4"
 
 [build-dependencies]

@@ -4,6 +4,7 @@ use windows::core::PCWSTR;
 
 use crate::{
     BasicVector, Vector,
+    cs::{MultiplayRole, MultiplayType, SummonParamType},
     dltx::DLString,
     fd4::{FD4StepBaseInterface, FD4Time},
     position::BlockPosition,
@@ -42,7 +43,7 @@ pub struct CSNetMan {
     spiritual_statue_db: usize,
     unk98: usize,
     unka0: usize,
-    unka8: usize,
+    pub breakin_manager: OwnedPtr<BreakInManager>,
     /// Keeps track of quickmatch gamemode state.
     pub quickmatch_manager: OwnedPtr<QuickmatchManager>,
     visitor_db: usize,
@@ -99,6 +100,67 @@ pub struct CSNetBloodMessageDbItem {
     unk3e: u16,
     pub message_id: u64,
     unk48: u32,
+}
+
+#[repr(C)]
+pub struct BreakInData {
+    pub block_id: BlockId,
+    pub block_pos: BlockPosition,
+    pub entryfilelist_id: i32,
+    pub summon_param_type: SummonParamType,
+    pub multiplay_role: MultiplayRole,
+    pub has_password: bool,
+    unk1e: u8,
+    pub join_data: BasicVector<u8>,
+}
+
+#[repr(C)]
+pub struct BreakInPointManager {
+    breakin_points: DoublyLinkedList<()>,
+    unk18: [u8; 0x10],
+}
+
+#[repr(C)]
+pub struct BreakInAreaList {
+    pub areas: Vector<u32>,
+    pub count: u32,
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum BreakInSearchState {
+    Idle = 0,
+    InSearch = 1,
+    ConnectionAttempt = 2,
+    CheckingResponse = 3,
+}
+
+#[repr(C)]
+pub struct BreakInTarget {
+    pub player_id: u32,
+    pub external_id: BasicVector<u8>,
+    pub play_region: u32,
+}
+
+#[repr(C)]
+pub struct BreakInManager {
+    pub multiplay_type: MultiplayType,
+    pub targets: BasicVector<BreakInTarget>,
+    unk20: BasicVector<()>,
+    /// Data from breakin push
+    pub data: BreakInData,
+    pub point_manager: BreakInPointManager,
+    rebreakin_pos_step: usize,
+    pub error_code: i32,
+    pub areas: BreakInAreaList,
+    unkd0: usize,
+    unkd8: usize,
+    pub invasion_search_state: BreakInSearchState,
+    pub last_update_invasion_search_state: BreakInSearchState,
+    pub attempt_interval_timer: FD4Time,
+    pub time_out_timer: FD4Time,
+    pub is_yellow_costume_region: bool,
+    pub is_multi_region: bool,
 }
 
 #[repr(C)]

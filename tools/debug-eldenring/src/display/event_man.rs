@@ -1,28 +1,115 @@
+use eldenring::cs::CSEventSosSignCtrl;
+use eldenring::cs::CSEventSosSignData;
 use hudhook::imgui::Ui;
 
 use debug::UiExt;
 use eldenring::cs::CSEventManImp;
-use eldenring::cs::CSSosSignMan;
+use eldenring::cs::CSEventScriptEventInfo;
+use eldenring::cs::CSEventWorldAreaTimeCtrl;
 use eldenring::cs::DisplayGhostData;
 use eldenring::cs::PhantomJoinData;
 use eldenring::cs::SosSignData;
+use eldenring::cs::SosSignMan;
 
 use super::DebugDisplay;
 
 impl DebugDisplay for CSEventManImp {
     fn render_debug(&self, ui: &Ui) {
         ui.header("CSEventSosSignCtrl", || {
-            let sos_sign_ctrl = self.sos_sign.as_ref();
-            ui.header("SosSignMan", || {
-                if let Some(sos_sign_man) = sos_sign_ctrl.sos_sign_man {
-                    unsafe { sos_sign_man.as_ref().render_debug(ui) };
-                }
-            });
+            self.sos_sign.render_debug(ui);
+        });
+
+        ui.header("CSEventScriptEventInfo", || {
+            self.script.render_debug(ui);
+        });
+
+        ui.header("CSEventWorldAreaTimeCtrl", || {
+            self.world_area_time.render_debug(ui);
         });
     }
 }
 
-impl DebugDisplay for CSSosSignMan {
+impl DebugDisplay for CSEventSosSignCtrl {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Sign Data", || {
+            self.data.render_debug(ui);
+        });
+        ui.header("SosSignMan", || {
+            if let Some(sos_sign_man) = self.sos_sign_man {
+                unsafe { sos_sign_man.as_ref().render_debug(ui) };
+            }
+        });
+        ui.text(format!("Summon Param Type: {:?}", self.summon_param_type))
+    }
+}
+
+impl DebugDisplay for CSEventSosSignData {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Sign Position", || self.sign_position.render_debug(ui));
+        ui.header("Sign Rotation", || self.sign_rotation.render_debug(ui));
+        ui.text(format!("Multiplay type: {:?}", self.multiplay_type));
+        ui.text(format!("Is Sign Active: {:?}", self.is_sign_active));
+        ui.text(format!("Is Match Area: {:?}", self.is_match_area_sign));
+        ui.text(format!("Is Near/Far: {:?}", self.is_near_far_sign));
+    }
+}
+
+impl DebugDisplay for CSEventScriptEventInfo {
+    fn render_debug(&self, ui: &Ui) {
+        ui.list(
+            "Event Info by Block ID",
+            self.event_info_by_block_id.iter(),
+            |ui, _i, entry| {
+                ui.header(format!("Block ID: {}", entry.block_id), || {
+                    ui.list("Event IDs", entry.event_ids.iter(), |ui, _i, event_id| {
+                        ui.text(format!("Event ID: {}", event_id));
+                    });
+                });
+            },
+        );
+    }
+}
+
+impl DebugDisplay for CSEventWorldAreaTimeCtrl {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Target Hours: {}", self.target_hours));
+        ui.text(format!("Target Minutes: {}", self.target_minutes));
+        ui.text(format!("Target Seconds: {}", self.target_seconds));
+        ui.text(format!("Fade Transition: {}", self.fade_transition));
+        ui.text(format!("Black Screen Time: {}", self.black_screen_time));
+        ui.text(format!("Bonfire Entity ID: {}", self.bonfire_entity_id));
+        ui.text(format!("Reset World: {}", self.reset_world));
+        ui.text(format!(
+            "Reset Main Character: {}",
+            self.reset_main_character
+        ));
+        ui.text(format!("Reset Magic Charges: {}", self.reset_magic_charges));
+        ui.text(format!("Restore Estus: {}", self.restore_estus));
+        ui.text(format!("Show Clock: {}", self.show_clock));
+        ui.text(format!(
+            "Clock Startup Delay: {}",
+            self.clock_startup_delay_s
+        ));
+        ui.text(format!("Clock Move Time: {}", self.clock_move_time_s));
+        ui.text(format!("Clock Finish Delay: {}", self.clock_finish_delay_s));
+        ui.text(format!("Fade Out Time: {}", self.fade_out_time));
+        ui.text(format!("Fade In Time: {}", self.fade_in_time));
+        ui.text(format!("Fade Out Requested: {}", self.fade_out_requested));
+        ui.text(format!("Update Elapsed Time: {}", self.update_elapsed_time));
+        ui.text(format!(
+            "Black Screen Elapsed Time: {}",
+            self.black_screen_elapsed_time
+        ));
+        ui.text(format!("Respawn Wait Flag: {}", self.respawn_wait_flag));
+        ui.text(format!("Total Elapsed Time: {}", self.total_elapsed_time));
+        ui.text(format!(
+            "Black Screen Timeout: {}",
+            self.black_screen_timeout
+        ));
+    }
+}
+
+impl DebugDisplay for SosSignMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Signs", self.signs.iter(), |ui, _i, entry| {
             ui.header(format!("Sign {}", entry.sign_id), || {
@@ -49,6 +136,8 @@ impl DebugDisplay for CSSosSignMan {
                 });
             },
         );
+
+        ui.text(format!("Is in Rescue: {}", self.is_in_resque));
 
         ui.text(format!(
             "White Sign Cool Time Param ID: {}",
