@@ -110,6 +110,7 @@ pub struct QuickmatchManager {
     unk18: u32,
     /// List of speffects applied to the players during battle.
     /// Source of names: debug strings
+    ///
     /// ```text
     /// 1110 Team A Summon/Respawn                            チームＡ用召喚・リスポン時
     /// 1111 Team B Summon/Respawn                            チームＢ用召喚・リスポン時
@@ -130,28 +131,28 @@ pub struct QuickmatchManager {
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, StepperStates)]
 pub enum CSQuickMatchingCtrlState {
+    /// Stepper is not running.
     Inactive = -0x1,
+    /// No quickmatch is active.
     None = 0x0,
+    /// Looking up existing rooms that match the quickmatch settings.
     SearchRegister = 0x1,
+    /// Waiting for a response for the SearchRegister request.
     SearchRegisterWait = 0x2,
-    // Waiting for lobby to gain enough people to start.
     GuestInviteWait = 0x3,
     GuestWaitSession = 0x4,
     GuestReadyWait = 0x5,
-    // Moving to arena map.
     GuestMoveMap = 0x6,
-    // People are loaded into the map and match is running or has errored.
+    /// People are loaded into the map and match is running.
     GuestInGame = 0x7,
     HostWaitSession = 0x8,
-    // Hosting and allowing other people to join the room before starting.
     HostInvite = 0x9,
     HostReadyWait = 0xa,
     HostReadyWaitBlockList = 0xb,
-    // Moving to arena map.
     HostMoveMap = 0xc,
-    // People are loaded into the map and match is running or has errored.
+    /// People are loaded into the map and match is running.
     HostInGame = 0xd,
-    // Match has ended either by completion or error.
+    /// Match has ended either by completion or error.
     Unregister = 0xe,
 }
 

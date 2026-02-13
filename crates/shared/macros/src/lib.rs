@@ -304,7 +304,7 @@ pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream
     }
 }
 
-/// A derive macro for implementing a trait on an enum which represents all states of a stepper.
+/// A derive macro that implements the StepperStates trait on a given enum.
 ///
 /// - The enum must be exhaustive (represent all states and no more).
 /// - The enum must have no gaps in the discriminants.
@@ -388,7 +388,7 @@ pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
 
     let count = e.variants.len();
     let expanded = quote! {
-        impl ::fromsoftware_shared::StepperStates for #input_struct_ident {
+        unsafe impl ::fromsoftware_shared::StepperStates for #input_struct_ident {
             type StepperFnArray<TStepperFn> = [TStepperFn; #count];
         }
     };
