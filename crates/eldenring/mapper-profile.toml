@@ -143,6 +143,18 @@ class = "CS::MsbFileCap"
 vftable = "msb_file_cap_vmt"
 
 [[vmts]]
+class = "CS::CSLuaEventMsgExec"
+vftable = "cslua_event_msg_exec_vmt"
+
+[[vmts]]
+class = "CS::CSLuaEventMsgExec_Func"
+vftable = "cslua_event_msg_exec_func_vmt"
+
+[[vmts]]
+class = "CS::CSLuaEventMsgExec_String"
+vftable = "cslua_event_msg_exec_string_vmt"
+
+[[vmts]]
 class = "CS::CSMsbParts"
 vftable = "csmsb_parts_vmt"
 

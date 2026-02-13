@@ -1,27 +1,92 @@
+use eldenring::cs::CSEventSosSignCtrl;
+use eldenring::cs::CSEventSosSignData;
 use hudhook::imgui::Ui;
 
 use debug::UiExt;
 use eldenring::cs::CSEventManImp;
-use eldenring::cs::CSSosSignMan;
+use eldenring::cs::CSEventScriptEventInfo;
+use eldenring::cs::CSEventWorldAreaTimeCtrl;
 use eldenring::cs::DisplayGhostData;
 use eldenring::cs::PhantomJoinData;
 use eldenring::cs::SosSignData;
+use eldenring::cs::SosSignMan;
 
 use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSEventManImp {
     fn render_debug(&self, ui: &Ui) {
-        ui.header("CSEventSosSignCtrl", || {
-            let sos_sign_ctrl = self.sos_sign.as_ref();
-            ui.nested_opt(
-                "SosSignMan",
-                sos_sign_ctrl.sos_sign_man.map(|m| unsafe { m.as_ref() }),
-            );
-        });
+        ui.nested("CSEventSosSignCtrl", &self.sos_sign);
+        ui.nested("CSEventScriptEventInfo", &self.script);
+        ui.nested("CSEventWorldAreaTimeCtrl", &self.world_area_time);
     }
 }
 
-impl DebugDisplay for CSSosSignMan {
+impl DebugDisplay for CSEventSosSignCtrl {
+    fn render_debug(&self, ui: &Ui) {
+        ui.nested("Sign Data", &self.data);
+        ui.nested_opt(
+            "SosSignMan",
+            self.sos_sign_man.map(|s| unsafe { s.as_ref() }),
+        );
+        ui.debug("Summon Param Type", self.summon_param_type)
+    }
+}
+
+impl DebugDisplay for CSEventSosSignData {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Sign Position", || self.sign_position.render_debug(ui));
+        ui.header("Sign Rotation", || self.sign_rotation.render_debug(ui));
+        ui.debug("Multiplay type", self.multiplay_type);
+        ui.display("Is Sign Active", self.is_sign_active);
+        ui.display("Is Match Area", self.is_match_area_sign);
+        ui.display("Is Near/Far", self.is_near_far_sign);
+    }
+}
+
+impl DebugDisplay for CSEventScriptEventInfo {
+    fn render_debug(&self, ui: &Ui) {
+        ui.list(
+            "Event Info by Block ID",
+            self.event_info_by_block_id.iter(),
+            |ui, _i, entry| {
+                ui.header(format!("Block ID: {}", entry.block_id), || {
+                    ui.list("Event IDs", entry.event_ids.iter(), |ui, _i, event_id| {
+                        ui.display("Event ID", event_id);
+                    });
+                });
+            },
+        );
+    }
+}
+
+impl DebugDisplay for CSEventWorldAreaTimeCtrl {
+    fn render_debug(&self, ui: &Ui) {
+        ui.display("Target Hours", self.target_hours);
+        ui.display("Target Minutes", self.target_minutes);
+        ui.display("Target Seconds", self.target_seconds);
+        ui.display("Fade Transition", self.fade_transition);
+        ui.display("Black Screen Time", self.black_screen_time);
+        ui.display("Bonfire Entity ID", self.bonfire_entity_id);
+        ui.display("Reset World", self.reset_world);
+        ui.display("Reset Main Character", self.reset_main_character);
+        ui.display("Reset Magic Charges", self.reset_magic_charges);
+        ui.display("Restore Estus", self.restore_estus);
+        ui.display("Show Clock", self.show_clock);
+        ui.display("Clock Startup Delay", self.clock_startup_delay_s);
+        ui.display("Clock Move Time", self.clock_move_time_s);
+        ui.display("Clock Finish Delay", self.clock_finish_delay_s);
+        ui.display("Fade Out Time", self.fade_out_time);
+        ui.display("Fade In Time", self.fade_in_time);
+        ui.display("Fade Out Requested", self.fade_out_requested);
+        ui.display("Update Elapsed Time", self.update_elapsed_time);
+        ui.display("Black Screen Elapsed Time", self.black_screen_elapsed_time);
+        ui.display("Respawn Wait Flag", self.respawn_wait_flag);
+        ui.display("Total Elapsed Time", self.total_elapsed_time);
+        ui.display("Black Screen Timeout", self.black_screen_timeout);
+    }
+}
+
+impl DebugDisplay for SosSignMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Signs", self.signs.iter(), |ui, _i, entry| {
             ui.nested(format!("Sign {}", entry.sign_id), &entry.sign_data);
@@ -40,6 +105,8 @@ impl DebugDisplay for CSSosSignMan {
             self.join_data.iter().map(|e| unsafe { e.as_ref() }),
             |ui, _i, entry| ui.nested(format!("Join Data (Sign ID: {})", entry.sign_id), entry),
         );
+
+        ui.display("Is in Rescue", self.is_in_resque);
 
         ui.display(
             "White Sign Cool Time Param ID",
