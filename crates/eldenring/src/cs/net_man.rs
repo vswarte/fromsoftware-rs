@@ -1,15 +1,13 @@
 use std::ptr::NonNull;
 
-use windows::core::PCWSTR;
-
 use crate::{
     BasicVector, Vector,
     dltx::DLString,
-    fd4::{FD4StepBaseInterface, FD4Time},
+    fd4::{FD4StepTemplateBase, FD4Time},
     position::BlockPosition,
     stl::DoublyLinkedList,
 };
-use shared::OwnedPtr;
+use shared::{OwnedPtr, StepperStates};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask};
 
@@ -129,9 +127,10 @@ pub struct QuickmatchManager {
     // TODO: more fields up to 0xd8
 }
 
-#[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, StepperStates)]
 pub enum CSQuickMatchingCtrlState {
+    Inactive = -0x1,
     None = 0x0,
     SearchRegister = 0x1,
     SearchRegisterWait = 0x2,
@@ -159,18 +158,7 @@ pub enum CSQuickMatchingCtrlState {
 /// Source of name: RTTI
 #[repr(C)]
 pub struct CSQuickMatchingCtrl {
-    pub base: FD4StepBaseInterface<15, Self>,
-    unk18: [u8; 0x28],
-    pub current_state: CSQuickMatchingCtrlState,
-    pub requested_state: CSQuickMatchingCtrlState,
-    unk48: [u8; 0x50],
-    /// FD4Step state string.
-    state_string: PCWSTR,
-    unka0: bool,
-    unka1: bool,
-    unka2: bool,
-    unka3: bool,
-    unka4: u32,
+    pub stepper: FD4StepTemplateBase<CSQuickMatchingCtrlState, Self>,
     pub context: NonNull<CSBattleRoyalContext>,
     menu_job: usize,
     unkb8: FD4Time,
