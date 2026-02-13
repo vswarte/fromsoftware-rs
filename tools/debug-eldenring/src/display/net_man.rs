@@ -105,6 +105,6 @@ impl DebugDisplay for CSBattleRoyalContext {
 
 impl DebugDisplay for CSQuickMatchingCtrl {
     fn render_debug(&self, ui: &Ui) {
-        ui.display_copiable("Match state", format!("{:?}", self.current_state));
+        ui.display_copiable("Match state", format!("{:?}", self.stepper.current_state));
     }
 }

@@ -1,65 +1,54 @@
 use std::ptr::NonNull;
 
+use shared::StepperStates;
 use windows::core::PCWSTR;
 
-use crate::{Tree, dlkr::DLAllocatorBase, dltx::DLString};
-
-use super::FD4TaskBase;
+use crate::{Tree, dlkr::{DLAllocatorRef}, dltx::DLString, fd4::FD4Time};
 
 /// Source of name: RTTI
 #[repr(C)]
-pub struct FD4StepTemplateBase<const N: usize, T> {
-    pub task: FD4TaskBase,
-    pub stepper_fns: NonNull<[StepperFn<T>; N]>,
-    unk18: FD4StepTemplateBase0x18,
-    /// Index into the stepper_fns array.
-    pub current_state: u32,
-    /// Target step for next cycle.
-    pub request_state: u32,
-    unk50: bool,
-    unk51: [u8; 7],
-    allocator: NonNull<DLAllocatorBase>,
-    unk60: usize,
-    unk68: i8,
-    unk69: bool,
-    _pad6a: [u8; 6],
-    unk70: DLString,
-    state_description: PCWSTR,
-    unka8: bool,
-    unka9: [u8; 3],
-}
+pub struct FD4StepTemplateBase<TStates: StepperStates, TSubject> {
+    // Inheritance chain: FD4ComponentBase -> FD4StepBaseInterface -> FD4StepTemplateInterface<FD4StepBaseInterface>
 
-impl<const N: usize, T> AsRef<FD4TaskBase> for FD4StepTemplateBase<N, T> {
-    fn as_ref(&self) -> &FD4TaskBase {
-        &self.task
-    }
+    vftable: *const (),
+    pub stepper_fns: NonNull<TStates::StepperFnArray<StepperFn<TSubject>>>,
+    pub attach: FD4ComponentAttachSystem_Step,
+    /// Current state executing this frame.
+    pub current_state: TStates,
+    /// Target step for next frames execution.
+    pub requested_state: TStates,
+    unk48: u8,
+
+    // Seemingly all debug stuff after this point.
+    pub allocator: DLAllocatorRef,
+    unk58: usize,
+    unk60: i8,
+    unk61: bool,
+    unk68: DLString,
+    pub debug_state_label: PCWSTR,
+    unka0: bool,
+    unka4: i32,
 }
 
 /// Single state for the stepper to be executing from.
 #[repr(C)]
 pub struct StepperFn<T> {
-    pub executor: fn(&mut T, usize),
-    name: PCWSTR,
-}
-
-impl<T> StepperFn<T> {
-    pub fn name(&self) -> String {
-        unsafe { self.name.to_string().unwrap() }
-    }
-}
-
-#[repr(C)]
-pub struct FD4StepTemplateBase0x18 {
-    unk0: NonNull<()>,
-    unk8: Tree<()>,
-    unk20: NonNull<DLAllocatorBase>,
-    unk28: NonNull<DLAllocatorBase>,
+    pub executor: extern "C" fn(&mut T, &FD4Time),
+    pub name: PCWSTR,
 }
 
 /// Source of name: RTTI
 #[repr(C)]
-pub struct FD4StepBaseInterface<const N: usize, T> {
-    vftable: usize,
-    pub stepper_fns: NonNull<[StepperFn<T>; N]>,
-    unk10: NonNull<()>,
+pub struct FD4ComponentAttachSystem {
+    vftable: *const (),
+    unk8: Tree<()>,
+    pub allocator: DLAllocatorRef,
+}
+
+/// Source of name: RTTI
+#[allow(non_camel_case_types)]
+#[repr(C)]
+pub struct FD4ComponentAttachSystem_Step {
+    pub base: FD4ComponentAttachSystem,
+    pub allocator: DLAllocatorRef,
 }
