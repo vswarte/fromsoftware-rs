@@ -303,3 +303,95 @@ pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream
         Err(err) => err.into_compile_error().into(),
     }
 }
+
+/// A derive macro for implementing a trait on an enum which represents all states of a stepper.
+///
+/// - The enum must be exhaustive (represent all states and no more).
+/// - The enum must have no gaps in the discriminants.
+/// - The enum must have a -1 state for inactive steppers.
+///
+/// # Safety
+///
+/// The implementer must ensure that the enum is exhaustive as unknown discriminants can be used to
+/// trigger undefined behavior.
+/// The implementer must ensure that the enum does not have more states than the game defines.
+/// Failing to do so will allow for out-of-bound access to the stepper array.
+/// The implementer must ensure that the enum discriminants have no gaps. Failing to do so will
+/// allow out of bounds access to the stepper array as well as cause unknown discriminants.
+#[proc_macro_derive(StepperStates)]
+pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
+    fn error(ident: &Ident, message: &str) -> TokenStream {
+        syn::Error::new_spanned(ident, message)
+            .to_compile_error()
+            .into()
+    }
+
+    let input = parse_macro_input!(input as DeriveInput);
+    let input_struct_ident = &input.ident;
+
+    // Ensure the macro's on an enum.
+    let Data::Enum(e) = &input.data else {
+        return error(&input.ident, "StepperStates can only be derived on enums");
+    };
+
+    // Ensure all variants are unit variants.
+    if e.variants.iter().any(|v| !matches!(v.fields, Fields::Unit)) {
+        return error(&input.ident, "Enum cannot have non unit types");
+    }
+
+    // Ensure there's a -1 variant on the enum.
+    if !e.variants.iter().any(|v| {
+        let Some((_, expr)) = &v.discriminant else {
+            return false;
+        };
+
+        match expr {
+            Expr::Unary(ExprUnary {
+                op: UnOp::Neg(_),
+                expr,
+                ..
+            }) => match expr.as_ref() {
+                Expr::Lit(ExprLit {
+                    lit: Lit::Int(i), ..
+                }) => i.base10_parse::<i64>().ok() == Some(1),
+                _ => false,
+            },
+            _ => false,
+        }
+    }) {
+        return error(
+            &input.ident,
+            "Enum must have a -1 state representing inactivity",
+        );
+    }
+
+    // Ensure there's a repr(i32) attribute on the target struct.
+    let Some(repr_attr) = input.attrs.iter().find(|a| a.path().is_ident("repr")) else {
+        return error(&input.ident, "Enum must apply a #[repr(i32)]");
+    };
+
+    // Ensure the repr attribute has arguments.
+    let Meta::List(repr_args) = &repr_attr.meta else {
+        return error(&input.ident, "Enum must apply a #[repr(i32)]");
+    };
+
+    // Ensure the repr attribute has i32 as one of its arguments.
+    if !repr_args
+        .tokens
+        .to_string()
+        .split(',')
+        .map(|s| s.trim())
+        .any(|s| s == "i32")
+    {
+        return error(&input.ident, "Enum must apply a #[repr(i32)]");
+    }
+
+    let count = e.variants.len();
+    let expanded = quote! {
+        impl ::fromsoftware_shared::StepperStates for #input_struct_ident {
+            type StepperFnArray<TStepperFn> = [TStepperFn; #count];
+        }
+    };
+
+    TokenStream::from(expanded)
+}
