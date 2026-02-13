@@ -57,7 +57,10 @@ pub struct WorldChrMan {
     pub player_grid_area: Option<NonNull<WorldGridAreaChr>>,
     /// Points to the local player.
     pub main_player: Option<OwnedPtr<PlayerIns>>,
-    unk_player: Option<OwnedPtr<PlayerIns>>,
+    /// Points to the chr id `30000` [`SinnerHunt`] player (Spears of the Church covenant boss)
+    ///
+    /// [`SinnerHunt`]: crate::cs::MultiplayType::SinnerHunt
+    pub sinner_hunter: Option<OwnedPtr<PlayerIns>>,
 
     unk_block_id_1: BlockId,
     unk_block_id_2: BlockId,

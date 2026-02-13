@@ -2,8 +2,8 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::UiExt;
 use eldenring::cs::{
-    CSBattleRoyalContext, CSNetBloodMessageDb, CSNetBloodMessageDbItem, CSNetMan,
-    CSQuickMatchingCtrl, QuickmatchManager,
+    BreakInAreaList, BreakInData, BreakInManager, BreakInTarget, CSBattleRoyalContext,
+    CSNetBloodMessageDb, CSNetBloodMessageDbItem, CSNetMan, CSQuickMatchingCtrl, QuickmatchManager,
 };
 
 use super::DebugDisplay;
@@ -14,9 +14,101 @@ impl DebugDisplay for CSNetMan {
             self.blood_message_db.render_debug(ui);
         });
 
+        ui.header("Break In", || {
+            self.breakin_manager.render_debug(ui);
+        });
+
         ui.header("Quickmatch", || {
             self.quickmatch_manager.render_debug(ui);
         });
+    }
+}
+
+impl DebugDisplay for BreakInManager {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Multiplay Type: {:?}", self.multiplay_type));
+
+        ui.list("Break In Targets", self.targets.items(), |ui, _i, item| {
+            item.render_debug(ui);
+        });
+
+        ui.header("Break In Data", || {
+            self.data.render_debug(ui);
+        });
+        ui.text(format!("Error Code: {:?}", self.error_code));
+        ui.header("Break In Areas", || {
+            self.areas.render_debug(ui);
+        });
+        ui.text(format!(
+            "Invasion Search State: {:?}",
+            self.invasion_search_state
+        ));
+
+        ui.text(format!(
+            "Prev Invasion Search State: {:?}",
+            self.last_update_invasion_search_state
+        ));
+
+        ui.text(format!(
+            "Attempt Interval Timer: {:?}",
+            self.attempt_interval_timer.time
+        ));
+        ui.text(format!("Time Out Timer: {:?}", self.time_out_timer.time));
+
+        ui.text(format!(
+            "Is Yellow Monk: {:?}",
+            self.is_yellow_costume_region
+        ));
+
+        ui.text(format!("Is Multi Region: {:?}", self.is_multi_region));
+    }
+}
+
+impl DebugDisplay for BreakInTarget {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Player ID: {}", self.player_id));
+        let mut steam_id_str =
+            String::from_utf8(self.external_id.items().to_vec()).unwrap_or("Invalid".to_owned());
+        ui.input_text("Steam ID", &mut steam_id_str)
+            .read_only(true)
+            .build();
+        ui.text(format!("Play Region: {}", self.play_region))
+    }
+}
+
+impl DebugDisplay for BreakInAreaList {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Count: {:?}", self.count));
+        ui.header("Areas", || {
+            ui.table(
+                "breakin-areas-list",
+                [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("Area"),
+                ],
+                self.areas.items(),
+                |ui, i, e| {
+                    ui.table_next_column();
+                    ui.text(format!("{i}"));
+
+                    ui.table_next_column();
+                    ui.text(format!("{e}"));
+                },
+            );
+        });
+    }
+}
+
+impl DebugDisplay for BreakInData {
+    fn render_debug(&self, ui: &Ui) {
+        ui.text(format!("Block ID: {}", self.block_id));
+        ui.header("Block Position", || {
+            self.block_pos.render_debug(ui);
+        });
+        ui.text(format!("Entry File List Id: {:?}", self.entryfilelist_id));
+        ui.text(format!("Summon Param Type: {:?}", self.summon_param_type));
+        ui.text(format!("Multi Play Role: {:?}", self.multiplay_role));
+        ui.text(format!("Has Password: {:?}", self.has_password));
     }
 }
 

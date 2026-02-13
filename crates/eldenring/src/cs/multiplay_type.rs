@@ -193,8 +193,39 @@ bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct MultiplayPropertyEntryFlags(u32);
     impl Debug;
-    /// Whether this multiplayer type ignores network penalty when summoning/invading
-    pub ignore_net_penalty, set_ignore_net_penalty: 3;
+    /// Whether this multiplayer type should create sign geometry and summon prompt.
+    pub enable_sign_interaction, set_enable_sign_interaction: 0;
+    /// Whether this multiplayer type should ignore lua events related to sign summoning errors.
+    pub disable_on_summon_error_lua_events, set_disable_on_summon_error_lua_events: 1;
+    /// Whether this multiplayer type should not create session when it's entry in [`SosSignMan::signs`]
+    /// is processed.
+    ///
+    /// [`SosSignMan::signs`]: crate::cs::sos_sign_man::SosSignMan::signs
+    pub disable_session_creation, set_disable_session_creation: 2;
+    /// Whether this multiplayer type ignores network penalty when summoning/invading.
+    pub ignore_net_penalty, set_ignore_net_penalty: 5;
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+/// Special Type used only for `CSMultiplayNotifyJoinJob`
+pub enum JoinMultiplayLogType {
+    WhiteSummon = 0,
+    RedSummon = 2,
+    Invader = 10,
+    RedHunt = 20,
+    SinnerHunt = 21,
+    Duel = 30,
+    Brawl1v1 = 31,
+    Brawl2v2 = 32,
+    Brawl3v3 = 33,
+    Team1v1 = 34,
+    Team2v2 = 35,
+    Team3v3 = 36,
+    /// RosariaGuardian, ForestMapGuardian, AnorMapGuardian, AvatarBattle, NpcPseudoPhantasmEvent
+    ///
+    /// Not send to the server.
+    Special = 37,
 }
 
 #[repr(C)]
@@ -210,7 +241,8 @@ pub struct MultiplayPropertyEntry {
     pub join_type: JoinType,
     unk14: i32,
     unk18: i32,
-    unk1c: i32,
+    /// Special Type used only for `CSMultiplayNotifyJoinJob`
+    pub join_log_type: JoinMultiplayLogType,
     unk20: i32,
     /// Type of cooldown used to limit this type of multiplayer type
     pub matching_cooldown_type: MatchingCooldownType,

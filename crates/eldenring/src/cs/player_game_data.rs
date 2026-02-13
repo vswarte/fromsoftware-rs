@@ -206,7 +206,7 @@ pub struct PlayerGameData {
     unkaae: u8,
     /// Should sign cooldown be enabled?
     /// Each time your coop player dies and you have someone in your world
-    /// you will get a cooldown depending on [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST] and level from [crate::cs::CSSosSignMan::white_sign_cool_time_param_id]
+    /// you will get a cooldown depending on [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST] and level from [crate::cs::SosSignMan::white_sign_cool_time_param_id]
     pub sign_cooldown_enabled: bool,
     unkab0: [u8; 0x2],
     pub has_preorder_gesture: bool,
