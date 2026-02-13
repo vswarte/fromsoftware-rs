@@ -1,11 +1,11 @@
 use std::{sync::Once, time::Duration};
 
-use sekiro::util::system::wait_for_system_init;
 use fromsoftware_shared::Program;
+use hudhook::ImguiRenderLoop;
 use hudhook::hooks::dx11::ImguiDx11Hooks;
 use hudhook::imgui::{sys as imgui_sys, *};
 use hudhook::windows::Win32::Foundation::HINSTANCE;
-use hudhook::ImguiRenderLoop;
+use sekiro::util::system::wait_for_system_init;
 
 /// # Safety
 /// This is exposed this way such that libraryloader can call it. Do not call this yourself.
