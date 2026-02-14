@@ -15,6 +15,7 @@ fromsoftware-shared.workspace = true
 thiserror.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
+cxx-stl.workspace = true
 
 [build-dependencies]
 serde_derive = "1"
