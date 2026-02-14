@@ -3,13 +3,12 @@ use std::ptr::NonNull;
 use shared::StepperStates;
 use windows::core::PCWSTR;
 
-use crate::{Tree, dlkr::{DLAllocatorRef}, dltx::DLString, fd4::FD4Time};
+use crate::{Tree, dlkr::DLAllocatorRef, dltx::DLString, fd4::FD4Time};
 
 /// Source of name: RTTI
 #[repr(C)]
 pub struct FD4StepTemplateBase<TStates: StepperStates, TSubject> {
     // Inheritance chain: FD4ComponentBase -> FD4StepBaseInterface -> FD4StepTemplateInterface<FD4StepBaseInterface>
-
     vftable: *const (),
     pub stepper_fns: NonNull<TStates::StepperFnArray<StepperFn<TSubject>>>,
     pub attach: FD4ComponentAttachSystem_Step,
