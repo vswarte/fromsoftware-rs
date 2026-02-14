@@ -326,6 +326,10 @@ pattern = "48 89 05 ${ ' } 48 83 c4 38 e9 ${}"
 captures = ["", "crypto_spi_registry"]
 pattern = "e8 $ { 48 89 4c 24 08 55 56 57 48 83 ec 30 } eb ? 33 c0 48 89 05 $ { ' }"
 
+[[patterns]]
+captures = ["", "world_chr_man_dbg_flags"]
+pattern = "80 3d $ { ? ' } 00 0f 85 [4] 32 c0 "
+
 [[vmts]]
 class = "CS::CSEzStateTalkEvent"
 vftable = "cs_ez_state_talk_event_vmt"

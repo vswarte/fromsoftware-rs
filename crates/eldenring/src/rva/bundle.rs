@@ -93,6 +93,7 @@ pub struct RvaBundle {
     pub world_area_chr_vmt: u32,
     pub world_area_info_base_vmt: u32,
     pub world_area_info_vmt: u32,
+    pub world_chr_man_dbg_flags: u32,
     pub world_grid_area_chr_vmt: u32,
     pub world_grid_area_info_vmt: u32,
 }

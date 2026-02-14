@@ -92,6 +92,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     world_area_chr_vmt: 0x2a4c0f0,
     world_area_info_base_vmt: 0x2a76ba8,
     world_area_info_vmt: 0x2a79588,
+    world_chr_man_dbg_flags: 0x3d661a0,
     world_grid_area_chr_vmt: 0x2a4c730,
     world_grid_area_info_vmt: 0x2a79ed8,
 };
