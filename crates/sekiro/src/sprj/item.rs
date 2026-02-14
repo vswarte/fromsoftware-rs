@@ -103,7 +103,7 @@ impl MapItemMan {
     }
 }
 
-#[repr(C)]
+#[repr(C, packed(4))]
 // Source of name: RTTI
 pub struct CSMapItemDropChanger {
     _vftable: usize,
@@ -113,16 +113,16 @@ pub struct CSMapItemDropChanger {
     _unk4c: u32,
     _unk50: u32,
     _unk54: u32,
-    _unk60: u64,
-    _unk68: u32,
+    _unk58: u64,
+    _unk60: u32,
 }
 
 #[repr(C)]
 // Source of name: RTTI
 pub struct MenuHandle {
     _vftable: usize,
-    _unk08: u8,
-    _unk10: u8,
+    _unk08: u64,
+    _unk10: u64,
 }
 
 /// A set of items granted to the player.
@@ -307,8 +307,8 @@ mod tests {
 
     #[test]
     fn test_bitfield() {
-        assert_eq!(0x198, size_of::<MapItemMan>());
         assert_eq!(0x64, size_of::<CSMapItemDropChanger>());
         assert_eq!(0x18, size_of::<MenuHandle>());
+        assert_eq!(0x198, size_of::<MapItemMan>());
     }
 }
