@@ -1,11 +1,15 @@
 use std::{sync::Once, time::Duration};
 
 use fromsoftware_shared::Program;
-use hudhook::ImguiRenderLoop;
 use hudhook::hooks::dx11::ImguiDx11Hooks;
 use hudhook::imgui::{sys as imgui_sys, *};
 use hudhook::windows::Win32::Foundation::HINSTANCE;
-use sekiro::util::system::wait_for_system_init;
+use hudhook::{ImguiRenderLoop, eject};
+use sekiro::{sprj::*, util::system::wait_for_system_init};
+
+mod display;
+
+use display::StaticDebugger;
 
 /// # Safety
 /// This is exposed this way such that libraryloader can call it. Do not call this yourself.
@@ -26,6 +30,9 @@ pub unsafe extern "C" fn DllMain(hmodule: HINSTANCE, reason: u32) -> i32 {
 struct SekiroDebugGui {
     size: [f32; 2],
     scale: f32,
+
+    // World
+    map_item_man: StaticDebugger<MapItemMan>,
 }
 
 impl SekiroDebugGui {
@@ -33,6 +40,7 @@ impl SekiroDebugGui {
         Self {
             size: [600., 400.],
             scale: 1.8,
+            map_item_man: Default::default(),
         }
     }
 }
@@ -70,7 +78,19 @@ unsafe fn render_live_reload(gui: &mut SekiroDebugGui, ui: &mut Ui) {
         .build(|| {
             ui.set_window_font_scale(gui.scale);
 
-            ui.text("Nothing here yet...");
+            let tabs = ui.tab_bar("main-tabs").unwrap();
+            if let Some(item) = ui.tab_item("World") {
+                gui.map_item_man.render_debug(ui);
+                item.end();
+            }
+
+            if let Some(item) = ui.tab_item("Eject") {
+                if ui.button("Eject") {
+                    eject();
+                }
+                item.end();
+            }
+            tabs.end();
         });
 }
 
