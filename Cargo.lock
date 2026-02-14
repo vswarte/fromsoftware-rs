@@ -1129,7 +1129,6 @@ name = "sekiro"
 version = "0.12.0"
 dependencies = [
  "bitfield",
- "cxx-stl",
  "encoding_rs",
  "fromsoftware-shared 0.12.0",
  "pelite",
