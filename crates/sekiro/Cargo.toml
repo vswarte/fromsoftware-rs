@@ -15,7 +15,10 @@ fromsoftware-shared.workspace = true
 thiserror.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
-cxx-stl = { version = "3.4", features = ["msvc2012"] }
+
+[dependencies.cxx-stl]
+workspace = true
+features = ["msvc2012"]
 
 [build-dependencies]
 serde_derive = "1"

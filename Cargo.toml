@@ -46,6 +46,7 @@ vtable-rs = "0.1.4"
 bitfield = "0.19.2"
 encoding_rs = "0.8.35"
 libhotpatch = "1.1.0"
+cxx-stl = "4.4"
 
 [workspace.dependencies.windows]
 version = "0.54"
