@@ -130,8 +130,11 @@ impl DebugDisplay for CSBattleRoyalContext {
 
 impl DebugDisplay for CSQuickMatchingCtrl {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text("Match state", &mut format!("{:?}", self.current_state))
-            .read_only(true)
-            .build();
+        ui.input_text(
+            "Match state",
+            &mut format!("{:?}", self.stepper.current_state),
+        )
+        .read_only(true)
+        .build();
     }
 }
