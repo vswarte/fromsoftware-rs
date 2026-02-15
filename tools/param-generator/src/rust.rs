@@ -122,6 +122,16 @@ fn generate_struct(def: &StructDef) -> String {
                     "    pub fn set_{normalized_name}(&mut self, value: u8) {{\n        self.{group_name} = (self.{group_name} & !(0b{mask:08b} << {used_bits})) | ((value & 0b{mask:08b}) << {used_bits});\n    }}\n\n"
                 ));
             }
+            FieldType::Standard(arg) if arg == "b32" => {
+                code.push_str(&format!(
+                    "    pub fn {}(&self) -> bool {{\n        self.{} != 0\n    }}\n\n",
+                    normalized_name, normalized_name
+                ));
+                code.push_str(&format!(
+                    "    pub fn set_{}(&mut self, value: bool) {{\n        self.{} = value as {};\n    }}\n\n",
+                    normalized_name, normalized_name, unit.field_type.native_type()
+                ));
+            }
             FieldType::Standard(_) => {
                 code.push_str(&format!(
                     "    pub fn {}(&self) -> {} {{\n        self.{}\n    }}\n\n",
