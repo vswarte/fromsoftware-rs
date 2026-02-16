@@ -7,7 +7,13 @@ use pelite::pe64::Pe;
 use shared::{F32Vector2, F32Vector3, program::Program};
 
 use super::{CSEzTask, CSEzUpdateTask, OptionalItemId};
-use crate::{Tree, Vector, cs::{BlockId, MenuString}, dlut::DLFixedVector, position::{BlockPosition, MapPosition}, rva};
+use crate::{
+    Tree, Vector,
+    cs::{BlockId, MenuString},
+    dlut::DLFixedVector,
+    position::{BlockPosition, MapPosition},
+    rva,
+};
 
 pub const STATUS_MESSAGE_DEMIGOD_FELLED: i32 = 1;
 pub const STATUS_MESSAGE_LEGEND_FELLED: i32 = 2;
@@ -300,7 +306,7 @@ pub trait MenuViewItemListBaseVmt {
 }
 
 #[vtable_rs::vtable]
-pub trait MenuViewItemListVmt : MenuViewItemListBaseVmt {
+pub trait MenuViewItemListVmt: MenuViewItemListBaseVmt {
     fn unk20(&self, index: usize) -> NonNull<usize>;
 
     fn unk28(&self, index: usize) -> NonNull<usize>;

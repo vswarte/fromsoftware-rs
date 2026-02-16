@@ -30,10 +30,22 @@ impl DebugDisplay for CSPopupMenu {
 impl DebugDisplay for WorldMapViewModel {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!("Main player block: {:?}", self.main_player_block));
-        ui.text(format!("Main player block position: {:?}", self.main_player_block_position));
-        ui.text(format!("Main player orientation: {:?}", self.main_player_orientation));
-        ui.text(format!("Disable main player marker: {:?}", self.disable_main_player_marker));
-        ui.text(format!("Player map position: {:?}", self.main_player_map_position));
+        ui.text(format!(
+            "Main player block position: {:?}",
+            self.main_player_block_position
+        ));
+        ui.text(format!(
+            "Main player orientation: {:?}",
+            self.main_player_orientation
+        ));
+        ui.text(format!(
+            "Disable main player marker: {:?}",
+            self.disable_main_player_marker
+        ));
+        ui.text(format!(
+            "Player map position: {:?}",
+            self.main_player_map_position
+        ));
 
         ui.header("World map legacy converter", || {
             self.legacy_converter.render_debug(ui);
@@ -60,7 +72,6 @@ impl DebugDisplay for WorldMapViewModel {
                 },
             );
         });
-
     }
 }
 
