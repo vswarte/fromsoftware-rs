@@ -12,7 +12,7 @@ mod gesture;
 pub use gesture::*;
 
 #[repr(C)]
-/// Source of name: RTTI
+// Source of name: RTTI
 pub struct PlayerGameData {
     _vftable: usize,
     _unk08: u64,

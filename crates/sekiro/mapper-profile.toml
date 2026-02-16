@@ -1,4 +1,8 @@
 [[patterns]]
+pattern = "c7 44 24 20 00 00 00 00 48 8b 05 $ { ' } 48 8b 58 08 8b 02"
+captures = ["", "game_data_man_ptr"]
+
+[[patterns]]
 pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 captures = ["", "global_hinstance"]
 

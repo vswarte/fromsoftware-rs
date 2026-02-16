@@ -33,6 +33,9 @@ struct SekiroDebugGui {
 
     // World
     map_item_man: StaticDebugger<MapItemMan>,
+
+    // Game Data
+    game_data: StaticDebugger<GameDataMan>,
 }
 
 impl SekiroDebugGui {
@@ -40,7 +43,7 @@ impl SekiroDebugGui {
         Self {
             size: [600., 400.],
             scale: 1.8,
-            map_item_man: Default::default(),
+            ..Default::default()
         }
     }
 }
@@ -81,6 +84,11 @@ unsafe fn render_live_reload(gui: &mut SekiroDebugGui, ui: &mut Ui) {
             let tabs = ui.tab_bar("main-tabs").unwrap();
             if let Some(item) = ui.tab_item("World") {
                 gui.map_item_man.render_debug(ui);
+                item.end();
+            }
+
+            if let Some(item) = ui.tab_item("Game Data") {
+                gui.game_data.render_debug(ui);
                 item.end();
             }
 
