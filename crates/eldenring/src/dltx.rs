@@ -1,11 +1,12 @@
 use std::borrow::Cow;
+use std::cmp::PartialEq;
 use std::fmt::Display;
 use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
 
 use crate::dlkr::DLAllocatorRef;
 
-use encoding_rs;
+use encoding_rs::{self, DecoderResult};
 
 use thiserror::Error;
 
@@ -21,6 +22,25 @@ pub enum DLCharacterSet {
     ShiftJis = 3,
     EucJp = 4,
     UTF32 = 5,
+}
+
+impl DLCharacterSet {
+    /// Returns the [encoding_rs::Encoding] that corresponds to this character
+    /// set, or None if no such encoding exists (which is only possible for
+    /// [DLCharacterSet::UTF32]).
+    pub fn encoding(&self) -> Option<&'static encoding_rs::Encoding> {
+        Some(match self {
+            DLCharacterSet::UTF8 => encoding_rs::UTF_8,
+            #[cfg(target_endian = "little")]
+            DLCharacterSet::UTF16 => encoding_rs::UTF_16LE,
+            #[cfg(target_endian = "big")]
+            DLCharacterSet::UTF16 => encoding_rs::UTF_16BE,
+            DLCharacterSet::Iso8859_1 => encoding_rs::WINDOWS_1252,
+            DLCharacterSet::ShiftJis => encoding_rs::SHIFT_JIS,
+            DLCharacterSet::EucJp => encoding_rs::EUC_JP,
+            DLCharacterSet::UTF32 => return None,
+        })
+    }
 }
 
 #[derive(Error, Debug)]
@@ -40,9 +60,10 @@ pub enum DLStringEncodingError {
 
 trait CxxString<CharType> {
     fn new_in(allocator: DLAllocatorRef) -> Self;
-    fn from_bytes_in(bytes: &[CharType], allocator: DLAllocatorRef) -> Self;
+    fn from_chars_in(bytes: &[CharType], allocator: DLAllocatorRef) -> Self;
     fn as_u8_slice(&self) -> &[u8];
-    fn as_bytes(&self) -> &[CharType];
+    fn as_chars(&self) -> &[CharType];
+    fn len(&self) -> usize;
 }
 
 macro_rules! impl_cxx_string {
@@ -52,7 +73,7 @@ macro_rules! impl_cxx_string {
                 Self::new_in(allocator)
             }
 
-            fn from_bytes_in(bytes: &[$char_type], allocator: DLAllocatorRef) -> Self {
+            fn from_chars_in(bytes: &[$char_type], allocator: DLAllocatorRef) -> Self {
                 Self::from_bytes_in(bytes, allocator)
             }
             fn as_u8_slice(&self) -> &[u8] {
@@ -63,8 +84,11 @@ macro_rules! impl_cxx_string {
                     )
                 }
             }
-            fn as_bytes(&self) -> &[$char_type] {
+            fn as_chars(&self) -> &[$char_type] {
                 self.as_bytes()
+            }
+            fn len(&self) -> usize {
+                <$string_type>::len(self)
             }
         }
     };
@@ -75,9 +99,9 @@ impl_cxx_string!(CxxUtf8String<DLAllocatorRef>, u8);
 impl_cxx_string!(CxxNarrowString<DLAllocatorRef>, u8);
 impl_cxx_string!(CxxUtf32String<DLAllocatorRef>, u32);
 
+/// This trait is used to seal the DLStringKind trait, preventing external implementations.
 trait DLStringKindSeal {}
 
-/// This trait is used to seal the DLStringKind trait, preventing external implementations.
 #[allow(private_bounds)]
 pub trait DLStringKind: DLStringKindSeal {
     type InnerType: CxxString<Self::CharType>;
@@ -108,13 +132,7 @@ pub trait DLStringKind: DLStringKindSeal {
                 Ok(unsafe { std::mem::transmute::<Vec<u8>, Vec<Self::CharType>>(bytes) })
             }
             _ => {
-                let encoding = match Self::ENCODING {
-                    DLCharacterSet::Iso8859_1 => encoding_rs::WINDOWS_1252,
-                    DLCharacterSet::ShiftJis => encoding_rs::SHIFT_JIS,
-                    DLCharacterSet::EucJp => encoding_rs::EUC_JP,
-                    _ => unreachable!(),
-                };
-                let (encoded_bytes, _, had_errors) = encoding.encode(s);
+                let (encoded_bytes, _, had_errors) = Self::ENCODING.encoding().unwrap().encode(s);
                 if had_errors {
                     return Err(DLStringEncodingError::EncodeError);
                 }
@@ -158,13 +176,7 @@ pub trait DLStringKind: DLStringKindSeal {
                 Ok(Cow::Borrowed(s))
             }
             _ => {
-                let encoding = match Self::ENCODING {
-                    DLCharacterSet::Iso8859_1 => encoding_rs::WINDOWS_1252,
-                    DLCharacterSet::ShiftJis => encoding_rs::SHIFT_JIS,
-                    DLCharacterSet::EucJp => encoding_rs::EUC_JP,
-                    _ => unreachable!(),
-                };
-                let (cow, _, had_errors) = encoding.decode(s);
+                let (cow, _, had_errors) = Self::ENCODING.encoding().unwrap().decode(s);
                 if had_errors {
                     Err(DLStringEncodingError::DecodeError)
                 } else {
@@ -241,7 +253,7 @@ impl<T: DLStringKind> DLString<T> {
         let encoded: Vec<T::CharType> = T::encode(s)?;
 
         Ok(Self {
-            base: T::InnerType::from_bytes_in(&encoded, allocator.clone()),
+            base: T::InnerType::from_chars_in(&encoded, allocator.clone()),
             encoding: T::ENCODING,
         })
     }
@@ -258,9 +270,9 @@ impl<T: DLStringKind> DLString<T> {
         // If the encodings match, we can directly copy the bytes
         if T::ENCODING == U::ENCODING {
             // SAFETY: T::ENCODING == U::ENCODING implies T::CharType is compatible with U::CharType.
-            let bytes: &[T::CharType] = unsafe { std::mem::transmute(other.base.as_bytes()) };
+            let bytes: &[T::CharType] = unsafe { std::mem::transmute(other.base.as_chars()) };
             Ok(Self {
-                base: T::InnerType::from_bytes_in(bytes, allocator.clone()),
+                base: T::InnerType::from_chars_in(bytes, allocator.clone()),
                 encoding: T::ENCODING,
             })
         } else {
@@ -290,6 +302,78 @@ impl<T: DLStringKind> Display for DLString<T> {
         match self.to_str() {
             Ok(s) => write!(f, "{s}"),
             Err(_) => Err(std::fmt::Error),
+        }
+    }
+}
+
+impl<T: DLStringKind, S: AsRef<str>> PartialEq<S> for DLString<T> {
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        match T::ENCODING {
+            DLCharacterSet::UTF8 => self.base.as_u8_slice() == other.as_bytes(),
+            DLCharacterSet::UTF32 => {
+                // Safety: If this is UTF32, its characters are u32s.
+                unsafe { std::mem::transmute::<&[T::CharType], &[u32]>(self.base.as_chars()) }
+                    .iter()
+                    .map(|c| char::try_from(*c))
+                    .eq(other.chars().map(Ok))
+            }
+            _ => {
+                // Do equality comparisons byte-by-byte on the UTF-8
+                // representations of each string. It would be simpler to just
+                // convert to a string and compare that, but it would be
+                // substantially less efficient because it would involve an
+                // allocation for eqach comparison.
+
+                let mut decoder = T::ENCODING.encoding().unwrap().new_decoder();
+                if decoder
+                    .max_utf8_buffer_length_without_replacement(self.base.len())
+                    .map(|len| len < other.len())
+                    .unwrap_or(true)
+                {
+                    // If the other string is big enough that this string can't
+                    // possibly decode to it, exit early without even attempting
+                    // to decode. This is most likely if this is the empty
+                    // string.
+                    return false;
+                }
+
+                let mut our_bytes = self.base.as_u8_slice();
+                let mut other_bytes = other.as_bytes().iter();
+                let mut output: [u8; 0x20] = [0; 0x20];
+                loop {
+                    let (result, bytes_read, bytes_written) =
+                        decoder.decode_to_utf8_without_replacement(our_bytes, &mut output, true);
+                    if matches!(result, DecoderResult::Malformed(_, _)) {
+                        // Malformed strings are never equal to valid UTF-8.
+                        return false;
+                    }
+
+                    for &our_byte in output.iter().take(bytes_written) {
+                        let Some(&their_byte) = other_bytes.next() else {
+                            // If this string has more bytes than the other
+                            // string, they're not equal.
+                            return false;
+                        };
+
+                        if our_byte != their_byte {
+                            // If this string has different bytes than the other
+                            // string, they're not equal.
+                            return false;
+                        }
+                    }
+
+                    if matches!(result, DecoderResult::InputEmpty) {
+                        // If this string has fewer bytes than the other string,
+                        // they're not equal, but if it has the same number and
+                        // they've been equivalent up to this point then they
+                        // are equal.
+                        return other_bytes.next().is_none();
+                    }
+
+                    our_bytes = &our_bytes[bytes_read..];
+                }
+            }
         }
     }
 }

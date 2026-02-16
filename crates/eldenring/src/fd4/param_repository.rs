@@ -9,6 +9,31 @@ use super::resource::FD4ResCap;
 
 use param_layout::{ParamLayout, ParamLayout32, ParamLayout64};
 
+// Under most circumstances, it wuold make the most sense to consider
+// [FD4ParamRepository] to be the owner of the [FD4ParamResCap]s it contains.
+// However, it's substantially less efficient to look up a given parameter
+// through [FD4ParamRepository] than it is through more specific repositories
+// like [SoloParamRepository]. Other repositories assemble a mapping from
+// parameter "indexes" to the actual locations of those parameters in memory
+// which is robust against the parameters being reordered on disk;
+// [FD4ParamRepository] does not. Because of this, it's possible to do an O(1)
+// lookup through individual repositories while any lookup here must be O(n).
+//
+// To mitigate this, we expose APIs that act like [FD4ParamRepository] is *not*
+// the owner of its data, in the sense that all access to that data is `unsafe`
+// on the condition that users have no other mutable references (or immutable
+// references in the case of mutable access) to param data elsewhere in their
+// program. This allows us to avoid the `unsafe` qualifier for access through
+// individual parameter repositories, because they're guaranteed to have the
+// only references on the Rust side. (We're insulated from references on the C++
+// side by the safety requirements for accessing any of these globals in the
+// first place.)
+//
+// It's important to note as well that this solution relies on all the
+// individual parameter repositories having access to a disjoint set of
+// parameters. If any of them overlap (in another patch or another game),
+// they'll have the same soundness issues between one another and we may need to
+// consider a different approach to solving that problem.
 #[repr(C)]
 #[shared::singleton("FD4ParamRepository")]
 #[derive(Subclass)]
@@ -16,31 +41,85 @@ use param_layout::{ParamLayout, ParamLayout32, ParamLayout64};
 pub struct FD4ParamRepository {
     /// Resource repository holding the actual param data.
     pub res_rep: FD4ResRep,
-    pub res_cap_holder: FD4ResCapHolder<FD4ParamResCap>,
+    res_cap_holder: FD4ResCapHolder<FD4ParamResCap>,
     allocator: usize,
 }
 
 impl FD4ParamRepository {
-    pub fn get<P: ParamDef>(&self, id: u32) -> Option<&P> {
-        self.get_rescap::<P>()
-            .and_then(|entry| unsafe { entry.get::<P>(id) })
+    /// Returns this repository's collection of [FD4ParamResCap]s.
+    ///
+    /// ## Safety
+    ///
+    /// This accesses data that `fromsoftware-rs` considers to be owned by
+    /// individual parameter repositories such as [`SoloParamRepository`]. The
+    /// caller must guarantee that there are no mutable references to *any*
+    /// parameter data anywhere in the program before calling this.
+    ///
+    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
+    pub unsafe fn res_cap_holder(&self) -> &FD4ResCapHolder<FD4ParamResCap> {
+        &self.res_cap_holder
     }
 
-    pub fn get_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
-        self.get_rescap_mut::<P>()
-            .and_then(|entry| unsafe { entry.get_mut::<P>(id) })
+    /// Returns a mutable reference to this repository's collection of
+    /// [FD4ParamResCap]s.
+    ///
+    /// ## Safety
+    ///
+    /// This accesses data that `fromsoftware-rs` considers to be owned by
+    /// individual parameter repositories such as [`SoloParamRepository`]. The
+    /// caller must guarantee that there are no mutable references to *any*
+    /// parameter data anywhere in the program before calling this.
+    ///
+    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
+    pub unsafe fn res_cap_holder_mut(&mut self) -> &mut FD4ResCapHolder<FD4ParamResCap> {
+        &mut self.res_cap_holder
     }
 
-    fn get_rescap<P: ParamDef>(&self) -> Option<&FD4ParamResCap> {
+    /// Returns the first parameter in the repository whose struct type is `P`,
+    /// or `None` if there is no such parameter. This should never return `None`
+    /// for a vanilla game, because the only parameters this library defines are
+    /// ones that are found in the game.
+    ///
+    /// ## Safety
+    ///
+    /// This accesses data that `fromsoftware-rs` considers to be owned by
+    /// individual parameter repositories such as [`SoloParamRepository`]. The
+    /// caller must guarantee that there are no mutable references to *any*
+    /// parameter data anywhere in the program before calling this.
+    ///
+    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
+    pub unsafe fn get<P: ParamDef>(&self, id: u32) -> Option<&P> {
+        unsafe { self.get_rescap::<P>() }.and_then(|entry| unsafe { entry.get::<P>(id) })
+    }
+
+    /// Returns a mutable reference to the first parameter in the repository
+    /// whose struct type is `P`, or `None` if there is no such parameter. This
+    /// should never return `None` for a vanilla game, because the only
+    /// parameters this library defines are ones that are found in the game.
+    ///
+    /// ## Safety
+    ///
+    /// This accesses data that `fromsoftware-rs` considers to be owned by
+    /// individual parameter repositories such as [`SoloParamRepository`]. The
+    /// caller must guarantee that there are no other references (mutable or
+    /// immutable) to *any* parameter data anywhere in the program before
+    /// calling this.
+    ///
+    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
+    pub unsafe fn get_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
+        unsafe { self.get_rescap_mut::<P>() }.and_then(|entry| unsafe { entry.get_mut::<P>(id) })
+    }
+
+    unsafe fn get_rescap<P: ParamDef>(&self) -> Option<&FD4ParamResCap> {
         self.res_cap_holder
             .entries()
-            .find(|e| e.param_name() == P::NAME)
+            .find(|e| e.struct_name() == P::NAME)
     }
 
-    fn get_rescap_mut<P: ParamDef>(&mut self) -> Option<&mut FD4ParamResCap> {
+    unsafe fn get_rescap_mut<P: ParamDef>(&mut self) -> Option<&mut FD4ParamResCap> {
         self.res_cap_holder
             .entries_mut()
-            .find(|e| e.param_name() == P::NAME)
+            .find(|e| e.struct_name() == P::NAME)
     }
 }
 
@@ -55,8 +134,15 @@ pub struct FD4ParamResCap {
 }
 
 impl FD4ParamResCap {
-    pub fn param_name(&self) -> &str {
-        self.data.param_name()
+    /// Returns the name of the struct that this parameter uses.
+    ///
+    /// This corresponds to [`ParamDef::NAME`] (typically written in all-caps
+    /// snake case) rather than the parameter name (typically written in camel
+    /// case).
+    ///
+    /// [`ParamDef::NAME`]: crate::param::ParamDef::NAME
+    pub fn struct_name(&self) -> &str {
+        self.data.struct_name()
     }
 
     /// # Safety
@@ -149,11 +235,18 @@ pub struct ParamFile {
 }
 
 impl ParamFile {
-    pub fn param_name(&self) -> &str {
+    /// Returns the name of the struct that this parameter uses.
+    ///
+    /// This corresponds to [`ParamDef::NAME`] (typically written in all-caps
+    /// snake case) rather than the parameter name (typically written in camel
+    /// case).
+    ///
+    /// [`ParamDef::NAME`]: crate::param::ParamDef::NAME
+    pub fn struct_name(&self) -> &str {
         if self.header.has_offset_param_type() {
-            self.read_offset_param_name()
+            self.read_offset_struct_name()
         } else {
-            self.read_inline_param_name()
+            self.read_inline_struct_name()
         }
     }
 
@@ -211,17 +304,17 @@ impl ParamFile {
         self as *const Self as *const u8
     }
 
-    fn read_inline_param_name(&self) -> &str {
+    fn read_inline_struct_name(&self) -> &str {
         unsafe {
-            CStr::from_ptr(self.header.param_name.inline.as_ptr() as *const i8)
+            CStr::from_ptr(self.header.struct_name.inline.as_ptr() as *const i8)
                 .to_str()
                 .unwrap_or("")
         }
     }
 
-    fn read_offset_param_name(&self) -> &str {
+    fn read_offset_struct_name(&self) -> &str {
         unsafe {
-            let offset = self.header.param_name.offset.value;
+            let offset = self.header.struct_name.offset.value;
             if offset == 0 {
                 return "";
             }
@@ -271,7 +364,7 @@ struct ParamHeader {
     unk_06: u16,
     paramdef_data_version: u16,
     row_count: u16,
-    param_name: ParamTypeName,
+    struct_name: ParamStructName,
     big_endian: u8,
     format_2d: u8,
     format_2e: u8,
@@ -295,14 +388,14 @@ impl ParamHeader {
 }
 
 #[repr(C)]
-union ParamTypeName {
+union ParamStructName {
     inline: [u8; 0x20],
-    offset: ParamTypeNameOffset,
+    offset: ParamStructNameOffset,
 }
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-struct ParamTypeNameOffset {
+struct ParamStructNameOffset {
     _pad: u32,
     value: u32,
     _reserved: [u32; 6],

@@ -9,22 +9,26 @@ impl DebugDisplay for FD4ParamRepository {
     fn render_debug(&self, ui: &Ui) {
         ui.text(format!(
             "ResCapHolder map bucket count: {:?}",
-            self.res_cap_holder.bucket_count
+            unsafe { self.res_cap_holder() }.bucket_count
         ));
 
         ui.header("Resources", || {
             ui.table(
                 "fd4-param-repository-rescaps",
                 [
-                    TableColumnSetup::new("Name"),
+                    TableColumnSetup::new("Param Name"),
+                    TableColumnSetup::new("Struct Name"),
                     TableColumnSetup::new("Row Count"),
                     TableColumnSetup::new("Paramdef Version"),
                     TableColumnSetup::new("Bytes"),
                 ],
-                self.res_cap_holder.entries(),
+                unsafe { self.res_cap_holder() }.entries(),
                 |ui, _i, res_cap| {
                     ui.table_next_column();
-                    ui.text(res_cap.data.param_name());
+                    ui.text(res_cap.name.to_string());
+
+                    ui.table_next_column();
+                    ui.text(res_cap.data.struct_name());
 
                     ui.table_next_column();
                     let row_count = res_cap.data.row_count();

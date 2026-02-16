@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{cmp::PartialEq, fmt::Display};
 
 use crate::dltx::{DLString, DLStringKind, DLUTF16StringKind};
 
@@ -27,6 +27,12 @@ impl<T: DLStringKind> AsRef<DLString<T>> for FD4BasicHashString<T> {
 impl<T: DLStringKind> Display for FD4BasicHashString<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.inner.fmt(f)
+    }
+}
+
+impl<T: DLStringKind, S: AsRef<str>> PartialEq<S> for FD4BasicHashString<T> {
+    fn eq(&self, other: &S) -> bool {
+        self.inner.eq(other)
     }
 }
 
