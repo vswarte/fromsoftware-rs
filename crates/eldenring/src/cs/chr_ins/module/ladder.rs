@@ -11,7 +11,7 @@ pub struct CSChrLadderModule {
     pub owner: NonNull<ChrIns>,
     /// FieldInsHandle of the ladder's [`crate::cs::GeomIns`].
     pub ladder_handle: FieldInsHandle,
-    /// Animation and control state for the currently ongoing ladder interaction. 
+    /// Animation and control state for the currently ongoing ladder interaction.
     pub state: LadderState,
     /// Havok coordinates of the ladder's top.
     pub top: F32Vector4,
