@@ -9,7 +9,7 @@ use crate::cs::{ChrIns, FieldInsHandle};
 pub struct CSChrLadderModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    /// FieldInsHandle of the ladders GeomIns.
+    /// FieldInsHandle of the ladder's [`crate::cs::GeomIns`].
     pub ladder_handle: FieldInsHandle,
     /// Animation and control state for the currently ongoing ladder interaction. 
     pub state: LadderState,
