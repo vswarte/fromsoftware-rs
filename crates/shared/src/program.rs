@@ -16,7 +16,7 @@ static CURRENT_BASE: LazyLock<Program> = LazyLock::new(|| {
 });
 
 impl Program<'_> {
-    /// Returns the currently running programing.
+    /// Returns the currently running program.
     pub fn current() -> Self {
         *CURRENT_BASE
     }

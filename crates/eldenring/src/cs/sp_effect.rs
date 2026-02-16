@@ -4,7 +4,7 @@ use shared::OwnedPtr;
 
 use crate::param::SP_EFFECT_PARAM_ST;
 
-use super::ChrIns;
+use super::{ChrIns, FieldInsHandle};
 
 #[repr(C)]
 /// Manages speffects for an entity.
@@ -51,7 +51,19 @@ pub struct SpecialEffectEntry {
     /// How long it takes the speffect before removing itself.
     pub duration: f32,
     pub interval_timer: f32,
-    unk50: [u8; 0x28],
+    pub stat_scalings: StatScalings,
+    unk50: [u8; 0x17],
+    pub instigator_handle: FieldInsHandle,
+    pub control_flags: u8,
+    unk71: [u8; 0x6],
+}
+
+#[repr(C)]
+pub struct StatScalings {
+    pub int: f32,
+    pub fth: f32,
+    pub str: f32,
+    pub dex: f32
 }
 
 #[repr(C)]

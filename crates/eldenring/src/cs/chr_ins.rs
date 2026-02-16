@@ -537,7 +537,8 @@ pub struct ChrCtrl {
     hover_warp_ctrl: usize,
     ai_jump_move_ctrl: usize,
     chr_model_pos_easing: usize,
-    unke8: [u8; 0x8],
+    pub unk_bitfield: ChrCtrlUnkBitfield,
+    unke9: [u8; 0x7],
     pub flags: ChrCtrlFlags,
     pub flags_copy: ChrCtrlFlags,
     unkf8: u32,
@@ -639,6 +640,14 @@ pub struct ChrCtrl {
     unk3ab: [u8; 0x5],
     unk3b0: usize,
     unk3b8: [u8; 0x18],
+}
+
+bitfield! {
+    #[derive(Clone, Copy, PartialEq, Eq, Hash)]
+    pub struct ChrCtrlUnkBitfield(u8);
+    impl Debug;
+    /// As described in Pav's table. Prevents inputs from reaching the player
+    pub enable_control, set_enable_control: 5;
 }
 
 #[repr(C)]

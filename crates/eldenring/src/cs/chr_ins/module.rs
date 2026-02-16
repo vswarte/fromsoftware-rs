@@ -17,6 +17,7 @@ mod throw;
 mod time_act;
 mod toughness;
 mod wet;
+mod sword_arts;
 
 pub use action_flag::*;
 pub use action_request::*;
@@ -31,6 +32,7 @@ pub use model_param_modifier::*;
 pub use physics::*;
 pub use ride::*;
 pub use super_armor::*;
+pub use sword_arts::*;
 pub use throw::*;
 pub use time_act::*;
 pub use toughness::*;
@@ -76,7 +78,7 @@ pub struct ChrInsModuleContainer {
     pub wet: OwnedPtr<CSChrWetModule>,
     auto_homing: usize,
     above_shadow_test: usize,
-    sword_arts: usize,
+    pub sword_arts: OwnedPtr<CSChrSwordArtsModule>,
     pub grass_hit: OwnedPtr<CSChrGrassHitModule>,
     wheel_rot: usize,
     cliff_wind: usize,

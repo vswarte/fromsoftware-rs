@@ -1,13 +1,14 @@
 use std::fmt::Display;
-
+use std::mem::transmute;
+use std::ptr::NonNull;
 use bitfield::bitfield;
+use pelite::pe64::Pe;
 use thiserror::Error;
 
-use crate::{
-    cs::{CSRandXorshift, OptionalItemId},
-    dlut::DLFixedVector,
-};
-use shared::{OwnedPtr, Subclass, Superclass};
+use crate::{cs::{CSRandXorshift, OptionalItemId}, dlut::DLFixedVector, rva};
+use shared::{OwnedPtr, Program, Subclass, Superclass};
+use crate::cs::ItemCategory;
+use crate::param::{EQUIP_PARAM_GEM_ST, EQUIP_PARAM_GOODS_ST, EQUIP_PARAM_WEAPON_ST};
 
 #[repr(C)]
 #[shared::singleton("CSGaitem")]
@@ -205,6 +206,59 @@ pub struct CSGaitemGameData {
     pub igame_data_elem_vftable: usize,
     pub gaitem_entries: DLFixedVector<CSGaitemGameDataEntry, 14000>,
 }
+
+#[repr(C)]
+pub struct GaitemLookupResult {
+    pub gaitem_handle: GaitemHandle,
+    unk: i32,
+    pub gaitem_ins: CSGaitemIns,
+    pub item_id: i32,
+}
+pub trait GaitemLookupResultExt {
+    fn get_gaitem_ins_by_category(&self, handle: *const GaitemHandle, item_category: ItemCategory) -> Option<&CSGaitemIns>;
+
+    fn get_sword_arts_param_id_for_weapon(&mut self) -> Option<i32>;
+}
+
+impl GaitemLookupResultExt for GaitemLookupResult {
+    fn get_gaitem_ins_by_category(&self, handle: *const GaitemHandle, item_category: ItemCategory) -> Option<&CSGaitemIns> {
+        let rva = Program::current()
+            .rva_to_va(rva::get().gaitem_lookup_result_get_gaitem_ins_by_category)
+            .unwrap();
+
+        let call = unsafe { transmute::<u64, fn(&GaitemLookupResult, *const GaitemHandle, ItemCategory) -> Option<&CSGaitemIns>>(rva) };
+        call(self, handle, item_category)
+    }
+
+    fn get_sword_arts_param_id_for_weapon(&mut self) -> Option<i32> {
+        let rva = Program::current()
+            .rva_to_va(rva::get().gaitem_get_swordarts_param_id_for_weapon)
+            .unwrap();
+
+        let call = unsafe { transmute::<u64, fn(&GaitemLookupResult) -> Option<i32>>(rva) };
+        call(self)
+    }
+}
+
+#[repr(C)]
+pub struct EquipParamGoodsLookupResult {
+    pub param_id: i32,
+    unk: i32,
+    pub param_row: Option<NonNull<EQUIP_PARAM_GOODS_ST>>,
+}
+#[repr(C)]
+pub struct EquipParamWeaponLookupResult {
+    pub param_id: i32,
+    unk: i32,
+    pub param_row: Option<NonNull<EQUIP_PARAM_WEAPON_ST>>,
+}
+#[repr(C)]
+pub struct EquipParamGemLookupResult {
+    pub param_id: i32,
+    unk: i32,
+    pub param_row: Option<NonNull<EQUIP_PARAM_GEM_ST>>,
+}
+
 
 #[cfg(test)]
 mod test {
