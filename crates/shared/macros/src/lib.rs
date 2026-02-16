@@ -367,12 +367,12 @@ pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
 
     // Ensure there's a repr(i32) attribute on the target struct.
     let Some(repr_attr) = input.attrs.iter().find(|a| a.path().is_ident("repr")) else {
-        return error(&input.ident, "Enum must apply a #[repr(i32)]");
+        return error(&input.ident, "Enum must apply a #[repr(i32)], there is currently no repr specified at all");
     };
 
     // Ensure the repr attribute has arguments.
     let Meta::List(repr_args) = &repr_attr.meta else {
-        return error(&input.ident, "Enum must apply a #[repr(i32)]");
+        return error(&input.ident, "Enum must apply a #[repr(i32)], the repr attribute currently has no arguments");
     };
 
     // Ensure the repr attribute has i32 as one of its arguments.
