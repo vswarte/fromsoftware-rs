@@ -15,5 +15,5 @@
 /// allow out of bounds access to the stepper array as well as cause unknown discriminants.
 pub unsafe trait StepperStates: Copy + std::fmt::Debug + 'static {
     // GAT since we can't use the count itself on FD4StepTemplateBase.
-    type StepperFnArray<TStepperFn>: AsRef<[TStepperFn]>;
+    type StepperFnArray<StepperFn>: AsRef<[StepperFn]>;
 }

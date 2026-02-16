@@ -7,15 +7,15 @@ use crate::{Tree, dlkr::DLAllocatorRef, dltx::DLString, fd4::FD4Time};
 
 /// Source of name: RTTI
 #[repr(C)]
-pub struct FD4StepTemplateBase<TStates: StepperStates, TSubject> {
+pub struct FD4StepTemplateBase<States: StepperStates, Subject> {
     // Inheritance chain: FD4ComponentBase -> FD4StepBaseInterface -> FD4StepTemplateInterface<FD4StepBaseInterface>
     vftable: *const (),
-    pub stepper_fns: NonNull<TStates::StepperFnArray<StepperFn<TSubject>>>,
+    pub stepper_fns: NonNull<States::StepperFnArray<StepperFn<Subject>>>,
     pub attach: FD4ComponentAttachSystem_Step,
     /// Current state executing this frame.
-    pub current_state: TStates,
+    pub current_state: States,
     /// Target step for next frames execution.
-    pub requested_state: TStates,
+    pub requested_state: States,
     unk48: u8,
 
     // Seemingly all debug stuff after this point.
