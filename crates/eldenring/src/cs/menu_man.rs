@@ -136,7 +136,7 @@ pub struct WorldMapViewModel {
     pub main_player_block: BlockId,
     /// Player's position inside of the current block.
     pub main_player_block_position: BlockPosition,
-    /// Players position on the map.
+    /// Player's position on the map.
     pub main_player_map_position: F32Vector2,
     /// Are we in a m12_xx_xx_xx map?
     pub main_player_is_underground: bool,
