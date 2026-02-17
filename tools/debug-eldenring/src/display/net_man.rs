@@ -6,17 +6,12 @@ use eldenring::cs::{
     CSQuickMatchingCtrl, QuickmatchManager,
 };
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSNetMan {
     fn render_debug(&self, ui: &Ui) {
-        ui.header("Blood Messages", || {
-            self.blood_message_db.render_debug(ui);
-        });
-
-        ui.header("Quickmatch", || {
-            self.quickmatch_manager.render_debug(ui);
-        });
+        ui.nested("Blood Messages", &self.blood_message_db);
+        ui.nested("Quickmatch", &self.quickmatch_manager);
     }
 }
 
@@ -92,46 +87,24 @@ fn render_message_table<'a>(messages: impl Iterator<Item = &'a CSNetBloodMessage
 
 impl DebugDisplay for QuickmatchManager {
     fn render_debug(&self, ui: &Ui) {
-        ui.header("CSQuickMatchingCtrl", || {
-            self.quickmatching_ctrl.render_debug(ui);
-        });
-
-        ui.header("CSBattleRoyalContext", || {
-            self.battle_royal_context.render_debug(ui);
-        });
+        ui.nested("CSQuickMatchingCtrl", &self.quickmatching_ctrl);
+        ui.nested("CSBattleRoyalContext", &self.battle_royal_context);
     }
 }
 
 impl DebugDisplay for CSBattleRoyalContext {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!(
-            "Error State: {:?}",
-            self.quickmatch_context.error_state
-        ));
-
-        ui.text(format!(
-            "Match settings: {:?}",
-            self.quickmatch_context.match_settings
-        ));
-
-        ui.text(format!(
-            "Match map (arena): {:?}",
-            self.quickmatch_context.match_map
-        ));
-
-        ui.text(format!("Max players: {}", self.match_player_count));
-        ui.text(format!("Current players: {}", self.current_player_count));
-
-        ui.input_text("Password", &mut self.password.to_string())
-            .read_only(true)
-            .build();
+        ui.debug("Error State", self.quickmatch_context.error_state);
+        ui.debug("Match settings", self.quickmatch_context.match_settings);
+        ui.debug("Match map (arena)", self.quickmatch_context.match_map);
+        ui.display("Max players", self.match_player_count);
+        ui.display("Current players", self.current_player_count);
+        ui.display_copiable("Password", &self.password);
     }
 }
 
 impl DebugDisplay for CSQuickMatchingCtrl {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text("Match state", &mut format!("{:?}", self.current_state))
-            .read_only(true)
-            .build();
+        ui.display_copiable("Match state", format!("{:?}", self.current_state));
     }
 }

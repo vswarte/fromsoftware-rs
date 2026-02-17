@@ -3,14 +3,12 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 use debug::UiExt;
 use eldenring::cs::{AutoInvadePointBlockEntry, CSAutoInvadePoint};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSAutoInvadePoint {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Entries", self.entries.iter(), |ui, _i, block_entry| {
-            ui.header(format!("Block {}", block_entry.block_id), || {
-                block_entry.render_debug(ui);
-            });
+            ui.nested(format!("Block {}", block_entry.block_id), block_entry);
         });
     }
 }

@@ -36,11 +36,11 @@ impl DebugDisplay for CSGaitemImp {
                         CSGaitemInsSubclass::CSWepGaitemIns(wep) => {
                             let gem_handle = wep.gem_slot_table.gem_slots[0].gaitem_handle;
                             if gem_handle.0 != 0 {
-                                ui.text(format!("Gem: {:?}", gem_handle.index()))
+                                ui.debug("Gem", gem_handle.index())
                             }
                         }
                         CSGaitemInsSubclass::CSGemGaitemIns(gem) if gem.weapon_handle.0 != 0 => {
-                            ui.text(format!("Weapon: {:?}", gem.weapon_handle.index()))
+                            ui.debug("Weapon", gem.weapon_handle.index())
                         }
                         _ => {}
                     }

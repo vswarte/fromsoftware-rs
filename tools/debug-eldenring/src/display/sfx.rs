@@ -6,23 +6,18 @@ use eldenring::{
     gxffx::{FxrListNode, FxrWrapper, GXFfxGraphicsResourceManager, GXFfxSceneCtrl},
 };
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSSfxImp {
     fn render_debug(&self, ui: &Ui) {
-        ui.header("Scene Ctrl", || {
-            self.scene_ctrl.render_debug(ui);
-        });
+        ui.nested("Scene Ctrl", &self.scene_ctrl);
     }
 }
 
 impl DebugDisplay for GXFfxSceneCtrl {
     fn render_debug(&self, ui: &Ui) {
         ui.header("Graphics Resource Manager", || {
-            ui.text(format!(
-                "graphics_resource_manager: {:#01x}",
-                self.graphics_resource_manager.as_ptr() as *const _ as usize
-            ));
+            ui.pointer("Address", self.graphics_resource_manager.as_ptr());
             unsafe {
                 self.graphics_resource_manager.as_ref().render_debug(ui);
             }
@@ -47,10 +42,10 @@ fn render_graphics_resource_manager<'a>(
     fxr_nodes: impl Iterator<Item = &'a FxrListNode>,
     ui: &Ui,
 ) {
-    ui.text(format!(
-        "fx_resource_container_scene_ctrl {:#x}",
-        fx_resource_container_scene_ctrl as *const _ as usize
-    ));
+    ui.pointer(
+        "fx_resource_container_scene_ctrl",
+        fx_resource_container_scene_ctrl,
+    );
 
     ui.table(
         "gx-ffx-graphics-resource-manager",
@@ -70,6 +65,6 @@ fn render_graphics_resource_manager<'a>(
 
 impl DebugDisplay for FxrWrapper {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("{:#01x}", self.fxr));
+        ui.pointer("FXR", &self.fxr);
     }
 }

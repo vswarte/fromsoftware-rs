@@ -7,17 +7,16 @@ use eldenring::cs::DisplayGhostData;
 use eldenring::cs::PhantomJoinData;
 use eldenring::cs::SosSignData;
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSEventManImp {
     fn render_debug(&self, ui: &Ui) {
         ui.header("CSEventSosSignCtrl", || {
             let sos_sign_ctrl = self.sos_sign.as_ref();
-            ui.header("SosSignMan", || {
-                if let Some(sos_sign_man) = sos_sign_ctrl.sos_sign_man {
-                    unsafe { sos_sign_man.as_ref().render_debug(ui) };
-                }
-            });
+            ui.nested_opt(
+                "SosSignMan",
+                sos_sign_ctrl.sos_sign_man.map(|m| unsafe { m.as_ref() }),
+            );
         });
     }
 }
@@ -25,35 +24,27 @@ impl DebugDisplay for CSEventManImp {
 impl DebugDisplay for CSSosSignMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Signs", self.signs.iter(), |ui, _i, entry| {
-            ui.header(format!("Sign {}", entry.sign_id), || {
-                entry.sign_data.render_debug(ui);
-            });
+            ui.nested(format!("Sign {}", entry.sign_id), &entry.sign_data);
         });
         ui.list("Sign SFX", self.sign_sfx.iter(), |ui, _i, entry| {
-            ui.text(format!("Sign ID: {}", entry.sign_id));
+            ui.display("Sign ID", entry.sign_id);
         });
         ui.list(
             "Summon Requests",
             self.summon_requests.iter(),
-            |ui, _i, entry| {
-                ui.text(format!("Summon Request ID: {entry}"));
-            },
+            |ui, _i, entry| ui.display("Summon Request ID", entry),
         );
 
         ui.list(
             "Join Data",
             self.join_data.iter().map(|e| unsafe { e.as_ref() }),
-            |ui, _i, entry| {
-                ui.header(format!("Join Data (Sign ID: {})", entry.sign_id), || {
-                    entry.render_debug(ui);
-                });
-            },
+            |ui, _i, entry| ui.nested(format!("Join Data (Sign ID: {})", entry.sign_id), entry),
         );
 
-        ui.text(format!(
-            "White Sign Cool Time Param ID: {}",
-            self.white_sign_cool_time_param_id
-        ));
+        ui.display(
+            "White Sign Cool Time Param ID",
+            self.white_sign_cool_time_param_id,
+        );
 
         ui.list(
             "Sign Cooldowns",
@@ -63,119 +54,102 @@ impl DebugDisplay for CSSosSignMan {
             },
         );
 
-        ui.text(format!(
-            "Override Guardian of Rosalia Count Enabled: {}",
-            self.override_guardian_of_rosalia_count_enabled
-        ));
-        ui.text(format!(
-            "Override Guardian of Rosalia Count: {}",
-            self.override_guardian_of_rosalia_count
-        ));
-        ui.text(format!(
-            "Override Map Guardian Count Enabled: {}",
-            self.override_map_guardian_count_enabled
-        ));
-        ui.text(format!(
-            "Override Map Guardian Count: {}",
-            self.override_map_guardian_count
-        ));
-        ui.text(format!(
-            "Override Force Join Black Count Enabled: {}",
-            self.override_force_join_black_count_enabled
-        ));
-        ui.text(format!(
-            "Override Force Join Black Count: {}",
-            self.override_force_join_black_count
-        ));
-        ui.text(format!(
-            "Override Sinner Hunter Count Enabled: {}",
-            self.override_sinner_hunter_count_enabled
-        ));
-        ui.text(format!(
-            "Override Sinner Hunter Count: {}",
-            self.override_sinner_hunter_count
-        ));
-        ui.text(format!(
-            "Override Berserker White Count Enabled: {}",
-            self.override_berserker_white_count_enabled
-        ));
-        ui.text(format!(
-            "Override Berserker White Count: {}",
-            self.override_berserker_white_count
-        ));
-        ui.text(format!(
-            "Override Sinner Hero Count Enabled: {}",
-            self.override_sinner_hero_count_enabled
-        ));
-        ui.text(format!(
-            "Override Sinner Hero Count: {}",
-            self.override_sinner_hero_count
-        ));
-        ui.text(format!(
-            "Override Cult White Summon Count Enabled: {}",
-            self.override_cult_white_summon_count_enabled
-        ));
-        ui.text(format!(
-            "Override Cult White Summon Count: {}",
-            self.override_cult_white_summon_count
-        ));
-        ui.text(format!(
-            "Override Normal White Count Enabled: {}",
-            self.override_normal_white_count_enabled
-        ));
-        ui.text(format!(
-            "Override Normal White Count: {}",
-            self.override_normal_white_count
-        ));
-        ui.text(format!(
-            "Override Red Summon Type Count Enabled: {}",
-            self.override_red_summon_type_count_enabled
-        ));
-        ui.text(format!(
-            "Override Red Summon Type Count: {}",
-            self.override_red_summon_type_count
-        ));
+        ui.display(
+            "Override Guardian of Rosalia Count Enabled",
+            self.override_guardian_of_rosalia_count_enabled,
+        );
+        ui.display(
+            "Override Guardian of Rosalia Count",
+            self.override_guardian_of_rosalia_count,
+        );
+        ui.display(
+            "Override Map Guardian Count Enabled",
+            self.override_map_guardian_count_enabled,
+        );
+        ui.display(
+            "Override Map Guardian Count",
+            self.override_map_guardian_count,
+        );
+        ui.display(
+            "Override Force Join Black Count Enabled",
+            self.override_force_join_black_count_enabled,
+        );
+        ui.display(
+            "Override Force Join Black Count",
+            self.override_force_join_black_count,
+        );
+        ui.display(
+            "Override Sinner Hunter Count Enabled",
+            self.override_sinner_hunter_count_enabled,
+        );
+        ui.display(
+            "Override Sinner Hunter Count",
+            self.override_sinner_hunter_count,
+        );
+        ui.display(
+            "Override Berserker White Count Enabled",
+            self.override_berserker_white_count_enabled,
+        );
+        ui.display(
+            "Override Berserker White Count",
+            self.override_berserker_white_count,
+        );
+        ui.display(
+            "Override Sinner Hero Count Enabled",
+            self.override_sinner_hero_count_enabled,
+        );
+        ui.display(
+            "Override Sinner Hero Count",
+            self.override_sinner_hero_count,
+        );
+        ui.display(
+            "Override Cult White Summon Count Enabled",
+            self.override_cult_white_summon_count_enabled,
+        );
+        ui.display(
+            "Override Cult White Summon Count",
+            self.override_cult_white_summon_count,
+        );
+        ui.display(
+            "Override Normal White Count Enabled",
+            self.override_normal_white_count_enabled,
+        );
+        ui.display(
+            "Override Normal White Count",
+            self.override_normal_white_count,
+        );
+        ui.display(
+            "Override Red Summon Type Count Enabled",
+            self.override_red_summon_type_count_enabled,
+        );
+        ui.display(
+            "Override Red Summon Type Count",
+            self.override_red_summon_type_count,
+        );
     }
 }
 
 impl DebugDisplay for SosSignData {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Sign ID: {}", self.sign_id));
-        ui.text(format!("Sign Identifier: {}", self.sign_identifier.0));
-        ui.text(format!("Map ID: {}", self.block_id));
-        ui.text(format!("Position: {:?}", self.pos));
-        ui.text(format!("Yaw: {}", self.yaw));
-        ui.text(format!("Play region: {}", self.play_region_id));
-        ui.text(format!("Vow Type: {}", self.vow_type));
-        ui.text(format!(
-            "Apply Multiplayer Rules: {}",
-            self.apply_multiplayer_rules
-        ));
-        ui.text(format!("Multiplay Type: {:?}", self.multiplay_type));
-        ui.text(format!("Is Sign Puddle: {}", self.is_sign_puddle));
-        ui.text(format!(
-            "Steam ID: {}",
-            self.steam_id.to_u64().unwrap_or_default()
-        ));
-        ui.text(format!("FMG Name ID: {}", self.fmg_name_id));
-        ui.text(format!("NPC Param ID: {}", self.npc_param_id));
-        ui.header("Display Ghost Data", || {
-            self.display_ghost.render_debug(ui);
-        });
-        ui.text(format!(
-            "Summoned NPC Entity ID: {}",
-            self.summoned_npc_entity_id
-        ));
-        ui.text(format!(
-            "Summon Event Flag ID: {}",
-            self.summon_event_flag_id
-        ));
-        ui.text(format!(
-            "Dismissal Event Flag ID: {}",
-            self.dismissal_event_flag_id
-        ));
-        ui.text(format!("Summonee Player ID: {}", self.summonee_player_id));
-        ui.text(format!("Character ID: {}", self.character_id));
+        ui.display("Sign ID", self.sign_id);
+        ui.display("Sign Identifier", self.sign_identifier.0);
+        ui.display("Map ID", self.block_id);
+        ui.debug("Position", self.pos);
+        ui.display("Yaw", self.yaw);
+        ui.display("Play region", self.play_region_id);
+        ui.display("Vow Type", self.vow_type);
+        ui.display("Apply Multiplayer Rules", self.apply_multiplayer_rules);
+        ui.debug("Multiplay Type", self.multiplay_type);
+        ui.display("Is Sign Puddle", self.is_sign_puddle);
+        ui.display("Steam ID", self.steam_id.to_u64().unwrap_or_default());
+        ui.display("FMG Name ID", self.fmg_name_id);
+        ui.display("NPC Param ID", self.npc_param_id);
+        ui.nested("Display Ghost Data", &self.display_ghost);
+        ui.display("Summoned NPC Entity ID", self.summoned_npc_entity_id);
+        ui.display("Summon Event Flag ID", self.summon_event_flag_id);
+        ui.display("Dismissal Event Flag ID", self.dismissal_event_flag_id);
+        ui.display("Summonee Player ID", self.summonee_player_id);
+        ui.display("Character ID", self.character_id);
     }
 }
 
@@ -211,45 +185,28 @@ impl DebugDisplay for DisplayGhostData {
                 ui.text(format!("{}: {}", item.1, item.0));
             },
         );
-        ui.text(format!("Gender: {}", self.gender));
-        ui.header("Selected Slots", || {
-            self.asm_equipment.render_debug(ui);
-        });
+        ui.display("Gender", self.gender);
+        ui.nested("Selected Slots", &self.asm_equipment);
     }
 }
 
 impl DebugDisplay for PhantomJoinData {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Sign ID: {}", self.sign_id));
-        ui.text(format!("Sign Identifier: {}", self.sign_identifier.0));
-        ui.text(format!("Join Time: {}", self.join_time));
-        ui.text(format!("Multiplay Type: {:?}", self.multiplay_type));
-        ui.text(format!("Is Sign Puddle: {}", self.is_sign_puddle));
-        ui.text(format!("State: {}", self.state));
-        ui.text(format!(
-            "Steam ID: {}",
-            self.steam_id.to_u64().unwrap_or_default()
-        ));
-        ui.text(format!("NPC Entity ID: {}", self.npc_entity_id));
-        ui.text(format!(
-            "Summon Event Flag ID: {}",
-            self.summon_event_flag_id
-        ));
-        ui.text(format!(
-            "Dismissal Event Flag ID: {}",
-            self.dismissal_event_flag_id
-        ));
-        ui.text(format!("Position: {:?}", self.pos));
-        ui.text(format!("Rotation: {:?}", self.rotation));
-        ui.text(format!("Block ID: {}", self.block_id));
-        ui.text(format!("Summonee Player ID: {}", self.summonee_player_id));
-        ui.text(format!(
-            "Summon Job Error Code: {:?}",
-            self.summon_job_error_code
-        ));
-        ui.text(format!(
-            "Apply Multiplayer Rules: {}",
-            self.apply_multiplayer_rules
-        ));
+        ui.display("Sign ID", self.sign_id);
+        ui.display("Sign Identifier", self.sign_identifier.0);
+        ui.display("Join Time", self.join_time);
+        ui.debug("Multiplay Type", self.multiplay_type);
+        ui.display("Is Sign Puddle", self.is_sign_puddle);
+        ui.display("State", self.state);
+        ui.display("Steam ID: {}", self.steam_id.to_u64().unwrap_or_default());
+        ui.display("NPC Entity ID", self.npc_entity_id);
+        ui.display("Summon Event Flag ID", self.summon_event_flag_id);
+        ui.display("Dismissal Event Flag ID", self.dismissal_event_flag_id);
+        ui.debug("Position", self.pos);
+        ui.debug("Rotation", self.rotation);
+        ui.display("Block ID", self.block_id);
+        ui.display("Summonee Player ID", self.summonee_player_id);
+        ui.debug("Summon Job Error Code", self.summon_job_error_code);
+        ui.display("Apply Multiplayer Rules", self.apply_multiplayer_rules);
     }
 }
