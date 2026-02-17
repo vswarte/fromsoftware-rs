@@ -1,5 +1,6 @@
 use std::{sync::Once, time::Duration};
 
+use debug::*;
 use fromsoftware_shared::Program;
 use hudhook::ImguiRenderLoop;
 use hudhook::hooks::dx11::ImguiDx11Hooks;
@@ -38,7 +39,9 @@ impl SekiroDebugGui {
 }
 
 impl ImguiRenderLoop for SekiroDebugGui {
-    fn initialize(&mut self, _ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
+    fn initialize(&mut self, ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
+        ctx.set_clipboard_backend(WindowsClipboardBackend {});
+
         // TODO: Look for CSWindowImp and scale everything based on that like ER
         // does.
     }

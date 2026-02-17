@@ -2,10 +2,12 @@ use hudhook::{Hooks, Hudhook, ImguiRenderLoop, eject};
 use tracing_panic::panic_hook;
 use windows::Win32::{Foundation::HINSTANCE, System::SystemServices::DLL_PROCESS_ATTACH};
 
+mod clipboard;
 mod display;
 mod ext;
 mod state_map;
 
+pub use clipboard::*;
 pub use ext::*;
 pub use state_map::*;
 
