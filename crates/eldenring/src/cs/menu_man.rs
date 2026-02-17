@@ -134,7 +134,7 @@ pub struct WorldMapViewModel {
     pub disable_main_player_marker: bool,
     /// The current block the player is in.
     pub main_player_block: BlockId,
-    /// Players position inside of the current block.
+    /// Player's position inside of the current block.
     pub main_player_block_position: BlockPosition,
     /// Players position on the map.
     pub main_player_map_position: F32Vector2,
