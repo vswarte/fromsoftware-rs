@@ -140,7 +140,7 @@ pub struct WorldMapViewModel {
     pub main_player_map_position: F32Vector2,
     /// Are we in a m12_xx_xx_xx map?
     pub main_player_is_underground: bool,
-    /// Players yaw rotation from 0 to 360.
+    /// Player's yaw rotation from 0 to 360.
     pub main_player_orientation: f32,
     unk38: u64,
     unk40: u64,
