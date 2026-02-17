@@ -130,7 +130,7 @@ pub struct WorldMapViewModel {
     vftable: usize,
     /// Currently open map dialog. Is only Some when the map is actually being viewed.
     dialog: Option<NonNull<()>>,
-    /// Disables the players marker on the map.
+    /// Disables the player's marker on the map.
     pub disable_main_player_marker: bool,
     /// The current block the player is in.
     pub main_player_block: BlockId,
