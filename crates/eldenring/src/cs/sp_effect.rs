@@ -51,19 +51,20 @@ pub struct SpecialEffectEntry {
     /// How long it takes the speffect before removing itself.
     pub duration: f32,
     pub interval_timer: f32,
-    pub stat_scalings: StatScalings,
+    pub stat_scaling: StatScaling,
     unk50: [u8; 0x17],
+    /// The entity "responsible" for applying the speffect to its owner, if available.
     pub instigator_handle: FieldInsHandle,
-    pub control_flags: u8,
+    unk_control_flags: u8,
     unk71: [u8; 0x6],
 }
 
 #[repr(C)]
-pub struct StatScalings {
-    pub int: f32,
-    pub fth: f32,
-    pub str: f32,
-    pub dex: f32
+pub struct StatScaling {
+    pub intelligence: f32,
+    pub faith: f32,
+    pub strength: f32,
+    pub dexterity: f32
 }
 
 #[repr(C)]

@@ -8,7 +8,7 @@ use thiserror::Error;
 use crate::{cs::{CSRandXorshift, OptionalItemId}, dlut::DLFixedVector, rva};
 use shared::{OwnedPtr, Program, Subclass, Superclass};
 use crate::cs::ItemCategory;
-use crate::param::{EQUIP_PARAM_GEM_ST, EQUIP_PARAM_GOODS_ST, EQUIP_PARAM_WEAPON_ST};
+use crate::param::{EquipParam, EQUIP_PARAM_GEM_ST, EQUIP_PARAM_GOODS_ST, EQUIP_PARAM_WEAPON_ST};
 
 #[repr(C)]
 #[shared::singleton("CSGaitem")]
@@ -210,18 +210,14 @@ pub struct CSGaitemGameData {
 #[repr(C)]
 pub struct GaitemLookupResult {
     pub gaitem_handle: GaitemHandle,
-    unk: i32,
+    _pad: [u8; 4],
     pub gaitem_ins: CSGaitemIns,
     pub item_id: i32,
 }
-pub trait GaitemLookupResultExt {
-    fn get_gaitem_ins_by_category(&self, handle: *const GaitemHandle, item_category: ItemCategory) -> Option<&CSGaitemIns>;
 
-    fn get_sword_arts_param_id_for_weapon(&mut self) -> Option<i32>;
-}
-
-impl GaitemLookupResultExt for GaitemLookupResult {
-    fn get_gaitem_ins_by_category(&self, handle: *const GaitemHandle, item_category: ItemCategory) -> Option<&CSGaitemIns> {
+impl GaitemLookupResult {
+    // Retrieves a valid CSGaitemIns from a GaitemHandle if it matches item_category.
+    fn get_gaitem_ins_by_category(&self, handle: &GaitemHandle, item_category: ItemCategory) -> Option<&CSGaitemIns> {
         let rva = Program::current()
             .rva_to_va(rva::get().gaitem_lookup_result_get_gaitem_ins_by_category)
             .unwrap();
@@ -230,35 +226,23 @@ impl GaitemLookupResultExt for GaitemLookupResult {
         call(self, handle, item_category)
     }
 
-    fn get_sword_arts_param_id_for_weapon(&mut self) -> Option<i32> {
+    // Retrieves the SwordArts param ID associated with a weapon in the GaitemLookupResult.
+    fn get_sword_arts_param_id_for_weapon(&self) -> Option<i32> {
         let rva = Program::current()
             .rva_to_va(rva::get().gaitem_get_swordarts_param_id_for_weapon)
             .unwrap();
 
-        let call = unsafe { transmute::<u64, fn(&GaitemLookupResult) -> Option<i32>>(rva) };
+        let call = unsafe { transmute::<u64, fn(*const GaitemLookupResult) -> Option<i32>>(rva) };
         call(self)
     }
 }
 
 #[repr(C)]
-pub struct EquipParamGoodsLookupResult {
+pub struct EquipParamLookupResult<T> where T: EquipParam {
     pub param_id: i32,
-    unk: i32,
-    pub param_row: Option<NonNull<EQUIP_PARAM_GOODS_ST>>,
+    _pad: [u8; 4],
+    pub param_row: Option<NonNull<T>>,
 }
-#[repr(C)]
-pub struct EquipParamWeaponLookupResult {
-    pub param_id: i32,
-    unk: i32,
-    pub param_row: Option<NonNull<EQUIP_PARAM_WEAPON_ST>>,
-}
-#[repr(C)]
-pub struct EquipParamGemLookupResult {
-    pub param_id: i32,
-    unk: i32,
-    pub param_row: Option<NonNull<EQUIP_PARAM_GEM_ST>>,
-}
-
 
 #[cfg(test)]
 mod test {
