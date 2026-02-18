@@ -9,7 +9,7 @@ use super::resource::FD4ResCap;
 
 use param_layout::{ParamLayout, ParamLayout32, ParamLayout64};
 
-// Under most circumstances, it wuold make the most sense to consider
+// Under most circumstances, it would make the most sense to consider
 // [FD4ParamRepository] to be the owner of the [FD4ParamResCap]s it contains.
 // However, it's substantially less efficient to look up a given parameter
 // through [FD4ParamRepository] than it is through more specific repositories
