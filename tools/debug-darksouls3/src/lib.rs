@@ -4,6 +4,7 @@ use darksouls3::app_menu::*;
 use darksouls3::sprj::*;
 use darksouls3::util::system::wait_for_system_init;
 use darksouls3_extra::input::*;
+use debug::*;
 use fromsoftware_shared::Program;
 use hudhook::hooks::dx11::ImguiDx11Hooks;
 use hudhook::imgui::{sys as imgui_sys, *};
@@ -71,7 +72,9 @@ impl DarkSouls3DebugGui {
 }
 
 impl ImguiRenderLoop for DarkSouls3DebugGui {
-    fn initialize(&mut self, _ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
+    fn initialize(&mut self, ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
+        ctx.set_clipboard_backend(WindowsClipboardBackend {});
+
         // TODO: Look for CSWindowImp and scale everything based on that like ER
         // does.
     }

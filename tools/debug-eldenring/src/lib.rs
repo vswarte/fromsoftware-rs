@@ -92,6 +92,8 @@ impl EldenRingDebugGui {
 
 impl ImguiRenderLoop for EldenRingDebugGui {
     fn initialize(&mut self, ctx: &mut Context, _render_context: &mut dyn hudhook::RenderContext) {
+        ctx.set_clipboard_backend(WindowsClipboardBackend {});
+
         if self.update_scale() {
             ctx.style_mut()
                 .scale_all_sizes(f32::max(self.scale / 2.0, 1.0));
