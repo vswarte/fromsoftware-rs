@@ -10,4 +10,6 @@ use super::RvaBundle;
 /// using `tools/binary-generator`.
 pub const RVAS: RvaBundle = RvaBundle {
     global_hinstance: 0x3e9edb8,
+    map_item_man_grant_item: 0x91c970,
+    map_item_man_ptr: 0x3d6cdc0,
 };
