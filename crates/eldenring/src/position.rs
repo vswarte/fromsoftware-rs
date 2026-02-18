@@ -145,8 +145,11 @@ impl Display for DirectionalVector {
 
 /// XZ Coordinates on the world map.
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct MapPosition(pub f32, pub f32);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct MapPosition {
+    pub x: f32,
+    pub z: f32,
+}
 
 #[cfg(test)]
 mod test {
