@@ -3,42 +3,20 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 use debug::UiExt;
 use eldenring::cs::{CSEventFlagMan, CSFD4VirtualMemoryFlag};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSEventFlagMan {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text("World type", &mut self.world_type.to_string())
-            .read_only(true)
-            .build();
-
-        ui.header("CSFD4VirtualMemory", || {
-            self.virtual_memory_flag.render_debug(ui);
-        });
+        ui.debug_copiable("World type", self.world_type);
+        ui.nested("CSFD4VirtualMemory", &self.virtual_memory_flag);
     }
 }
 
 impl DebugDisplay for CSFD4VirtualMemoryFlag {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text(
-            "Event flag divisor",
-            &mut self.event_flag_divisor.to_string(),
-        )
-        .read_only(true)
-        .build();
-
-        ui.input_text(
-            "Event flag holder size",
-            &mut self.event_flag_holder_size.to_string(),
-        )
-        .read_only(true)
-        .build();
-
-        ui.input_text(
-            "Event flag holder count",
-            &mut self.event_flag_holder_count.to_string(),
-        )
-        .read_only(true)
-        .build();
+        ui.debug_copiable("Event flag divisor", self.event_flag_divisor);
+        ui.debug_copiable("Event flag holder size", self.event_flag_holder_size);
+        ui.debug_copiable("Event flag holder count", self.event_flag_holder_count);
 
         ui.header("Block Descriptors", || {
             ui.table(

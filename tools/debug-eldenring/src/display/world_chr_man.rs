@@ -7,7 +7,7 @@ use eldenring::cs::{
 };
 use fromsoftware_shared::Subclass;
 
-use super::{DebugDisplay, StatefulDebugDisplay, chr::ChrInsState};
+use super::{DebugDisplay, DisplayUiExt, StatefulDebugDisplay, chr::ChrInsState};
 
 #[derive(Default)]
 pub struct WorldChrManState {
@@ -26,23 +26,17 @@ impl StatefulDebugDisplay for WorldChrMan {
     fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
         state.chr_ins_states.track_reads();
 
-        let world_area_chr_list_count = self.world_area_chr_list_count;
-        ui.text(format!(
-            "World Area Chr List Count: {world_area_chr_list_count}"
-        ));
+        ui.display("World Area Chr List Count", self.world_area_chr_list_count);
 
         let world_block_chr_list_count = self.world_block_chr_list_count;
-        ui.text(format!(
-            "World Block Chr List Count: {world_block_chr_list_count}"
-        ));
+        ui.display("World Block Chr List Count", world_block_chr_list_count);
 
-        let world_grid_area_chr_list_count = self.world_grid_area_chr_list_count;
-        ui.text(format!(
-            "World Grid Area Chr List Count: {world_grid_area_chr_list_count}"
-        ));
+        ui.display(
+            "World Grid Area Chr List Count",
+            self.world_grid_area_chr_list_count,
+        );
 
-        let world_area_list_count = self.world_area_list_count;
-        ui.text(format!("World Area List Count: {world_area_list_count}"));
+        ui.display("World Area List Count", self.world_area_list_count);
 
         ui.header("Player ChrSet", || {
             self.player_chr_set
@@ -81,19 +75,12 @@ impl StatefulDebugDisplay for WorldChrMan {
             },
         );
 
-        match self.main_player.as_mut() {
-            Some(p) => {
-                ui.header("Main player", || {
-                    let state = state.chr_ins_states.get(p.field_ins_handle);
-                    p.render_debug_mut(ui, state);
-                });
-            }
-            None => ui.text("No Main player instance"),
-        }
-
-        ui.header("SummonBuddyManager", || {
-            self.summon_buddy_manager.render_debug(ui);
+        ui.header_opt("Main player", self.main_player.as_mut(), |p| {
+            let state = state.chr_ins_states.get(p.field_ins_handle);
+            p.render_debug_mut(ui, state);
         });
+
+        ui.nested("SummonBuddyManager", &self.summon_buddy_manager);
 
         ui.list(
             "NetChrSetSync",
@@ -101,20 +88,14 @@ impl StatefulDebugDisplay for WorldChrMan {
                 .net_chr_set_sync
                 .iter()
                 .filter_map(|s| s.as_ref()),
-            |ui, i, entry| {
-                ui.header(format!("NetChrSetSync {i}"), || {
-                    entry.render_debug(ui);
-                });
-            },
+            |ui, i, entry| ui.nested(format!("NetChrSetSync {i}"), entry),
         );
 
         ui.header("Debug Character Creator", || {
-            ui.input_text(
+            ui.display_copiable(
                 "Last Created Character",
-                &mut format!("{:x?}", self.debug_chr_creator.last_created_chr),
-            )
-            .read_only(true)
-            .build();
+                format!("{:x?}", self.debug_chr_creator.last_created_chr),
+            );
         });
 
         // We can't use .list here because it relies on entries being stable across frames
@@ -129,7 +110,7 @@ impl StatefulDebugDisplay for WorldChrMan {
                     let label = format!("ChrIns {}", chr_ins.field_ins_handle);
                     let _id = ui.push_id(&label);
                     ui.header(&label, || {
-                        ui.text(format!("Distance: {}", distance));
+                        ui.display("Distance", distance);
                         chr_ins.render_debug_mut(
                             ui,
                             state.chr_ins_states.get(chr_ins.field_ins_handle),
@@ -144,7 +125,7 @@ impl StatefulDebugDisplay for WorldChrMan {
 
 impl DebugDisplay for NetChrSetSync {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Character capacity: {}", self.capacity));
+        ui.display("Character capacity", self.capacity);
 
         ui.list(
             "Placement Updates",
@@ -152,10 +133,7 @@ impl DebugDisplay for NetChrSetSync {
             |ui, i, flags| {
                 let placement = &self.placement_updates()[i];
                 ui.header(format!("Index {i}"), || {
-                    ui.text(format!(
-                        "Has Placement Update: {}",
-                        flags.has_placement_update()
-                    ));
+                    ui.display("Has Placement Update", flags.has_placement_update());
                     ui.text(format!(
                         "Position: ({},{},{})",
                         placement.position.0, placement.position.1, placement.position.2
@@ -174,9 +152,9 @@ impl DebugDisplay for NetChrSetSync {
             |ui, i, flags| {
                 let health = &self.health_updates()[i];
                 ui.header(format!("Index {i}"), || {
-                    ui.text(format!("Has Health Update: {}", flags.has_health_update()));
-                    ui.text(format!("Current HP: {}", health.current_hp));
-                    ui.text(format!("Damage Taken: {}", health.damage_taken));
+                    ui.display("Has Health Update", flags.has_health_update());
+                    ui.display("Current HP", health.current_hp);
+                    ui.display("Damage Taken", health.damage_taken);
                 });
             },
         );
@@ -195,7 +173,7 @@ where
     type State = ChrSetState;
 
     fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
-        ui.text(format!("Character capacity: {}", self.capacity));
+        ui.display("Character capacity", self.capacity);
 
         ui.list("Characters", self.characters(), |ui, _i, chr_ins| {
             let chr_ins = chr_ins.superclass_mut();
@@ -260,124 +238,87 @@ where
 
 impl DebugDisplay for SummonBuddyWarpEntry {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Handle: {}", self.handle));
-        ui.text(format!("Warp stage: {:?}", self.warp_stage));
-        ui.text(format!("Target position: {}", self.target_position));
-        ui.text(format!("Target rotation: {:?}", self.q_target_rotation));
+        ui.display("Handle", self.handle);
+        ui.debug("Warp stage", self.warp_stage);
+        ui.display("Target position", self.target_position);
+        ui.debug("Target rotation", self.q_target_rotation);
         ui.text(format!("Flags: {:032b}", self.flags));
-        ui.text(format!("Time ray blocked: {}", self.time_ray_blocked));
-        ui.text(format!("Time path stacked: {}", self.time_path_stacked));
+        ui.display("Time ray blocked", self.time_ray_blocked);
+        ui.display("Time path stacked", self.time_path_stacked);
     }
 }
 
 impl DebugDisplay for SummonBuddyWarpManager {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Warp Entries", self.entries.iter(), |ui, index, entry| {
-            ui.header(format!("Warp Entry {index}"), || {
-                entry.render_debug(ui);
-            });
+            ui.nested(format!("Warp Entry {index}"), entry);
         });
     }
 }
 
 impl DebugDisplay for SummonBuddyGroupEntry {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Buddy param ID: {}", self.buddy_param_id));
-        ui.text(format!("Has mount: {}", self.has_mount));
-        ui.text(format!(
-            "Buddy stone param ID: {}",
-            self.buddy_stone_param_id
-        ));
-        ui.text(format!("Doping SpEffect ID: {}", self.doping_sp_effect_id));
-        ui.text(format!(
-            "Dopping level SpEffect ID: {}",
-            self.dopping_level_sp_effect_id
-        ));
-        ui.text(format!("Spawn animation ID: {}", self.spawn_animation));
-        ui.text(format!("Warp requested: {}", self.warp_requested));
-        ui.text(format!("Disappear requested: {}", self.disappear_requested));
-        ui.text(format!("Disappear delay sec: {}", self.disappear_delay_sec));
-        ui.text(format!("Has spawn point: {}", self.has_spawn_point));
-        ui.text(format!(
-            "Disable PC target share: {}",
-            self.disable_pc_target_share
-        ));
-        ui.text(format!("Follow type: {}", self.follow_type));
-        ui.text(format!("Is remote: {}", self.is_remote));
-        ui.text(format!(
-            "Has Mogh's Great Rune buff: {}",
-            self.has_mogh_great_rune_buff
-        ));
+        ui.display("Buddy param ID", self.buddy_param_id);
+        ui.display("Has mount", self.has_mount);
+        ui.display("Buddy stone param ID", self.buddy_stone_param_id);
+        ui.display("Doping SpEffect ID", self.doping_sp_effect_id);
+        ui.display("Dopping level SpEffect ID", self.dopping_level_sp_effect_id);
+        ui.display("Spawn animation ID", self.spawn_animation);
+        ui.display("Warp requested", self.warp_requested);
+        ui.display("Disappear requested", self.disappear_requested);
+        ui.display("Disappear delay sec", self.disappear_delay_sec);
+        ui.display("Has spawn point", self.has_spawn_point);
+        ui.display("Disable PC target share", self.disable_pc_target_share);
+        ui.display("Follow type", self.follow_type);
+        ui.display("Is remote", self.is_remote);
+        ui.display("Has Mogh's Great Rune buff", self.has_mogh_great_rune_buff);
     }
 }
 
 impl DebugDisplay for SummonBuddyManager {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!(
-            "Request summon SpEffect ID: {}",
-            self.request_summon_speffect_id
-        ));
-        ui.text(format!(
-            "Active summon SpEffect ID: {}",
-            self.active_summon_speffect_id
-        ));
-        ui.text(format!("Disappear requested: {}", self.disappear_requested));
-        ui.text(format!(
-            "Buddy stone entity ID: {}",
-            self.buddy_stone_entity_id
-        ));
-        ui.text(format!(
-            "Active summon buddy stone entity ID: {}",
-            self.active_summmon_buddy_stone_entity_id
-        ));
-        ui.text(format!(
-            "Buddy disappear delay sec: {}",
-            self.buddy_disappear_delay_sec
-        ));
-        ui.text(format!(
-            "Item use cooldown timer: {}",
-            self.item_use_cooldown_timer
-        ));
-        ui.text(format!("Spawn rotation: {}", self.spawn_rotation));
-        ui.text(format!(
-            "Player has alive summon: {}",
-            self.player_has_alive_summon
-        ));
-        ui.text(format!(
-            "Is within activation range: {}",
-            self.is_within_activation_range
-        ));
-        ui.text(format!(
-            "Is within warn range: {}",
-            self.is_within_warn_range
-        ));
-        ui.text(format!("Last buddy slot: {}", self.last_buddy_slot));
-        ui.text(format!(
-            "Debug buddy stone param ID: {}",
-            self.debug_buddy_stone_param_id
-        ));
-        ui.text(format!(
-            "Requested summon buddy goods ID: {}",
-            self.requested_summon_goods_id
-        ));
-        ui.text(format!(
-            "Active summon buddy goods ID: {}",
-            self.active_summon_goods_id
-        ));
+        ui.display(
+            "Request summon SpEffect ID",
+            self.request_summon_speffect_id,
+        );
+        ui.display("Active summon SpEffect ID", self.active_summon_speffect_id);
+        ui.display("Disappear requested", self.disappear_requested);
+        ui.display("Buddy stone entity ID", self.buddy_stone_entity_id);
+        ui.display(
+            "Active summon buddy stone entity ID",
+            self.active_summmon_buddy_stone_entity_id,
+        );
+        ui.display("Buddy disappear delay sec", self.buddy_disappear_delay_sec);
+        ui.display("Item use cooldown timer", self.item_use_cooldown_timer);
+        ui.display("Spawn rotation", self.spawn_rotation);
+        ui.display("Player has alive summon", self.player_has_alive_summon);
+        ui.display(
+            "Is within activation range",
+            self.is_within_activation_range,
+        );
+        ui.display("Is within warn range", self.is_within_warn_range);
+        ui.display("Last buddy slot", self.last_buddy_slot);
+        ui.display(
+            "Debug buddy stone param ID",
+            self.debug_buddy_stone_param_id,
+        );
+        ui.display(
+            "Requested summon buddy goods ID",
+            self.requested_summon_goods_id,
+        );
+        ui.display("Active summon buddy goods ID", self.active_summon_goods_id);
 
         ui.header("Spawn Origin", || {
-            ui.text(format!("X: {}", self.spawn_origin.0));
-            ui.text(format!("Y: {}", self.spawn_origin.1));
-            ui.text(format!("Z: {}", self.spawn_origin.2));
-            ui.text(format!("W: {}", self.spawn_origin.3));
+            ui.display("X", self.spawn_origin.0);
+            ui.display("Y", self.spawn_origin.1);
+            ui.display("Z", self.spawn_origin.2);
+            ui.display("W", self.spawn_origin.3);
         });
 
         ui.list("Groups", self.groups.iter(), |ui, _i, group| {
             ui.header(format!("Group {}", group.owner_event_id), || {
                 ui.list("Entries", group.entries.iter(), |ui, index, v| {
-                    ui.header(format!("Entry {index}"), || {
-                        v.render_debug(ui);
-                    });
+                    ui.nested(format!("Entry {index}"), v);
                 });
             });
         });
@@ -387,32 +328,21 @@ impl DebugDisplay for SummonBuddyManager {
             self.eliminate_target_entries.iter(),
             |ui, index, entry| {
                 ui.header(format!("Entry {index}"), || {
-                    ui.text(format!(
-                        "Buddy field ins handle: {}",
-                        entry.buddy_field_ins_handle
-                    ));
-                    ui.text(format!(
-                        "Buddy stone param ID: {}",
-                        entry.target_calc.buddy_stone_param_id
-                    ));
-                    ui.text(format!(
-                        "Target event entity ID: {}",
-                        entry.target_calc.target_event_entity_id
-                    ));
-                    ui.text(format!(
-                        "Target in range: {}",
-                        entry.target_calc.target_in_range
-                    ));
-                    ui.text(format!(
-                        "Range check counter: {}",
-                        entry.target_calc.range_check_counter
-                    ));
+                    ui.display("Buddy field ins handle", entry.buddy_field_ins_handle);
+                    ui.display(
+                        "Buddy stone param ID",
+                        entry.target_calc.buddy_stone_param_id,
+                    );
+                    ui.display(
+                        "Target event entity ID",
+                        entry.target_calc.target_event_entity_id,
+                    );
+                    ui.display("Target in range", entry.target_calc.target_in_range);
+                    ui.display("Range check counter", entry.target_calc.range_check_counter);
                 });
             },
         );
 
-        ui.header("Warp Manager", || {
-            self.warp_manager.render_debug(ui);
-        });
+        ui.nested("Warp Manager", &self.warp_manager);
     }
 }

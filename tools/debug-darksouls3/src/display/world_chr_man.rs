@@ -20,7 +20,7 @@ impl StatefulDebugDisplay for WorldChrMan {
 
     fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
         state.world_block_chr_states.track_reads();
-        ui.text(format!("World Area Chr Len: {}", self.world_area_chr_len));
+        ui.debug("World Area Chr Len", self.world_area_chr_len);
 
         let mut world_block_chrs = self.block_chrs_mut().collect::<Vec<_>>();
         ui.list(
@@ -36,15 +36,11 @@ impl StatefulDebugDisplay for WorldChrMan {
             },
         );
 
-        ui.text(format!(
-            "World Block Chr Count: {}",
-            self.world_block_chr_count
-        ));
-
-        ui.text(format!(
-            "Loaded? World Block Chr Count: {}",
-            self.loaded_world_block_chr_count
-        ));
+        ui.debug("World Block Chr Count", self.world_block_chr_count);
+        ui.debug(
+            "Loaded? World Block Chr Count",
+            self.loaded_world_block_chr_count,
+        );
 
         ui.header("Player ChrSet", || {
             self.player_chr_set
@@ -61,12 +57,9 @@ impl StatefulDebugDisplay for WorldChrMan {
                 .render_debug_mut(ui, &mut state.debug_chr_set_state);
         });
 
-        match self.main_player.as_mut() {
-            Some(p) => ui.header("Main player", || {
-                unsafe { p.as_mut() }.render_debug_mut(ui, &mut state.main_player_state);
-            }),
-            None => ui.text("No Main player instance"),
-        }
+        ui.header_opt("Main player", self.main_player.as_mut(), |p| {
+            unsafe { p.as_mut() }.render_debug_mut(ui, &mut state.main_player_state);
+        });
 
         state.world_block_chr_states.remove_unread();
     }

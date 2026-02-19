@@ -1,6 +1,8 @@
 use eldenring::cs::{CSFD4FadePlate, CSFade};
 use hudhook::imgui::Ui;
 
+use debug::UiExt;
+
 use super::DebugDisplay;
 
 impl DebugDisplay for CSFade {
@@ -27,11 +29,7 @@ impl DebugDisplay for CSFD4FadePlate {
         let mut end_color: [f32; 4] = (&self.end_color).into();
         ui.color_edit4("end_color", &mut end_color);
 
-        ui.input_text("Fade timer", &mut self.fade_timer.time.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Fade duration", &mut self.fade_duration.time.to_string())
-            .read_only(true)
-            .build();
+        ui.display_copiable("Fade timer", self.fade_timer.time);
+        ui.display_copiable("Fade duration", self.fade_duration.time);
     }
 }

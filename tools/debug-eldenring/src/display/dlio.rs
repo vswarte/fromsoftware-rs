@@ -7,9 +7,7 @@ use crate::display::DebugDisplay;
 
 impl DebugDisplay for DLFileDeviceManager {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text("File Device Count", &mut self.devices.len().to_string())
-            .read_only(true)
-            .build();
+        ui.debug_copiable("File Device Count", self.devices.len());
 
         ui.header("Virtual Roots", || {
             ui.table(

@@ -3,35 +3,28 @@ use hudhook::imgui::Ui;
 use debug::UiExt;
 use eldenring::cs::{CSWorldGeomIns, CSWorldGeomMan, CSWorldGeomManBlockData};
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSWorldGeomMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list(
             format!("Loaded blocks: {}", self.blocks.len()),
             self.blocks.iter(),
-            |ui, _i, block| {
-                ui.header(format!("{}", block.block_id), || {
-                    block.data.render_debug(ui);
-                });
-            },
+            |ui, _i, block| ui.nested(format!("{}", block.block_id), &block.data),
         );
 
-        ui.header("Current Unk Block", || {
-            self.curent_99_block_data.render_debug(ui);
-        });
+        ui.nested("Current Unk Block", &self.curent_99_block_data);
     }
 }
 
 impl DebugDisplay for CSWorldGeomManBlockData {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Block ID: {}", self.block_id));
+        ui.display("Block ID", self.block_id);
         ui.text(format!("World block info: {:x}", self.world_block_info));
-
-        ui.text(format!(
-            "Next GeomIns FieldIns index: {}",
-            self.next_geom_ins_field_ins_index
-        ));
+        ui.display(
+            "Next GeomIns FieldIns index",
+            self.next_geom_ins_field_ins_index,
+        );
 
         ui.list(
             format!("Geometry Vector ({})", self.geom_ins_vector.len()),
@@ -48,7 +41,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 }
                 .unwrap();
 
-                ui.header(
+                ui.nested(
                     format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
@@ -56,9 +49,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                         geometry_ins.field_ins_handle.selector.container(),
                         geometry_ins.field_ins_handle.selector.index()
                     ),
-                    || {
-                        geometry_ins.render_debug(ui);
-                    },
+                    geometry_ins,
                 );
             },
         );
@@ -78,7 +69,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                 }
                 .unwrap();
 
-                ui.header(
+                ui.nested(
                     format!(
                         "{} - {} FieldInsSelector({}, {})",
                         name,
@@ -86,9 +77,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                         geometry_ins.field_ins_handle.selector.container(),
                         geometry_ins.field_ins_handle.selector.index()
                     ),
-                    || {
-                        geometry_ins.render_debug(ui);
-                    },
+                    geometry_ins,
                 );
             },
         );

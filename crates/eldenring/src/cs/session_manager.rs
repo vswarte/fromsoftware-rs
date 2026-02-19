@@ -10,7 +10,7 @@ use crate::{
     dltx::{DLInplaceStr, DLUTF16StringKind},
     fd4::FD4Time,
 };
-use shared::{F32Vector3, OwnedPtr};
+use shared::{F32Vector3, IsEmpty, MaybeEmpty, OwnedPtr};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask, P2PEntityHandle};
 
@@ -91,7 +91,7 @@ pub struct CSSessionManager {
     manager_impl_steam: usize,
     unk68: bool,
     pub players: Vector<SessionManagerPlayerEntry>,
-    pub host_player: SessionManagerPlayerEntryBase,
+    pub host_player: MaybeEmpty<SessionManagerPlayerEntryBase>,
     unk160: usize,
     unk168: usize,
     /// Player limit for current session.
@@ -187,6 +187,13 @@ pub struct SessionManagerPlayerEntryBase {
     pub steam_name: DLInplaceStr<DLUTF16StringKind, 64>,
     connection_ref_info: usize,
     voice_chat_member_ref_info: usize,
+}
+
+unsafe impl IsEmpty for SessionManagerPlayerEntryBase {
+    fn is_empty(base: &MaybeEmpty<SessionManagerPlayerEntryBase>) -> bool {
+        // Check whether steam_id is 0
+        *unsafe { base.as_non_null().cast::<u64>().offset(2).as_ref() } == 0
+    }
 }
 
 #[repr(C)]
