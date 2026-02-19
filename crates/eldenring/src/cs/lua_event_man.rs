@@ -69,8 +69,8 @@ pub struct CSLuaEventMsgExec_String {
 #[repr(C)]
 pub struct EventMsgExecListEntry {
     pub event_group: u32,
-    /// First argument to execute function
-    /// usually it's just [LuaEventId] but could also be a event flag in case of `OnEvent_Bonfire`
+    /// First argument to execute function.
+    /// Usually it's just [LuaEventId] but could also be a event flag in case of `OnEvent_Bonfire`
     pub arg1: u32,
     /// Second argument to execute function.
     /// Used to pass bonfire entity id in case of `OnEvent_Bonfire`
@@ -78,7 +78,7 @@ pub struct EventMsgExecListEntry {
     /// Third argument to execute function.
     /// Usually unused and set to 0.
     pub arg3: u32,
-    /// How repetiotion of the event execution should be handled
+    /// How repetition of the event execution should be handled
     pub repetition: LuaScriptExecuteRepetition,
     /// Whether this event is from a network message
     pub is_net_message: bool,
@@ -95,7 +95,7 @@ pub struct CSLuaEventMsgMap {
     pub event_msg_exec_list: DoublyLinkedList<OwnedPtr<EventMsgExecListEntry>>,
     /// Entries that were executed but retained to prevent immediate re-execution
     /// - The list is checked before scheduling to reject duplicates.
-    /// - After execution, non‑everytime entries are either deleted or moved
+    /// - After execution, entries with [`EventMsgExecListEntry::repetition`] [`LuaScriptExecuteRepetition::Once`] are either deleted or moved
     ///   here depending on event id and [`EventMsgExecListEntry.is_repeat_message`].
     ///
     /// [`EventMsgExecListEntry.is_repeat_message`]: EventMsgExecListEntry::is_repeat_message
@@ -183,20 +183,25 @@ pub struct CSLuaEventProxy {
 
 bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
-    /// Lua event flags to control certain event behaviors
+    /// Lua event flags to control certain event behaviors.
+    ///
     /// 40xx event flags in old `global_event.lua` scripts (DES, DS1)
     pub struct LuaEventControlFlags(u32);
     impl Debug;
     /// 4047 再読み込み関連イベントの割り込み防止フラグ
+    ///
     /// English: Flag to prevent interruption of reload-related events
     pub pause_reload_events, set_pause_reload_events: 0;
     /// 4000 自分の死亡イベント
+    ///
     /// English: Self death event
     pub pause_self_death_event, set_pause_self_death_event: 1;
     /// 4093 (not present in DES, so no comment there)
+    ///
     /// Pauses various `OnDisconnect` events handling
     pub pause_disconnect_event, set_pause_disconnect_event: 2;
     /// 4092 (not present in DES, so no comment there)
+    ///
     /// Flag to indicate whether the player was alive at the time of block clear
     /// so `SoloBlockClear` can clear [`pause_reload_events`] and [`pause_self_death_event`]
     ///
@@ -207,52 +212,63 @@ bitfield! {
     /// Makes the character able to receive rewards for killing players based on their role param.
     pub red_hunt_active, set_red_hunt_active: 4;
     /// 4079 (not present in DES, so no comment there)
+    ///
     /// - Cleared at start of `Lua_BonfireLoopAnimBegin`
     /// - Set in `Lua_BonfireLoopAnimBegin` after playing sit-down anim
     /// - Signals sit-down animation has started
     pub bonfire_loop_begin_requested, set_bonfire_loop_begin_requested: 5;
     /// 4083 (not present in DES, so no comment there)
+    ///
     /// - Checked in `Lua_BonfireLoopAnimBegin_1` - if set, skip loop and go to stand up
     /// - Set in `Lua_BonfireLoopAnimEnd` when stand up not yet allowed
     /// - Signals player requested exit but loop animation wasn't running yet
     pub bonfire_end_pending, set_bonfire_end_pending: 6;
     /// 4084 (not present in DES, so no comment there)
+    ///
     /// - Set in `Lua_BonfireLoopAnimBegin_1` before playing loop anim
     /// - Checked in `Lua_BonfireLoopAnimEnd` - if set, proceed to stand up; if not set, set bit 6
     /// - Confirms loop animation is actively playing
     pub bonfire_sitting_loop_active, set_bonfire_sitting_loop_active: 7;
-    /// 4079 with 4083 (not present in DES, so no comment there)
+    /// 4079 with 4083 (when both are true) (not present in DES, so no comment there)
+    ///
     /// - Set in `Lua_BonfireLoopAnimEnd` when bit 7 is set, before playing stand up anim
     /// - Checked in `Lua_BonfireLoopAnimBegin_1` at start - if set, early return (prevents re-entry)
     /// - Cleared in `Lua_BonfireLoopAnimEnd` after stand up starts
     pub bonfire_stand_up_in_progress, set_bonfire_stand_up_in_progress: 8;
     /// 4044 キックアウトしたのを通知
+    ///
     /// English: Notify that someone was kicked out
     pub pause_player_leave_event, set_pause_player_leave_event: 9;
     /// (Not present in DES/DS1 lua scripts)
+    ///
     /// Signals that the player was notified of block clear,
     /// so when the hosts disconnects, game shows "The Host of Fingers accomplished their objective in a distant location."
     /// instead of generic connection lost message.
     pub notified_of_block_clear, set_notified_of_block_clear: 10;
     /// (Not present in DES/DS1 lua scripts)
-    /// Set by `RegistReturnTitle`, prevents `CS::CSWorldTalkManImpl::Update` from running
+    ///
+    ///  Set by `RegistReturnTitle`, prevents `CS::CSWorldTalkManImpl::Update` from running
     pub return_title_requested, set_return_title_requested: 11;
     /// (Not present in DES/DS1 lua scripts)
+    ///
     /// Set by `STEP_WaitDialogOk` when in arena and player is dead
     /// forces BattleRoyale end-finalization (`SendQMResultsStats`, `InvokeLocalEvent`) instead of
     /// early-return on certain quickmatch states.
     pub arena_local_player_dead, set_arena_local_player_dead: 12;
     /// (Not present in DES/DS1 lua scripts)
+    ///
     /// Set by `SoloPlayDeath_Arena` when not in duel, indicating that
     /// respawn should happen without returning to title and with arena-specific death restart behavior.
     pub arena_death_restart_flag, set_arena_death_restart_flag: 13;
     /// If set, forces kickout at the end of death restart in arena.
     pub arena_death_restart_kickout, set_arena_death_restart_kickout: 14;
     /// (Not present in DES/DS1 lua scripts)
+    ///
     /// Set by `SoloPlayDeath_Arena`, prevents some of multiplayer connection lost handling until
     /// death restart ends.
     pub arena_death_restart_pending, set_arena_death_restart_pending: 15;
     /// (Not present in DES/DS1 lua scripts)
+    ///
     /// Set by `StartCeremonyRestartWait` when in ceremony and it's ended.
     pub ceremony_restart_pending, set_ceremony_restart_pending: 16;
 }
