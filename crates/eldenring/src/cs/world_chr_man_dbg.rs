@@ -1,5 +1,7 @@
-use crate::cs::ChrIns;
-use std::ptr::NonNull;
+use shared::{FromStatic, load_static_direct};
+
+use crate::{cs::ChrIns, rva};
+use std::{borrow::Cow, ptr::NonNull};
 
 use super::PlayerSessionHolder;
 
@@ -199,4 +201,14 @@ pub struct WorldChrManDbgFlags {
     unk39: u8,
     unk3c: i32,
     unk40: i32,
+}
+
+impl FromStatic for WorldChrManDbgFlags {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("WorldChrManDbgFlags")
+    }
+
+    unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
+        unsafe { load_static_direct(rva::get().world_chr_man_dbg_flags) }
+    }
 }
