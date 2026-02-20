@@ -132,28 +132,28 @@ pub struct QuickmatchManager {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, StepperStates)]
 pub enum CSQuickMatchingCtrlState {
     /// Stepper is not running.
-    Inactive = -0x1,
+    Inactive = -1,
     /// No quickmatch is active.
-    None = 0x0,
+    None = 0,
     /// Looking up existing rooms that match the quickmatch settings.
-    SearchRegister = 0x1,
+    SearchRegister = 1,
     /// Waiting for a response for the SearchRegister request.
-    SearchRegisterWait = 0x2,
-    GuestInviteWait = 0x3,
-    GuestWaitSession = 0x4,
-    GuestReadyWait = 0x5,
-    GuestMoveMap = 0x6,
+    SearchRegisterWait = 2,
+    GuestInviteWait = 3,
+    GuestWaitSession = 4,
+    GuestReadyWait = 5,
+    GuestMoveMap = 6,
     /// People are loaded into the map and match is running.
-    GuestInGame = 0x7,
-    HostWaitSession = 0x8,
-    HostInvite = 0x9,
-    HostReadyWait = 0xa,
-    HostReadyWaitBlockList = 0xb,
-    HostMoveMap = 0xc,
+    GuestInGame = 7,
+    HostWaitSession = 8,
+    HostInvite = 9,
+    HostReadyWait = 10,
+    HostReadyWaitBlockList = 11,
+    HostMoveMap = 12,
     /// People are loaded into the map and match is running.
-    HostInGame = 0xd,
+    HostInGame = 13,
     /// Match has ended either by completion or error.
-    Unregister = 0xe,
+    Unregister = 14,
 }
 
 /// Source of name: RTTI

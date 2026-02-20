@@ -5,6 +5,7 @@ use syn::*;
 mod multi_param;
 
 mod for_all_subclasses;
+mod stepper;
 mod subclass;
 mod superclass;
 mod utils;
@@ -307,8 +308,8 @@ pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream
 /// A derive macro that implements the StepperStates trait on a given enum.
 ///
 /// - The enum must be exhaustive (represent all states and no more).
-/// - The enum must have no gaps in the discriminants.
 /// - The enum must have a -1 state for inactive steppers.
+/// - The enum must have no gaps in the discriminants.
 ///
 /// # Safety
 ///
@@ -329,68 +330,17 @@ pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let input_struct_ident = &input.ident;
 
-    // Ensure the macro's on an enum.
     let Data::Enum(e) = &input.data else {
         return error(&input.ident, "StepperStates can only be derived on enums");
     };
 
-    // Ensure all variants are unit variants.
-    if e.variants.iter().any(|v| !matches!(v.fields, Fields::Unit)) {
-        return error(&input.ident, "Enum cannot have non unit types");
-    }
-
-    // Ensure there's a -1 variant on the enum.
-    if !e.variants.iter().any(|v| {
-        let Some((_, expr)) = &v.discriminant else {
-            return false;
-        };
-
-        match expr {
-            Expr::Unary(ExprUnary {
-                op: UnOp::Neg(_),
-                expr,
-                ..
-            }) => match expr.as_ref() {
-                Expr::Lit(ExprLit {
-                    lit: Lit::Int(i), ..
-                }) => i.base10_parse::<i64>().ok() == Some(1),
-                _ => false,
-            },
-            _ => false,
-        }
-    }) {
-        return error(
-            &input.ident,
-            "Enum must have a -1 state representing inactivity",
-        );
-    }
-
-    // Ensure there's a repr(i32) attribute on the target struct.
-    let Some(repr_attr) = input.attrs.iter().find(|a| a.path().is_ident("repr")) else {
-        return error(
-            &input.ident,
-            "Enum must apply a #[repr(i32)], there is currently no repr specified at all",
-        );
+    if let Err(e) = stepper::validate_stepper_enum_storage(&input) {
+        return e.to_compile_error().into();
     };
 
-    // Ensure the repr attribute has arguments.
-    let Meta::List(repr_args) = &repr_attr.meta else {
-        return error(
-            &input.ident,
-            "Enum must apply a #[repr(i32)], the repr attribute currently has no arguments",
-        );
+    if let Err(e) = stepper::validate_stepper_enum_variants(e) {
+        return e.to_compile_error().into();
     };
-
-    // Ensure the repr attribute has i32 as one of its arguments.
-    if !repr_args
-        .tokens
-        .to_string()
-        .split(',')
-        .map(|s| s.trim())
-        .any(|s| s == "i32")
-    {
-        return error(&input.ident, "Enum must apply a #[repr(i32)]");
-    }
 
     let count = e.variants.len();
     let expanded = quote! {
