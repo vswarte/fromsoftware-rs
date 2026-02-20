@@ -88,7 +88,12 @@ impl StatefulDebugDisplay for WorldChrMan {
                 .net_chr_set_sync
                 .iter()
                 .filter_map(|s| s.as_ref()),
-            |ui, i, entry| ui.nested(format!("NetChrSetSync {i}"), entry),
+            |ui, _i, entry| {
+                ui.nested(
+                    format!("NetChrSetSync {}", unsafe { entry.chr_set.as_ref().index }),
+                    entry,
+                )
+            },
         );
 
         ui.header("Debug Character Creator", || {

@@ -27,7 +27,7 @@ macro_rules! define_debug_display {
 
         impl<T: DebugDisplay> DebugDisplay for ::fromsoftware_shared::OwnedPtr<T> {
             fn render_debug(&self, ui: &::hudhook::imgui::Ui) {
-                self.render_debug(ui);
+                <T as DebugDisplay>::render_debug(self, ui);
             }
         }
 
