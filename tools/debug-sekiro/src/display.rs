@@ -1,3 +1,4 @@
+pub(crate) mod chr;
 pub(crate) mod game;
 pub(crate) mod item;
 
