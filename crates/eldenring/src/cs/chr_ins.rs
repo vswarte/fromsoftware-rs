@@ -822,7 +822,7 @@ pub struct CSChrModelIns {
 /// Source of name: RTTI
 pub struct PlayerIns {
     pub chr_ins: ChrIns,
-    pub player_game_data: OwnedPtr<PlayerGameData>,
+    pub player_game_data: NonNull<PlayerGameData>,
     chr_manipulator: usize,
     unk590: usize,
     pub player_session_holder: PlayerSessionHolder,
