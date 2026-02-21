@@ -26,7 +26,7 @@ impl StatefulDebugDisplay for PlayerIns {
         chr_ins_common_debug(&mut self.chr_ins, ui, state);
 
         ui.nested("ChrAsm", &self.chr_asm);
-        ui.nested("PlayerGameData", &self.player_game_data);
+        ui.nested("PlayerGameData", unsafe { self.player_game_data.as_ref() });
         ui.nested(
             "Session Player Entry",
             self.session_manager_player_entry.as_ref(),
