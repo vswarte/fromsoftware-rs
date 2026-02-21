@@ -9,7 +9,6 @@ description = "Structures, bindings, and utilities for From Software's title Eld
 
 [dependencies]
 fromsoftware-shared.workspace = true
-tracing.workspace = true
 thiserror.workspace = true
 glam.workspace = true
 pelite.workspace = true
