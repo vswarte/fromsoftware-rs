@@ -463,7 +463,6 @@ dependencies = [
  "serde",
  "serde_derive",
  "thiserror 1.0.69",
- "tracing",
  "vtable-rs",
  "windows",
 ]
