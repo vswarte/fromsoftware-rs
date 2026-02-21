@@ -157,7 +157,7 @@ impl ItemId {
         if param_id > 0xFFFFFFF {
             Err(ItemIdError::InvalidParamId(param_id))
         } else {
-            Ok(Self(OptionalItemId(((category as u32) << 28) & param_id)))
+            Ok(Self(OptionalItemId(((category as u32) << 28) | param_id)))
         }
     }
 

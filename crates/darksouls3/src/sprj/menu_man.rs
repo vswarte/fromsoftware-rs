@@ -213,7 +213,7 @@ impl GrantItemCommand {
 
     /// Returns item ID granted by [GrantItemCommand].
     pub fn item_id(&self) -> ItemId {
-        unsafe { mem::transmute::<u32, ItemId>(self.category as u32 & self.item_id) }
+        unsafe { mem::transmute::<u32, ItemId>(self.category as u32 | self.item_id) }
     }
 }
 
