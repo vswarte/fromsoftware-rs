@@ -161,29 +161,24 @@ pub struct ParamResCap {
 }
 
 impl ParamResCap {
-    /// Returns whether this parameter's name matches `P`.
+    /// In debug mode, if this parameter's name and type doesn't `P`.
     ///
-    /// In debug mode, this will also panic if this parameter's struct name
-    /// doesn't match `P::UnderlyingType::NAME`.
-    fn matches_param<P: SoloParam>(&self) -> bool {
-        if self.res_cap.name == P::NAME {
-            let struct_name = self.param_res_cap.data.struct_name();
+    /// In release mode, this is a no-op.
+    fn assert_matches_param<P: SoloParam>(&self) {
+        debug_assert!(
+            self.res_cap.name == P::NAME,
+            "Expected param {}, was {}",
+            P::NAME,
+            self.res_cap.name,
+        );
 
-            // Double-check that the struct we found is the one we're expecting.
-            // We don't need to check this in release mode because it's safe
-            // enough to asusme that an expected parameter name implies an
-            // expected struct layout.
-            debug_assert!(
-                struct_name == P::UnderlyingType::NAME,
-                "Expected param struct {}, was {}",
-                P::UnderlyingType::NAME,
-                struct_name,
-            );
-
-            true
-        } else {
-            false
-        }
+        let struct_name = self.param_res_cap.data.struct_name();
+        debug_assert!(
+            struct_name == P::UnderlyingType::NAME,
+            "Expected param struct {}, was {}",
+            P::UnderlyingType::NAME,
+            struct_name,
+        );
     }
 }
 
@@ -309,7 +304,7 @@ impl SoloParamRepository {
     pub fn get<P: SoloParam>(&self, param_id: u32) -> Option<&P::UnderlyingType> {
         // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            self.get_param_file::<P>()?
+            self.get_param_file::<P>()
                 .get_row_by_id::<P::UnderlyingType>(param_id)
         }
     }
@@ -319,7 +314,7 @@ impl SoloParamRepository {
     pub fn get_mut<P: SoloParam>(&mut self, param_id: u32) -> Option<&mut P::UnderlyingType> {
         // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            self.get_param_file_mut::<P>()?
+            self.get_param_file_mut::<P>()
                 .get_row_by_id_mut::<P::UnderlyingType>(param_id)
         }
     }
@@ -334,7 +329,7 @@ impl SoloParamRepository {
     pub fn get_row_by_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::UnderlyingType> {
         // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            self.get_param_file::<P>()?
+            self.get_param_file::<P>()
                 .get_row_by_index::<P::UnderlyingType>(row_index)
         }
     }
@@ -352,7 +347,7 @@ impl SoloParamRepository {
     ) -> Option<&mut P::UnderlyingType> {
         // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            self.get_param_file_mut::<P>()?
+            self.get_param_file_mut::<P>()
                 .get_row_by_index_mut::<P::UnderlyingType>(row_index)
         }
     }
@@ -360,39 +355,53 @@ impl SoloParamRepository {
     /// Returns the index of a solo param (regulation.bin) row by its parameter
     /// type and ID.
     pub fn get_index_by_param_id<P: SoloParam>(&self, param_id: u32) -> Option<usize> {
-        self.get_param_file::<P>()?.metadata().find_index(param_id)
+        self.get_param_file::<P>().metadata().find_index(param_id)
     }
 
     /// Returns the [ParamFile] associated with `P`, if it exists at the
     /// expected index. This should never return `None` for a vanilla game,
     /// because the only [SoloParam]s this library defines are ones that are
     /// found in the game.
-    fn get_param_file<P: SoloParam>(&self) -> Option<&ParamFile> {
-        let holder = self.solo_param_holders.get(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap(0)?;
+    fn get_param_file<P: SoloParam>(&self) -> &ParamFile {
+        let holder = self
+            .solo_param_holders
+            .get(P::INDEX as usize)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Param {} should exist at index {}, but it does not",
+                    P::NAME,
+                    P::INDEX
+                )
+            });
+        let res_cap = holder
+            .get_res_cap(0)
+            .expect("Expected param holder to have exactly one res cap");
 
-        // Double-check that the parameter we found is the one we're epxecting.
-        if res_cap.matches_param::<P>() {
-            Some(&res_cap.param_res_cap.data)
-        } else {
-            None
-        }
+        res_cap.assert_matches_param::<P>();
+        &res_cap.param_res_cap.data
     }
 
     /// Returns the mutable [ParamFile] associated with `P`, if it exists at the
     /// expected index. This should never return `None` for a vanilla game,
     /// because the only [SoloParam]s this library defines are ones that are
     /// found in the game.
-    fn get_param_file_mut<P: SoloParam>(&mut self) -> Option<&mut ParamFile> {
-        let holder = self.solo_param_holders.get_mut(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap_mut(0)?;
+    fn get_param_file_mut<P: SoloParam>(&mut self) -> &mut ParamFile {
+        let holder = self
+            .solo_param_holders
+            .get_mut(P::INDEX as usize)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Param {} should exist at index {}, but it does not",
+                    P::NAME,
+                    P::INDEX
+                )
+            });
+        let res_cap = holder
+            .get_res_cap_mut(0)
+            .expect("Expected param holder to have exactly one res cap");
 
-        // Double-check that the parameter we found is the one we're epxecting.
-        if res_cap.matches_param::<P>() {
-            Some(&mut res_cap.param_res_cap.data)
-        } else {
-            None
-        }
+        res_cap.assert_matches_param::<P>();
+        &mut res_cap.param_res_cap.data
     }
 }
 
