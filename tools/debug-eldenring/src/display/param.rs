@@ -7,10 +7,10 @@ use super::DebugDisplay;
 
 impl DebugDisplay for FD4ParamRepository {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!(
-            "ResCapHolder map bucket count: {:?}",
-            unsafe { self.res_cap_holder() }.bucket_count
-        ));
+        ui.debug(
+            "ResCapHolder map bucket count",
+            unsafe { self.res_cap_holder() }.bucket_count,
+        );
 
         ui.header("Resources", || {
             ui.table(

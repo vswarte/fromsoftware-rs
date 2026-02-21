@@ -5,18 +5,14 @@ use eldenring::cs::{
     CSGparamIdLerper, CSWorldAreaBlockSceneDrawParam, CSWorldSceneDrawParamManager,
 };
 
-use super::DebugDisplay;
+use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSWorldSceneDrawParamManager {
     fn render_debug(&self, ui: &Ui) {
         ui.list(
             "World Area Blocks",
             self.world_area_blocks.iter(),
-            |ui, _i, b| {
-                ui.header(format!("{}", b.area), || {
-                    b.render_debug(ui);
-                });
-            },
+            |ui, _i, b| ui.nested(format!("{}", b.area), b),
         );
 
         ui.text("Lerper");
@@ -61,30 +57,14 @@ impl DebugDisplay for CSWorldSceneDrawParamManager {
 
 impl DebugDisplay for CSGparamIdLerper {
     fn render_debug(&self, ui: &Ui) {
-        ui.input_text("Unk8", &mut self.unk8.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("UnkC", &mut self.unkc.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Destination ID", &mut self.destination_id.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Unk14", &mut self.unk14.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Begin ID", &mut self.begin_id.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Unk1C", &mut self.unk1c.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Timer", &mut self.timer.to_string())
-            .read_only(true)
-            .build();
-        ui.input_text("Unk24", &mut self.unk24.to_string())
-            .read_only(true)
-            .build();
+        ui.display_copiable("Unk8", self.unk8);
+        ui.display_copiable("UnkC", self.unkc);
+        ui.display_copiable("Destination ID", self.destination_id);
+        ui.display_copiable("Unk14", self.unk14);
+        ui.display_copiable("Begin ID", self.begin_id);
+        ui.display_copiable("Unk1C", self.unk1c);
+        ui.display_copiable("Timer", self.timer);
+        ui.display_copiable("Unk24", self.unk24);
     }
 }
 

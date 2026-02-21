@@ -10,5 +10,8 @@
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
+    pub game_data_man_ptr: u32,
     pub global_hinstance: u32,
+    pub map_item_man_grant_item: u32,
+    pub map_item_man_ptr: u32,
 }

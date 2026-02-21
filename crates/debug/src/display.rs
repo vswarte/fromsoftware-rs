@@ -13,6 +13,24 @@ macro_rules! define_debug_display {
             fn render_debug(&self, ui: &::hudhook::imgui::Ui);
         }
 
+        impl<T: DebugDisplay> DebugDisplay for &T {
+            fn render_debug(&self, ui: &::hudhook::imgui::Ui) {
+                <T as DebugDisplay>::render_debug(self, ui);
+            }
+        }
+
+        impl<T: DebugDisplay> DebugDisplay for &mut T {
+            fn render_debug(&self, ui: &::hudhook::imgui::Ui) {
+                <T as DebugDisplay>::render_debug(self, ui);
+            }
+        }
+
+        impl<T: DebugDisplay> DebugDisplay for ::fromsoftware_shared::OwnedPtr<T> {
+            fn render_debug(&self, ui: &::hudhook::imgui::Ui) {
+                <T as DebugDisplay>::render_debug(self, ui);
+            }
+        }
+
         /// A trait for structs that can render mutable debug widgets that track
         /// state across frames.
         ///
@@ -59,17 +77,10 @@ macro_rules! define_debug_display {
                 let instance = unsafe { T::instance() };
 
                 match instance {
-                    Ok(instance) => {
-                        ::debug::UiExt::header(ui, &T::name(), || {
-                            // Render this as a text input so it's easy to
-                            // copy/paste the address into a debugger.
-                            let mut address = format!("{instance:p}");
-                            let label = format!("{} address", T::name());
-                            ui.input_text(&label, &mut address).read_only(true).build();
-
-                            instance.render_debug_mut(ui, &mut self.state);
-                        })
-                    }
+                    Ok(instance) => ::debug::UiExt::header(ui, &T::name(), || {
+                        ::debug::UiExt::pointer(ui, "Address", &*instance);
+                        instance.render_debug_mut(ui, &mut self.state);
+                    }),
                     Err(err) => ui.text(format!("Couldn't load {}: {:?}", T::name(), err)),
                 }
             }
@@ -81,6 +92,39 @@ macro_rules! define_debug_display {
         {
             fn default() -> Self {
                 Self::new()
+            }
+        }
+
+        /// An additional extension trait for UI helpers that use the
+        /// [DebugDisplay] trait.
+        pub trait DisplayUiExt {
+            /// Renders a collapsing header with the given `label` and the
+            /// contents of `display` nested beneath it.
+            ///
+            /// This automatically creates a unique ID for the header so that
+            /// its collapsed state doesn't collide with other headers.
+            fn nested(&self, label: impl AsRef<str>, display: impl DebugDisplay);
+
+            /// Renders a collapsing header with the given `label` and the
+            /// contents of `display` nested beneath it, or a single line of
+            /// text if `display` is `None`.
+            ///
+            /// This automatically creates a unique ID for the header so that
+            /// its collapsed state doesn't collide with other headers.
+            fn nested_opt(&self, label: impl AsRef<str>, display: Option<impl DebugDisplay>);
+        }
+
+        impl DisplayUiExt for ::hudhook::imgui::Ui {
+            fn nested(&self, label: impl AsRef<str>, display: impl DebugDisplay) {
+                ::debug::UiExt::header(self, label, || display.render_debug(self));
+            }
+
+            fn nested_opt(&self, label: impl AsRef<str>, display: Option<impl DebugDisplay>) {
+                if let Some(display) = display {
+                    self.nested(label, &display);
+                } else {
+                    self.text(format!("{}: None", label.as_ref()));
+                }
             }
         }
     };

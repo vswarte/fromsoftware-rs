@@ -1,3 +1,17 @@
 [[patterns]]
+pattern = "c7 44 24 20 00 00 00 00 48 8b 05 $ { ' } 48 8b 58 08 8b 02"
+captures = ["", "game_data_man_ptr"]
+
+[[patterns]]
 pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 captures = ["", "global_hinstance"]
+
+[[patterns]]
+pattern = "e8 [4] 48 8b 0d $ { ' } 4c 8d 4c 24 60 4c 8b c7"
+captures = ["", "map_item_man_ptr"]
+
+[[patterns]]
+pattern = "4c 8d 44 24 40 48 8d 54 24 50 48 8b cb e8 $ { ' }"
+captures = ["", "map_item_man_grant_item"]
+
+

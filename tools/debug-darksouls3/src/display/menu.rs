@@ -4,12 +4,12 @@ use pelite::pe64::Pe;
 use darksouls3::{app_menu::*, sprj::*};
 use debug::UiExt;
 
-use super::{DebugDisplay, StatefulDebugDisplay};
+use super::{DebugDisplay, DisplayUiExt, StatefulDebugDisplay};
 
 impl DebugDisplay for MenuMan {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("Load screen: {}", self.is_load_screen()));
-        ui.text(format!("Menu: {}", self.is_menu_mode()));
+        ui.debug("Load screen", self.is_load_screen());
+        ui.debug("Menu", self.is_menu_mode());
 
         ui.header("Flags", || {
             ui.table(
@@ -27,9 +27,9 @@ impl DebugDisplay for MenuMan {
         });
 
         if let Some(cmd) = self.grant_item_command.as_option() {
-            ui.text(format!("Item ID: {:?}", cmd.item_id()));
-            ui.text(format!("Durability: {}", cmd.durability));
-            ui.text(format!("Quantity: {}", cmd.quantity));
+            ui.debug("Item ID", cmd.item_id());
+            ui.debug("Durability", cmd.durability);
+            ui.debug("Quantity", cmd.quantity);
         } else {
             ui.text("<no grant item command>");
         }
@@ -44,9 +44,7 @@ impl DebugDisplay for NewMenuSystem {
                 MenuWindowSubclass::GaitemSelectMenu(_) => "GaitemSelect",
                 _ => "Unknown",
             };
-            ui.header(format!("#{}: {}", i, name), || {
-                DebugDisplay::render_debug(window, ui)
-            });
+            ui.nested(format!("#{}: {}", i, name), window);
         }
     }
 }
@@ -56,14 +54,12 @@ impl DebugDisplay for MenuWindow {
         match MenuWindowSubclass::from(self) {
             MenuWindowSubclass::GaitemSelectMenu(player) => DebugDisplay::render_debug(player, ui),
             MenuWindowSubclass::MenuWindow(window) => {
-                ui.text(format!("Address: {:p}", window));
+                ui.pointer("Address", window);
 
-                ui.text(format!(
-                    "Vtable RVA: {:x}",
-                    crate::Program::current()
-                        .va_to_rva(window.vftable as u64)
-                        .unwrap()
-                ));
+                let rva = crate::Program::current()
+                    .va_to_rva(window.vftable as u64)
+                    .unwrap();
+                ui.display_copiable("Vtable RVA", format!("{:x}", rva));
             }
             _ => ui.text("Unknown MenuWindow type"),
         }
