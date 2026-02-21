@@ -1,12 +1,10 @@
-use std::ptr::NonNull;
-
 use shared::{OwnedPtr, Subclass};
 
 use crate::{
     ArrayWithHeader, Vector,
     cs::BlockId,
     dlkr::DLAllocatorRef,
-    fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep},
+    fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile},
     param::ParamDef,
     stl::Tree,
 };
@@ -152,8 +150,36 @@ pub struct ParamResCap {
     /// while CSEventFlagUsageParamManager will have
     /// [ParamResCapType::EventFlagUsageParam]
     pub param_type: ParamResCapType,
-    /// Actual res cap is owned by ParamRepository
-    pub param_res_cap: NonNull<FD4ParamResCap>,
+
+    /// The underlying res cap.
+    // This is technically owned by [FD4ParamRepository], in the sense that
+    // that's the code responsible for creating and destroying it. However, for
+    // efficiency reasons, we don't allow access through [FD4ParamRepository]
+    // without an `unsafe` block, which makes it safe for us to expose this as
+    // an [OwnedPtr] here. See the comment on [FD4ParamRepository] for details.
+    pub param_res_cap: OwnedPtr<FD4ParamResCap>,
+}
+
+impl ParamResCap {
+    /// In debug mode, if this parameter's name and type doesn't `P`.
+    ///
+    /// In release mode, this is a no-op.
+    fn assert_matches_param<P: SoloParam>(&self) {
+        debug_assert!(
+            self.res_cap.name == P::NAME,
+            "Expected param {}, was {}",
+            P::NAME,
+            self.res_cap.name,
+        );
+
+        let struct_name = self.param_res_cap.data.struct_name();
+        debug_assert!(
+            struct_name == P::UnderlyingType::NAME,
+            "Expected param struct {}, was {}",
+            P::UnderlyingType::NAME,
+            struct_name,
+        );
+    }
 }
 
 #[repr(u32)]
@@ -274,95 +300,108 @@ impl SoloParamRepository {
             })
     }
 
-    /// Get solo param (regulation.bin) row by param type and param ID.
+    /// Get a solo param (regulation.bin) row by its parameter type and ID.
     pub fn get<P: SoloParam>(&self, param_id: u32) -> Option<&P::UnderlyingType> {
-        let holder = self.solo_param_holders.get(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap(0)?;
-        // SAFETY: we shouldn't run into invalid casts because of the code gen dictating underlying type.
+        // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            res_cap
-                .param_res_cap
-                .as_ref()
-                .data
+            self.get_param_file::<P>()
                 .get_row_by_id::<P::UnderlyingType>(param_id)
         }
     }
-    /// Get mutable solo param (regulation.bin) row by param type and param ID.
-    ///
-    /// # Safety
-    ///
-    /// [SoloParamRepository], technically, doesn't own underlying param data,
-    /// but it owns the [ParamResCap] which is tied to the [FD4ParamResCap] lifetime.
-    pub unsafe fn get_mut<P: SoloParam>(
-        &mut self,
-        param_id: u32,
-    ) -> Option<&mut P::UnderlyingType> {
-        let holder = self.solo_param_holders.get_mut(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap_mut(0)?;
-        // SAFETY: we shouldn't run into invalid casts because of the code gen dictating underlying type.
+
+    /// Get a mutable solo param (regulation.bin) row by its parameter type and
+    /// ID.
+    pub fn get_mut<P: SoloParam>(&mut self, param_id: u32) -> Option<&mut P::UnderlyingType> {
+        // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            res_cap
-                .param_res_cap
-                .as_mut()
-                .data
+            self.get_param_file_mut::<P>()
                 .get_row_by_id_mut::<P::UnderlyingType>(param_id)
         }
     }
 
-    /// Get solo param (regulation.bin) row by param type and row index.
+    /// Get a solo param (regulation.bin) row by its parameter type and row
+    /// index.
     ///
-    /// **IMPORTANT**: row index is NOT the same as param ID, use this when you already know the index with mapping like
-    /// [SoloParamRepository::wep_reinforces] or [SoloParamRepository::buddy_stone_entity_ids].
+    /// **IMPORTANT**: The row index is *not* the same as the parameter ID. Use
+    /// this when you already know the index from a mapping like
+    /// [SoloParamRepository::wep_reinforces] or
+    /// [SoloParamRepository::buddy_stone_entity_ids].
     pub fn get_row_by_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::UnderlyingType> {
-        let holder = self.solo_param_holders.get(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap(0)?;
-        // SAFETY: we shouldn't run into invalid casts because of the code gen dictating underlying type.
+        // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            res_cap
-                .param_res_cap
-                .as_ref()
-                .data
+            self.get_param_file::<P>()
                 .get_row_by_index::<P::UnderlyingType>(row_index)
         }
     }
 
-    /// Get mutable solo param (regulation.bin) row by param type and row index.
+    /// Get a mutable solo param (regulation.bin) row by its parameter type and
+    /// row index.
     ///
-    /// **IMPORTANT**: row index is NOT the same as param ID, use this when you already know the index with mapping like
-    /// [SoloParamRepository::wep_reinforces] or [SoloParamRepository::buddy_stone_entity_ids].
-    ///
-    /// # Safety
-    ///
-    /// [SoloParamRepository], technically, doesn't own underlying param data,
-    /// but it owns the [ParamResCap] which is tied to the [FD4ParamResCap] lifetime.
-    pub unsafe fn get_row_by_index_mut<P: SoloParam>(
+    /// **IMPORTANT**: The row index is *not* the same as the parameter ID. Use
+    /// this when you already know the index from a mapping like
+    /// [SoloParamRepository::wep_reinforces] or
+    /// [SoloParamRepository::buddy_stone_entity_ids].
+    pub fn get_row_by_index_mut<P: SoloParam>(
         &mut self,
         row_index: usize,
     ) -> Option<&mut P::UnderlyingType> {
-        let holder = self.solo_param_holders.get_mut(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap_mut(0)?;
-        // SAFETY: we shouldn't run into invalid casts because of the code gen dictating underlying type.
+        // SAFETY: `get_param_file` checks that the param type is what we expect.
         unsafe {
-            res_cap
-                .param_res_cap
-                .as_mut()
-                .data
+            self.get_param_file_mut::<P>()
                 .get_row_by_index_mut::<P::UnderlyingType>(row_index)
         }
     }
 
+    /// Returns the index of a solo param (regulation.bin) row by its parameter
+    /// type and ID.
     pub fn get_index_by_param_id<P: SoloParam>(&self, param_id: u32) -> Option<usize> {
-        let holder = self.solo_param_holders.get(P::INDEX as usize)?;
-        let res_cap = holder.get_res_cap(0)?;
-        // SAFETY: we shouldn't run into invalid casts because of the code gen dictating underlying type.
-        unsafe {
-            res_cap
-                .param_res_cap
-                .as_ref()
-                .data
-                .metadata()
-                .find_index(param_id)
-        }
+        self.get_param_file::<P>().metadata().find_index(param_id)
+    }
+
+    /// Returns the [ParamFile] associated with `P`, if it exists at the
+    /// expected index. This should never return `None` for a vanilla game,
+    /// because the only [SoloParam]s this library defines are ones that are
+    /// found in the game.
+    fn get_param_file<P: SoloParam>(&self) -> &ParamFile {
+        let holder = self
+            .solo_param_holders
+            .get(P::INDEX as usize)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Param {} should exist at index {}, but it does not",
+                    P::NAME,
+                    P::INDEX
+                )
+            });
+        let res_cap = holder
+            .get_res_cap(0)
+            .expect("Expected param holder to have exactly one res cap");
+
+        res_cap.assert_matches_param::<P>();
+        &res_cap.param_res_cap.data
+    }
+
+    /// Returns the mutable [ParamFile] associated with `P`, if it exists at the
+    /// expected index. This should never return `None` for a vanilla game,
+    /// because the only [SoloParam]s this library defines are ones that are
+    /// found in the game.
+    fn get_param_file_mut<P: SoloParam>(&mut self) -> &mut ParamFile {
+        let holder = self
+            .solo_param_holders
+            .get_mut(P::INDEX as usize)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Param {} should exist at index {}, but it does not",
+                    P::NAME,
+                    P::INDEX
+                )
+            });
+        let res_cap = holder
+            .get_res_cap_mut(0)
+            .expect("Expected param holder to have exactly one res cap");
+
+        res_cap.assert_matches_param::<P>();
+        &mut res_cap.param_res_cap.data
     }
 }
 
