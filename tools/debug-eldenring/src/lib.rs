@@ -45,6 +45,7 @@ struct EldenRingDebugGui {
     world_area_time: StaticDebugger<WorldAreaTime>,
     bullet: StaticDebugger<CSBulletManager>,
     event: StaticDebugger<CSEventManImp>,
+    lua_event: StaticDebugger<CSLuaEventManImp>,
     auto_invade_point: StaticDebugger<CSAutoInvadePoint>,
 
     // Game Data
@@ -145,6 +146,7 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
                 gui.world_area_time.render_debug(ui);
                 gui.bullet.render_debug(ui);
                 gui.event.render_debug(ui);
+                gui.lua_event.render_debug(ui);
                 gui.auto_invade_point.render_debug(ui);
                 item.end();
             }

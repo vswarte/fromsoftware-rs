@@ -17,6 +17,7 @@ windows.workspace = true
 bitfield.workspace = true
 encoding_rs.workspace = true
 cxx-stl.workspace = true
+num_enum.workspace = true
 
 [build-dependencies]
 serde_derive = "1"

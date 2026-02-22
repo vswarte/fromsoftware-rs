@@ -1,5 +1,3 @@
-use std::ffi;
-
 use shared::OwnedPtr;
 
 #[repr(C)]
@@ -7,7 +5,7 @@ use shared::OwnedPtr;
 ///
 /// Source of name: RTTI
 pub struct DLRuntimeClass {
-    vftable: *const ffi::c_void,
+    vftable: usize,
     pub base_class: OwnedPtr<DLRuntimeClass>,
     unk10: usize,
     unk18: usize,
@@ -16,4 +14,11 @@ pub struct DLRuntimeClass {
     unk30: usize,
     allocator1: usize,
     allocator2: usize,
+}
+
+#[repr(C)]
+pub struct DLRuntimeClassImpl {
+    pub runtime_class: DLRuntimeClass,
+    pub name: *const u8,
+    pub name_w: *const u16,
 }
