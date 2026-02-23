@@ -69,10 +69,10 @@ checksum = "5f0e0fee31ef5ed1ba1316088939cea399010ed7731dba877ed44aeb407a75ea"
 
 [[package]]
 name = "apply-speffect"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
 ]
 
 [[package]]
@@ -99,10 +99,10 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "binary-mapper"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "clap",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "memmap",
  "pelite",
  "rayon",
@@ -295,9 +295,11 @@ dependencies = [
 [[package]]
 name = "darksouls3"
 version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "46d3df52b6a59631a6032d09b76637c8b0ef9b289596c8a174bba1badf450020"
 dependencies = [
  "bitfield",
- "cxx-stl 4.4.0",
+ "cxx-stl 3.4.0",
  "encoding_rs",
  "fromsoftware-shared 0.12.0",
  "pelite",
@@ -311,14 +313,12 @@ dependencies = [
 
 [[package]]
 name = "darksouls3"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46d3df52b6a59631a6032d09b76637c8b0ef9b289596c8a174bba1badf450020"
+version = "0.13.0"
 dependencies = [
  "bitfield",
- "cxx-stl 3.4.0",
+ "cxx-stl 4.4.0",
  "encoding_rs",
- "fromsoftware-shared 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fromsoftware-shared 0.13.0",
  "pelite",
  "regex",
  "serde",
@@ -335,8 +335,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8fec68c565cd9e94073f1c3f13754001dc937737f0bb54820e2cebf54c301d8"
 dependencies = [
  "bitflags 2.11.0",
- "darksouls3 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "fromsoftware-shared 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "darksouls3 0.12.0",
+ "fromsoftware-shared 0.12.0",
  "ilhook",
  "pelite",
  "thiserror 1.0.69",
@@ -354,10 +354,10 @@ dependencies = [
 
 [[package]]
 name = "debug"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "clipboard-win",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "hudhook",
  "libhotpatch",
  "tracing",
@@ -369,12 +369,12 @@ dependencies = [
 
 [[package]]
 name = "debug-darksouls3"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
- "darksouls3 0.12.0",
+ "darksouls3 0.13.0",
  "darksouls3-extra",
  "debug",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "hudhook",
  "libhotpatch",
  "pelite",
@@ -387,11 +387,11 @@ dependencies = [
 
 [[package]]
 name = "debug-eldenring"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "debug",
  "eldenring",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "hudhook",
  "libhotpatch",
  "pelite",
@@ -404,19 +404,19 @@ dependencies = [
 
 [[package]]
 name = "debug-line"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "glam",
 ]
 
 [[package]]
 name = "debug-sekiro"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "debug",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "hudhook",
  "libhotpatch",
  "pelite",
@@ -451,12 +451,12 @@ checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
 name = "eldenring"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "bitfield",
  "cxx-stl 4.4.0",
  "encoding_rs",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "glam",
  "pelite",
  "regex",
@@ -532,6 +532,8 @@ dependencies = [
 [[package]]
 name = "fromsoftware-shared"
 version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c175c296b9d827c839de32a0d9107d6420d1e145175189a7f6957ce4d1506348"
 dependencies = [
  "from-singleton",
  "fromsoftware-shared-macros 0.12.0",
@@ -545,12 +547,10 @@ dependencies = [
 
 [[package]]
 name = "fromsoftware-shared"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c175c296b9d827c839de32a0d9107d6420d1e145175189a7f6957ce4d1506348"
+version = "0.13.0"
 dependencies = [
  "from-singleton",
- "fromsoftware-shared-macros 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fromsoftware-shared-macros 0.13.0",
  "glam",
  "pelite",
  "thiserror 1.0.69",
@@ -562,6 +562,8 @@ dependencies = [
 [[package]]
 name = "fromsoftware-shared-macros"
 version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83a0ee48757ea237db11eeb52b1814493422ec5304eb569a82271df9f8eccf30"
 dependencies = [
  "inflections",
  "proc-macro2",
@@ -571,9 +573,7 @@ dependencies = [
 
 [[package]]
 name = "fromsoftware-shared-macros"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83a0ee48757ea237db11eeb52b1814493422ec5304eb569a82271df9f8eccf30"
+version = "0.13.0"
 dependencies = [
  "inflections",
  "proc-macro2",
@@ -731,10 +731,10 @@ checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
 
 [[package]]
 name = "invoke-esd"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "windows",
 ]
 
@@ -887,7 +887,7 @@ checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
 
 [[package]]
 name = "nightreign"
-version = "0.12.0"
+version = "0.13.0"
 
 [[package]]
 name = "no-std-compat"
@@ -939,7 +939,7 @@ checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
 
 [[package]]
 name = "param-generator"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "clap",
  "quick-xml",
@@ -1002,10 +1002,10 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 
 [[package]]
 name = "present-action-button"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
 ]
 
 [[package]]
@@ -1150,12 +1150,12 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "sekiro"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "bitfield",
  "cxx-stl 4.4.0",
  "encoding_rs",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
  "pelite",
  "serde",
  "serde_derive",
@@ -1245,10 +1245,10 @@ checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
 name = "spawn-asset"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "eldenring",
- "fromsoftware-shared 0.12.0",
+ "fromsoftware-shared 0.13.0",
 ]
 
 [[package]]
