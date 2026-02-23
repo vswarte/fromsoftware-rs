@@ -2,29 +2,37 @@ use std::ptr::NonNull;
 
 use bitfield::bitfield;
 
+use crate::dlkr::DLAllocatorRef;
 use crate::fd4::FD4BasicHashString;
 use shared::{Subclass, Superclass};
 
-/// Represents a managed resource.
-/// The data it represents is immediately handed over to
-/// other systems and the ResCap serves as a token for unloading things.
-/// One such example is gparams where the file associated with a FileCap is
-/// parsed, ResCaps (multiple) are created from the FileCap, and the ResCaps
-/// individually post the data they represent to associated sub-systems.
-/// For GParamResCaps that means posting the such data to the gparam blending
-/// system as well as a bunch of other GX structures.
+/// Represents a managed resource. The data it represents is immediately handed
+/// over to other systems and the ResCap serves as a token for unloading things.
+///
+/// For example, where the file associated with a gparam [FD4FileCap] is parsed,
+/// multiple [FD4ResCap]s are created from the [FD4FileCap], and the
+/// [FD4ResCap]s individually post the data they represent to associated
+/// sub-systems. For `GParamResCaps` that means posting the [FD4ResCap]s to the
+/// gparam blending system as well as a bunch of other GX structures.
 ///
 /// Source of name: RTTI
 #[repr(C)]
 #[derive(Superclass)]
 pub struct FD4ResCap {
     vftable: usize,
-    /// Name of the resource contained in the ResCap
+
+    /// The name of the resource this contains. This may be empty, such as for
+    /// repositories that contain further resources.
     pub name: FD4BasicHashString,
+
     /// The repository this resource is hosted in.
     pub owning_repository: Option<NonNull<FD4ResCapHolder<FD4ResCap>>>,
-    /// Next item in the linked list
+
+    /// The next item in the linked list for the bucket in
+    /// [Self::owning_repository] that this occupies. `None` if this is the last
+    /// element in the list.
     pub next_item: Option<NonNull<FD4ResCap>>,
+
     /// Amount of references to this resource.
     pub reference_count: u32,
     unk5c: u32,
@@ -46,16 +54,12 @@ pub struct FD4ResRep {
     pub res_cap: FD4ResCap,
 }
 
-/// Represents a collection of ResCaps/FileCaps.
-/// The game relies heavily on hashmaps for asset management.
-/// The resources name gets turned in a u32 using some FNV variant. That hash
-/// is then modulo'd by the repository's capacity to find the appropriate bucket.
-/// In the case of collision on lookups it will start cycling through the
-/// linked list for the matched slot and compare the full resource name hashes.
+/// A hash table of [FD4ResCap]s indexed by [FD4ResCap::name].
 ///
-/// This fnv hashing itself is actually facilitated by FD4BasicHashString.
-/// In the case of a collision on insertion it will make the entry you are
-/// seeking to insert the new head.
+/// The resource is hashed to a u32 using some FNV variant (using
+/// [FD4BasicHashString::hash]). That hash is then modulo'd by
+/// [FD4ResCapHolder::bucket_count] to find the appropriate bucket. Collisions
+/// are added as the head of the [FD4ResCap::next_item] linked list.
 ///
 /// ```ignore
 /// Bucket # = fnv(resource name) % bucket count
@@ -78,18 +82,27 @@ where
     T: Subclass<FD4ResCap>,
 {
     vftable: usize,
-    allocator: usize,
-    pub owning_repository: Option<NonNull<FD4ResCapHolder<FD4ResCap>>>,
+
+    /// The allocator used to expand this if necessary while adding data.
+    pub allocator: DLAllocatorRef,
+
+    /// A pointer to the repository that owns this holder.
+    pub owning_repository: Option<NonNull<FD4ResRep>>,
     unk18: u32,
+
+    /// The size of the array pointed to be [Self::buckets].
     pub bucket_count: u32,
-    buckets: NonNull<Option<NonNull<T>>>,
+
+    /// The buckets this repository contains.
+    pub buckets: NonNull<Option<NonNull<T>>>,
 }
 
 impl<T> FD4ResCapHolder<T>
 where
     T: Subclass<FD4ResCap>,
 {
-    /// Immutable iterator over entries.
+    /// An immutable iterator over this holder's entries, in no guaranteed
+    /// order.
     pub fn entries<'a>(&'a self) -> impl Iterator<Item = &'a T> + 'a {
         // For immutable iteration we can store the current chain pointer (if any)
         // and an index into the bucket array.
@@ -141,6 +154,7 @@ where
         }
     }
 
+    /// A mutable iterator over this holder's entries, in no guaranteed order.
     pub fn entries_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut T> + 'a {
         struct IterMut<'a, T: Subclass<FD4ResCap>> {
             buckets_ptr: *const Option<NonNull<T>>,

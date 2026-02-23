@@ -1,13 +1,10 @@
-use std::ffi::CStr;
+use std::{ffi::CStr, ptr::NonNull, slice};
 
 use crate::fd4::FD4ResCapHolder;
 use crate::param::ParamDef;
 use shared::{OwnedPtr, Subclass};
 
-use super::FD4ResRep;
-use super::resource::FD4ResCap;
-
-use param_layout::{ParamLayout, ParamLayout32, ParamLayout64};
+use super::{FD4ResCap, FD4ResRep};
 
 // Under most circumstances, it would make the most sense to consider
 // [FD4ParamRepository] to be the owner of the [FD4ParamResCap]s it contains.
@@ -67,8 +64,8 @@ impl FD4ParamRepository {
     ///
     /// This accesses data that `fromsoftware-rs` considers to be owned by
     /// individual parameter repositories such as [`SoloParamRepository`]. The
-    /// caller must guarantee that there are no mutable references to *any*
-    /// parameter data anywhere in the program before calling this.
+    /// caller must guarantee that there are no other references to *any* parameter
+    /// data anywhere in the program before calling this.
     ///
     /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
     pub unsafe fn res_cap_holder_mut(&mut self) -> &mut FD4ResCapHolder<FD4ParamResCap> {
@@ -126,10 +123,12 @@ impl FD4ParamRepository {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct FD4ParamResCap {
-    inner: FD4ResCap,
-    /// Size of data at pointer.
-    size: u64,
-    /// Raw row data for this param file.
+    pub res_cap: FD4ResCap,
+
+    /// The size in bytes of the [ParamFile] pointed at by [Self::data].
+    pub size: u64,
+
+    /// The raw row data for this param resource.
     pub data: OwnedPtr<ParamFile>,
 }
 
@@ -145,6 +144,9 @@ impl FD4ParamResCap {
         self.data.struct_name()
     }
 
+    /// Returns the row in this parameter with the given `id`, interpreted as a
+    /// `P`.
+    ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
@@ -152,6 +154,9 @@ impl FD4ParamResCap {
         unsafe { self.data.get_row_by_id(id) }
     }
 
+    /// Returns the mutable row in this parameter with the given `id`,
+    /// interpreted as a `P`.
+    ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
@@ -161,80 +166,82 @@ impl FD4ParamResCap {
 }
 
 /// Runtime metadata prepended at offset -0x10 from the param file.
-///
-/// Memory layout:
-/// ```text
-/// [ParamHeaderMetadata]          <- file_ptr-0x10
-/// [ParamFile]                    <- file_ptr (FD4ParamResCap.file points here)
-/// [row data...]
-/// [aligned padding to 0x10]
-/// [RowLookupEntry * row_count]   <- sorted by param ID lookup table
-/// ```
 #[repr(C)]
-pub struct ParamHeaderMetadata {
-    file_size: u32,
+struct ParamFileMetadata {
+    /// The unaligned offset from the beginning of the parameter file to the end
+    /// of its name string (or its [RowDescriptor] array if the name is stored
+    /// inline).
+    after_name_offset: u32,
+
+    /// The number of rows in the parameter file.
     row_count: u32,
+
     _reserved: u64,
 }
 
-impl ParamHeaderMetadata {
-    const ALIGNMENT: u32 = 0x10;
-    const SIZE: usize = size_of::<Self>();
-
-    fn lookup_table(&self) -> &[RowLookupEntry] {
-        let aligned_file_size = self.file_size.next_multiple_of(Self::ALIGNMENT) as usize;
-
-        unsafe {
-            let file_start = (self as *const Self).add(1) as *const u8;
-            std::slice::from_raw_parts(
-                file_start.add(aligned_file_size) as *const RowLookupEntry,
-                self.row_count as usize,
-            )
-        }
-    }
-
-    pub fn find_index(&self, param_id: u32) -> Option<usize> {
-        let table = self.lookup_table();
-        let target_index = self
-            .lookup_table()
-            .binary_search_by(|entry| entry.param_id.cmp(&param_id))
-            .ok()?;
-        Some(table[target_index].index as usize)
-    }
-}
-
-/// Entry in the runtime lookup table for O(log n) access by row ID.
+/// An entry in the runtime lookup table to look up rows by ID.
+///
+/// This table is sorted by ID, enabling O(log n) lookups.
 #[repr(C)]
 struct RowLookupEntry {
     param_id: u32,
     index: u32,
 }
 
-/// Row descriptor for param files.
+/// A row descriptor that makes Row descriptor for param files.
 ///
 /// The actual size depends on the offset type:
 /// - 32-bit offsets: 12 bytes (id + data_offset + name_offset)
 /// - 64-bit offsets: 24 bytes (id + pad + data_offset + name_offset)
 #[repr(C)]
-pub struct RowDescriptor<O: ParamLayout> {
-    pub id: u32,
-    pub data_offset: O::FileOffsetType,
-    pub name_offset: O::FileOffsetType,
+struct RowDescriptor<T: Into<u64> + Copy> {
+    /// The parameter ID of the row this describes.
+    id: u32,
+
+    data_offset: T,
+
+    /// The offset between the beginning of the [ParamFile] and its struct name.
+    /// This is the same for all descriptors.
+    name_offset: T,
 }
 
-impl<O: ParamLayout> RowDescriptor<O> {
+impl<T: Into<u64> + Copy> RowDescriptor<T> {
+    /// The offset between the beginning of the [ParamFile] and the [ParamDef]
+    /// data this descriptor refers to.
     pub fn data_offset(&self) -> usize {
         self.data_offset.into() as usize
     }
 }
 
-/// Param file accessor that handles format variations at runtime.
+/// An in-memory representation of a file that contains all the data for a
+/// single parameter type.
+// Memory layout:
+// ```text
+// [ParamFileMetadata]            <- file_ptr-0x10
+// [ParamFile]                    <- file_ptr ([FD4ParamResCap::file] points here)
+// [RowDescriptor * row_count]
+// [char...]                      <- struct name, if [ParamFile::has_offset_param_type] is true
+// [aligned padding to 0x10]
+// [ParamDef * row_count]         <- file_ptr + RowDescriptor::data_offset
+// [RowLookupEntry * row_count]   <- lookup table for param indexes, sorted by param ID
+// ```
 #[repr(C)]
 pub struct ParamFile {
-    header: ParamHeader,
+    strings_offset: u32,
+    short_data_offset: u16,
+    _unk06: u16,
+    paramdef_version: u16,
+    row_count: u16,
+    struct_name: ParamStructName,
+    big_endian: u8,
+    format_2d: u8,
+    format_2e: u8,
 }
 
 impl ParamFile {
+    /// The alignment used for the beginning of the [RowLookupEntry] table.
+    const LOOKUP_TABLE_ALIGNMENT: u32 = 0x10;
+
     /// Returns the name of the struct that this parameter uses.
     ///
     /// This corresponds to [`ParamDef::NAME`] (typically written in all-caps
@@ -243,70 +250,167 @@ impl ParamFile {
     ///
     /// [`ParamDef::NAME`]: crate::param::ParamDef::NAME
     pub fn struct_name(&self) -> &str {
-        if self.header.has_offset_param_type() {
+        if self.has_offset_param_type() {
             self.read_offset_struct_name()
         } else {
             self.read_inline_struct_name()
         }
     }
 
-    pub const fn row_count(&self) -> usize {
-        self.header.row_count as usize
-    }
-
+    /// The revision of this paramdef struct type.
     pub const fn paramdef_version(&self) -> u16 {
-        self.header.paramdef_data_version
+        self.paramdef_version
     }
 
+    /// The number of rows this file contains.
+    pub const fn row_count(&self) -> usize {
+        self.row_count as usize
+    }
+
+    /// Returns the row in this file with the given `id`, if one exists.
+    ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_row_by_id<P: ParamDef>(&self, id: u32) -> Option<&P> {
-        let row_index = self.metadata().find_index(id)?;
-        let data_offset = self.row_data_offset(row_index)?;
-        Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
+        unsafe { self.get_row_by_index(self.find_index(id)?) }
     }
 
+    /// Returns the mutable row in this file with the given `id`, if one exists.
+    ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_row_by_id_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
-        let row_index = self.metadata().find_index(id)?;
-        let data_offset = self.row_data_offset(row_index)?;
-        Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
+        unsafe { self.get_row_by_index_mut(self.find_index(id)?) }
     }
 
+    /// Returns the row in this file at the given `index`, if one exists.
+    ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_row_by_index<P: ParamDef>(&self, row_index: usize) -> Option<&P> {
         let data_offset = self.row_data_offset(row_index)?;
-        Some(unsafe { &*(self.as_ptr().add(data_offset) as *const P) })
+        Some(unsafe { self.offset::<P>(data_offset).as_ref() })
     }
 
+    /// Returns the mutable row in this file at the given `index`, if one exists.
+    ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn get_row_by_index_mut<P: ParamDef>(&mut self, row_index: usize) -> Option<&mut P> {
         let data_offset = self.row_data_offset(row_index)?;
-        Some(unsafe { &mut *(self.as_ptr().add(data_offset) as *mut P) })
+        Some(unsafe { self.offset::<P>(data_offset).as_mut() })
     }
 
-    pub const fn metadata(&self) -> &ParamHeaderMetadata {
+    /// Returns an iterator over each row in this file, in parameter ID order.
+    ///
+    /// # Safety
+    ///
+    /// Type `P` must match the actual row data structure for this param file.
+    pub unsafe fn rows<'a, P: ParamDef + 'a>(&'a self) -> impl Iterator<Item = &'a P> + 'a {
+        self.lookup_table()
+            .iter()
+            .map(|l| unsafe { self.get_row_by_index(l.index as usize).unwrap() })
+    }
+
+    /// Returns an iterator over each mutable row in this file, in parameter ID order.
+    ///
+    /// # Safety
+    ///
+    /// Type `P` must match the actual row data structure for this param file.
+    pub unsafe fn rows_mut<'a, P: ParamDef + 'a>(
+        &'a mut self,
+    ) -> impl Iterator<Item = &'a mut P> + 'a {
+        // We have to do this more manually to avoid having a reference to the
+        // `lookup_table` slice coexisting with the mutable reference returned
+        // by the iterator.
+        struct Iter<'a, P: ParamDef + 'a> {
+            file: NonNull<ParamFile>,
+            ptr: *const RowLookupEntry,
+            end: *const RowLookupEntry,
+            _marker: std::marker::PhantomData<&'a mut P>,
+        }
+
+        impl<'a, P: ParamDef + 'a> Iterator for Iter<'a, P> {
+            type Item = &'a mut P;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                if self.ptr == self.end {
+                    None
+                } else {
+                    unsafe {
+                        let result = self
+                            .file
+                            .as_mut()
+                            .get_row_by_index_mut(self.ptr.as_ref().unwrap().index as usize)
+                            .unwrap();
+                        self.ptr = self.ptr.add(1);
+                        Some(result)
+                    }
+                }
+            }
+        }
+
+        let range = self.lookup_table().as_ptr_range();
+        Iter {
+            file: NonNull::from_ref(self),
+            ptr: range.start,
+            end: range.end,
+            _marker: std::marker::PhantomData,
+        }
+    }
+
+    /// Returns the index of the parameter row with the given `id`.
+    pub fn find_index(&self, id: u32) -> Option<usize> {
+        let table = self.lookup_table();
+        let target_index = self
+            .lookup_table()
+            .binary_search_by(|entry| entry.param_id.cmp(&id))
+            .ok()?;
+        Some(table[target_index].index as usize)
+    }
+
+    /// Returns a reference to the lookup table used to efficiently map
+    /// parameter IDs to indices.
+    fn lookup_table(&self) -> &[RowLookupEntry] {
+        let aligned_file_size =
+            self.metadata()
+                .after_name_offset
+                .next_multiple_of(Self::LOOKUP_TABLE_ALIGNMENT) as usize;
+
         unsafe {
-            let metadata_ptr = (self as *const Self).byte_sub(ParamHeaderMetadata::SIZE)
-                as *const ParamHeaderMetadata;
+            slice::from_raw_parts(
+                self.offset::<RowLookupEntry>(aligned_file_size).as_ptr(),
+                self.row_count as usize,
+            )
+        }
+    }
+
+    /// Returns the metadata that's stored in memory before this file.
+    const fn metadata(&self) -> &ParamFileMetadata {
+        unsafe {
+            let metadata_ptr = (self as *const Self).byte_sub(size_of::<ParamFileMetadata>())
+                as *const ParamFileMetadata;
             &*metadata_ptr
         }
     }
 
-    fn as_ptr(&self) -> *const u8 {
-        self as *const Self as *const u8
+    /// Returns a pointer to [offset] bytes after the beginning of this struct.
+    ///
+    /// ## Safety
+    ///
+    /// The `offset` must be in range of [isize] and the resulting addition must
+    /// not overflow the address space.
+    const unsafe fn offset<T>(&self, offset: usize) -> NonNull<T> {
+        unsafe { NonNull::from_ref(self).cast::<u8>().add(offset).cast::<T>() }
     }
 
     fn read_inline_struct_name(&self) -> &str {
         unsafe {
-            CStr::from_ptr(self.header.struct_name.inline.as_ptr() as *const i8)
+            CStr::from_ptr(self.struct_name.inline.as_ptr() as *const i8)
                 .to_str()
                 .unwrap_or("")
         }
@@ -314,63 +418,48 @@ impl ParamFile {
 
     fn read_offset_struct_name(&self) -> &str {
         unsafe {
-            let offset = self.header.struct_name.offset.value;
+            let offset = self.struct_name.offset.value;
             if offset == 0 {
                 return "";
             }
-            CStr::from_ptr(self.as_ptr().add(offset as usize) as *const i8)
+            CStr::from_ptr(self.offset::<i8>(offset as usize).as_ptr())
                 .to_str()
                 .unwrap_or("")
         }
     }
 
-    /// Extended header offset is 0x40 bytes, otherwise 0x30
-    const fn row_descriptors_offset(&self) -> usize {
-        const HEADER_SIZE: usize = size_of::<ParamHeader>();
-        if self.header.has_extended_header() {
-            return HEADER_SIZE + 0x10;
-        };
-        HEADER_SIZE
+    /// Returns this param file's row descriptor list. This uses the same
+    /// indices as the paramter data.
+    const fn row_descriptors<T: Into<u64> + Copy>(&self) -> &[RowDescriptor<T>] {
+        let offset = size_of::<ParamFile>() + if self.has_extended_header() { 0x10 } else { 0 };
+        unsafe {
+            slice::from_raw_parts(
+                self.offset::<RowDescriptor<T>>(offset).as_ptr(),
+                self.row_count as usize,
+            )
+        }
     }
 
+    /// Returns the offset from the beginning of this paramter file to the data
+    /// of the row at `row_index`.
+    ///
+    /// Returns `None` if `row_index` is out-of-range for this file.
     fn row_data_offset(&self, row_index: usize) -> Option<usize> {
         if row_index >= self.row_count() {
             return None;
         }
-        let base = self.row_descriptors_offset();
 
-        unsafe {
-            if self.header.is_64_bit() {
-                let desc = &*(self
-                    .as_ptr()
-                    .add(base + row_index * size_of::<RowDescriptor<ParamLayout64>>())
-                    as *const RowDescriptor<ParamLayout64>);
-                Some(desc.data_offset())
-            } else {
-                let desc = &*(self
-                    .as_ptr()
-                    .add(base + row_index * size_of::<RowDescriptor<ParamLayout32>>())
-                    as *const RowDescriptor<ParamLayout32>);
-                Some(desc.data_offset())
-            }
+        if self.is_64_bit() {
+            self.row_descriptors::<u64>()
+                .get(row_index)
+                .map(|d| d.data_offset())
+        } else {
+            self.row_descriptors::<u32>()
+                .get(row_index)
+                .map(|d| d.data_offset())
         }
     }
-}
 
-#[repr(C)]
-struct ParamHeader {
-    strings_offset: u32,
-    short_data_offset: u16,
-    unk_06: u16,
-    paramdef_data_version: u16,
-    row_count: u16,
-    struct_name: ParamStructName,
-    big_endian: u8,
-    format_2d: u8,
-    format_2e: u8,
-}
-
-impl ParamHeader {
     /// Whether param type is stored as an offset (bit 7 of format_2d).
     const fn has_offset_param_type(&self) -> bool {
         (self.format_2d & 0x80) != 0
@@ -399,39 +488,4 @@ struct ParamStructNameOffset {
     _pad: u32,
     value: u32,
     _reserved: [u32; 6],
-}
-
-/// Traits for compile-time encoding of param file layout variations.
-mod param_layout {
-    use std::mem::size_of;
-
-    /// Trait for offset size variations in param files.
-    ///
-    /// # Safety
-    ///
-    /// Implementors must assure that the associated `FileOffsetType` correctly
-    /// represents param file row descriptor offset sizes.
-    pub unsafe trait ParamLayout: Copy {
-        type FileOffsetType: Into<u64> + Copy;
-
-        fn is_64_bit() -> bool {
-            size_of::<Self::FileOffsetType>() == 8
-        }
-    }
-
-    /// Marker for 32-bit offsets (12-byte row descriptors).
-    #[derive(Clone, Copy)]
-    pub struct ParamLayout32;
-
-    unsafe impl ParamLayout for ParamLayout32 {
-        type FileOffsetType = u32;
-    }
-
-    /// Marker for 64-bit offsets (24-byte row descriptors).
-    #[derive(Clone, Copy)]
-    pub struct ParamLayout64;
-
-    unsafe impl ParamLayout for ParamLayout64 {
-        type FileOffsetType = u64;
-    }
 }

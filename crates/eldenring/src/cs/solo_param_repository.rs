@@ -1,13 +1,8 @@
 use shared::{OwnedPtr, Subclass};
 
-use crate::{
-    ArrayWithHeader, Vector,
-    cs::BlockId,
-    dlkr::DLAllocatorRef,
-    fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile},
-    param::ParamDef,
-    stl::Tree,
-};
+use super::{BlockId, ItemCategory, ItemId};
+use crate::fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile};
+use crate::{ArrayWithHeader, Vector, dlkr::DLAllocatorRef, param::ParamDef, stl::Tree};
 use bitfield::bitfield;
 
 #[repr(C)]
@@ -174,9 +169,9 @@ impl ParamResCap {
 
         let struct_name = self.param_res_cap.data.struct_name();
         debug_assert!(
-            struct_name == P::UnderlyingType::NAME,
+            struct_name == P::StructType::NAME,
             "Expected param struct {}, was {}",
-            P::UnderlyingType::NAME,
+            P::StructType::NAME,
             struct_name,
         );
     }
@@ -202,16 +197,23 @@ pub struct SoloParamHolder {
 }
 
 impl SoloParamHolder {
+    /// The res cap at `index` in this holder, if it exists.
     pub fn get_res_cap(&self, index: usize) -> Option<&ParamResCap> {
         self.res_caps.get(index)?.as_deref()
     }
+
+    /// The mutable res cap at `index` in this holder, if it exists.
     pub fn get_res_cap_mut(&mut self, index: usize) -> Option<&mut ParamResCap> {
         self.res_caps.get_mut(index)?.as_deref_mut()
     }
-    pub fn get_res_caps(&self) -> impl Iterator<Item = &ParamResCap> {
+
+    /// An iterator over all res caps in this holder.
+    pub fn res_caps(&self) -> impl Iterator<Item = &ParamResCap> {
         self.res_caps.iter().filter_map(|opt| opt.as_deref())
     }
-    pub fn get_res_caps_mut(&mut self) -> impl Iterator<Item = &mut ParamResCap> {
+
+    /// An iterator over all mutable res caps in this holder.
+    pub fn res_caps_mut(&mut self) -> impl Iterator<Item = &mut ParamResCap> {
         self.res_caps
             .iter_mut()
             .filter_map(|opt| opt.as_deref_mut())
@@ -220,6 +222,7 @@ impl SoloParamHolder {
 
 #[repr(C)]
 #[shared::singleton("SoloParamRepository")]
+#[derive(Subclass)]
 pub struct SoloParamRepository {
     pub res_rep: FD4ResRep,
     unk78: u32,
@@ -249,6 +252,22 @@ pub struct SoloParamRepository {
 }
 
 impl SoloParamRepository {
+    /// An iterator over all solo parameters.
+    pub fn params(&self) -> impl Iterator<Item = &FD4ParamResCap> {
+        self.solo_param_holders
+            .iter()
+            .flat_map(|h| h.res_caps())
+            .map(|rc| rc.param_res_cap.as_ref())
+    }
+
+    /// An iterator over all mutable solo parameters.
+    pub fn params_mut(&mut self) -> impl Iterator<Item = &mut FD4ParamResCap> {
+        self.solo_param_holders
+            .iter_mut()
+            .flat_map(|h| h.res_caps_mut())
+            .map(|rc| rc.param_res_cap.as_mut())
+    }
+
     pub fn get_chr_equip_model_param_by_key(
         &self,
         equip_type: u8,
@@ -301,21 +320,23 @@ impl SoloParamRepository {
     }
 
     /// Get a solo param (regulation.bin) row by its parameter type and ID.
-    pub fn get<P: SoloParam>(&self, param_id: u32) -> Option<&P::UnderlyingType> {
-        // SAFETY: `get_param_file` checks that the param type is what we expect.
+    pub fn get<P: SoloParam>(&self, param_id: u32) -> Option<&P::StructType> {
+        // SAFETY: By construction, [SoloParam] only applies to parameters whose
+        // indices are guaranteed by the game to be consistent.
         unsafe {
             self.get_param_file::<P>()
-                .get_row_by_id::<P::UnderlyingType>(param_id)
+                .get_row_by_id::<P::StructType>(param_id)
         }
     }
 
     /// Get a mutable solo param (regulation.bin) row by its parameter type and
     /// ID.
-    pub fn get_mut<P: SoloParam>(&mut self, param_id: u32) -> Option<&mut P::UnderlyingType> {
-        // SAFETY: `get_param_file` checks that the param type is what we expect.
+    pub fn get_mut<P: SoloParam>(&mut self, param_id: u32) -> Option<&mut P::StructType> {
+        // SAFETY: By construction, [SoloParam] only applies to parameters whose
+        // indices are guaranteed by the game to be consistent.
         unsafe {
             self.get_param_file_mut::<P>()
-                .get_row_by_id_mut::<P::UnderlyingType>(param_id)
+                .get_row_by_id_mut::<P::StructType>(param_id)
         }
     }
 
@@ -326,11 +347,12 @@ impl SoloParamRepository {
     /// this when you already know the index from a mapping like
     /// [SoloParamRepository::wep_reinforces] or
     /// [SoloParamRepository::buddy_stone_entity_ids].
-    pub fn get_row_by_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::UnderlyingType> {
-        // SAFETY: `get_param_file` checks that the param type is what we expect.
+    pub fn get_row_by_index<P: SoloParam>(&self, row_index: usize) -> Option<&P::StructType> {
+        // SAFETY: By construction, [SoloParam] only applies to parameters whose
+        // indices are guaranteed by the game to be consistent.
         unsafe {
             self.get_param_file::<P>()
-                .get_row_by_index::<P::UnderlyingType>(row_index)
+                .get_row_by_index::<P::StructType>(row_index)
         }
     }
 
@@ -344,18 +366,69 @@ impl SoloParamRepository {
     pub fn get_row_by_index_mut<P: SoloParam>(
         &mut self,
         row_index: usize,
-    ) -> Option<&mut P::UnderlyingType> {
-        // SAFETY: `get_param_file` checks that the param type is what we expect.
+    ) -> Option<&mut P::StructType> {
+        // SAFETY: By construction, [SoloParam] only applies to parameters whose
+        // indices are guaranteed by the game to be consistent.
         unsafe {
             self.get_param_file_mut::<P>()
-                .get_row_by_index_mut::<P::UnderlyingType>(row_index)
+                .get_row_by_index_mut::<P::StructType>(row_index)
         }
     }
 
     /// Returns the index of a solo param (regulation.bin) row by its parameter
     /// type and ID.
     pub fn get_index_by_param_id<P: SoloParam>(&self, param_id: u32) -> Option<usize> {
-        self.get_param_file::<P>().metadata().find_index(param_id)
+        self.get_param_file::<P>().find_index(param_id)
+    }
+
+    /// Returns an equipment parameter row enum for the given item ID, or `None`
+    /// if the row doesn't exit.
+    pub fn get_equip_param(&self, id: ItemId) -> Option<EquipParamStruct<'_>> {
+        use ItemCategory::*;
+        match id.category() {
+            Weapon => self
+                // Round to the nearest 100 in case the ID is for an upgraded
+                // weapon.
+                .get::<EquipParamWeapon>((id.param_id() / 100) * 100)
+                .map(|p| EquipParam::as_enum(p)),
+            Protector => self
+                .get::<EquipParamProtector>(id.param_id())
+                .map(|p| EquipParam::as_enum(p)),
+            Accessory => self
+                .get::<EquipParamAccessory>(id.param_id())
+                .map(|p| EquipParam::as_enum(p)),
+            Gem => self
+                .get::<EquipParamGem>(id.param_id())
+                .map(|p| EquipParam::as_enum(p)),
+            Goods => self
+                .get::<EquipParamGoods>(id.param_id())
+                .map(|p| EquipParam::as_enum(p)),
+        }
+    }
+
+    /// Returns a mutable equipment parameter row enum for the given item ID, or `None`
+    /// if the row doesn't exit.
+    pub fn get_equip_param_mut(&mut self, id: ItemId) -> Option<EquipParamStructMut<'_>> {
+        use ItemCategory::*;
+        match id.category() {
+            Weapon => self
+                // Round to the nearest 100 in case the ID is for an upgraded
+                // weapon.
+                .get_mut::<EquipParamWeapon>((id.param_id() / 100) * 100)
+                .map(|p| EquipParam::as_enum_mut(p)),
+            Protector => self
+                .get_mut::<EquipParamProtector>(id.param_id())
+                .map(|p| EquipParam::as_enum_mut(p)),
+            Accessory => self
+                .get_mut::<EquipParamAccessory>(id.param_id())
+                .map(|p| EquipParam::as_enum_mut(p)),
+            Gem => self
+                .get_mut::<EquipParamGem>(id.param_id())
+                .map(|p| EquipParam::as_enum_mut(p)),
+            Goods => self
+                .get_mut::<EquipParamGoods>(id.param_id())
+                .map(|p| EquipParam::as_enum_mut(p)),
+        }
     }
 
     /// Returns the [ParamFile] associated with `P`, if it exists at the
@@ -405,23 +478,37 @@ impl SoloParamRepository {
     }
 }
 
+/// A shared trait for parameters that are part of [SoloParamRepository], used
+/// to ensure that they can be accessed in a type-safe way.
 pub trait SoloParam {
+    /// The parameter name. This corresponds to `ParamResCap.res_cap.name` and
+    /// `FD4ParamResCap.res_cap.name`, not to [ParamFile::struct_name] and
+    /// [ParamDef::NAME].
     const NAME: &'static str;
+
+    /// The index of this parameter in [SoloParamRepository].
     const INDEX: u32;
-    type UnderlyingType: ParamDef;
+
+    /// The type of the data that this parameter contains.
+    type StructType: ParamDef;
 }
 
 use crate::param::*;
 
 macro_rules! solo_params {
-    ( $( ($ParamType:ident, $UnderlyingType:ty, $Index:expr) ),* $(,)? ) => {
+    ( $( ($ParamType:ident, $StructType:ty, $Index:expr) ),* $(,)? ) => {
         $(
+            #[doc="The"]
+            #[doc=stringify!($ParamType)]
+            #[doc="parameter. This can be used with [SoloParamRepository::get] and similar methods"]
+            #[doc="to load parameter data."]
             #[allow(non_camel_case_types)]
             pub struct $ParamType;
+
             impl SoloParam for $ParamType {
                 const NAME: &'static str = stringify!($ParamType);
                 const INDEX: u32 = $Index;
-                type UnderlyingType = $UnderlyingType;
+                type StructType = $StructType;
             }
         )*
     };
