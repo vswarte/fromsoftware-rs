@@ -37,6 +37,9 @@ struct SekiroDebugGui {
 
     // Game Data
     game_data: StaticDebugger<GameDataMan>,
+
+    // Resources
+    solo_param_repository: StaticDebugger<SoloParamRepository>,
 }
 
 impl SekiroDebugGui {
@@ -92,6 +95,11 @@ unsafe fn render_live_reload(gui: &mut SekiroDebugGui, ui: &mut Ui) {
 
             if let Some(item) = ui.tab_item("Game Data") {
                 gui.game_data.render_debug(ui);
+                item.end();
+            }
+
+            if let Some(item) = ui.tab_item("Resources") {
+                gui.solo_param_repository.render_debug(ui);
                 item.end();
             }
 
