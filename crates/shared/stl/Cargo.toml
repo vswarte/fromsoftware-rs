@@ -1,0 +1,11 @@
+[package]
+name = "fromsoftware-shared-stl"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+readme = false
+description = "STL types used in FromSoftware crates"
+
+[features]
+msvc2012 = []
