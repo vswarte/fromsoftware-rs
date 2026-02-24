@@ -1,0 +1,19 @@
+[package]
+name = "tests"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[[test]]
+name = "rva_test"
+path = "rva_test.rs"
+
+[dependencies]
+anyhow = "1.0.102"
+glob = "0.3.3"
+regex = "1.12.3"
+regex-macro = "0.3.0"
+toml.workspace = true
+serde.workspace = true
