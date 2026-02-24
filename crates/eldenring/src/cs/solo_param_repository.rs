@@ -431,6 +431,22 @@ impl SoloParamRepository {
         }
     }
 
+    /// Returns an iterator over each row in parameter `P` along with their
+    /// parameter IDs, in ID order.
+    pub fn rows<'a, P: SoloParam + 'a>(
+        &'a self,
+    ) -> impl Iterator<Item = (u32, &'a P::StructType)> + 'a {
+        unsafe { self.get_param_file::<P>().rows() }
+    }
+
+    /// Returns an iterator over each mutable row in parameter `P` along with
+    /// their parameter IDs, in ID order.
+    pub fn rows_mut<'a, P: SoloParam + 'a>(
+        &'a mut self,
+    ) -> impl Iterator<Item = (u32, &'a mut P::StructType)> + 'a {
+        unsafe { self.get_param_file_mut::<P>().rows_mut() }
+    }
+
     /// Returns the [ParamFile] associated with `P`, if it exists at the
     /// expected index. This should never return `None` for a vanilla game,
     /// because the only [SoloParam]s this library defines are ones that are
