@@ -222,8 +222,9 @@ captures = ["", "fd4param_repository_vmt"]
 pattern = "48 8d 05 $ { ' } 48 89 07 48 89 77 78 48 89 b7 80 00 00 00 48 89 b7 88 00 00 00"
 captures = ["", "fd4param_res_cap_vmt"]
 
+# Not a unique pattern, but every match is a call to `FD4::FD4TaskBase::FD4TaskBase()`.
 [[patterns]]
-pattern = "e8 $ { 48 8d 05 $ { ' } } 90 48 8d 05 ? ? ? ? 48 89 06 ? ? ? ? 7b 76 02 48 89 06 48 89 5e 10 48 8b"
+pattern = "e8 $ { 48 8d 05 $ { ' } } 90 48 8d 05 ? ? ? ? 48 89 06 48 8d 05 ? ? ? ? 48 89 06 48 89 5e 10 48 8b"
 captures = ["", "fd4task_base_vmt"]
 
 [[patterns]]
