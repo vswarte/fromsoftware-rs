@@ -1,4 +1,4 @@
-use std::{ffi::CStr, ptr::NonNull, slice};
+use std::{ffi::CStr, iter, ptr::NonNull, slice};
 
 use crate::fd4::FD4ResCapHolder;
 use crate::param::ParamDef;
@@ -305,62 +305,51 @@ impl ParamFile {
         Some(unsafe { self.offset::<P>(data_offset).as_mut() })
     }
 
-    /// Returns an iterator over each row in this file, in parameter ID order.
+    /// Returns an iterator over each row in this file along with their parameter IDs,
+    /// in ID order.
     ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
-    pub unsafe fn rows<'a, P: ParamDef + 'a>(&'a self) -> impl Iterator<Item = &'a P> + 'a {
+    pub unsafe fn rows<'a, P: ParamDef + 'a>(&'a self) -> impl Iterator<Item = (u32, &'a P)> + 'a {
         self.lookup_table()
             .iter()
-            .map(|l| unsafe { self.get_row_by_index(l.index as usize).unwrap() })
+            .map(|l| unsafe { (l.index, self.get_row_by_index(l.index as usize).unwrap()) })
     }
 
-    /// Returns an iterator over each mutable row in this file, in parameter ID order.
+    /// Returns an iterator over each mutable row in this file along with their
+    /// parameter IDs, in ID order.
     ///
     /// # Safety
     ///
     /// Type `P` must match the actual row data structure for this param file.
     pub unsafe fn rows_mut<'a, P: ParamDef + 'a>(
         &'a mut self,
-    ) -> impl Iterator<Item = &'a mut P> + 'a {
+    ) -> impl Iterator<Item = (u32, &'a mut P)> + 'a {
         // We have to do this more manually to avoid having a reference to the
         // `lookup_table` slice coexisting with the mutable reference returned
         // by the iterator.
-        struct Iter<'a, P: ParamDef + 'a> {
-            file: NonNull<ParamFile>,
-            ptr: *const RowLookupEntry,
-            end: *const RowLookupEntry,
-            _marker: std::marker::PhantomData<&'a mut P>,
-        }
-
-        impl<'a, P: ParamDef + 'a> Iterator for Iter<'a, P> {
-            type Item = &'a mut P;
-
-            fn next(&mut self) -> Option<Self::Item> {
-                if self.ptr == self.end {
-                    None
-                } else {
-                    unsafe {
-                        let result = self
-                            .file
-                            .as_mut()
-                            .get_row_by_index_mut(self.ptr.as_ref().unwrap().index as usize)
-                            .unwrap();
-                        self.ptr = self.ptr.add(1);
-                        Some(result)
-                    }
-                }
-            }
-        }
-
+        let mut file = NonNull::from_ref(self);
         let range = self.lookup_table().as_ptr_range();
-        Iter {
-            file: NonNull::from_ref(self),
-            ptr: range.start,
-            end: range.end,
-            _marker: std::marker::PhantomData,
-        }
+        let mut ptr = range.start;
+        let end = range.end;
+
+        iter::from_fn(move || {
+            if ptr == end {
+                return None;
+            }
+
+            // Safety: We know `ptr` is valid because the iterator holds a
+            // reference to `self` and thus to its lookup table, and `ptr` can't
+            // be `end` at this point. We know `file` is valid because of that
+            // same reference.
+            unsafe {
+                let index = ptr.as_ref().unwrap().index;
+                let result = file.as_mut().get_row_by_index_mut(index as usize).unwrap();
+                ptr = ptr.add(1);
+                Some((index, result))
+            }
+        })
     }
 
     /// Returns the index of the parameter row with the given `id`.
