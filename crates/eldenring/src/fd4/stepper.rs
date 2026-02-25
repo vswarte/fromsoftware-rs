@@ -1,16 +1,20 @@
-use std::ptr::NonNull;
+use std::{marker::PhantomData, ptr::NonNull};
 
 use shared::StepperStates;
 use windows::core::PCWSTR;
 
-use crate::{Tree, dlkr::DLAllocatorRef, dltx::DLString, fd4::FD4Time};
+use crate::{dlkr::DLAllocatorRef, dltx::DLString, fd4::FD4Time, Tree};
+
+/// Source of name: RTTI
+pub type FD4StepBase<Subject, Base, States> = FD4StepTemplateBase<Subject, Base, States>;
 
 /// Source of name: RTTI
 #[repr(C)]
-pub struct FD4StepTemplateBase<States: StepperStates, Subject> {
-    vftable: *const (),
+pub struct FD4StepTemplateBase<Subject, Base, States: StepperStates> {
+    base: FD4StepTemplateInterface<Base, Subject>,
     pub stepper_fns: NonNull<States::StepperFnArray<StepperFn<Subject>>>,
     pub attach: FD4ComponentAttachSystem_Step,
+
     /// Current state executing this frame.
     pub current_state: States,
     /// Target step for next frames execution.
@@ -28,6 +32,19 @@ pub struct FD4StepTemplateBase<States: StepperStates, Subject> {
     pub debug_state_label: PCWSTR,
     unka0: bool,
     unka4: i32,
+}
+
+/// Source of name: RTTI
+#[repr(C)]
+pub struct FD4StepTemplateInterface<Base, Subject> {
+    base: Base,
+    _phantom_data: PhantomData<Subject>,
+}
+
+/// Source of name: RTTI
+#[repr(C)]
+pub struct FD4StepBaseInterface {
+    vftable: *const (),
 }
 
 /// Single state for the stepper to be executing from.

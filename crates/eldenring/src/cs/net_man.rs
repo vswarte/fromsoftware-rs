@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use crate::{
     BasicVector, Vector,
     dltx::DLString,
-    fd4::{FD4StepTemplateBase, FD4Time},
+    fd4::{FD4StepBaseInterface, FD4StepBase, FD4Time},
     position::BlockPosition,
     stl::DoublyLinkedList,
 };
@@ -159,7 +159,7 @@ pub enum CSQuickMatchingCtrlState {
 /// Source of name: RTTI
 #[repr(C)]
 pub struct CSQuickMatchingCtrl {
-    pub stepper: FD4StepTemplateBase<CSQuickMatchingCtrlState, Self>,
+    pub stepper: FD4StepBase<Self, FD4StepBaseInterface, CSQuickMatchingCtrlState>,
     pub context: NonNull<CSBattleRoyalContext>,
     menu_job: usize,
     unkb8: FD4Time,
