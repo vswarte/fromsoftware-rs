@@ -5,6 +5,7 @@ use syn::*;
 mod multi_param;
 
 mod for_all_subclasses;
+mod stepper;
 mod subclass;
 mod superclass;
 mod utils;
@@ -299,6 +300,28 @@ pub fn derive_superclass(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream {
     match for_all_subclasses::for_all_subclasses_helper(input) {
+        Ok(stream) => stream,
+        Err(err) => err.into_compile_error().into(),
+    }
+}
+
+/// A derive macro that implements the StepperStates trait on a given enum.
+///
+/// - The enum must be exhaustive (represent all states and no more).
+/// - The enum must have a -1 state for inactive steppers.
+/// - The enum must have no gaps in the discriminants.
+///
+/// # Safety
+///
+/// The implementer must ensure that the enum is exhaustive as unknown discriminants can be used to
+/// trigger undefined behavior.
+/// The implementer must ensure that the enum does not have more states than the game defines.
+/// Failing to do so will allow for out-of-bound access to the stepper array.
+/// The implementer must ensure that the enum discriminants have no gaps. Failing to do so will
+/// allow out of bounds access to the stepper array as well as cause unknown discriminants.
+#[proc_macro_derive(StepperStates)]
+pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
+    match stepper::stepper_states_helper(input) {
         Ok(stream) => stream,
         Err(err) => err.into_compile_error().into(),
     }

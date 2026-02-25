@@ -1,15 +1,13 @@
 use std::ptr::NonNull;
 
-use windows::core::PCWSTR;
-
 use crate::{
     BasicVector, Vector,
     dltx::DLString,
-    fd4::{FD4StepBaseInterface, FD4Time},
+    fd4::{FD4StepBaseInterface, FD4StepBase, FD4Time},
     position::BlockPosition,
     stl::DoublyLinkedList,
 };
-use shared::OwnedPtr;
+use shared::{OwnedPtr, StepperStates};
 
 use super::{BlockId, CSEzTask, CSEzUpdateTask};
 
@@ -112,6 +110,7 @@ pub struct QuickmatchManager {
     unk18: u32,
     /// List of speffects applied to the players during battle.
     /// Source of names: debug strings
+    ///
     /// ```text
     /// 1110 Team A Summon/Respawn                            チームＡ用召喚・リスポン時
     /// 1111 Team B Summon/Respawn                            チームＢ用召喚・リスポン時
@@ -129,48 +128,38 @@ pub struct QuickmatchManager {
     // TODO: more fields up to 0xd8
 }
 
-#[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, StepperStates)]
 pub enum CSQuickMatchingCtrlState {
-    None = 0x0,
-    SearchRegister = 0x1,
-    SearchRegisterWait = 0x2,
-    // Waiting for lobby to gain enough people to start.
-    GuestInviteWait = 0x3,
-    GuestWaitSession = 0x4,
-    GuestReadyWait = 0x5,
-    // Moving to arena map.
-    GuestMoveMap = 0x6,
-    // People are loaded into the map and match is running or has errored.
-    GuestInGame = 0x7,
-    HostWaitSession = 0x8,
-    // Hosting and allowing other people to join the room before starting.
-    HostInvite = 0x9,
-    HostReadyWait = 0xa,
-    HostReadyWaitBlockList = 0xb,
-    // Moving to arena map.
-    HostMoveMap = 0xc,
-    // People are loaded into the map and match is running or has errored.
-    HostInGame = 0xd,
-    // Match has ended either by completion or error.
-    Unregister = 0xe,
+    /// Stepper is not running.
+    NotExecuting = -1,
+    /// No quickmatch is active.
+    None = 0,
+    /// Looking up existing rooms that match the quickmatch settings.
+    SearchRegister = 1,
+    /// Waiting for a response for the SearchRegister request.
+    SearchRegisterWait = 2,
+    GuestInviteWait = 3,
+    GuestWaitSession = 4,
+    GuestReadyWait = 5,
+    GuestMoveMap = 6,
+    /// People are loaded into the map and match is running.
+    GuestInGame = 7,
+    HostWaitSession = 8,
+    HostInvite = 9,
+    HostReadyWait = 10,
+    HostReadyWaitBlockList = 11,
+    HostMoveMap = 12,
+    /// People are loaded into the map and match is running.
+    HostInGame = 13,
+    /// Match has ended either by completion or error.
+    Unregister = 14,
 }
 
 /// Source of name: RTTI
 #[repr(C)]
 pub struct CSQuickMatchingCtrl {
-    pub base: FD4StepBaseInterface<15, Self>,
-    unk18: [u8; 0x28],
-    pub current_state: CSQuickMatchingCtrlState,
-    pub requested_state: CSQuickMatchingCtrlState,
-    unk48: [u8; 0x50],
-    /// FD4Step state string.
-    state_string: PCWSTR,
-    unka0: bool,
-    unka1: bool,
-    unka2: bool,
-    unka3: bool,
-    unka4: u32,
+    pub stepper: FD4StepBase<Self, FD4StepBaseInterface, CSQuickMatchingCtrlState>,
     pub context: NonNull<CSBattleRoyalContext>,
     menu_job: usize,
     unkb8: FD4Time,
