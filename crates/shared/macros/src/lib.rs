@@ -321,33 +321,8 @@ pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream
 /// allow out of bounds access to the stepper array as well as cause unknown discriminants.
 #[proc_macro_derive(StepperStates)]
 pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
-    fn error(ident: &Ident, message: &str) -> TokenStream {
-        syn::Error::new_spanned(ident, message)
-            .to_compile_error()
-            .into()
+    match stepper::stepper_states_helper(input) {
+        Ok(stream) => stream,
+        Err(err) => err.into_compile_error().into(),
     }
-
-    let input = parse_macro_input!(input as DeriveInput);
-    let input_struct_ident = &input.ident;
-
-    let Data::Enum(e) = &input.data else {
-        return error(&input.ident, "StepperStates can only be derived on enums");
-    };
-
-    if let Err(e) = stepper::validate_stepper_enum_storage(&input) {
-        return e.to_compile_error().into();
-    };
-
-    if let Err(e) = stepper::validate_stepper_enum_variants(e) {
-        return e.to_compile_error().into();
-    };
-
-    let count = e.variants.len();
-    let expanded = quote! {
-        unsafe impl ::fromsoftware_shared::StepperStates for #input_struct_ident {
-            type StepperFnArray<TStepperFn> = [TStepperFn; #count];
-        }
-    };
-
-    TokenStream::from(expanded)
 }
