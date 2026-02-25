@@ -4,7 +4,7 @@ use vtable_rs::VPtr;
 
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::{F32Vector2, F32Vector3, program::Program};
+use shared::{F32Vector2, F32Vector3, UnknownStruct, program::Program};
 
 use super::{CSEzTask, CSEzUpdateTask, OptionalItemId};
 use crate::{
@@ -145,10 +145,10 @@ pub struct WorldMapViewModel {
     unk38: u64,
     unk40: u64,
     unk48: u32,
-    unk50: WorldMapViewModelUnk50,
+    unk50: UnknownStruct<0x24>,
     unk70: u8,
     unk74: u32,
-    pub remote_player_data: WorlMapRemotePlayerDataList,
+    pub remote_player_data: WorldMapRemotePlayerDataList,
     unka0: F32Vector2,
     unka8: u16,
     unkac: u32,
@@ -159,7 +159,7 @@ pub struct WorldMapViewModel {
     pub legacy_converter: WorldMapLegacyConverter,
     unkf0: u64,
     pub map_converters: DLFixedVector<WorldMapAreaConverter, 8>,
-    unk288: [u8; 0x48],
+    unk288: UnknownStruct<0x48>,
     unk2d0: u64,
     pub warp_pins: WorldMapPinDataList<WorldMapWarpPinData>,
     // unkf0: [u8; 0x360],
@@ -187,7 +187,7 @@ pub struct WorldMapViewModelUnk50 {
 }
 
 #[repr(C)]
-pub struct WorlMapRemotePlayerDataList {
+pub struct WorldMapRemotePlayerDataList {
     vftable: usize,
     entries: Vector<()>,
 }
