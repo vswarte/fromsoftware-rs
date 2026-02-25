@@ -132,7 +132,7 @@ pub struct QuickmatchManager {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, StepperStates)]
 pub enum CSQuickMatchingCtrlState {
     /// Stepper is not running.
-    Inactive = -1,
+    NotExecuting = -1,
     /// No quickmatch is active.
     None = 0,
     /// Looking up existing rooms that match the quickmatch settings.
