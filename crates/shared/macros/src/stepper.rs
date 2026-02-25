@@ -32,24 +32,19 @@ fn validate_stepper_enum_storage(i: &DeriveInput) -> Result<()> {
     let Some(repr_attr) = i.attrs.iter().find(|a| a.path().is_ident("repr")) else {
         return Err(Error::new_spanned(
             &i.ident,
-            "Enum must apply a #[repr(i32)], there is currently no repr specified at all",
+            "Enum must apply a #[repr(i32)]",
         ));
     };
 
-    let Meta::List(repr_args) = &repr_attr.meta else {
-        return Err(Error::new_spanned(
-            &i.ident,
-            "Enum must apply a #[repr(i32)], the repr attribute currently has no arguments",
-        ));
-    };
+    let mut has_i32 = false;
+    repr_attr.parse_nested_meta(|meta| {
+        if meta.path.is_ident("i32") {
+            has_i32 = true;
+        }
+        Ok(())
+    })?;
 
-    if !repr_args
-        .tokens
-        .to_string()
-        .split(',')
-        .map(|s| s.trim())
-        .any(|s| s == "i32")
-    {
+    if !has_i32 {
         return Err(Error::new_spanned(
             &i.ident,
             "Enum must apply a #[repr(i32)]",
