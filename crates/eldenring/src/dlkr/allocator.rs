@@ -1,9 +1,14 @@
 use std::{
     alloc::{GlobalAlloc, Layout},
+    mem::transmute,
     ptr::NonNull,
 };
 
+use pelite::pe64::Pe;
+use shared::Program;
 use vtable_rs::VPtr;
+
+use crate::rva;
 
 #[vtable_rs::vtable]
 pub trait DLAllocatorVmt {
@@ -77,6 +82,20 @@ pub struct DLAllocatorBase {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
+
+impl DLAllocatorRef {
+    /// Returns the global instance of DLAllocator that uses the standard MSVC malloc()/free()
+    /// implementation for heap management
+    pub fn runtime_heap_allocator() -> Self {
+        unsafe {
+            transmute::<u64, Self>(
+                Program::current()
+                    .rva_to_va(rva::get().runtime_heap_allocator)
+                    .unwrap(),
+            )
+        }
+    }
+}
 
 unsafe impl GlobalAlloc for DLAllocatorRef {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {

@@ -23,7 +23,7 @@ pub struct EzStateEvent {
 
 impl EzStateEvent {
     pub fn id(&self) -> i32 {
-        let value: EzStateValue = self.id.into();
+        let value: EzStateValue = (&self.id).into();
         value.into()
     }
 
@@ -31,7 +31,7 @@ impl EzStateEvent {
         if index as usize > self.args.len() {
             None
         } else {
-            Some(self.args[index as usize].into())
+            Some((&self.args[index as usize]).into())
         }
     }
 }
