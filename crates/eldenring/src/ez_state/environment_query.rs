@@ -22,7 +22,7 @@ pub struct EzStateEnvironmentQuery {
 
 impl EzStateEnvironmentQuery {
     pub fn id(&self) -> i32 {
-        let value: EzStateValue = self.id.into();
+        let value: EzStateValue = (&self.id).into();
         value.into()
     }
 
@@ -30,7 +30,7 @@ impl EzStateEnvironmentQuery {
         if index >= self.arity {
             None
         } else {
-            Some(self.args[index as usize].into())
+            Some((&self.args[index as usize]).into())
         }
     }
 
@@ -47,7 +47,15 @@ impl Default for EzStateEnvironmentQuery {
                 .unwrap() as usize,
             arity: 1,
             id: EzStateValue::Int32(0).into(),
-            args: [EzStateValue::Int32(0).into(); 7],
+            args: [
+                EzStateValue::Int32(0).into(),
+                EzStateValue::Int32(0).into(),
+                EzStateValue::Int32(0).into(),
+                EzStateValue::Int32(0).into(),
+                EzStateValue::Int32(0).into(),
+                EzStateValue::Int32(0).into(),
+                EzStateValue::Int32(0).into(),
+            ],
         }
     }
 }

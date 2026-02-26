@@ -331,6 +331,10 @@ pattern = "e8 $ { 48 89 4c 24 08 55 56 57 48 83 ec 30 } eb ? 33 c0 48 89 05 $ { 
 captures = ["", "world_chr_man_dbg_flags"]
 pattern = "80 3d $ { ? ' } 00 0f 85 [4] 32 c0 "
 
+[[patterns]]
+captures = ["", "runtime_heap_allocator"]
+pattern = "e8 [4] 48 8b 05 ${ ' } 48 85 c0 75 0c e8 [4] 48 89 05 [4] 48 89 05 [4]"
+
 [[vmts]]
 class = "CS::CSEzStateTalkEvent"
 vftable = "cs_ez_state_talk_event_vmt"
@@ -346,3 +350,7 @@ vftable = "ez_state_detail_external_event_temp_vmt"
 [[vmts]]
 class = "EzState::EzStateEnvironmentQueryImpl"
 vftable = "ez_state_environment_query_impl_vmt"
+
+[[vmts]]
+class = "EzState::EzStateValue::EzStateSharedString"
+vftable = "ez_state_shared_string_vmt"
