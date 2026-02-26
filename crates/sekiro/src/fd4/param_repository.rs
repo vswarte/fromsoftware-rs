@@ -1,124 +1,10 @@
-use std::{ffi::CStr, iter, ptr::NonNull, slice};
+use std::{ffi::CStr, iter, mem::ManuallyDrop, ops::Drop, ptr::NonNull, slice};
 
-use crate::fd4::FD4ResCapHolder;
+use bitfield::bitfield;
+
+use super::FD4ResCap;
 use crate::param::ParamDef;
 use shared::{OwnedPtr, Subclass};
-
-use super::{FD4ResCap, FD4ResRep};
-
-// Under most circumstances, it would make the most sense to consider
-// [FD4ParamRepository] to be the owner of the [FD4ParamResCap]s it contains.
-// However, it's substantially less efficient to look up a given parameter
-// through [FD4ParamRepository] than it is through more specific repositories
-// like [SoloParamRepository]. Other repositories assemble a mapping from
-// parameter "indexes" to the actual locations of those parameters in memory
-// which is robust against the parameters being reordered on disk;
-// [FD4ParamRepository] does not. Because of this, it's possible to do an O(1)
-// lookup through individual repositories while any lookup here must be O(n).
-//
-// To mitigate this, we expose APIs that act like [FD4ParamRepository] is *not*
-// the owner of its data, in the sense that all access to that data is `unsafe`
-// on the condition that users have no other mutable references (or immutable
-// references in the case of mutable access) to param data elsewhere in their
-// program. This allows us to avoid the `unsafe` qualifier for access through
-// individual parameter repositories, because they're guaranteed to have the
-// only references on the Rust side. (We're insulated from references on the C++
-// side by the safety requirements for accessing any of these globals in the
-// first place.)
-//
-// It's important to note as well that this solution relies on all the
-// individual parameter repositories having access to a disjoint set of
-// parameters. If any of them overlap (in another patch or another game),
-// they'll have the same soundness issues between one another and we may need to
-// consider a different approach to solving that problem.
-#[repr(C)]
-#[shared::singleton("FD4ParamRepository")]
-#[derive(Subclass)]
-#[subclass(base = FD4ResRep, base = FD4ResCap)]
-pub struct FD4ParamRepository {
-    /// Resource repository holding the actual param data.
-    pub res_rep: FD4ResRep,
-    res_cap_holder: FD4ResCapHolder<FD4ParamResCap>,
-    allocator: usize,
-}
-
-impl FD4ParamRepository {
-    /// Returns this repository's collection of [FD4ParamResCap]s.
-    ///
-    /// ## Safety
-    ///
-    /// This accesses data that `fromsoftware-rs` considers to be owned by
-    /// individual parameter repositories such as [`SoloParamRepository`]. The
-    /// caller must guarantee that there are no mutable references to *any*
-    /// parameter data anywhere in the program before calling this.
-    ///
-    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
-    pub unsafe fn res_cap_holder(&self) -> &FD4ResCapHolder<FD4ParamResCap> {
-        &self.res_cap_holder
-    }
-
-    /// Returns a mutable reference to this repository's collection of
-    /// [FD4ParamResCap]s.
-    ///
-    /// ## Safety
-    ///
-    /// This accesses data that `fromsoftware-rs` considers to be owned by
-    /// individual parameter repositories such as [`SoloParamRepository`]. The
-    /// caller must guarantee that there are no other references to *any* parameter
-    /// data anywhere in the program before calling this.
-    ///
-    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
-    pub unsafe fn res_cap_holder_mut(&mut self) -> &mut FD4ResCapHolder<FD4ParamResCap> {
-        &mut self.res_cap_holder
-    }
-
-    /// Returns the first parameter in the repository whose struct type is `P`,
-    /// or `None` if there is no such parameter. This should never return `None`
-    /// for a vanilla game, because the only parameters this library defines are
-    /// ones that are found in the game.
-    ///
-    /// ## Safety
-    ///
-    /// This accesses data that `fromsoftware-rs` considers to be owned by
-    /// individual parameter repositories such as [`SoloParamRepository`]. The
-    /// caller must guarantee that there are no mutable references to *any*
-    /// parameter data anywhere in the program before calling this.
-    ///
-    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
-    pub unsafe fn get<P: ParamDef>(&self, id: u32) -> Option<&P> {
-        unsafe { self.get_rescap::<P>() }.and_then(|entry| unsafe { entry.get::<P>(id) })
-    }
-
-    /// Returns a mutable reference to the first parameter in the repository
-    /// whose struct type is `P`, or `None` if there is no such parameter. This
-    /// should never return `None` for a vanilla game, because the only
-    /// parameters this library defines are ones that are found in the game.
-    ///
-    /// ## Safety
-    ///
-    /// This accesses data that `fromsoftware-rs` considers to be owned by
-    /// individual parameter repositories such as [`SoloParamRepository`]. The
-    /// caller must guarantee that there are no other references (mutable or
-    /// immutable) to *any* parameter data anywhere in the program before
-    /// calling this.
-    ///
-    /// [`SoloParamRepository`]: crate::cs::SoloParamRepository
-    pub unsafe fn get_mut<P: ParamDef>(&mut self, id: u32) -> Option<&mut P> {
-        unsafe { self.get_rescap_mut::<P>() }.and_then(|entry| unsafe { entry.get_mut::<P>(id) })
-    }
-
-    unsafe fn get_rescap<P: ParamDef>(&self) -> Option<&FD4ParamResCap> {
-        self.res_cap_holder
-            .entries()
-            .find(|e| e.struct_name() == P::NAME)
-    }
-
-    unsafe fn get_rescap_mut<P: ParamDef>(&mut self) -> Option<&mut FD4ParamResCap> {
-        self.res_cap_holder
-            .entries_mut()
-            .find(|e| e.struct_name() == P::NAME)
-    }
-}
 
 #[repr(C)]
 #[derive(Subclass)]
@@ -173,10 +59,7 @@ struct ParamFileMetadata {
     /// inline).
     after_name_offset: u32,
 
-    /// The number of rows in the parameter file.
-    row_count: u32,
-
-    _reserved: u64,
+    _un08: u64,
 }
 
 /// An entry in the runtime lookup table to look up rows by ID.
@@ -213,29 +96,74 @@ impl<T: Into<u64> + Copy> RowDescriptor<T> {
     }
 }
 
-/// An in-memory representation of a file that contains all the data for a
-/// single parameter type.
+/// The oldest parameter format Sekiro supports, used for only one of its
+/// parameters that we know of. This stores the parameter name inline within the
+/// file's data.
 // Memory layout:
 // ```text
 // [ParamFileMetadata]            <- file_ptr-0x10
 // [ParamFile]                    <- file_ptr ([FD4ParamResCap::file] points here)
 // [RowDescriptor * row_count]
-// [char...]                      <- struct name, if [ParamFile::has_offset_param_type] is true
 // [aligned padding to 0x10]
 // [ParamDef * row_count]         <- file_ptr + RowDescriptor::data_offset
 // [RowLookupEntry * row_count]   <- lookup table for param indexes, sorted by param ID
 // ```
 #[repr(C)]
-pub struct ParamFile {
-    strings_offset: u32,
-    short_data_offset: u16,
-    _unk06: u16,
+struct ParamFileV2 {
+    _unk00: [u8; 0x8],
     paramdef_version: u16,
     row_count: u16,
-    struct_name: ParamStructName,
-    big_endian: u8,
-    format_2d: u8,
-    format_2e: u8,
+
+    /// The struct's name, stored inline.
+    struct_name: [u8; 0x20],
+
+    /// Flags indicating the structure of this file.
+    flags: ParamFileFlags,
+}
+
+/// The newest parameter format Sekiro supports, used for almost all of its
+/// parameters. This has some extra metadata and stores the parameter name
+/// outside the struct header.
+// Memory layout:
+// ```text
+// [ParamFileMetadata]            <- file_ptr-0x10
+// [ParamFile]                    <- file_ptr ([FD4ParamResCap::file] points here)
+// [RowDescriptor * row_count]
+// [char...]                      <- struct name
+// [aligned padding to 0x10]
+// [ParamDef * row_count]         <- file_ptr + RowDescriptor::data_offset
+// [RowLookupEntry * row_count]   <- lookup table for param indexes, sorted by param ID
+// ```
+#[repr(C)]
+struct ParamFileV5 {
+    _aligned_offset_after_param_data: u32,
+    _unk04: u32,
+    paramdef_version: u16,
+    row_count: u16,
+    _unk0c: u32,
+
+    /// The offset in bytes between the beginning of this struct and the
+    /// beginning of the [u8] array that contains its name.
+    struct_name_offset: u32,
+
+    _unk18: u64,
+    _unk20: u64,
+    _unk28: u32,
+
+    /// Flags indicating the structure of this file.
+    flags: ParamFileFlags,
+
+    /// The offset in bytes between the beginning of this struct and the
+    /// beginning of the first parameter struct's data.
+    data_offset: u32,
+}
+
+/// An in-memory representation of a file that contains all the data for a
+/// single parameter type.
+// The discriminator for a param file is in [ParamFileFlags::file_version].
+pub union ParamFile {
+    v2: ManuallyDrop<ParamFileV2>,
+    v5: ManuallyDrop<ParamFileV5>,
 }
 
 impl ParamFile {
@@ -250,21 +178,36 @@ impl ParamFile {
     ///
     /// [`ParamDef::NAME`]: crate::param::ParamDef::NAME
     pub fn struct_name(&self) -> &str {
-        if self.has_offset_param_type() {
-            self.read_offset_struct_name()
-        } else {
-            self.read_inline_struct_name()
+        match self.as_enum() {
+            ParamFileType::V2(file) => CStr::from_bytes_until_nul(&file.struct_name)
+                .ok()
+                .and_then(|s| s.to_str().ok())
+                .unwrap_or(""),
+            ParamFileType::V5(file) => {
+                let offset = file.struct_name_offset;
+                if offset == 0 {
+                    ""
+                } else {
+                    unsafe {
+                        CStr::from_ptr(self.offset::<i8>(offset as usize).as_ptr())
+                            .to_str()
+                            .unwrap_or("")
+                    }
+                }
+            }
         }
     }
 
     /// The revision of this paramdef struct type.
-    pub const fn paramdef_version(&self) -> u16 {
-        self.paramdef_version
+    pub fn paramdef_version(&self) -> u16 {
+        // This has the same positioning across both union types.
+        unsafe { self.v5.paramdef_version }
     }
 
     /// The number of rows this file contains.
-    pub const fn row_count(&self) -> usize {
-        self.row_count as usize
+    pub fn row_count(&self) -> usize {
+        // This has the same positioning across both union types.
+        unsafe { self.v5.row_count as usize }
     }
 
     /// Returns the row in this file with the given `id`, if one exists.
@@ -305,8 +248,7 @@ impl ParamFile {
         Some(unsafe { self.offset::<P>(data_offset).as_mut() })
     }
 
-    /// Returns an iterator over each row in this file along with their parameter IDs,
-    /// in ID order.
+    /// Returns an iterator over each row in this file, in parameter ID order.
     ///
     /// # Safety
     ///
@@ -317,8 +259,7 @@ impl ParamFile {
             .map(|l| unsafe { (l.index, self.get_row_by_index(l.index as usize).unwrap()) })
     }
 
-    /// Returns an iterator over each mutable row in this file along with their
-    /// parameter IDs, in ID order.
+    /// Returns an iterator over each mutable row in this file, in parameter ID order.
     ///
     /// # Safety
     ///
@@ -373,7 +314,7 @@ impl ParamFile {
         unsafe {
             slice::from_raw_parts(
                 self.offset::<RowLookupEntry>(aligned_file_size).as_ptr(),
-                self.row_count as usize,
+                self.row_count(),
             )
         }
     }
@@ -397,34 +338,18 @@ impl ParamFile {
         unsafe { NonNull::from_ref(self).cast::<u8>().add(offset).cast::<T>() }
     }
 
-    fn read_inline_struct_name(&self) -> &str {
-        unsafe {
-            CStr::from_ptr(self.struct_name.inline.as_ptr() as *const i8)
-                .to_str()
-                .unwrap_or("")
-        }
-    }
-
-    fn read_offset_struct_name(&self) -> &str {
-        unsafe {
-            let offset = self.struct_name.offset.value;
-            if offset == 0 {
-                return "";
-            }
-            CStr::from_ptr(self.offset::<i8>(offset as usize).as_ptr())
-                .to_str()
-                .unwrap_or("")
-        }
-    }
-
     /// Returns this param file's row descriptor list. This uses the same
     /// indices as the paramter data.
-    const fn row_descriptors<T: Into<u64> + Copy>(&self) -> &[RowDescriptor<T>] {
-        let offset = size_of::<ParamFile>() + if self.has_extended_header() { 0x10 } else { 0 };
+    fn row_descriptors<T: Into<u64> + Copy>(&self) -> &[RowDescriptor<T>] {
+        let offset = size_of::<ParamFile>()
+            + match self.as_enum() {
+                ParamFileType::V2(_) => 0,
+                ParamFileType::V5(_) => 0x10,
+            };
         unsafe {
             slice::from_raw_parts(
                 self.offset::<RowDescriptor<T>>(offset).as_ptr(),
-                self.row_count as usize,
+                self.row_count(),
             )
         }
     }
@@ -438,43 +363,95 @@ impl ParamFile {
             return None;
         }
 
-        if self.is_64_bit() {
-            self.row_descriptors::<u64>()
+        match self.as_enum() {
+            ParamFileType::V2(_) => self
+                .row_descriptors::<u32>()
                 .get(row_index)
-                .map(|d| d.data_offset())
-        } else {
-            self.row_descriptors::<u32>()
-                .get(row_index)
-                .map(|d| d.data_offset())
+                .map(|d| d.data_offset()),
+            ParamFileType::V5(_) => {
+                debug_assert!(
+                    self.flags().offset_64() && self.flags().offset_64_v5(),
+                    "Expected all v5 param files to use 64-bit RowDescriptor offsets",
+                );
+
+                self.row_descriptors::<u64>()
+                    .get(row_index)
+                    .map(|d| d.data_offset())
+            }
         }
     }
 
-    /// Whether param type is stored as an offset (bit 7 of format_2d).
-    const fn has_offset_param_type(&self) -> bool {
-        (self.format_2d & 0x80) != 0
+    /// Reeturns a type-safe representation of this as an enum.
+    ///
+    /// Panics if this has a parameter type we don't recognize.
+    fn as_enum(&self) -> ParamFileType<'_> {
+        unsafe {
+            match self.flags().file_version() {
+                2 => ParamFileType::V2(&self.v2),
+                5 => ParamFileType::V5(&self.v5),
+                n => panic!("Unexpected ParamFile version {n}"),
+            }
+        }
     }
 
-    /// Whether the file uses 64-bit offsets (bit 2 of format_2d).
-    const fn is_64_bit(&self) -> bool {
-        (self.format_2d & 0x04) != 0
-    }
-
-    /// Whether the header has the extended 16-byte section.
-    const fn has_extended_header(&self) -> bool {
-        self.is_64_bit() || ((self.format_2d & 0x01) != 0 && (self.format_2d & 0x02) != 0)
+    /// The flags indicating details about how the file is structured.
+    fn flags(&self) -> ParamFileFlags {
+        // This has the same positioning across both union types.
+        unsafe { self.v5.flags }
     }
 }
 
-#[repr(C)]
-union ParamStructName {
-    inline: [u8; 0x20],
-    offset: ParamStructNameOffset,
+impl Drop for ParamFile {
+    fn drop(&mut self) {
+        unsafe {
+            match self.flags().file_version() {
+                2 => ManuallyDrop::drop(&mut self.v2),
+                5 => ManuallyDrop::drop(&mut self.v5),
+                n => panic!("Unexpected ParamFile version {n}"),
+            }
+        }
+    }
 }
 
-#[repr(C)]
-#[derive(Clone, Copy)]
-struct ParamStructNameOffset {
-    _pad: u32,
-    value: u32,
-    _reserved: [u32; 6],
+/// The type-safe enum equivalent of the  [ParamFile] union type.
+enum ParamFileType<'a> {
+    V2(&'a ParamFileV2),
+    V5(&'a ParamFileV5),
+}
+
+bitfield! {
+    /// Configuration that indicates the specific layout of the parameter file
+    /// in memory.
+    #[derive(Clone, Copy, PartialEq, Eq)]
+    struct ParamFileFlags(u32);
+    impl Debug;
+
+    /// For files with [Self::file_version] 4 and 5, this indicates that the
+    /// param file's [RowDescriptor]s uses [u64] offsets.
+    ///
+    /// For version 5, [offset_64_v5] must *also* be true for the descriptor to
+    /// use [u64] offsets.
+    ///
+    /// In practice, this is always true.
+    _, offset_64, _: 17;
+
+    /// For files with [Self::file_version] 5, this **and** [offset_64] must
+    /// both be true for the param file's [RowDescriptor]s to use [u64] offsets.
+    ///
+    /// In practice, this is always true.
+    _, offset_64_v5, _: 15;
+
+    /// The version of the parameter file format used for this parameter. Sekiro
+    /// only supports versions between 2 and 5, inclusive.
+    pub u8, file_version, _: 14, 8;
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn proper_sizes() {
+        assert_eq!(0x38, size_of::<ParamFile>());
+    }
 }
