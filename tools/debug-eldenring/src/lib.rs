@@ -55,7 +55,7 @@ struct EldenRingDebugGui {
     session: StaticDebugger<CSSessionManager>,
     net: StaticDebugger<CSNetMan>,
 
-    // Resource
+    // Resources
     task_group: StaticDebugger<CSTaskGroup>,
     task: StaticDebugger<CSTaskImp>,
     param_repository: StaticDebugger<FD4ParamRepository>,
@@ -161,7 +161,7 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
                 item.end();
             }
 
-            if let Some(item) = ui.tab_item("Resource") {
+            if let Some(item) = ui.tab_item("Resources") {
                 gui.task_group.render_debug(ui);
                 gui.task.render_debug(ui);
                 gui.param_repository.render_debug(ui);
