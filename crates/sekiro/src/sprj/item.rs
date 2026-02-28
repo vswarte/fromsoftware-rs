@@ -244,7 +244,7 @@ pub struct ItemBufferEntry {
 
 impl ItemBufferEntry {
     /// Creates an [ItemBufferEntry] containing `quantity` copies of `item`.
-    fn new(item: ItemId, quantity: u32) -> Self {
+    pub fn new(item: ItemId, quantity: u32) -> Self {
         Self {
             id: item,
             quantity,
