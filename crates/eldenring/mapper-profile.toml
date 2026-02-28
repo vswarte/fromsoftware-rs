@@ -210,6 +210,10 @@ vftable = "ichr_finder_vmt"
 class = "CS::NearEnemyFinder"
 vftable = "near_enemy_finder_vmt"
 
+[[vmts]]
+class = "CS::SoloParamRepositoryImp"
+vftable = "solo_param_repository_vmt"
+
 [[patterns]]
 pattern = "48 8d 05 $ { ' } 48 89 4f 68 88 4f 70 48 89 4f 78 48 89 07 48 8b 43 18"
 captures = ["", "fd4file_cap_vmt"]

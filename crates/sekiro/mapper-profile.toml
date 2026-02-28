@@ -1,3 +1,19 @@
+[[vmts]]
+class = "NS_SPRJ::ParamResCap"
+vftable = "param_res_cap_vmt"
+
+[[vmts]]
+class = "NS_SPRJ::SoloParamRepositoryImp"
+vftable = "solo_param_repository_vmt"
+
+[[patterns]]
+pattern = "48 83 ec 20 48 8d 05 ${ ' } 48 8b f9 48 89 01 48 8b ca 48 8b 02 ff 50 10"
+captures = ["", "fd4res_cap_vmt"]
+
+[[patterns]]
+pattern = "c6 47 60 00 48 8d 05 $ { ' } 48 89 07 33 f6 48 89 77 68 48 89 77 70 48 89 77 78"
+captures = ["", "fd4param_res_cap_vmt"]
+
 [[patterns]]
 pattern = "c7 44 24 20 00 00 00 00 48 8b 05 $ { ' } 48 8b 58 08 8b 02"
 captures = ["", "game_data_man_ptr"]
@@ -14,4 +30,6 @@ captures = ["", "map_item_man_ptr"]
 pattern = "4c 8d 44 24 40 48 8d 54 24 50 48 8b cb e8 $ { ' }"
 captures = ["", "map_item_man_grant_item"]
 
-
+[[patterns]]
+pattern = "4c 8b cf 45 33 c0 41 8d 50 5d e8 $ { ' }"
+captures = ["", "register_task"]
