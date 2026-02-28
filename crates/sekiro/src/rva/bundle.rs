@@ -17,5 +17,6 @@ pub struct RvaBundle {
     pub map_item_man_grant_item: u32,
     pub map_item_man_ptr: u32,
     pub param_res_cap_vmt: u32,
+    pub register_task: u32,
     pub solo_param_repository_vmt: u32,
 }

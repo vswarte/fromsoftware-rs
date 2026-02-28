@@ -29,3 +29,7 @@ captures = ["", "map_item_man_ptr"]
 [[patterns]]
 pattern = "4c 8d 44 24 40 48 8d 54 24 50 48 8b cb e8 $ { ' }"
 captures = ["", "map_item_man_grant_item"]
+
+[[patterns]]
+pattern = "4c 8b cf 45 33 c0 41 8d 50 5d e8 $ { ' }"
+captures = ["", "register_task"]

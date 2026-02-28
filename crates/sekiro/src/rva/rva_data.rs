@@ -16,5 +16,6 @@ pub const RVAS: RvaBundle = RvaBundle {
     map_item_man_grant_item: 0x91c970,
     map_item_man_ptr: 0x3d6cdc0,
     param_res_cap_vmt: 0x2b976b8,
+    register_task: 0x11df640,
     solo_param_repository_vmt: 0x2b9ab48,
 };
