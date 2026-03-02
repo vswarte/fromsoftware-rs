@@ -15,7 +15,7 @@ impl StatefulDebugDisplay for MapItemMan {
     fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
         {
             let _tok = ui.push_item_width(150.);
-            ui.input_text("Item ID:", &mut state.item).build();
+            ui.input_text("Item ID", &mut state.item).build();
         }
         ui.same_line();
 

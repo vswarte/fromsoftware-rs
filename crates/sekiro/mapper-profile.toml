@@ -23,6 +23,10 @@ pattern = "48 8b ce 48 8b f8 e8 $ { 48 89 0d $ { ' } c3 }"
 captures = ["", "global_hinstance"]
 
 [[patterns]]
+pattern = "45 8b cf 45 8b c6 8b d3 e8 $ { ' } e9"
+captures = ["", "lua_event_man_remove_item"]
+
+[[patterns]]
 pattern = "e8 [4] 48 8b 0d $ { ' } 4c 8d 4c 24 60 4c 8b c7"
 captures = ["", "map_item_man_ptr"]
 
