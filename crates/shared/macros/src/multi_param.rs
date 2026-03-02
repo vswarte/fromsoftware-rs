@@ -67,7 +67,7 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
             ),*
         }
 
-        impl #enum_<'_> {
+        impl<'a> #enum_<'a> {
             /// Converts an enum into a dynamically-dispatched reference to the
             /// underlying parameter, so that its shared members can be accessed
             /// without knowing its specific type.
@@ -75,6 +75,17 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
                 match self {
                     #(
                         #enum_::#structs(param) => *param
+                    ),*
+                }
+            }
+
+            /// Converts an enum into a dynamically-dispatched reference to the
+            /// underlying parameter, so that its shared members can be accessed
+            /// without knowing its specific type.
+            pub fn into_dyn(self) -> &'a dyn #trait_name {
+                match self {
+                    #(
+                        #enum_::#structs(param) => param
                     ),*
                 }
             }
@@ -88,7 +99,7 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
             ),*
         }
 
-        impl #enum_mut<'_> {
+        impl<'a> #enum_mut<'a> {
             /// Converts an enum into a dynamically-dispatched reference to the
             /// underlying parameter, so that its shared members can be accessed
             /// without knowing its specific type.
@@ -96,6 +107,17 @@ pub fn multi_param_helper(args: TokenStream, input: TokenStream) -> Result<Token
                 match self {
                     #(
                         #enum_mut::#structs(param) => *param
+                    ),*
+                }
+            }
+
+            /// Converts an enum into a dynamically-dispatched reference to the
+            /// underlying parameter, so that its shared members can be accessed
+            /// without knowing its specific type.
+            pub fn into_dyn(mut self) -> &'a mut dyn #trait_name {
+                match self {
+                    #(
+                        #enum_mut::#structs(param) => param
                     ),*
                 }
             }
