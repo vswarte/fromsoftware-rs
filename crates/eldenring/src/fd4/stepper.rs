@@ -1,9 +1,11 @@
 use std::{marker::PhantomData, ptr::NonNull};
 
 use shared::StepperStates;
-use windows::core::PCWSTR;
 
-use crate::{dlkr::DLAllocatorRef, dltx::DLString, fd4::FD4Time, Tree};
+use crate::dlkr::DLAllocatorRef;
+use crate::dltx::DLString;
+use crate::fd4::FD4Time;
+use crate::Tree;
 
 /// Source of name: RTTI
 pub type FD4StepBase<Subject, Base, States> = FD4StepTemplateBase<Subject, Base, States>;
@@ -29,7 +31,7 @@ pub struct FD4StepTemplateBase<Subject, Base, States: StepperStates> {
     unk68: DLString,
     /// State label seemingly used for debug tooling.
     /// Examples: "NotExecuting", "State Finished.(No StepMethod is Executing.)"
-    pub debug_state_label: PCWSTR,
+    pub debug_state_label: *const u16,
     unka0: bool,
     unka4: i32,
 }
@@ -51,7 +53,7 @@ pub struct FD4StepBaseInterface {
 #[repr(C)]
 pub struct StepperFn<T> {
     pub executor: extern "C" fn(&mut T, &FD4Time),
-    pub name: PCWSTR,
+    pub name: *const u16,
 }
 
 /// Source of name: RTTI
