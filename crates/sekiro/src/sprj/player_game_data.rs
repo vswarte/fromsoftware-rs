@@ -235,6 +235,17 @@ pub struct PlayerInfo {
     _unk17f: u8,
 }
 
+impl PlayerInfo {
+    /// Whether this is a default player info object, as opposed to one
+    /// representing the actual in-game player.
+    ///
+    /// Vanilla Sekiro only uses a default player to hold the main menu
+    /// settings.
+    pub fn is_default(&self) -> bool {
+        self.player_number == -1
+    }
+}
+
 #[repr(C)]
 pub struct EquipGameData {
     _vftable: usize,
