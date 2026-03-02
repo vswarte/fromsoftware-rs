@@ -9,6 +9,7 @@ description = "Raw structures and bindings for From Software's title Sekiro: Sha
 
 [dependencies]
 bitfield.workspace = true
+bitflags.workspace = true
 encoding_rs.workspace = true
 pelite.workspace = true
 fromsoftware-shared.workspace = true
