@@ -87,19 +87,19 @@ pub static MAP_ITEM_MAN_GRANT_ITEM_VA: LazyLock<u64> = LazyLock::new(|| {
 impl MapItemMan {
     /// Grants the player the single `item`, with an on-screen pop-up indicating
     /// that they received it.
-    pub fn grant_item(&self, item: impl Into<ItemBufferEntry>) {
+    pub fn grant_item(&mut self, item: impl Into<ItemBufferEntry>) {
         let array = ItemArray::new([item.into()]);
         self.grant_items(&array);
     }
 
     /// Grants the player the given `items`, with an on-screen pop-up indicating
     /// that they received them.
-    pub fn grant_items(&self, items: impl AsRef<ItemBuffer>) {
-        let grant_items: extern "C" fn(&MapItemMan, &ItemBuffer, usize, usize, bool) =
+    pub fn grant_items(&mut self, items: impl AsRef<ItemBuffer>) {
+        let grant_items: extern "C" fn(&MapItemMan, &ItemBuffer, u64, bool, usize, bool) =
             unsafe { std::mem::transmute(*MAP_ITEM_MAN_GRANT_ITEM_VA) };
-        // We don't know what the last three arguments do, but the game sets
-        // them to zero in most calls.
-        grant_items(self, items.as_ref(), 0, 0, false);
+        // Argument three is unused. We don't know what the last three arguments
+        // do, but the game sets them to zero in most calls.
+        grant_items(self, items.as_ref(), 0, false, 0, false);
     }
 }
 
