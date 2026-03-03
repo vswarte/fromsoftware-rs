@@ -134,5 +134,6 @@ pub trait EquipParamPassive: EquipParam {
         ref_category: u8,
         sp_effect_category: u8,
         shop_lv: i16,
+        is_deposit: bool,
     }
 }

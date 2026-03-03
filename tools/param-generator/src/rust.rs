@@ -18,10 +18,13 @@ pub fn generate_rust(definitions: Vec<StructDef>) -> String {
 
     if definitions[0].index.is_some() {
         output.push('\n');
-        output.push_str("    /// The index in the global parameter repository of the *first*\n");
-        output.push_str("    /// parameter with this definition. Some definitions are re-used\n");
-        output.push_str("    /// across multiple parameters, which are usually contiguous in\n");
-        output.push_str("    /// the repository.\n");
+        output.push_str(
+            "    /// The index in the global parameter repository of the *first* parameter\n",
+        );
+        output.push_str(
+            "    /// with this definition. Some definitions are re-used across multiple\n",
+        );
+        output.push_str("    /// parameters, which are usually contiguous in the repository.\n");
         output.push_str("    const INDEX: usize;\n");
     }
 
@@ -110,17 +113,28 @@ fn generate_struct(def: &StructDef) -> String {
                     .map(|(_, b)| *b)
                     .sum();
 
-                let mask = (1 << bits) - 1;
+                if *bits == 1 {
+                    code.push_str("    #[allow(clippy::identity_op)]\n");
+                    code.push_str(&format!(
+                        "    pub fn {normalized_name}(&self) -> bool {{\n        self.{group_name} & (1 << {used_bits}) != 0\n    }}\n\n"
+                    ));
 
-                code.push_str("    #[allow(clippy::identity_op)]\n");
-                code.push_str(&format!(
-                    "    pub fn {normalized_name}(&self) -> u8 {{\n        (self.{group_name} >> {used_bits}) & 0b{mask:08b}\n    }}\n\n"
-                ));
+                    code.push_str("    #[allow(clippy::identity_op)]\n");
+                    code.push_str(&format!(
+                        "    pub fn set_{normalized_name}(&mut self, value: bool) {{\n        self.{group_name} = (self.{group_name} & !(1 << {used_bits})) | (u8::from(value) << {used_bits});\n    }}\n\n"
+                    ));
+                } else {
+                    let mask = (1 << bits) - 1;
+                    code.push_str("    #[allow(clippy::identity_op)]\n");
+                    code.push_str(&format!(
+                        "    pub fn {normalized_name}(&self) -> u8 {{\n        (self.{group_name} >> {used_bits}) & 0b{mask:08b}\n    }}\n\n"
+                    ));
 
-                code.push_str("    #[allow(clippy::identity_op)]\n");
-                code.push_str(&format!(
-                    "    pub fn set_{normalized_name}(&mut self, value: u8) {{\n        self.{group_name} = (self.{group_name} & !(0b{mask:08b} << {used_bits})) | ((value & 0b{mask:08b}) << {used_bits});\n    }}\n\n"
-                ));
+                    code.push_str("    #[allow(clippy::identity_op)]\n");
+                    code.push_str(&format!(
+                        "    pub fn set_{normalized_name}(&mut self, value: u8) {{\n        self.{group_name} = (self.{group_name} & !(0b{mask:08b} << {used_bits})) | ((value & 0b{mask:08b}) << {used_bits});\n    }}\n\n"
+                    ));
+                }
             }
             FieldType::Standard(arg) if arg == "b32" => {
                 code.push_str(&format!(

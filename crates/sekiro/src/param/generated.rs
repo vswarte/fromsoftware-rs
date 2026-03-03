@@ -3153,53 +3153,53 @@ impl AI_SOUND_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn oppose_target(&self) -> u8 {
-        (self.bits_a >> 0) & 0b00000001
+    pub fn oppose_target(&self) -> bool {
+        self.bits_a & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_oppose_target(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_oppose_target(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn friendly_target(&self) -> u8 {
-        (self.bits_a >> 1) & 0b00000001
+    pub fn friendly_target(&self) -> bool {
+        self.bits_a & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_friendly_target(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_friendly_target(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn self_target(&self) -> u8 {
-        (self.bits_a >> 2) & 0b00000001
+    pub fn self_target(&self) -> bool {
+        self.bits_a & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_self_target(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_self_target(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_restrict_same_placement_group(&self) -> u8 {
-        (self.bits_a >> 3) & 0b00000001
+    pub fn b_restrict_same_placement_group(&self) -> bool {
+        self.bits_a & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_restrict_same_placement_group(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_b_restrict_same_placement_group(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_call_friend(&self) -> u8 {
-        (self.bits_a >> 4) & 0b00000001
+    pub fn b_call_friend(&self) -> bool {
+        self.bits_a & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_call_friend(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_b_call_friend(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     pub fn rank(&self) -> u8 {
@@ -4256,83 +4256,83 @@ impl ATK_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_all_dir_guard(&self) -> u8 {
-        (self.bits_86 >> 0) & 0b00000001
+    pub fn is_all_dir_guard(&self) -> bool {
+        self.bits_86 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_all_dir_guard(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_all_dir_guard(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_stamina_attack(&self) -> u8 {
-        (self.bits_86 >> 1) & 0b00000001
+    pub fn disable_stamina_attack(&self) -> bool {
+        self.bits_86 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_stamina_attack(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_disable_stamina_attack(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_hit_sp_effect(&self) -> u8 {
-        (self.bits_86 >> 2) & 0b00000001
+    pub fn disable_hit_sp_effect(&self) -> bool {
+        self.bits_86 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_hit_sp_effect(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_disable_hit_sp_effect(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn ignore_notify_miss_swing_for_ai(&self) -> u8 {
-        (self.bits_86 >> 3) & 0b00000001
+    pub fn ignore_notify_miss_swing_for_ai(&self) -> bool {
+        self.bits_86 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_ignore_notify_miss_swing_for_ai(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_ignore_notify_miss_swing_for_ai(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn repeat_hit_sfx(&self) -> u8 {
-        (self.bits_86 >> 4) & 0b00000001
+    pub fn repeat_hit_sfx(&self) -> bool {
+        self.bits_86 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_repeat_hit_sfx(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_repeat_hit_sfx(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_arrow_atk(&self) -> u8 {
-        (self.bits_86 >> 5) & 0b00000001
+    pub fn is_arrow_atk(&self) -> bool {
+        self.bits_86 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_arrow_atk(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_arrow_atk(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_ghost_atk(&self) -> u8 {
-        (self.bits_86 >> 6) & 0b00000001
+    pub fn is_ghost_atk(&self) -> bool {
+        self.bits_86 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_ghost_atk(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_ghost_atk(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_no_damage(&self) -> u8 {
-        (self.bits_86 >> 7) & 0b00000001
+    pub fn is_disable_no_damage(&self) -> bool {
+        self.bits_86 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_no_damage(&mut self, value: u8) {
-        self.bits_86 = (self.bits_86 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_disable_no_damage(&mut self, value: bool) {
+        self.bits_86 = (self.bits_86 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn atk_pow_for_sfx(&self) -> i8 {
@@ -4352,63 +4352,63 @@ impl ATK_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn oppose_target(&self) -> u8 {
-        (self.bits_89 >> 0) & 0b00000001
+    pub fn oppose_target(&self) -> bool {
+        self.bits_89 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_oppose_target(&mut self, value: u8) {
-        self.bits_89 = (self.bits_89 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_oppose_target(&mut self, value: bool) {
+        self.bits_89 = (self.bits_89 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn friendly_target(&self) -> u8 {
-        (self.bits_89 >> 1) & 0b00000001
+    pub fn friendly_target(&self) -> bool {
+        self.bits_89 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_friendly_target(&mut self, value: u8) {
-        self.bits_89 = (self.bits_89 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_friendly_target(&mut self, value: bool) {
+        self.bits_89 = (self.bits_89 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn self_target(&self) -> u8 {
-        (self.bits_89 >> 2) & 0b00000001
+    pub fn self_target(&self) -> bool {
+        self.bits_89 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_self_target(&mut self, value: u8) {
-        self.bits_89 = (self.bits_89 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_self_target(&mut self, value: bool) {
+        self.bits_89 = (self.bits_89 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_check_door_penetration(&self) -> u8 {
-        (self.bits_89 >> 3) & 0b00000001
+    pub fn is_check_door_penetration(&self) -> bool {
+        self.bits_89 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_check_door_penetration(&mut self, value: u8) {
-        self.bits_89 = (self.bits_89 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_check_door_penetration(&mut self, value: bool) {
+        self.bits_89 = (self.bits_89 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_damage_drop_attack(&self) -> u8 {
-        (self.bits_89 >> 4) & 0b00000001
+    pub fn is_damage_drop_attack(&self) -> bool {
+        self.bits_89 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_damage_drop_attack(&mut self, value: u8) {
-        self.bits_89 = (self.bits_89 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_damage_drop_attack(&mut self, value: bool) {
+        self.bits_89 = (self.bits_89 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn does_break_repel_stam_damage(&self) -> u8 {
-        (self.bits_89 >> 5) & 0b00000001
+    pub fn does_break_repel_stam_damage(&self) -> bool {
+        self.bits_89 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_does_break_repel_stam_damage(&mut self, value: u8) {
-        self.bits_89 = (self.bits_89 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_does_break_repel_stam_damage(&mut self, value: bool) {
+        self.bits_89 = (self.bits_89 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     pub fn atk_behavior_id(&self) -> u8 {
@@ -5212,43 +5212,43 @@ impl ATK_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_charge_atk(&self) -> u8 {
-        (self.bits_192 >> 0) & 0b00000001
+    pub fn is_charge_atk(&self) -> bool {
+        self.bits_192 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_charge_atk(&mut self, value: u8) {
-        self.bits_192 = (self.bits_192 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_charge_atk(&mut self, value: bool) {
+        self.bits_192 = (self.bits_192 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_parry(&self) -> u8 {
-        (self.bits_192 >> 1) & 0b00000001
+    pub fn is_disable_parry(&self) -> bool {
+        self.bits_192 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_parry(&mut self, value: u8) {
-        self.bits_192 = (self.bits_192 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_disable_parry(&mut self, value: bool) {
+        self.bits_192 = (self.bits_192 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_both_hands_atk_bonus(&self) -> u8 {
-        (self.bits_192 >> 2) & 0b00000001
+    pub fn is_disable_both_hands_atk_bonus(&self) -> bool {
+        self.bits_192 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_both_hands_atk_bonus(&mut self, value: u8) {
-        self.bits_192 = (self.bits_192 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_disable_both_hands_atk_bonus(&mut self, value: bool) {
+        self.bits_192 = (self.bits_192 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_obj_ext_hit_sfx(&self) -> u8 {
-        (self.bits_192 >> 3) & 0b00000001
+    pub fn is_obj_ext_hit_sfx(&self) -> bool {
+        self.bits_192 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_obj_ext_hit_sfx(&mut self, value: u8) {
-        self.bits_192 = (self.bits_192 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_obj_ext_hit_sfx(&mut self, value: bool) {
+        self.bits_192 = (self.bits_192 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     pub fn track_type(&self) -> u8 {
@@ -5615,253 +5615,253 @@ impl ParamDef for ATTACK_ELEMENT_CORRECT_PARAM_ST {
 
 impl ATTACK_ELEMENT_CORRECT_PARAM_ST {
     #[allow(clippy::identity_op)]
-    pub fn is_strength_correct_by_physics(&self) -> u8 {
-        (self.bits_0 >> 0) & 0b00000001
+    pub fn is_strength_correct_by_physics(&self) -> bool {
+        self.bits_0 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_strength_correct_by_physics(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_strength_correct_by_physics(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dexterity_correct_by_physics(&self) -> u8 {
-        (self.bits_0 >> 1) & 0b00000001
+    pub fn is_dexterity_correct_by_physics(&self) -> bool {
+        self.bits_0 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dexterity_correct_by_physics(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_dexterity_correct_by_physics(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_magic_correct_by_physics(&self) -> u8 {
-        (self.bits_0 >> 2) & 0b00000001
+    pub fn is_magic_correct_by_physics(&self) -> bool {
+        self.bits_0 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_magic_correct_by_physics(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_magic_correct_by_physics(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_faith_correct_by_physics(&self) -> u8 {
-        (self.bits_0 >> 3) & 0b00000001
+    pub fn is_faith_correct_by_physics(&self) -> bool {
+        self.bits_0 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_faith_correct_by_physics(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_faith_correct_by_physics(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_luck_correct_by_physics(&self) -> u8 {
-        (self.bits_0 >> 4) & 0b00000001
+    pub fn is_luck_correct_by_physics(&self) -> bool {
+        self.bits_0 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_luck_correct_by_physics(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_luck_correct_by_physics(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_strength_correct_by_magic(&self) -> u8 {
-        (self.bits_0 >> 5) & 0b00000001
+    pub fn is_strength_correct_by_magic(&self) -> bool {
+        self.bits_0 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_strength_correct_by_magic(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_strength_correct_by_magic(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dexterity_correct_by_magic(&self) -> u8 {
-        (self.bits_0 >> 6) & 0b00000001
+    pub fn is_dexterity_correct_by_magic(&self) -> bool {
+        self.bits_0 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dexterity_correct_by_magic(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_dexterity_correct_by_magic(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_magic_correct_by_magic(&self) -> u8 {
-        (self.bits_0 >> 7) & 0b00000001
+    pub fn is_magic_correct_by_magic(&self) -> bool {
+        self.bits_0 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_magic_correct_by_magic(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_magic_correct_by_magic(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_faith_correct_by_magic(&self) -> u8 {
-        (self.bits_1 >> 0) & 0b00000001
+    pub fn is_faith_correct_by_magic(&self) -> bool {
+        self.bits_1 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_faith_correct_by_magic(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_faith_correct_by_magic(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_luck_correct_by_magic(&self) -> u8 {
-        (self.bits_1 >> 1) & 0b00000001
+    pub fn is_luck_correct_by_magic(&self) -> bool {
+        self.bits_1 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_luck_correct_by_magic(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_luck_correct_by_magic(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_strength_correct_by_fire(&self) -> u8 {
-        (self.bits_1 >> 2) & 0b00000001
+    pub fn is_strength_correct_by_fire(&self) -> bool {
+        self.bits_1 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_strength_correct_by_fire(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_strength_correct_by_fire(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dexterity_correct_by_fire(&self) -> u8 {
-        (self.bits_1 >> 3) & 0b00000001
+    pub fn is_dexterity_correct_by_fire(&self) -> bool {
+        self.bits_1 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dexterity_correct_by_fire(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_dexterity_correct_by_fire(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_magic_correct_by_fire(&self) -> u8 {
-        (self.bits_1 >> 4) & 0b00000001
+    pub fn is_magic_correct_by_fire(&self) -> bool {
+        self.bits_1 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_magic_correct_by_fire(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_magic_correct_by_fire(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_faith_correct_by_fire(&self) -> u8 {
-        (self.bits_1 >> 5) & 0b00000001
+    pub fn is_faith_correct_by_fire(&self) -> bool {
+        self.bits_1 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_faith_correct_by_fire(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_faith_correct_by_fire(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_luck_correct_by_fire(&self) -> u8 {
-        (self.bits_1 >> 6) & 0b00000001
+    pub fn is_luck_correct_by_fire(&self) -> bool {
+        self.bits_1 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_luck_correct_by_fire(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_luck_correct_by_fire(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_strength_correct_by_thunder(&self) -> u8 {
-        (self.bits_1 >> 7) & 0b00000001
+    pub fn is_strength_correct_by_thunder(&self) -> bool {
+        self.bits_1 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_strength_correct_by_thunder(&mut self, value: u8) {
-        self.bits_1 = (self.bits_1 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_strength_correct_by_thunder(&mut self, value: bool) {
+        self.bits_1 = (self.bits_1 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dexterity_correct_by_thunder(&self) -> u8 {
-        (self.bits_2 >> 0) & 0b00000001
+    pub fn is_dexterity_correct_by_thunder(&self) -> bool {
+        self.bits_2 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dexterity_correct_by_thunder(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_dexterity_correct_by_thunder(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_magic_correct_by_thunder(&self) -> u8 {
-        (self.bits_2 >> 1) & 0b00000001
+    pub fn is_magic_correct_by_thunder(&self) -> bool {
+        self.bits_2 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_magic_correct_by_thunder(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_magic_correct_by_thunder(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_faith_correct_by_thunder(&self) -> u8 {
-        (self.bits_2 >> 2) & 0b00000001
+    pub fn is_faith_correct_by_thunder(&self) -> bool {
+        self.bits_2 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_faith_correct_by_thunder(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_faith_correct_by_thunder(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_luck_correct_by_thunder(&self) -> u8 {
-        (self.bits_2 >> 3) & 0b00000001
+    pub fn is_luck_correct_by_thunder(&self) -> bool {
+        self.bits_2 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_luck_correct_by_thunder(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_luck_correct_by_thunder(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_strength_correct_by_dark(&self) -> u8 {
-        (self.bits_2 >> 4) & 0b00000001
+    pub fn is_strength_correct_by_dark(&self) -> bool {
+        self.bits_2 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_strength_correct_by_dark(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_strength_correct_by_dark(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dexterity_correct_by_dark(&self) -> u8 {
-        (self.bits_2 >> 5) & 0b00000001
+    pub fn is_dexterity_correct_by_dark(&self) -> bool {
+        self.bits_2 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dexterity_correct_by_dark(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_dexterity_correct_by_dark(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_magic_correct_by_dark(&self) -> u8 {
-        (self.bits_2 >> 6) & 0b00000001
+    pub fn is_magic_correct_by_dark(&self) -> bool {
+        self.bits_2 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_magic_correct_by_dark(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_magic_correct_by_dark(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_faith_correct_by_dark(&self) -> u8 {
-        (self.bits_2 >> 7) & 0b00000001
+    pub fn is_faith_correct_by_dark(&self) -> bool {
+        self.bits_2 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_faith_correct_by_dark(&mut self, value: u8) {
-        self.bits_2 = (self.bits_2 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_faith_correct_by_dark(&mut self, value: bool) {
+        self.bits_2 = (self.bits_2 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_luck_correct_by_dark(&self) -> u8 {
-        (self.bits_3 >> 0) & 0b00000001
+    pub fn is_luck_correct_by_dark(&self) -> bool {
+        self.bits_3 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_luck_correct_by_dark(&mut self, value: u8) {
-        self.bits_3 = (self.bits_3 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_luck_correct_by_dark(&mut self, value: bool) {
+        self.bits_3 = (self.bits_3 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn overwrite_strength_correct_rate_by_physics(&self) -> i16 {
@@ -7361,123 +7361,123 @@ impl BULLET_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_attack_sfx(&self) -> u8 {
-        (self.bits_9a >> 2) & 0b00000001
+    pub fn is_attack_sfx(&self) -> bool {
+        self.bits_9a & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_attack_sfx(&mut self, value: u8) {
-        self.bits_9a = (self.bits_9a & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_attack_sfx(&mut self, value: bool) {
+        self.bits_9a = (self.bits_9a & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_endless_hit(&self) -> u8 {
-        (self.bits_9a >> 3) & 0b00000001
+    pub fn is_endless_hit(&self) -> bool {
+        self.bits_9a & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_endless_hit(&mut self, value: u8) {
-        self.bits_9a = (self.bits_9a & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_endless_hit(&mut self, value: bool) {
+        self.bits_9a = (self.bits_9a & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_penetrate_map(&self) -> u8 {
-        (self.bits_9b >> 0) & 0b00000001
+    pub fn is_penetrate_map(&self) -> bool {
+        self.bits_9b & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_penetrate_map(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_penetrate_map(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_both_team(&self) -> u8 {
-        (self.bits_9b >> 1) & 0b00000001
+    pub fn is_hit_both_team(&self) -> bool {
+        self.bits_9b & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_both_team(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_hit_both_team(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_shared_hit_list(&self) -> u8 {
-        (self.bits_9b >> 2) & 0b00000001
+    pub fn is_use_shared_hit_list(&self) -> bool {
+        self.bits_9b & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_shared_hit_list(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_use_shared_hit_list(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_multi_dmy_poly_if_place(&self) -> u8 {
-        (self.bits_9b >> 3) & 0b00000001
+    pub fn is_use_multi_dmy_poly_if_place(&self) -> bool {
+        self.bits_9b & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_multi_dmy_poly_if_place(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_use_multi_dmy_poly_if_place(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_send_shoot_interrupt(&self) -> u8 {
-        (self.bits_9b >> 4) & 0b00000001
+    pub fn is_send_shoot_interrupt(&self) -> bool {
+        self.bits_9b & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_send_shoot_interrupt(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_send_shoot_interrupt(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_howitzer(&self) -> u8 {
-        (self.bits_9b >> 5) & 0b00000001
+    pub fn is_howitzer(&self) -> bool {
+        self.bits_9b & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_howitzer(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_howitzer(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_force_magic(&self) -> u8 {
-        (self.bits_9b >> 6) & 0b00000001
+    pub fn is_hit_force_magic(&self) -> bool {
+        self.bits_9b & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_force_magic(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_hit_force_magic(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_ignore_sfx_if_hit_water(&self) -> u8 {
-        (self.bits_9b >> 7) & 0b00000001
+    pub fn is_ignore_sfx_if_hit_water(&self) -> bool {
+        self.bits_9b & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_ignore_sfx_if_hit_water(&mut self, value: u8) {
-        self.bits_9b = (self.bits_9b & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_ignore_sfx_if_hit_water(&mut self, value: bool) {
+        self.bits_9b = (self.bits_9b & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_ignore_move_state_if_hit_water(&self) -> u8 {
-        (self.bits_9c >> 0) & 0b00000001
+    pub fn is_ignore_move_state_if_hit_water(&self) -> bool {
+        self.bits_9c & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_ignore_move_state_if_hit_water(&mut self, value: u8) {
-        self.bits_9c = (self.bits_9c & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_ignore_move_state_if_hit_water(&mut self, value: bool) {
+        self.bits_9c = (self.bits_9c & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_dark_force_magic(&self) -> u8 {
-        (self.bits_9c >> 1) & 0b00000001
+    pub fn is_hit_dark_force_magic(&self) -> bool {
+        self.bits_9c & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_dark_force_magic(&mut self, value: u8) {
-        self.bits_9c = (self.bits_9c & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_hit_dark_force_magic(&mut self, value: bool) {
+        self.bits_9c = (self.bits_9c & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
@@ -7491,43 +7491,43 @@ impl BULLET_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enable_auto_homing(&self) -> u8 {
-        (self.bits_9c >> 3) & 0b00000001
+    pub fn is_enable_auto_homing(&self) -> bool {
+        self.bits_9c & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enable_auto_homing(&mut self, value: u8) {
-        self.bits_9c = (self.bits_9c & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_enable_auto_homing(&mut self, value: bool) {
+        self.bits_9c = (self.bits_9c & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_sync_bullet_culc_dumypoly_pos(&self) -> u8 {
-        (self.bits_9c >> 4) & 0b00000001
+    pub fn is_sync_bullet_culc_dumypoly_pos(&self) -> bool {
+        self.bits_9c & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_sync_bullet_culc_dumypoly_pos(&mut self, value: u8) {
-        self.bits_9c = (self.bits_9c & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_sync_bullet_culc_dumypoly_pos(&mut self, value: bool) {
+        self.bits_9c = (self.bits_9c & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_interval_create_target_lock_on(&self) -> u8 {
-        (self.bits_9c >> 5) & 0b00000001
+    pub fn is_interval_create_target_lock_on(&self) -> bool {
+        self.bits_9c & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_interval_create_target_lock_on(&mut self, value: u8) {
-        self.bits_9c = (self.bits_9c & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_interval_create_target_lock_on(&mut self, value: bool) {
+        self.bits_9c = (self.bits_9c & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_inherit_sfx_to_child(&self) -> u8 {
-        (self.bits_9c >> 6) & 0b00000001
+    pub fn is_inherit_sfx_to_child(&self) -> bool {
+        self.bits_9c & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_inherit_sfx_to_child(&mut self, value: u8) {
-        self.bits_9c = (self.bits_9c & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_inherit_sfx_to_child(&mut self, value: bool) {
+        self.bits_9c = (self.bits_9c & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     pub fn dark_damage_damp(&self) -> i8 {
@@ -7643,73 +7643,73 @@ impl BULLET_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_inherit_speed_to_child(&self) -> u8 {
-        (self.bits_c3 >> 0) & 0b00000001
+    pub fn is_inherit_speed_to_child(&self) -> bool {
+        self.bits_c3 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_inherit_speed_to_child(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_inherit_speed_to_child(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_hit_sfx_by_chr_and_obj(&self) -> u8 {
-        (self.bits_c3 >> 1) & 0b00000001
+    pub fn is_disable_hit_sfx_by_chr_and_obj(&self) -> bool {
+        self.bits_c3 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_hit_sfx_by_chr_and_obj(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_disable_hit_sfx_by_chr_and_obj(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_check_wall_by_center_ray(&self) -> u8 {
-        (self.bits_c3 >> 2) & 0b00000001
+    pub fn is_check_wall_by_center_ray(&self) -> bool {
+        self.bits_c3 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_check_wall_by_center_ray(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_check_wall_by_center_ray(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_other_bullet_force_erase_a(&self) -> u8 {
-        (self.bits_c3 >> 3) & 0b00000001
+    pub fn is_hit_other_bullet_force_erase_a(&self) -> bool {
+        self.bits_c3 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_other_bullet_force_erase_a(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_hit_other_bullet_force_erase_a(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_bullet_wall_filter(&self) -> u8 {
-        (self.bits_c3 >> 4) & 0b00000001
+    pub fn is_use_bullet_wall_filter(&self) -> bool {
+        self.bits_c3 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_bullet_wall_filter(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_use_bullet_wall_filter(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_parent_ang_forlock_shoot_limit_ang(&self) -> u8 {
-        (self.bits_c3 >> 5) & 0b00000001
+    pub fn is_use_parent_ang_forlock_shoot_limit_ang(&self) -> bool {
+        self.bits_c3 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_parent_ang_forlock_shoot_limit_ang(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_use_parent_ang_forlock_shoot_limit_ang(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_non_dependence_magic_for_funnle_num(&self) -> u8 {
-        (self.bits_c3 >> 6) & 0b00000001
+    pub fn is_non_dependence_magic_for_funnle_num(&self) -> bool {
+        self.bits_c3 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_non_dependence_magic_for_funnle_num(&mut self, value: u8) {
-        self.bits_c3 = (self.bits_c3 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_non_dependence_magic_for_funnle_num(&mut self, value: bool) {
+        self.bits_c3 = (self.bits_c3 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     pub fn random_create_radius(&self) -> f32 {
@@ -7841,13 +7841,13 @@ impl BULLET_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_other_bullet_force_erase_b(&self) -> u8 {
-        (self.bits_f0 >> 0) & 0b00000001
+    pub fn is_hit_other_bullet_force_erase_b(&self) -> bool {
+        self.bits_f0 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_other_bullet_force_erase_b(&mut self, value: u8) {
-        self.bits_f0 = (self.bits_f0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_hit_other_bullet_force_erase_b(&mut self, value: bool) {
+        self.bits_f0 = (self.bits_f0 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn emitte_pos_type(&self) -> u16 {
@@ -10638,13 +10638,13 @@ impl CEREMONY_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_reload(&self) -> u8 {
-        (self.bits_18 >> 0) & 0b00000001
+    pub fn is_reload(&self) -> bool {
+        self.bits_18 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_reload(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_reload(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn play_region_offset(&self) -> u8 {
@@ -14170,13 +14170,13 @@ impl DECAL_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn replace_texture_id_by_material(&self) -> u8 {
-        (self.bits_24 >> 1) & 0b00000001
+    pub fn replace_texture_id_by_material(&self) -> bool {
+        self.bits_24 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_replace_texture_id_by_material(&mut self, value: u8) {
-        self.bits_24 = (self.bits_24 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_replace_texture_id_by_material(&mut self, value: bool) {
+        self.bits_24 = (self.bits_24 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
@@ -14190,73 +14190,73 @@ impl DECAL_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_deferred_decal(&self) -> u8 {
-        (self.bits_25 >> 1) & 0b00000001
+    pub fn use_deferred_decal(&self) -> bool {
+        self.bits_25 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_deferred_decal(&mut self, value: u8) {
-        self.bits_25 = (self.bits_25 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_use_deferred_decal(&mut self, value: bool) {
+        self.bits_25 = (self.bits_25 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_paint_decal(&self) -> u8 {
-        (self.bits_25 >> 2) & 0b00000001
+    pub fn use_paint_decal(&self) -> bool {
+        self.bits_25 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_paint_decal(&mut self, value: u8) {
-        self.bits_25 = (self.bits_25 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_use_paint_decal(&mut self, value: bool) {
+        self.bits_25 = (self.bits_25 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn blood_type_enable(&self) -> u8 {
-        (self.bits_25 >> 3) & 0b00000001
+    pub fn blood_type_enable(&self) -> bool {
+        self.bits_25 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_blood_type_enable(&mut self, value: u8) {
-        self.bits_25 = (self.bits_25 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_blood_type_enable(&mut self, value: bool) {
+        self.bits_25 = (self.bits_25 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_use_normal(&self) -> u8 {
-        (self.bits_25 >> 4) & 0b00000001
+    pub fn b_use_normal(&self) -> bool {
+        self.bits_25 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_use_normal(&mut self, value: u8) {
-        self.bits_25 = (self.bits_25 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_b_use_normal(&mut self, value: bool) {
+        self.bits_25 = (self.bits_25 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_pom(&self) -> u8 {
-        (self.bits_26 >> 2) & 0b00000001
+    pub fn use_pom(&self) -> bool {
+        self.bits_26 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_pom(&mut self, value: u8) {
-        self.bits_26 = (self.bits_26 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_use_pom(&mut self, value: bool) {
+        self.bits_26 = (self.bits_26 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_emissive(&self) -> u8 {
-        (self.bits_26 >> 3) & 0b00000001
+    pub fn use_emissive(&self) -> bool {
+        self.bits_26 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_emissive(&mut self, value: u8) {
-        self.bits_26 = (self.bits_26 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_use_emissive(&mut self, value: bool) {
+        self.bits_26 = (self.bits_26 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn put_vertical(&self) -> u8 {
-        (self.bits_26 >> 4) & 0b00000001
+    pub fn put_vertical(&self) -> bool {
+        self.bits_26 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_put_vertical(&mut self, value: u8) {
-        self.bits_26 = (self.bits_26 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_put_vertical(&mut self, value: bool) {
+        self.bits_26 = (self.bits_26 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     pub fn random_size_min(&self) -> i16 {
@@ -14784,13 +14784,13 @@ impl ParamDef for DIRECTION_CAMERA_PARAM_ST {
 
 impl DIRECTION_CAMERA_PARAM_ST {
     #[allow(clippy::identity_op)]
-    pub fn is_use_option(&self) -> u8 {
-        (self.bits_0 >> 0) & 0b00000001
+    pub fn is_use_option(&self) -> bool {
+        self.bits_0 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_option(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_use_option(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 0)) | (u8::from(value) << 0);
     }
 }
 
@@ -16086,53 +16086,53 @@ impl EQUIP_MTRL_SET_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_disp_num01(&self) -> u8 {
-        (self.bits_1e >> 0) & 0b00000001
+    pub fn is_disable_disp_num01(&self) -> bool {
+        self.bits_1e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_disp_num01(&mut self, value: u8) {
-        self.bits_1e = (self.bits_1e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_disable_disp_num01(&mut self, value: bool) {
+        self.bits_1e = (self.bits_1e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_disp_num02(&self) -> u8 {
-        (self.bits_1e >> 1) & 0b00000001
+    pub fn is_disable_disp_num02(&self) -> bool {
+        self.bits_1e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_disp_num02(&mut self, value: u8) {
-        self.bits_1e = (self.bits_1e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_disable_disp_num02(&mut self, value: bool) {
+        self.bits_1e = (self.bits_1e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_disp_num03(&self) -> u8 {
-        (self.bits_1e >> 2) & 0b00000001
+    pub fn is_disable_disp_num03(&self) -> bool {
+        self.bits_1e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_disp_num03(&mut self, value: u8) {
-        self.bits_1e = (self.bits_1e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_disable_disp_num03(&mut self, value: bool) {
+        self.bits_1e = (self.bits_1e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_disp_num04(&self) -> u8 {
-        (self.bits_1e >> 3) & 0b00000001
+    pub fn is_disable_disp_num04(&self) -> bool {
+        self.bits_1e & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_disp_num04(&mut self, value: u8) {
-        self.bits_1e = (self.bits_1e & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_disable_disp_num04(&mut self, value: bool) {
+        self.bits_1e = (self.bits_1e & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_disp_num05(&self) -> u8 {
-        (self.bits_1e >> 4) & 0b00000001
+    pub fn is_disable_disp_num05(&self) -> bool {
+        self.bits_1e & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_disp_num05(&mut self, value: u8) {
-        self.bits_1e = (self.bits_1e & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_disable_disp_num05(&mut self, value: bool) {
+        self.bits_1e = (self.bits_1e & !(1 << 4)) | (u8::from(value) << 4);
     }
 }
 
@@ -16351,73 +16351,73 @@ impl EQUIP_PARAM_ACCESSORY_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_deposit(&self) -> u8 {
-        (self.bits_3c >> 0) & 0b00000001
+    pub fn is_deposit(&self) -> bool {
+        self.bits_3c & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_deposit(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_deposit(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_equip_out_brake(&self) -> u8 {
-        (self.bits_3c >> 1) & 0b00000001
+    pub fn is_equip_out_brake(&self) -> bool {
+        self.bits_3c & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_equip_out_brake(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_equip_out_brake(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_multi_drop_share(&self) -> u8 {
-        (self.bits_3c >> 2) & 0b00000001
+    pub fn disable_multi_drop_share(&self) -> bool {
+        self.bits_3c & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_multi_drop_share(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_disable_multi_drop_share(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_discard(&self) -> u8 {
-        (self.bits_3c >> 3) & 0b00000001
+    pub fn is_discard(&self) -> bool {
+        self.bits_3c & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_discard(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_discard(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_drop(&self) -> u8 {
-        (self.bits_3c >> 4) & 0b00000001
+    pub fn is_drop(&self) -> bool {
+        self.bits_3c & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_drop(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_drop(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_log(&self) -> u8 {
-        (self.bits_3c >> 5) & 0b00000001
+    pub fn is_notice_log(&self) -> bool {
+        self.bits_3c & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_log(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_notice_log(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_dialog(&self) -> u8 {
-        (self.bits_3c >> 6) & 0b00000001
+    pub fn is_notice_dialog(&self) -> bool {
+        self.bits_3c & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_dialog(&mut self, value: u8) {
-        self.bits_3c = (self.bits_3c & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_notice_dialog(&mut self, value: bool) {
+        self.bits_3c = (self.bits_3c & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     pub fn sale_value(&self) -> i32 {
@@ -16797,403 +16797,403 @@ impl EQUIP_PARAM_GOODS_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type0(&self) -> u8 {
-        (self.bits_42 >> 0) & 0b00000001
+    pub fn vow_type0(&self) -> bool {
+        self.bits_42 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type0(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_vow_type0(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type1(&self) -> u8 {
-        (self.bits_42 >> 1) & 0b00000001
+    pub fn vow_type1(&self) -> bool {
+        self.bits_42 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type1(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_vow_type1(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type2(&self) -> u8 {
-        (self.bits_42 >> 2) & 0b00000001
+    pub fn vow_type2(&self) -> bool {
+        self.bits_42 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type2(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_vow_type2(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type3(&self) -> u8 {
-        (self.bits_42 >> 3) & 0b00000001
+    pub fn vow_type3(&self) -> bool {
+        self.bits_42 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type3(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_vow_type3(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type4(&self) -> u8 {
-        (self.bits_42 >> 4) & 0b00000001
+    pub fn vow_type4(&self) -> bool {
+        self.bits_42 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type4(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_vow_type4(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type5(&self) -> u8 {
-        (self.bits_42 >> 5) & 0b00000001
+    pub fn vow_type5(&self) -> bool {
+        self.bits_42 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type5(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_vow_type5(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type6(&self) -> u8 {
-        (self.bits_42 >> 6) & 0b00000001
+    pub fn vow_type6(&self) -> bool {
+        self.bits_42 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type6(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_vow_type6(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type7(&self) -> u8 {
-        (self.bits_42 >> 7) & 0b00000001
+    pub fn vow_type7(&self) -> bool {
+        self.bits_42 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type7(&mut self, value: u8) {
-        self.bits_42 = (self.bits_42 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_vow_type7(&mut self, value: bool) {
+        self.bits_42 = (self.bits_42 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type8(&self) -> u8 {
-        (self.bits_43 >> 0) & 0b00000001
+    pub fn vow_type8(&self) -> bool {
+        self.bits_43 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type8(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_vow_type8(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type9(&self) -> u8 {
-        (self.bits_43 >> 1) & 0b00000001
+    pub fn vow_type9(&self) -> bool {
+        self.bits_43 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type9(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_vow_type9(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type10(&self) -> u8 {
-        (self.bits_43 >> 2) & 0b00000001
+    pub fn vow_type10(&self) -> bool {
+        self.bits_43 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type10(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_vow_type10(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type11(&self) -> u8 {
-        (self.bits_43 >> 3) & 0b00000001
+    pub fn vow_type11(&self) -> bool {
+        self.bits_43 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type11(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_vow_type11(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type12(&self) -> u8 {
-        (self.bits_43 >> 4) & 0b00000001
+    pub fn vow_type12(&self) -> bool {
+        self.bits_43 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type12(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_vow_type12(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type13(&self) -> u8 {
-        (self.bits_43 >> 5) & 0b00000001
+    pub fn vow_type13(&self) -> bool {
+        self.bits_43 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type13(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_vow_type13(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type14(&self) -> u8 {
-        (self.bits_43 >> 6) & 0b00000001
+    pub fn vow_type14(&self) -> bool {
+        self.bits_43 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type14(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_vow_type14(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type15(&self) -> u8 {
-        (self.bits_43 >> 7) & 0b00000001
+    pub fn vow_type15(&self) -> bool {
+        self.bits_43 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type15(&mut self, value: u8) {
-        self.bits_43 = (self.bits_43 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_vow_type15(&mut self, value: bool) {
+        self.bits_43 = (self.bits_43 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_live(&self) -> u8 {
-        (self.bits_44 >> 0) & 0b00000001
+    pub fn enable_live(&self) -> bool {
+        self.bits_44 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_live(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_live(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_gray(&self) -> u8 {
-        (self.bits_44 >> 1) & 0b00000001
+    pub fn enable_gray(&self) -> bool {
+        self.bits_44 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_gray(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_gray(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_white(&self) -> u8 {
-        (self.bits_44 >> 2) & 0b00000001
+    pub fn enable_white(&self) -> bool {
+        self.bits_44 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_white(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_white(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_black(&self) -> u8 {
-        (self.bits_44 >> 3) & 0b00000001
+    pub fn enable_black(&self) -> bool {
+        self.bits_44 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_black(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_enable_black(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_multi(&self) -> u8 {
-        (self.bits_44 >> 4) & 0b00000001
+    pub fn enable_multi(&self) -> bool {
+        self.bits_44 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_multi(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_multi(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_offline(&self) -> u8 {
-        (self.bits_44 >> 5) & 0b00000001
+    pub fn disable_offline(&self) -> bool {
+        self.bits_44 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_offline(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_disable_offline(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_equip(&self) -> u8 {
-        (self.bits_44 >> 6) & 0b00000001
+    pub fn is_equip(&self) -> bool {
+        self.bits_44 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_equip(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_equip(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_consume(&self) -> u8 {
-        (self.bits_44 >> 7) & 0b00000001
+    pub fn is_consume(&self) -> bool {
+        self.bits_44 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_consume(&mut self, value: u8) {
-        self.bits_44 = (self.bits_44 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_consume(&mut self, value: bool) {
+        self.bits_44 = (self.bits_44 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_auto_equip(&self) -> u8 {
-        (self.bits_45 >> 0) & 0b00000001
+    pub fn is_auto_equip(&self) -> bool {
+        self.bits_45 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_auto_equip(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_auto_equip(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_establishment(&self) -> u8 {
-        (self.bits_45 >> 1) & 0b00000001
+    pub fn is_establishment(&self) -> bool {
+        self.bits_45 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_establishment(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_establishment(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_only_one(&self) -> u8 {
-        (self.bits_45 >> 2) & 0b00000001
+    pub fn is_only_one(&self) -> bool {
+        self.bits_45 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_only_one(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_only_one(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_discard(&self) -> u8 {
-        (self.bits_45 >> 3) & 0b00000001
+    pub fn is_discard(&self) -> bool {
+        self.bits_45 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_discard(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_discard(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_deposit(&self) -> u8 {
-        (self.bits_45 >> 4) & 0b00000001
+    pub fn is_deposit(&self) -> bool {
+        self.bits_45 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_deposit(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_deposit(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_hand(&self) -> u8 {
-        (self.bits_45 >> 5) & 0b00000001
+    pub fn is_disable_hand(&self) -> bool {
+        self.bits_45 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_hand(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_disable_hand(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_travel_item(&self) -> u8 {
-        (self.bits_45 >> 6) & 0b00000001
+    pub fn is_travel_item(&self) -> bool {
+        self.bits_45 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_travel_item(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_travel_item(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_supple_item(&self) -> u8 {
-        (self.bits_45 >> 7) & 0b00000001
+    pub fn is_supple_item(&self) -> bool {
+        self.bits_45 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_supple_item(&mut self, value: u8) {
-        self.bits_45 = (self.bits_45 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_supple_item(&mut self, value: bool) {
+        self.bits_45 = (self.bits_45 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_full_supple_item(&self) -> u8 {
-        (self.bits_46 >> 0) & 0b00000001
+    pub fn is_full_supple_item(&self) -> bool {
+        self.bits_46 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_full_supple_item(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_full_supple_item(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enhance(&self) -> u8 {
-        (self.bits_46 >> 1) & 0b00000001
+    pub fn is_enhance(&self) -> bool {
+        self.bits_46 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enhance(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_enhance(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_fix_item(&self) -> u8 {
-        (self.bits_46 >> 2) & 0b00000001
+    pub fn is_fix_item(&self) -> bool {
+        self.bits_46 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_fix_item(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_fix_item(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_multi_drop_share(&self) -> u8 {
-        (self.bits_46 >> 3) & 0b00000001
+    pub fn disable_multi_drop_share(&self) -> bool {
+        self.bits_46 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_multi_drop_share(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_disable_multi_drop_share(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_use_at_coliseum(&self) -> u8 {
-        (self.bits_46 >> 4) & 0b00000001
+    pub fn disable_use_at_coliseum(&self) -> bool {
+        self.bits_46 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_use_at_coliseum(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_disable_use_at_coliseum(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_use_at_out_of_coliseum(&self) -> u8 {
-        (self.bits_46 >> 5) & 0b00000001
+    pub fn disable_use_at_out_of_coliseum(&self) -> bool {
+        self.bits_46 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_use_at_out_of_coliseum(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_disable_use_at_out_of_coliseum(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enable_fast_use_item(&self) -> u8 {
-        (self.bits_46 >> 6) & 0b00000001
+    pub fn is_enable_fast_use_item(&self) -> bool {
+        self.bits_46 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enable_fast_use_item(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_enable_fast_use_item(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_apply_special_effect(&self) -> u8 {
-        (self.bits_46 >> 7) & 0b00000001
+    pub fn is_apply_special_effect(&self) -> bool {
+        self.bits_46 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_apply_special_effect(&mut self, value: u8) {
-        self.bits_46 = (self.bits_46 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_apply_special_effect(&mut self, value: bool) {
+        self.bits_46 = (self.bits_46 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn sync_num_vary_id(&self) -> u8 {
@@ -17269,83 +17269,83 @@ impl EQUIP_PARAM_GOODS_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_load_of_cinder(&self) -> u8 {
-        (self.bits_68 >> 0) & 0b00000001
+    pub fn enable_load_of_cinder(&self) -> bool {
+        self.bits_68 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_load_of_cinder(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_load_of_cinder(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_bonfire_warp_item(&self) -> u8 {
-        (self.bits_68 >> 1) & 0b00000001
+    pub fn is_bonfire_warp_item(&self) -> bool {
+        self.bits_68 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_bonfire_warp_item(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_bonfire_warp_item(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_ladder(&self) -> u8 {
-        (self.bits_68 >> 2) & 0b00000001
+    pub fn enable_ladder(&self) -> bool {
+        self.bits_68 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_ladder(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_ladder(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_multi_play_preparation(&self) -> u8 {
-        (self.bits_68 >> 3) & 0b00000001
+    pub fn is_use_multi_play_preparation(&self) -> bool {
+        self.bits_68 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_multi_play_preparation(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_use_multi_play_preparation(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn can_multi_use(&self) -> u8 {
-        (self.bits_68 >> 4) & 0b00000001
+    pub fn can_multi_use(&self) -> bool {
+        self.bits_68 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_can_multi_use(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_can_multi_use(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_ref_id1_for_enchant(&self) -> u8 {
-        (self.bits_68 >> 5) & 0b00000001
+    pub fn is_use_ref_id1_for_enchant(&self) -> bool {
+        self.bits_68 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_ref_id1_for_enchant(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_use_ref_id1_for_enchant(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_warp_prohibited(&self) -> u8 {
-        (self.bits_68 >> 6) & 0b00000001
+    pub fn is_warp_prohibited(&self) -> bool {
+        self.bits_68 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_warp_prohibited(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_warp_prohibited(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_multi_penalty_only(&self) -> u8 {
-        (self.bits_68 >> 7) & 0b00000001
+    pub fn is_use_multi_penalty_only(&self) -> bool {
+        self.bits_68 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_multi_penalty_only(&mut self, value: u8) {
-        self.bits_68 = (self.bits_68 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_use_multi_penalty_only(&mut self, value: bool) {
+        self.bits_68 = (self.bits_68 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn supple_type(&self) -> u8 {
@@ -17365,83 +17365,83 @@ impl EQUIP_PARAM_GOODS_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_drop(&self) -> u8 {
-        (self.bits_6b >> 0) & 0b00000001
+    pub fn is_drop(&self) -> bool {
+        self.bits_6b & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_drop(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_drop(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_log(&self) -> u8 {
-        (self.bits_6b >> 1) & 0b00000001
+    pub fn is_notice_log(&self) -> bool {
+        self.bits_6b & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_log(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_notice_log(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_dialog(&self) -> u8 {
-        (self.bits_6b >> 2) & 0b00000001
+    pub fn is_notice_dialog(&self) -> bool {
+        self.bits_6b & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_dialog(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_notice_dialog(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_empty_hand(&self) -> u8 {
-        (self.bits_6b >> 3) & 0b00000001
+    pub fn enable_empty_hand(&self) -> bool {
+        self.bits_6b & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_empty_hand(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_enable_empty_hand(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_swimming(&self) -> u8 {
-        (self.bits_6b >> 4) & 0b00000001
+    pub fn enable_swimming(&self) -> bool {
+        self.bits_6b & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_swimming(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_swimming(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_diving(&self) -> u8 {
-        (self.bits_6b >> 5) & 0b00000001
+    pub fn enable_diving(&self) -> bool {
+        self.bits_6b & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_diving(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_diving(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_cant_stand(&self) -> u8 {
-        (self.bits_6b >> 6) & 0b00000001
+    pub fn enable_cant_stand(&self) -> bool {
+        self.bits_6b & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_cant_stand(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_cant_stand(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_cant_climb_hang(&self) -> u8 {
-        (self.bits_6b >> 7) & 0b00000001
+    pub fn enable_cant_climb_hang(&self) -> bool {
+        self.bits_6b & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_cant_climb_hang(&mut self, value: u8) {
-        self.bits_6b = (self.bits_6b & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_enable_cant_climb_hang(&mut self, value: bool) {
+        self.bits_6b = (self.bits_6b & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn max_repository_num(&self) -> i16 {
@@ -17453,33 +17453,33 @@ impl EQUIP_PARAM_GOODS_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_fall_wall_cling(&self) -> u8 {
-        (self.bits_6e >> 0) & 0b00000001
+    pub fn enable_fall_wall_cling(&self) -> bool {
+        self.bits_6e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_fall_wall_cling(&mut self, value: u8) {
-        self.bits_6e = (self.bits_6e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_fall_wall_cling(&mut self, value: bool) {
+        self.bits_6e = (self.bits_6e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_dragons_cough(&self) -> u8 {
-        (self.bits_6e >> 1) & 0b00000001
+    pub fn enable_dragons_cough(&self) -> bool {
+        self.bits_6e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_dragons_cough(&mut self, value: u8) {
-        self.bits_6e = (self.bits_6e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_dragons_cough(&mut self, value: bool) {
+        self.bits_6e = (self.bits_6e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_hang(&self) -> u8 {
-        (self.bits_6e >> 2) & 0b00000001
+    pub fn enable_hang(&self) -> bool {
+        self.bits_6e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_hang(&mut self, value: u8) {
-        self.bits_6e = (self.bits_6e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_hang(&mut self, value: bool) {
+        self.bits_6e = (self.bits_6e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     pub fn sale_value(&self) -> i32 {
@@ -18448,603 +18448,603 @@ impl EQUIP_PARAM_PROTECTOR_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_deposit(&self) -> u8 {
-        (self.bits_d8 >> 0) & 0b00000001
+    pub fn is_deposit(&self) -> bool {
+        self.bits_d8 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_deposit(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_deposit(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn head_equip(&self) -> u8 {
-        (self.bits_d8 >> 1) & 0b00000001
+    pub fn head_equip(&self) -> bool {
+        self.bits_d8 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_head_equip(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_head_equip(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn body_equip(&self) -> u8 {
-        (self.bits_d8 >> 2) & 0b00000001
+    pub fn body_equip(&self) -> bool {
+        self.bits_d8 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_body_equip(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_body_equip(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn arm_equip(&self) -> u8 {
-        (self.bits_d8 >> 3) & 0b00000001
+    pub fn arm_equip(&self) -> bool {
+        self.bits_d8 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_arm_equip(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_arm_equip(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn leg_equip(&self) -> u8 {
-        (self.bits_d8 >> 4) & 0b00000001
+    pub fn leg_equip(&self) -> bool {
+        self.bits_d8 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_leg_equip(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_leg_equip(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_face_scale(&self) -> u8 {
-        (self.bits_d8 >> 5) & 0b00000001
+    pub fn use_face_scale(&self) -> bool {
+        self.bits_d8 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_face_scale(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_use_face_scale(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag00(&self) -> u8 {
-        (self.bits_d8 >> 6) & 0b00000001
+    pub fn invisible_flag00(&self) -> bool {
+        self.bits_d8 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag00(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag00(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag01(&self) -> u8 {
-        (self.bits_d8 >> 7) & 0b00000001
+    pub fn invisible_flag01(&self) -> bool {
+        self.bits_d8 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag01(&mut self, value: u8) {
-        self.bits_d8 = (self.bits_d8 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag01(&mut self, value: bool) {
+        self.bits_d8 = (self.bits_d8 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag02(&self) -> u8 {
-        (self.bits_d9 >> 0) & 0b00000001
+    pub fn invisible_flag02(&self) -> bool {
+        self.bits_d9 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag02(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag02(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag03(&self) -> u8 {
-        (self.bits_d9 >> 1) & 0b00000001
+    pub fn invisible_flag03(&self) -> bool {
+        self.bits_d9 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag03(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag03(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag04(&self) -> u8 {
-        (self.bits_d9 >> 2) & 0b00000001
+    pub fn invisible_flag04(&self) -> bool {
+        self.bits_d9 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag04(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag04(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag05(&self) -> u8 {
-        (self.bits_d9 >> 3) & 0b00000001
+    pub fn invisible_flag05(&self) -> bool {
+        self.bits_d9 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag05(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag05(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag06(&self) -> u8 {
-        (self.bits_d9 >> 4) & 0b00000001
+    pub fn invisible_flag06(&self) -> bool {
+        self.bits_d9 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag06(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag06(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag07(&self) -> u8 {
-        (self.bits_d9 >> 5) & 0b00000001
+    pub fn invisible_flag07(&self) -> bool {
+        self.bits_d9 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag07(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag07(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag08(&self) -> u8 {
-        (self.bits_d9 >> 6) & 0b00000001
+    pub fn invisible_flag08(&self) -> bool {
+        self.bits_d9 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag08(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag08(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag09(&self) -> u8 {
-        (self.bits_d9 >> 7) & 0b00000001
+    pub fn invisible_flag09(&self) -> bool {
+        self.bits_d9 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag09(&mut self, value: u8) {
-        self.bits_d9 = (self.bits_d9 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag09(&mut self, value: bool) {
+        self.bits_d9 = (self.bits_d9 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag10(&self) -> u8 {
-        (self.bits_da >> 0) & 0b00000001
+    pub fn invisible_flag10(&self) -> bool {
+        self.bits_da & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag10(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag10(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag11(&self) -> u8 {
-        (self.bits_da >> 1) & 0b00000001
+    pub fn invisible_flag11(&self) -> bool {
+        self.bits_da & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag11(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag11(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag12(&self) -> u8 {
-        (self.bits_da >> 2) & 0b00000001
+    pub fn invisible_flag12(&self) -> bool {
+        self.bits_da & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag12(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag12(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag13(&self) -> u8 {
-        (self.bits_da >> 3) & 0b00000001
+    pub fn invisible_flag13(&self) -> bool {
+        self.bits_da & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag13(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag13(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag14(&self) -> u8 {
-        (self.bits_da >> 4) & 0b00000001
+    pub fn invisible_flag14(&self) -> bool {
+        self.bits_da & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag14(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag14(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag15(&self) -> u8 {
-        (self.bits_da >> 5) & 0b00000001
+    pub fn invisible_flag15(&self) -> bool {
+        self.bits_da & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag15(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag15(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag16(&self) -> u8 {
-        (self.bits_da >> 6) & 0b00000001
+    pub fn invisible_flag16(&self) -> bool {
+        self.bits_da & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag16(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag16(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag17(&self) -> u8 {
-        (self.bits_da >> 7) & 0b00000001
+    pub fn invisible_flag17(&self) -> bool {
+        self.bits_da & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag17(&mut self, value: u8) {
-        self.bits_da = (self.bits_da & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag17(&mut self, value: bool) {
+        self.bits_da = (self.bits_da & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag18(&self) -> u8 {
-        (self.bits_db >> 0) & 0b00000001
+    pub fn invisible_flag18(&self) -> bool {
+        self.bits_db & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag18(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag18(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag19(&self) -> u8 {
-        (self.bits_db >> 1) & 0b00000001
+    pub fn invisible_flag19(&self) -> bool {
+        self.bits_db & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag19(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag19(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag20(&self) -> u8 {
-        (self.bits_db >> 2) & 0b00000001
+    pub fn invisible_flag20(&self) -> bool {
+        self.bits_db & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag20(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag20(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag21(&self) -> u8 {
-        (self.bits_db >> 3) & 0b00000001
+    pub fn invisible_flag21(&self) -> bool {
+        self.bits_db & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag21(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag21(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag22(&self) -> u8 {
-        (self.bits_db >> 4) & 0b00000001
+    pub fn invisible_flag22(&self) -> bool {
+        self.bits_db & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag22(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag22(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag23(&self) -> u8 {
-        (self.bits_db >> 5) & 0b00000001
+    pub fn invisible_flag23(&self) -> bool {
+        self.bits_db & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag23(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag23(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag24(&self) -> u8 {
-        (self.bits_db >> 6) & 0b00000001
+    pub fn invisible_flag24(&self) -> bool {
+        self.bits_db & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag24(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag24(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag25(&self) -> u8 {
-        (self.bits_db >> 7) & 0b00000001
+    pub fn invisible_flag25(&self) -> bool {
+        self.bits_db & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag25(&mut self, value: u8) {
-        self.bits_db = (self.bits_db & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag25(&mut self, value: bool) {
+        self.bits_db = (self.bits_db & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag26(&self) -> u8 {
-        (self.bits_dc >> 0) & 0b00000001
+    pub fn invisible_flag26(&self) -> bool {
+        self.bits_dc & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag26(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag26(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag27(&self) -> u8 {
-        (self.bits_dc >> 1) & 0b00000001
+    pub fn invisible_flag27(&self) -> bool {
+        self.bits_dc & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag27(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag27(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag28(&self) -> u8 {
-        (self.bits_dc >> 2) & 0b00000001
+    pub fn invisible_flag28(&self) -> bool {
+        self.bits_dc & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag28(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag28(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag29(&self) -> u8 {
-        (self.bits_dc >> 3) & 0b00000001
+    pub fn invisible_flag29(&self) -> bool {
+        self.bits_dc & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag29(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag29(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag30(&self) -> u8 {
-        (self.bits_dc >> 4) & 0b00000001
+    pub fn invisible_flag30(&self) -> bool {
+        self.bits_dc & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag30(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag30(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag31(&self) -> u8 {
-        (self.bits_dc >> 5) & 0b00000001
+    pub fn invisible_flag31(&self) -> bool {
+        self.bits_dc & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag31(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag31(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag32(&self) -> u8 {
-        (self.bits_dc >> 6) & 0b00000001
+    pub fn invisible_flag32(&self) -> bool {
+        self.bits_dc & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag32(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag32(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag33(&self) -> u8 {
-        (self.bits_dc >> 7) & 0b00000001
+    pub fn invisible_flag33(&self) -> bool {
+        self.bits_dc & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag33(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag33(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag34(&self) -> u8 {
-        (self.bits_dd >> 0) & 0b00000001
+    pub fn invisible_flag34(&self) -> bool {
+        self.bits_dd & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag34(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag34(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag35(&self) -> u8 {
-        (self.bits_dd >> 1) & 0b00000001
+    pub fn invisible_flag35(&self) -> bool {
+        self.bits_dd & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag35(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag35(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag36(&self) -> u8 {
-        (self.bits_dd >> 2) & 0b00000001
+    pub fn invisible_flag36(&self) -> bool {
+        self.bits_dd & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag36(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag36(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag37(&self) -> u8 {
-        (self.bits_dd >> 3) & 0b00000001
+    pub fn invisible_flag37(&self) -> bool {
+        self.bits_dd & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag37(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag37(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag38(&self) -> u8 {
-        (self.bits_dd >> 4) & 0b00000001
+    pub fn invisible_flag38(&self) -> bool {
+        self.bits_dd & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag38(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag38(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag39(&self) -> u8 {
-        (self.bits_dd >> 5) & 0b00000001
+    pub fn invisible_flag39(&self) -> bool {
+        self.bits_dd & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag39(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag39(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag40(&self) -> u8 {
-        (self.bits_dd >> 6) & 0b00000001
+    pub fn invisible_flag40(&self) -> bool {
+        self.bits_dd & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag40(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag40(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag41(&self) -> u8 {
-        (self.bits_dd >> 7) & 0b00000001
+    pub fn invisible_flag41(&self) -> bool {
+        self.bits_dd & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag41(&mut self, value: u8) {
-        self.bits_dd = (self.bits_dd & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag41(&mut self, value: bool) {
+        self.bits_dd = (self.bits_dd & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag42(&self) -> u8 {
-        (self.bits_de >> 0) & 0b00000001
+    pub fn invisible_flag42(&self) -> bool {
+        self.bits_de & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag42(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag42(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag43(&self) -> u8 {
-        (self.bits_de >> 1) & 0b00000001
+    pub fn invisible_flag43(&self) -> bool {
+        self.bits_de & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag43(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag43(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag44(&self) -> u8 {
-        (self.bits_de >> 2) & 0b00000001
+    pub fn invisible_flag44(&self) -> bool {
+        self.bits_de & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag44(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag44(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag45(&self) -> u8 {
-        (self.bits_de >> 3) & 0b00000001
+    pub fn invisible_flag45(&self) -> bool {
+        self.bits_de & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag45(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag45(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag46(&self) -> u8 {
-        (self.bits_de >> 4) & 0b00000001
+    pub fn invisible_flag46(&self) -> bool {
+        self.bits_de & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag46(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag46(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag47(&self) -> u8 {
-        (self.bits_de >> 5) & 0b00000001
+    pub fn invisible_flag47(&self) -> bool {
+        self.bits_de & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag47(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag47(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_multi_drop_share(&self) -> u8 {
-        (self.bits_de >> 6) & 0b00000001
+    pub fn disable_multi_drop_share(&self) -> bool {
+        self.bits_de & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_multi_drop_share(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_disable_multi_drop_share(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn simple_model_for_dlc(&self) -> u8 {
-        (self.bits_de >> 7) & 0b00000001
+    pub fn simple_model_for_dlc(&self) -> bool {
+        self.bits_de & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_simple_model_for_dlc(&mut self, value: u8) {
-        self.bits_de = (self.bits_de & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_simple_model_for_dlc(&mut self, value: bool) {
+        self.bits_de = (self.bits_de & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_discard(&self) -> u8 {
-        (self.bits_df >> 0) & 0b00000001
+    pub fn is_discard(&self) -> bool {
+        self.bits_df & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_discard(&mut self, value: u8) {
-        self.bits_df = (self.bits_df & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_discard(&mut self, value: bool) {
+        self.bits_df = (self.bits_df & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_drop(&self) -> u8 {
-        (self.bits_df >> 1) & 0b00000001
+    pub fn is_drop(&self) -> bool {
+        self.bits_df & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_drop(&mut self, value: u8) {
-        self.bits_df = (self.bits_df & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_drop(&mut self, value: bool) {
+        self.bits_df = (self.bits_df & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_log(&self) -> u8 {
-        (self.bits_df >> 2) & 0b00000001
+    pub fn is_notice_log(&self) -> bool {
+        self.bits_df & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_log(&mut self, value: u8) {
-        self.bits_df = (self.bits_df & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_notice_log(&mut self, value: bool) {
+        self.bits_df = (self.bits_df & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_dialog(&self) -> u8 {
-        (self.bits_df >> 3) & 0b00000001
+    pub fn is_notice_dialog(&self) -> bool {
+        self.bits_df & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_dialog(&mut self, value: u8) {
-        self.bits_df = (self.bits_df & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_notice_dialog(&mut self, value: bool) {
+        self.bits_df = (self.bits_df & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     pub fn neutral_damage_cut_rate(&self) -> f32 {
@@ -19208,333 +19208,333 @@ impl EQUIP_PARAM_PROTECTOR_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag48(&self) -> u8 {
-        (self.bits_11e >> 0) & 0b00000001
+    pub fn invisible_flag48(&self) -> bool {
+        self.bits_11e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag48(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag48(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag49(&self) -> u8 {
-        (self.bits_11e >> 1) & 0b00000001
+    pub fn invisible_flag49(&self) -> bool {
+        self.bits_11e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag49(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag49(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag50(&self) -> u8 {
-        (self.bits_11e >> 2) & 0b00000001
+    pub fn invisible_flag50(&self) -> bool {
+        self.bits_11e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag50(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag50(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag51(&self) -> u8 {
-        (self.bits_11e >> 3) & 0b00000001
+    pub fn invisible_flag51(&self) -> bool {
+        self.bits_11e & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag51(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag51(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag52(&self) -> u8 {
-        (self.bits_11e >> 4) & 0b00000001
+    pub fn invisible_flag52(&self) -> bool {
+        self.bits_11e & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag52(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag52(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag53(&self) -> u8 {
-        (self.bits_11e >> 5) & 0b00000001
+    pub fn invisible_flag53(&self) -> bool {
+        self.bits_11e & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag53(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag53(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag54(&self) -> u8 {
-        (self.bits_11e >> 6) & 0b00000001
+    pub fn invisible_flag54(&self) -> bool {
+        self.bits_11e & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag54(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag54(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag55(&self) -> u8 {
-        (self.bits_11e >> 7) & 0b00000001
+    pub fn invisible_flag55(&self) -> bool {
+        self.bits_11e & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag55(&mut self, value: u8) {
-        self.bits_11e = (self.bits_11e & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag55(&mut self, value: bool) {
+        self.bits_11e = (self.bits_11e & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag56(&self) -> u8 {
-        (self.bits_11f >> 0) & 0b00000001
+    pub fn invisible_flag56(&self) -> bool {
+        self.bits_11f & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag56(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag56(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag57(&self) -> u8 {
-        (self.bits_11f >> 1) & 0b00000001
+    pub fn invisible_flag57(&self) -> bool {
+        self.bits_11f & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag57(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag57(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag58(&self) -> u8 {
-        (self.bits_11f >> 2) & 0b00000001
+    pub fn invisible_flag58(&self) -> bool {
+        self.bits_11f & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag58(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag58(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag59(&self) -> u8 {
-        (self.bits_11f >> 3) & 0b00000001
+    pub fn invisible_flag59(&self) -> bool {
+        self.bits_11f & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag59(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag59(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag60(&self) -> u8 {
-        (self.bits_11f >> 4) & 0b00000001
+    pub fn invisible_flag60(&self) -> bool {
+        self.bits_11f & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag60(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag60(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag61(&self) -> u8 {
-        (self.bits_11f >> 5) & 0b00000001
+    pub fn invisible_flag61(&self) -> bool {
+        self.bits_11f & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag61(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag61(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag62(&self) -> u8 {
-        (self.bits_11f >> 6) & 0b00000001
+    pub fn invisible_flag62(&self) -> bool {
+        self.bits_11f & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag62(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag62(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag63(&self) -> u8 {
-        (self.bits_11f >> 7) & 0b00000001
+    pub fn invisible_flag63(&self) -> bool {
+        self.bits_11f & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag63(&mut self, value: u8) {
-        self.bits_11f = (self.bits_11f & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag63(&mut self, value: bool) {
+        self.bits_11f = (self.bits_11f & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag64(&self) -> u8 {
-        (self.bits_120 >> 0) & 0b00000001
+    pub fn invisible_flag64(&self) -> bool {
+        self.bits_120 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag64(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag64(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag65(&self) -> u8 {
-        (self.bits_120 >> 1) & 0b00000001
+    pub fn invisible_flag65(&self) -> bool {
+        self.bits_120 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag65(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag65(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag66(&self) -> u8 {
-        (self.bits_120 >> 2) & 0b00000001
+    pub fn invisible_flag66(&self) -> bool {
+        self.bits_120 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag66(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag66(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag67(&self) -> u8 {
-        (self.bits_120 >> 3) & 0b00000001
+    pub fn invisible_flag67(&self) -> bool {
+        self.bits_120 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag67(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag67(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag68(&self) -> u8 {
-        (self.bits_120 >> 4) & 0b00000001
+    pub fn invisible_flag68(&self) -> bool {
+        self.bits_120 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag68(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag68(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag69(&self) -> u8 {
-        (self.bits_120 >> 5) & 0b00000001
+    pub fn invisible_flag69(&self) -> bool {
+        self.bits_120 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag69(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag69(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag70(&self) -> u8 {
-        (self.bits_120 >> 6) & 0b00000001
+    pub fn invisible_flag70(&self) -> bool {
+        self.bits_120 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag70(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag70(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag71(&self) -> u8 {
-        (self.bits_120 >> 7) & 0b00000001
+    pub fn invisible_flag71(&self) -> bool {
+        self.bits_120 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag71(&mut self, value: u8) {
-        self.bits_120 = (self.bits_120 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag71(&mut self, value: bool) {
+        self.bits_120 = (self.bits_120 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag72(&self) -> u8 {
-        (self.bits_121 >> 0) & 0b00000001
+    pub fn invisible_flag72(&self) -> bool {
+        self.bits_121 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag72(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag72(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag73(&self) -> u8 {
-        (self.bits_121 >> 1) & 0b00000001
+    pub fn invisible_flag73(&self) -> bool {
+        self.bits_121 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag73(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_invisible_flag73(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag74(&self) -> u8 {
-        (self.bits_121 >> 2) & 0b00000001
+    pub fn invisible_flag74(&self) -> bool {
+        self.bits_121 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag74(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_invisible_flag74(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag75(&self) -> u8 {
-        (self.bits_121 >> 3) & 0b00000001
+    pub fn invisible_flag75(&self) -> bool {
+        self.bits_121 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag75(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_invisible_flag75(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag76(&self) -> u8 {
-        (self.bits_121 >> 4) & 0b00000001
+    pub fn invisible_flag76(&self) -> bool {
+        self.bits_121 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag76(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_flag76(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag77(&self) -> u8 {
-        (self.bits_121 >> 5) & 0b00000001
+    pub fn invisible_flag77(&self) -> bool {
+        self.bits_121 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag77(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_invisible_flag77(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag78(&self) -> u8 {
-        (self.bits_121 >> 6) & 0b00000001
+    pub fn invisible_flag78(&self) -> bool {
+        self.bits_121 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag78(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_invisible_flag78(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag79(&self) -> u8 {
-        (self.bits_121 >> 7) & 0b00000001
+    pub fn invisible_flag79(&self) -> bool {
+        self.bits_121 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag79(&mut self, value: u8) {
-        self.bits_121 = (self.bits_121 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_invisible_flag79(&mut self, value: bool) {
+        self.bits_121 = (self.bits_121 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_flag80(&self) -> u8 {
-        (self.bits_122 >> 0) & 0b00000001
+    pub fn invisible_flag80(&self) -> bool {
+        self.bits_122 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_flag80(&mut self, value: u8) {
-        self.bits_122 = (self.bits_122 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_invisible_flag80(&mut self, value: bool) {
+        self.bits_122 = (self.bits_122 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn upper_arm_param_id(&self) -> i32 {
@@ -21612,243 +21612,243 @@ impl EQUIP_PARAM_WEAPON_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn right_hand_equipable(&self) -> u8 {
-        (self.bits_101 >> 0) & 0b00000001
+    pub fn right_hand_equipable(&self) -> bool {
+        self.bits_101 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_right_hand_equipable(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_right_hand_equipable(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn left_hand_equipable(&self) -> u8 {
-        (self.bits_101 >> 1) & 0b00000001
+    pub fn left_hand_equipable(&self) -> bool {
+        self.bits_101 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_left_hand_equipable(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_left_hand_equipable(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn both_hand_equipable(&self) -> u8 {
-        (self.bits_101 >> 2) & 0b00000001
+    pub fn both_hand_equipable(&self) -> bool {
+        self.bits_101 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_both_hand_equipable(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_both_hand_equipable(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn arrow_slot_equipable(&self) -> u8 {
-        (self.bits_101 >> 3) & 0b00000001
+    pub fn arrow_slot_equipable(&self) -> bool {
+        self.bits_101 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_arrow_slot_equipable(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_arrow_slot_equipable(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn bolt_slot_equipable(&self) -> u8 {
-        (self.bits_101 >> 4) & 0b00000001
+    pub fn bolt_slot_equipable(&self) -> bool {
+        self.bits_101 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_bolt_slot_equipable(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_bolt_slot_equipable(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_guard(&self) -> u8 {
-        (self.bits_101 >> 5) & 0b00000001
+    pub fn enable_guard(&self) -> bool {
+        self.bits_101 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_guard(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_guard(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_parry(&self) -> u8 {
-        (self.bits_101 >> 6) & 0b00000001
+    pub fn enable_parry(&self) -> bool {
+        self.bits_101 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_parry(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_parry(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_magic(&self) -> u8 {
-        (self.bits_101 >> 7) & 0b00000001
+    pub fn enable_magic(&self) -> bool {
+        self.bits_101 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_magic(&mut self, value: u8) {
-        self.bits_101 = (self.bits_101 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_enable_magic(&mut self, value: bool) {
+        self.bits_101 = (self.bits_101 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_sorcery(&self) -> u8 {
-        (self.bits_102 >> 0) & 0b00000001
+    pub fn enable_sorcery(&self) -> bool {
+        self.bits_102 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_sorcery(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_sorcery(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_miracle(&self) -> u8 {
-        (self.bits_102 >> 1) & 0b00000001
+    pub fn enable_miracle(&self) -> bool {
+        self.bits_102 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_miracle(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_miracle(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_vow_magic(&self) -> u8 {
-        (self.bits_102 >> 2) & 0b00000001
+    pub fn enable_vow_magic(&self) -> bool {
+        self.bits_102 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_vow_magic(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_vow_magic(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_normal_attack_type(&self) -> u8 {
-        (self.bits_102 >> 3) & 0b00000001
+    pub fn is_normal_attack_type(&self) -> bool {
+        self.bits_102 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_normal_attack_type(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_normal_attack_type(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_blow_attack_type(&self) -> u8 {
-        (self.bits_102 >> 4) & 0b00000001
+    pub fn is_blow_attack_type(&self) -> bool {
+        self.bits_102 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_blow_attack_type(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_blow_attack_type(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_slash_attack_type(&self) -> u8 {
-        (self.bits_102 >> 5) & 0b00000001
+    pub fn is_slash_attack_type(&self) -> bool {
+        self.bits_102 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_slash_attack_type(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_slash_attack_type(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_thrust_attack_type(&self) -> u8 {
-        (self.bits_102 >> 6) & 0b00000001
+    pub fn is_thrust_attack_type(&self) -> bool {
+        self.bits_102 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_thrust_attack_type(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_thrust_attack_type(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enhance(&self) -> u8 {
-        (self.bits_102 >> 7) & 0b00000001
+    pub fn is_enhance(&self) -> bool {
+        self.bits_102 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enhance(&mut self, value: u8) {
-        self.bits_102 = (self.bits_102 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_enhance(&mut self, value: bool) {
+        self.bits_102 = (self.bits_102 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hero_point_correct(&self) -> u8 {
-        (self.bits_103 >> 0) & 0b00000001
+    pub fn is_hero_point_correct(&self) -> bool {
+        self.bits_103 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hero_point_correct(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_hero_point_correct(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_custom(&self) -> u8 {
-        (self.bits_103 >> 1) & 0b00000001
+    pub fn is_custom(&self) -> bool {
+        self.bits_103 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_custom(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_custom(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_base_change_reset(&self) -> u8 {
-        (self.bits_103 >> 2) & 0b00000001
+    pub fn disable_base_change_reset(&self) -> bool {
+        self.bits_103 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_base_change_reset(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_disable_base_change_reset(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_repair(&self) -> u8 {
-        (self.bits_103 >> 3) & 0b00000001
+    pub fn disable_repair(&self) -> bool {
+        self.bits_103 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_repair(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_disable_repair(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dark_hand(&self) -> u8 {
-        (self.bits_103 >> 4) & 0b00000001
+    pub fn is_dark_hand(&self) -> bool {
+        self.bits_103 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dark_hand(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_dark_hand(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn simple_model_for_dlc(&self) -> u8 {
-        (self.bits_103 >> 5) & 0b00000001
+    pub fn simple_model_for_dlc(&self) -> bool {
+        self.bits_103 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_simple_model_for_dlc(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_simple_model_for_dlc(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn lantern_wep(&self) -> u8 {
-        (self.bits_103 >> 6) & 0b00000001
+    pub fn lantern_wep(&self) -> bool {
+        self.bits_103 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_lantern_wep(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_lantern_wep(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_versus_ghost_wep(&self) -> u8 {
-        (self.bits_103 >> 7) & 0b00000001
+    pub fn is_versus_ghost_wep(&self) -> bool {
+        self.bits_103 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_versus_ghost_wep(&mut self, value: u8) {
-        self.bits_103 = (self.bits_103 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_versus_ghost_wep(&mut self, value: bool) {
+        self.bits_103 = (self.bits_103 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
@@ -21862,73 +21862,73 @@ impl EQUIP_PARAM_WEAPON_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dragon_slayer(&self) -> u8 {
-        (self.bits_104 >> 1) & 0b00000001
+    pub fn is_dragon_slayer(&self) -> bool {
+        self.bits_104 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dragon_slayer(&mut self, value: u8) {
-        self.bits_104 = (self.bits_104 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_dragon_slayer(&mut self, value: bool) {
+        self.bits_104 = (self.bits_104 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_deposit(&self) -> u8 {
-        (self.bits_104 >> 2) & 0b00000001
+    pub fn is_deposit(&self) -> bool {
+        self.bits_104 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_deposit(&mut self, value: u8) {
-        self.bits_104 = (self.bits_104 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_deposit(&mut self, value: bool) {
+        self.bits_104 = (self.bits_104 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_multi_drop_share(&self) -> u8 {
-        (self.bits_105 >> 0) & 0b00000001
+    pub fn disable_multi_drop_share(&self) -> bool {
+        self.bits_105 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_multi_drop_share(&mut self, value: u8) {
-        self.bits_105 = (self.bits_105 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_disable_multi_drop_share(&mut self, value: bool) {
+        self.bits_105 = (self.bits_105 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_discard(&self) -> u8 {
-        (self.bits_105 >> 1) & 0b00000001
+    pub fn is_discard(&self) -> bool {
+        self.bits_105 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_discard(&mut self, value: u8) {
-        self.bits_105 = (self.bits_105 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_discard(&mut self, value: bool) {
+        self.bits_105 = (self.bits_105 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_drop(&self) -> u8 {
-        (self.bits_105 >> 2) & 0b00000001
+    pub fn is_drop(&self) -> bool {
+        self.bits_105 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_drop(&mut self, value: u8) {
-        self.bits_105 = (self.bits_105 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_drop(&mut self, value: bool) {
+        self.bits_105 = (self.bits_105 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_log(&self) -> u8 {
-        (self.bits_105 >> 3) & 0b00000001
+    pub fn is_notice_log(&self) -> bool {
+        self.bits_105 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_log(&mut self, value: u8) {
-        self.bits_105 = (self.bits_105 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_notice_log(&mut self, value: bool) {
+        self.bits_105 = (self.bits_105 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_notice_dialog(&self) -> u8 {
-        (self.bits_105 >> 4) & 0b00000001
+    pub fn is_notice_dialog(&self) -> bool {
+        self.bits_105 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_notice_dialog(&mut self, value: u8) {
-        self.bits_105 = (self.bits_105 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_notice_dialog(&mut self, value: bool) {
+        self.bits_105 = (self.bits_105 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     pub fn def_sfx_material1(&self) -> u16 {
@@ -22188,53 +22188,53 @@ impl EQUIP_PARAM_WEAPON_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_valid_tough_prot_sa_dmg(&self) -> u8 {
-        (self.bits_178 >> 0) & 0b00000001
+    pub fn is_valid_tough_prot_sa_dmg(&self) -> bool {
+        self.bits_178 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_valid_tough_prot_sa_dmg(&mut self, value: u8) {
-        self.bits_178 = (self.bits_178 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_valid_tough_prot_sa_dmg(&mut self, value: bool) {
+        self.bits_178 = (self.bits_178 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dual_blade(&self) -> u8 {
-        (self.bits_178 >> 1) & 0b00000001
+    pub fn is_dual_blade(&self) -> bool {
+        self.bits_178 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dual_blade(&mut self, value: u8) {
-        self.bits_178 = (self.bits_178 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_dual_blade(&mut self, value: bool) {
+        self.bits_178 = (self.bits_178 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_auto_equip(&self) -> u8 {
-        (self.bits_178 >> 2) & 0b00000001
+    pub fn is_auto_equip(&self) -> bool {
+        self.bits_178 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_auto_equip(&mut self, value: u8) {
-        self.bits_178 = (self.bits_178 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_auto_equip(&mut self, value: bool) {
+        self.bits_178 = (self.bits_178 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enable_emergency_step(&self) -> u8 {
-        (self.bits_178 >> 3) & 0b00000001
+    pub fn is_enable_emergency_step(&self) -> bool {
+        self.bits_178 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enable_emergency_step(&mut self, value: u8) {
-        self.bits_178 = (self.bits_178 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_enable_emergency_step(&mut self, value: bool) {
+        self.bits_178 = (self.bits_178 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_on_remo(&self) -> u8 {
-        (self.bits_178 >> 4) & 0b00000001
+    pub fn invisible_on_remo(&self) -> bool {
+        self.bits_178 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_on_remo(&mut self, value: u8) {
-        self.bits_178 = (self.bits_178 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_on_remo(&mut self, value: bool) {
+        self.bits_178 = (self.bits_178 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     pub fn correct_type_magic(&self) -> u8 {
@@ -22438,83 +22438,83 @@ impl EQUIP_PARAM_WEAPON_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn resident_sfx_1_is_visible_for_hang(&self) -> u8 {
-        (self.bits_1c0 >> 0) & 0b00000001
+    pub fn resident_sfx_1_is_visible_for_hang(&self) -> bool {
+        self.bits_1c0 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_resident_sfx_1_is_visible_for_hang(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_resident_sfx_1_is_visible_for_hang(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn resident_sfx_2_is_visible_for_hang(&self) -> u8 {
-        (self.bits_1c0 >> 1) & 0b00000001
+    pub fn resident_sfx_2_is_visible_for_hang(&self) -> bool {
+        self.bits_1c0 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_resident_sfx_2_is_visible_for_hang(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_resident_sfx_2_is_visible_for_hang(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn resident_sfx_3_is_visible_for_hang(&self) -> u8 {
-        (self.bits_1c0 >> 2) & 0b00000001
+    pub fn resident_sfx_3_is_visible_for_hang(&self) -> bool {
+        self.bits_1c0 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_resident_sfx_3_is_visible_for_hang(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_resident_sfx_3_is_visible_for_hang(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn resident_sfx_4_is_visible_for_hang(&self) -> u8 {
-        (self.bits_1c0 >> 3) & 0b00000001
+    pub fn resident_sfx_4_is_visible_for_hang(&self) -> bool {
+        self.bits_1c0 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_resident_sfx_4_is_visible_for_hang(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_resident_sfx_4_is_visible_for_hang(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_soul_param_id_change_model0(&self) -> u8 {
-        (self.bits_1c0 >> 4) & 0b00000001
+    pub fn is_soul_param_id_change_model0(&self) -> bool {
+        self.bits_1c0 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_soul_param_id_change_model0(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_soul_param_id_change_model0(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_soul_param_id_change_model1(&self) -> u8 {
-        (self.bits_1c0 >> 5) & 0b00000001
+    pub fn is_soul_param_id_change_model1(&self) -> bool {
+        self.bits_1c0 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_soul_param_id_change_model1(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_soul_param_id_change_model1(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_soul_param_id_change_model2(&self) -> u8 {
-        (self.bits_1c0 >> 6) & 0b00000001
+    pub fn is_soul_param_id_change_model2(&self) -> bool {
+        self.bits_1c0 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_soul_param_id_change_model2(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_soul_param_id_change_model2(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_soul_param_id_change_model3(&self) -> u8 {
-        (self.bits_1c0 >> 7) & 0b00000001
+    pub fn is_soul_param_id_change_model3(&self) -> bool {
+        self.bits_1c0 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_soul_param_id_change_model3(&mut self, value: u8) {
-        self.bits_1c0 = (self.bits_1c0 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_soul_param_id_change_model3(&mut self, value: bool) {
+        self.bits_1c0 = (self.bits_1c0 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn derivation_level_type(&self) -> u8 {
@@ -31077,73 +31077,73 @@ impl GEM_CATEGORY_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_negative(&self) -> u8 {
-        (self.bits_14 >> 0) & 0b00000001
+    pub fn is_negative(&self) -> bool {
+        self.bits_14 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_negative(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_negative(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_slot_type_a(&self) -> u8 {
-        (self.bits_14 >> 1) & 0b00000001
+    pub fn enable_slot_type_a(&self) -> bool {
+        self.bits_14 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_slot_type_a(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_slot_type_a(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_slot_type_b(&self) -> u8 {
-        (self.bits_14 >> 2) & 0b00000001
+    pub fn enable_slot_type_b(&self) -> bool {
+        self.bits_14 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_slot_type_b(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_slot_type_b(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_slot_type_c(&self) -> u8 {
-        (self.bits_14 >> 3) & 0b00000001
+    pub fn enable_slot_type_c(&self) -> bool {
+        self.bits_14 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_slot_type_c(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_enable_slot_type_c(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_slot_type_d(&self) -> u8 {
-        (self.bits_14 >> 4) & 0b00000001
+    pub fn enable_slot_type_d(&self) -> bool {
+        self.bits_14 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_slot_type_d(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_slot_type_d(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_slot_type_e(&self) -> u8 {
-        (self.bits_14 >> 5) & 0b00000001
+    pub fn enable_slot_type_e(&self) -> bool {
+        self.bits_14 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_slot_type_e(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_slot_type_e(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_slot_type_f(&self) -> u8 {
-        (self.bits_14 >> 6) & 0b00000001
+    pub fn enable_slot_type_f(&self) -> bool {
+        self.bits_14 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_slot_type_f(&mut self, value: u8) {
-        self.bits_14 = (self.bits_14 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_slot_type_f(&mut self, value: bool) {
+        self.bits_14 = (self.bits_14 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     pub fn affinity_cate_id_0(&self) -> i32 {
@@ -31723,13 +31723,13 @@ impl ParamDef for GEM_GEN_PARAM_ST {
 
 impl GEM_GEN_PARAM_ST {
     #[allow(clippy::identity_op)]
-    pub fn is_unique(&self) -> u8 {
-        (self.bits_0 >> 0) & 0b00000001
+    pub fn is_unique(&self) -> bool {
+        self.bits_0 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_unique(&mut self, value: u8) {
-        self.bits_0 = (self.bits_0 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_unique(&mut self, value: bool) {
+        self.bits_0 = (self.bits_0 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn icon_id(&self) -> i32 {
@@ -31749,13 +31749,13 @@ impl GEM_GEN_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_slot_rate_modify(&self) -> u8 {
-        (self.bits_c >> 0) & 0b00000001
+    pub fn disable_slot_rate_modify(&self) -> bool {
+        self.bits_c & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_slot_rate_modify(&mut self, value: u8) {
-        self.bits_c = (self.bits_c & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_disable_slot_rate_modify(&mut self, value: bool) {
+        self.bits_c = (self.bits_c & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn slot_type_rate_a(&self) -> f32 {
@@ -34435,13 +34435,13 @@ impl HIT_MTRL_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_fall_damage(&self) -> u8 {
-        (self.bits_c >> 3) & 0b00000001
+    pub fn disable_fall_damage(&self) -> bool {
+        self.bits_c & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_fall_damage(&mut self, value: u8) {
-        self.bits_c = (self.bits_c & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_disable_fall_damage(&mut self, value: bool) {
+        self.bits_c = (self.bits_c & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     pub fn hardness_type(&self) -> u8 {
@@ -35028,163 +35028,163 @@ impl ITEMLOT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck01(&self) -> u8 {
-        (self.bits_92 >> 0) & 0b00000001
+    pub fn enable_luck01(&self) -> bool {
+        self.bits_92 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck01(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_luck01(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck02(&self) -> u8 {
-        (self.bits_92 >> 1) & 0b00000001
+    pub fn enable_luck02(&self) -> bool {
+        self.bits_92 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck02(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_luck02(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck03(&self) -> u8 {
-        (self.bits_92 >> 2) & 0b00000001
+    pub fn enable_luck03(&self) -> bool {
+        self.bits_92 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck03(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_luck03(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck04(&self) -> u8 {
-        (self.bits_92 >> 3) & 0b00000001
+    pub fn enable_luck04(&self) -> bool {
+        self.bits_92 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck04(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_enable_luck04(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck05(&self) -> u8 {
-        (self.bits_92 >> 4) & 0b00000001
+    pub fn enable_luck05(&self) -> bool {
+        self.bits_92 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck05(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_luck05(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck06(&self) -> u8 {
-        (self.bits_92 >> 5) & 0b00000001
+    pub fn enable_luck06(&self) -> bool {
+        self.bits_92 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck06(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_luck06(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck07(&self) -> u8 {
-        (self.bits_92 >> 6) & 0b00000001
+    pub fn enable_luck07(&self) -> bool {
+        self.bits_92 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck07(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_luck07(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_luck08(&self) -> u8 {
-        (self.bits_92 >> 7) & 0b00000001
+    pub fn enable_luck08(&self) -> bool {
+        self.bits_92 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_luck08(&mut self, value: u8) {
-        self.bits_92 = (self.bits_92 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_enable_luck08(&mut self, value: bool) {
+        self.bits_92 = (self.bits_92 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset01(&self) -> u8 {
-        (self.bits_93 >> 0) & 0b00000001
+    pub fn cumulate_reset01(&self) -> bool {
+        self.bits_93 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset01(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_cumulate_reset01(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset02(&self) -> u8 {
-        (self.bits_93 >> 1) & 0b00000001
+    pub fn cumulate_reset02(&self) -> bool {
+        self.bits_93 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset02(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_cumulate_reset02(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset03(&self) -> u8 {
-        (self.bits_93 >> 2) & 0b00000001
+    pub fn cumulate_reset03(&self) -> bool {
+        self.bits_93 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset03(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_cumulate_reset03(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset04(&self) -> u8 {
-        (self.bits_93 >> 3) & 0b00000001
+    pub fn cumulate_reset04(&self) -> bool {
+        self.bits_93 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset04(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_cumulate_reset04(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset05(&self) -> u8 {
-        (self.bits_93 >> 4) & 0b00000001
+    pub fn cumulate_reset05(&self) -> bool {
+        self.bits_93 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset05(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_cumulate_reset05(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset06(&self) -> u8 {
-        (self.bits_93 >> 5) & 0b00000001
+    pub fn cumulate_reset06(&self) -> bool {
+        self.bits_93 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset06(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_cumulate_reset06(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset07(&self) -> u8 {
-        (self.bits_93 >> 6) & 0b00000001
+    pub fn cumulate_reset07(&self) -> bool {
+        self.bits_93 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset07(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_cumulate_reset07(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cumulate_reset08(&self) -> u8 {
-        (self.bits_93 >> 7) & 0b00000001
+    pub fn cumulate_reset08(&self) -> bool {
+        self.bits_93 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cumulate_reset08(&mut self, value: u8) {
-        self.bits_93 = (self.bits_93 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_cumulate_reset08(&mut self, value: bool) {
+        self.bits_93 = (self.bits_93 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn game_clear_offset(&self) -> i8 {
@@ -36993,13 +36993,13 @@ impl LOD_BANK_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn texture_lod(&self) -> u8 {
-        (self.bits_10 >> 0) & 0b00000001
+    pub fn texture_lod(&self) -> bool {
+        self.bits_10 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_texture_lod(&mut self, value: u8) {
-        self.bits_10 = (self.bits_10 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_texture_lod(&mut self, value: bool) {
+        self.bits_10 = (self.bits_10 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn draw_border_dist(&self) -> f32 {
@@ -37420,283 +37420,283 @@ impl MAGIC_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type0(&self) -> u8 {
-        (self.bits_2c >> 0) & 0b00000001
+    pub fn vow_type0(&self) -> bool {
+        self.bits_2c & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type0(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_vow_type0(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type1(&self) -> u8 {
-        (self.bits_2c >> 1) & 0b00000001
+    pub fn vow_type1(&self) -> bool {
+        self.bits_2c & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type1(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_vow_type1(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type2(&self) -> u8 {
-        (self.bits_2c >> 2) & 0b00000001
+    pub fn vow_type2(&self) -> bool {
+        self.bits_2c & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type2(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_vow_type2(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type3(&self) -> u8 {
-        (self.bits_2c >> 3) & 0b00000001
+    pub fn vow_type3(&self) -> bool {
+        self.bits_2c & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type3(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_vow_type3(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type4(&self) -> u8 {
-        (self.bits_2c >> 4) & 0b00000001
+    pub fn vow_type4(&self) -> bool {
+        self.bits_2c & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type4(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_vow_type4(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type5(&self) -> u8 {
-        (self.bits_2c >> 5) & 0b00000001
+    pub fn vow_type5(&self) -> bool {
+        self.bits_2c & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type5(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_vow_type5(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type6(&self) -> u8 {
-        (self.bits_2c >> 6) & 0b00000001
+    pub fn vow_type6(&self) -> bool {
+        self.bits_2c & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type6(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_vow_type6(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type7(&self) -> u8 {
-        (self.bits_2c >> 7) & 0b00000001
+    pub fn vow_type7(&self) -> bool {
+        self.bits_2c & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type7(&mut self, value: u8) {
-        self.bits_2c = (self.bits_2c & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_vow_type7(&mut self, value: bool) {
+        self.bits_2c = (self.bits_2c & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_multi(&self) -> u8 {
-        (self.bits_2d >> 0) & 0b00000001
+    pub fn enable_multi(&self) -> bool {
+        self.bits_2d & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_multi(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_multi(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_multi_only(&self) -> u8 {
-        (self.bits_2d >> 1) & 0b00000001
+    pub fn enable_multi_only(&self) -> bool {
+        self.bits_2d & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_multi_only(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_multi_only(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enchant(&self) -> u8 {
-        (self.bits_2d >> 2) & 0b00000001
+    pub fn is_enchant(&self) -> bool {
+        self.bits_2d & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enchant(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_enchant(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_shield_enchant(&self) -> u8 {
-        (self.bits_2d >> 3) & 0b00000001
+    pub fn is_shield_enchant(&self) -> bool {
+        self.bits_2d & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_shield_enchant(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_shield_enchant(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_live(&self) -> u8 {
-        (self.bits_2d >> 4) & 0b00000001
+    pub fn enable_live(&self) -> bool {
+        self.bits_2d & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_live(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_live(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_gray(&self) -> u8 {
-        (self.bits_2d >> 5) & 0b00000001
+    pub fn enable_gray(&self) -> bool {
+        self.bits_2d & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_gray(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_gray(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_white(&self) -> u8 {
-        (self.bits_2d >> 6) & 0b00000001
+    pub fn enable_white(&self) -> bool {
+        self.bits_2d & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_white(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_white(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_black(&self) -> u8 {
-        (self.bits_2d >> 7) & 0b00000001
+    pub fn enable_black(&self) -> bool {
+        self.bits_2d & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_black(&mut self, value: u8) {
-        self.bits_2d = (self.bits_2d & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_enable_black(&mut self, value: bool) {
+        self.bits_2d = (self.bits_2d & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_offline(&self) -> u8 {
-        (self.bits_2e >> 0) & 0b00000001
+    pub fn disable_offline(&self) -> bool {
+        self.bits_2e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_offline(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_disable_offline(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn cast_resonance_magic(&self) -> u8 {
-        (self.bits_2e >> 1) & 0b00000001
+    pub fn cast_resonance_magic(&self) -> bool {
+        self.bits_2e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_cast_resonance_magic(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_cast_resonance_magic(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_valid_tough_prot_sa_dmg(&self) -> u8 {
-        (self.bits_2e >> 2) & 0b00000001
+    pub fn is_valid_tough_prot_sa_dmg(&self) -> bool {
+        self.bits_2e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_valid_tough_prot_sa_dmg(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_valid_tough_prot_sa_dmg(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_warp_magic(&self) -> u8 {
-        (self.bits_2e >> 3) & 0b00000001
+    pub fn is_warp_magic(&self) -> bool {
+        self.bits_2e & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_warp_magic(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_warp_magic(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type8(&self) -> u8 {
-        (self.bits_2f >> 0) & 0b00000001
+    pub fn vow_type8(&self) -> bool {
+        self.bits_2f & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type8(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_vow_type8(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type9(&self) -> u8 {
-        (self.bits_2f >> 1) & 0b00000001
+    pub fn vow_type9(&self) -> bool {
+        self.bits_2f & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type9(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_vow_type9(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type10(&self) -> u8 {
-        (self.bits_2f >> 2) & 0b00000001
+    pub fn vow_type10(&self) -> bool {
+        self.bits_2f & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type10(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_vow_type10(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type11(&self) -> u8 {
-        (self.bits_2f >> 3) & 0b00000001
+    pub fn vow_type11(&self) -> bool {
+        self.bits_2f & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type11(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_vow_type11(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type12(&self) -> u8 {
-        (self.bits_2f >> 4) & 0b00000001
+    pub fn vow_type12(&self) -> bool {
+        self.bits_2f & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type12(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_vow_type12(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type13(&self) -> u8 {
-        (self.bits_2f >> 5) & 0b00000001
+    pub fn vow_type13(&self) -> bool {
+        self.bits_2f & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type13(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_vow_type13(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type14(&self) -> u8 {
-        (self.bits_2f >> 6) & 0b00000001
+    pub fn vow_type14(&self) -> bool {
+        self.bits_2f & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type14(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_vow_type14(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type15(&self) -> u8 {
-        (self.bits_2f >> 7) & 0b00000001
+    pub fn vow_type15(&self) -> bool {
+        self.bits_2f & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type15(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_vow_type15(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn cast_sfx_id(&self) -> i32 {
@@ -39974,63 +39974,63 @@ impl NETWORK_AREA_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_bloodstain(&self) -> u8 {
-        (self.bits_18 >> 0) & 0b00000001
+    pub fn enable_bloodstain(&self) -> bool {
+        self.bits_18 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_bloodstain(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_bloodstain(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_blood_message(&self) -> u8 {
-        (self.bits_18 >> 1) & 0b00000001
+    pub fn enable_blood_message(&self) -> bool {
+        self.bits_18 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_blood_message(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_blood_message(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_ghost(&self) -> u8 {
-        (self.bits_18 >> 2) & 0b00000001
+    pub fn enable_ghost(&self) -> bool {
+        self.bits_18 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_ghost(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_ghost(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_multi_play(&self) -> u8 {
-        (self.bits_18 >> 3) & 0b00000001
+    pub fn enable_multi_play(&self) -> bool {
+        self.bits_18 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_multi_play(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_enable_multi_play(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_ring_search(&self) -> u8 {
-        (self.bits_18 >> 4) & 0b00000001
+    pub fn enable_ring_search(&self) -> bool {
+        self.bits_18 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_ring_search(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_ring_search(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_break_in_search(&self) -> u8 {
-        (self.bits_18 >> 5) & 0b00000001
+    pub fn enable_break_in_search(&self) -> bool {
+        self.bits_18 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_break_in_search(&mut self, value: u8) {
-        self.bits_18 = (self.bits_18 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_break_in_search(&mut self, value: bool) {
+        self.bits_18 = (self.bits_18 & !(1 << 5)) | (u8::from(value) << 5);
     }
 }
 
@@ -42735,43 +42735,43 @@ impl NPC_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_swim_map_collision(&self) -> u8 {
-        (self.bits_124 >> 0) & 0b00000001
+    pub fn is_hit_swim_map_collision(&self) -> bool {
+        self.bits_124 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_swim_map_collision(&mut self, value: u8) {
-        self.bits_124 = (self.bits_124 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_hit_swim_map_collision(&mut self, value: bool) {
+        self.bits_124 = (self.bits_124 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_dead_swim_map_collision(&self) -> u8 {
-        (self.bits_124 >> 1) & 0b00000001
+    pub fn is_dead_swim_map_collision(&self) -> bool {
+        self.bits_124 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_dead_swim_map_collision(&mut self, value: u8) {
-        self.bits_124 = (self.bits_124 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_dead_swim_map_collision(&mut self, value: bool) {
+        self.bits_124 = (self.bits_124 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_doping_progress_offset(&self) -> u8 {
-        (self.bits_124 >> 2) & 0b00000001
+    pub fn is_doping_progress_offset(&self) -> bool {
+        self.bits_124 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_doping_progress_offset(&mut self, value: u8) {
-        self.bits_124 = (self.bits_124 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_doping_progress_offset(&mut self, value: bool) {
+        self.bits_124 = (self.bits_124 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn does_prevent_talking_look_at_vibration(&self) -> u8 {
-        (self.bits_124 >> 3) & 0b00000001
+    pub fn does_prevent_talking_look_at_vibration(&self) -> bool {
+        self.bits_124 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_does_prevent_talking_look_at_vibration(&mut self, value: u8) {
-        self.bits_124 = (self.bits_124 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_does_prevent_talking_look_at_vibration(&mut self, value: bool) {
+        self.bits_124 = (self.bits_124 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     pub fn hit_stop_type_defencer(&self) -> u8 {
@@ -43079,323 +43079,323 @@ impl NPC_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_ragdoll_cam_hit(&self) -> u8 {
-        (self.bits_14d >> 0) & 0b00000001
+    pub fn use_ragdoll_cam_hit(&self) -> bool {
+        self.bits_14d & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_ragdoll_cam_hit(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_use_ragdoll_cam_hit(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_cloth_rigid_hit(&self) -> u8 {
-        (self.bits_14d >> 1) & 0b00000001
+    pub fn disable_cloth_rigid_hit(&self) -> bool {
+        self.bits_14d & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_cloth_rigid_hit(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_disable_cloth_rigid_hit(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_ragdoll(&self) -> u8 {
-        (self.bits_14d >> 2) & 0b00000001
+    pub fn use_ragdoll(&self) -> bool {
+        self.bits_14d & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_ragdoll(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_use_ragdoll(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_weak_a(&self) -> u8 {
-        (self.bits_14d >> 3) & 0b00000001
+    pub fn is_weak_a(&self) -> bool {
+        self.bits_14d & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_weak_a(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_weak_a(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_ghost(&self) -> u8 {
-        (self.bits_14d >> 4) & 0b00000001
+    pub fn is_ghost(&self) -> bool {
+        self.bits_14d & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_ghost(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_ghost(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_no_damage_motion(&self) -> u8 {
-        (self.bits_14d >> 5) & 0b00000001
+    pub fn is_no_damage_motion(&self) -> bool {
+        self.bits_14d & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_no_damage_motion(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_no_damage_motion(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_unduration(&self) -> u8 {
-        (self.bits_14d >> 6) & 0b00000001
+    pub fn is_unduration(&self) -> bool {
+        self.bits_14d & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_unduration(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_unduration(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_change_wander_ghost(&self) -> u8 {
-        (self.bits_14d >> 7) & 0b00000001
+    pub fn is_change_wander_ghost(&self) -> bool {
+        self.bits_14d & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_change_wander_ghost(&mut self, value: u8) {
-        self.bits_14d = (self.bits_14d & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_change_wander_ghost(&mut self, value: bool) {
+        self.bits_14d = (self.bits_14d & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask0(&self) -> u8 {
-        (self.bits_14e >> 0) & 0b00000001
+    pub fn model_disp_mask0(&self) -> bool {
+        self.bits_14e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask0(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_model_disp_mask0(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask1(&self) -> u8 {
-        (self.bits_14e >> 1) & 0b00000001
+    pub fn model_disp_mask1(&self) -> bool {
+        self.bits_14e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask1(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_model_disp_mask1(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask2(&self) -> u8 {
-        (self.bits_14e >> 2) & 0b00000001
+    pub fn model_disp_mask2(&self) -> bool {
+        self.bits_14e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask2(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_model_disp_mask2(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask3(&self) -> u8 {
-        (self.bits_14e >> 3) & 0b00000001
+    pub fn model_disp_mask3(&self) -> bool {
+        self.bits_14e & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask3(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_model_disp_mask3(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask4(&self) -> u8 {
-        (self.bits_14e >> 4) & 0b00000001
+    pub fn model_disp_mask4(&self) -> bool {
+        self.bits_14e & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask4(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_model_disp_mask4(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask5(&self) -> u8 {
-        (self.bits_14e >> 5) & 0b00000001
+    pub fn model_disp_mask5(&self) -> bool {
+        self.bits_14e & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask5(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_model_disp_mask5(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask6(&self) -> u8 {
-        (self.bits_14e >> 6) & 0b00000001
+    pub fn model_disp_mask6(&self) -> bool {
+        self.bits_14e & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask6(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_model_disp_mask6(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask7(&self) -> u8 {
-        (self.bits_14e >> 7) & 0b00000001
+    pub fn model_disp_mask7(&self) -> bool {
+        self.bits_14e & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask7(&mut self, value: u8) {
-        self.bits_14e = (self.bits_14e & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_model_disp_mask7(&mut self, value: bool) {
+        self.bits_14e = (self.bits_14e & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask8(&self) -> u8 {
-        (self.bits_14f >> 0) & 0b00000001
+    pub fn model_disp_mask8(&self) -> bool {
+        self.bits_14f & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask8(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_model_disp_mask8(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask9(&self) -> u8 {
-        (self.bits_14f >> 1) & 0b00000001
+    pub fn model_disp_mask9(&self) -> bool {
+        self.bits_14f & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask9(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_model_disp_mask9(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask10(&self) -> u8 {
-        (self.bits_14f >> 2) & 0b00000001
+    pub fn model_disp_mask10(&self) -> bool {
+        self.bits_14f & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask10(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_model_disp_mask10(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask11(&self) -> u8 {
-        (self.bits_14f >> 3) & 0b00000001
+    pub fn model_disp_mask11(&self) -> bool {
+        self.bits_14f & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask11(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_model_disp_mask11(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask12(&self) -> u8 {
-        (self.bits_14f >> 4) & 0b00000001
+    pub fn model_disp_mask12(&self) -> bool {
+        self.bits_14f & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask12(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_model_disp_mask12(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask13(&self) -> u8 {
-        (self.bits_14f >> 5) & 0b00000001
+    pub fn model_disp_mask13(&self) -> bool {
+        self.bits_14f & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask13(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_model_disp_mask13(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask14(&self) -> u8 {
-        (self.bits_14f >> 6) & 0b00000001
+    pub fn model_disp_mask14(&self) -> bool {
+        self.bits_14f & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask14(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_model_disp_mask14(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask15(&self) -> u8 {
-        (self.bits_14f >> 7) & 0b00000001
+    pub fn model_disp_mask15(&self) -> bool {
+        self.bits_14f & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask15(&mut self, value: u8) {
-        self.bits_14f = (self.bits_14f & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_model_disp_mask15(&mut self, value: bool) {
+        self.bits_14f = (self.bits_14f & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enable_neck_turn(&self) -> u8 {
-        (self.bits_150 >> 0) & 0b00000001
+    pub fn is_enable_neck_turn(&self) -> bool {
+        self.bits_150 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enable_neck_turn(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_enable_neck_turn(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_respawn(&self) -> u8 {
-        (self.bits_150 >> 1) & 0b00000001
+    pub fn disable_respawn(&self) -> bool {
+        self.bits_150 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_respawn(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_disable_respawn(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_move_anim_wait(&self) -> u8 {
-        (self.bits_150 >> 2) & 0b00000001
+    pub fn is_move_anim_wait(&self) -> bool {
+        self.bits_150 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_move_anim_wait(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_move_anim_wait(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_crowd(&self) -> u8 {
-        (self.bits_150 >> 3) & 0b00000001
+    pub fn is_crowd(&self) -> bool {
+        self.bits_150 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_crowd(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_crowd(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_weak_b(&self) -> u8 {
-        (self.bits_150 >> 4) & 0b00000001
+    pub fn is_weak_b(&self) -> bool {
+        self.bits_150 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_weak_b(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_weak_b(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_weak_c(&self) -> u8 {
-        (self.bits_150 >> 5) & 0b00000001
+    pub fn is_weak_c(&self) -> bool {
+        self.bits_150 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_weak_c(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_weak_c(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_weak_d(&self) -> u8 {
-        (self.bits_150 >> 6) & 0b00000001
+    pub fn is_weak_d(&self) -> bool {
+        self.bits_150 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_weak_d(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_weak_d(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn does_always_use_special_turn(&self) -> u8 {
-        (self.bits_150 >> 7) & 0b00000001
+    pub fn does_always_use_special_turn(&self) -> bool {
+        self.bits_150 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_does_always_use_special_turn(&mut self, value: u8) {
-        self.bits_150 = (self.bits_150 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_does_always_use_special_turn(&mut self, value: bool) {
+        self.bits_150 = (self.bits_150 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
@@ -43409,213 +43409,213 @@ impl NPC_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_initialize_dead(&self) -> u8 {
-        (self.bits_151 >> 1) & 0b00000001
+    pub fn disable_initialize_dead(&self) -> bool {
+        self.bits_151 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_initialize_dead(&mut self, value: u8) {
-        self.bits_151 = (self.bits_151 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_disable_initialize_dead(&mut self, value: bool) {
+        self.bits_151 = (self.bits_151 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_hit_rumble(&self) -> u8 {
-        (self.bits_151 >> 2) & 0b00000001
+    pub fn is_hit_rumble(&self) -> bool {
+        self.bits_151 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_hit_rumble(&mut self, value: u8) {
-        self.bits_151 = (self.bits_151 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_hit_rumble(&mut self, value: bool) {
+        self.bits_151 = (self.bits_151 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_smooth_turn(&self) -> u8 {
-        (self.bits_151 >> 3) & 0b00000001
+    pub fn is_smooth_turn(&self) -> bool {
+        self.bits_151 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_smooth_turn(&mut self, value: u8) {
-        self.bits_151 = (self.bits_151 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_smooth_turn(&mut self, value: bool) {
+        self.bits_151 = (self.bits_151 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_weak_e(&self) -> u8 {
-        (self.bits_151 >> 4) & 0b00000001
+    pub fn is_weak_e(&self) -> bool {
+        self.bits_151 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_weak_e(&mut self, value: u8) {
-        self.bits_151 = (self.bits_151 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_weak_e(&mut self, value: bool) {
+        self.bits_151 = (self.bits_151 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_weak_f(&self) -> u8 {
-        (self.bits_151 >> 5) & 0b00000001
+    pub fn is_weak_f(&self) -> bool {
+        self.bits_151 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_weak_f(&mut self, value: u8) {
-        self.bits_151 = (self.bits_151 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_weak_f(&mut self, value: bool) {
+        self.bits_151 = (self.bits_151 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask16(&self) -> u8 {
-        (self.bits_152 >> 0) & 0b00000001
+    pub fn model_disp_mask16(&self) -> bool {
+        self.bits_152 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask16(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_model_disp_mask16(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask17(&self) -> u8 {
-        (self.bits_152 >> 1) & 0b00000001
+    pub fn model_disp_mask17(&self) -> bool {
+        self.bits_152 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask17(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_model_disp_mask17(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask18(&self) -> u8 {
-        (self.bits_152 >> 2) & 0b00000001
+    pub fn model_disp_mask18(&self) -> bool {
+        self.bits_152 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask18(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_model_disp_mask18(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask19(&self) -> u8 {
-        (self.bits_152 >> 3) & 0b00000001
+    pub fn model_disp_mask19(&self) -> bool {
+        self.bits_152 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask19(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_model_disp_mask19(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask20(&self) -> u8 {
-        (self.bits_152 >> 4) & 0b00000001
+    pub fn model_disp_mask20(&self) -> bool {
+        self.bits_152 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask20(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_model_disp_mask20(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask21(&self) -> u8 {
-        (self.bits_152 >> 5) & 0b00000001
+    pub fn model_disp_mask21(&self) -> bool {
+        self.bits_152 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask21(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_model_disp_mask21(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask22(&self) -> u8 {
-        (self.bits_152 >> 6) & 0b00000001
+    pub fn model_disp_mask22(&self) -> bool {
+        self.bits_152 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask22(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_model_disp_mask22(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask23(&self) -> u8 {
-        (self.bits_152 >> 7) & 0b00000001
+    pub fn model_disp_mask23(&self) -> bool {
+        self.bits_152 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask23(&mut self, value: u8) {
-        self.bits_152 = (self.bits_152 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_model_disp_mask23(&mut self, value: bool) {
+        self.bits_152 = (self.bits_152 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask24(&self) -> u8 {
-        (self.bits_153 >> 0) & 0b00000001
+    pub fn model_disp_mask24(&self) -> bool {
+        self.bits_153 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask24(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_model_disp_mask24(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask25(&self) -> u8 {
-        (self.bits_153 >> 1) & 0b00000001
+    pub fn model_disp_mask25(&self) -> bool {
+        self.bits_153 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask25(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_model_disp_mask25(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask26(&self) -> u8 {
-        (self.bits_153 >> 2) & 0b00000001
+    pub fn model_disp_mask26(&self) -> bool {
+        self.bits_153 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask26(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_model_disp_mask26(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask27(&self) -> u8 {
-        (self.bits_153 >> 3) & 0b00000001
+    pub fn model_disp_mask27(&self) -> bool {
+        self.bits_153 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask27(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_model_disp_mask27(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask28(&self) -> u8 {
-        (self.bits_153 >> 4) & 0b00000001
+    pub fn model_disp_mask28(&self) -> bool {
+        self.bits_153 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask28(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_model_disp_mask28(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask29(&self) -> u8 {
-        (self.bits_153 >> 5) & 0b00000001
+    pub fn model_disp_mask29(&self) -> bool {
+        self.bits_153 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask29(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_model_disp_mask29(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask30(&self) -> u8 {
-        (self.bits_153 >> 6) & 0b00000001
+    pub fn model_disp_mask30(&self) -> bool {
+        self.bits_153 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask30(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_model_disp_mask30(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn model_disp_mask31(&self) -> u8 {
-        (self.bits_153 >> 7) & 0b00000001
+    pub fn model_disp_mask31(&self) -> bool {
+        self.bits_153 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_model_disp_mask31(&mut self, value: u8) {
-        self.bits_153 = (self.bits_153 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_model_disp_mask31(&mut self, value: bool) {
+        self.bits_153 = (self.bits_153 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn item_search_radius(&self) -> f32 {
@@ -43651,83 +43651,83 @@ impl NPC_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_soul_get_by_boss(&self) -> u8 {
-        (self.bits_161 >> 0) & 0b00000001
+    pub fn is_soul_get_by_boss(&self) -> bool {
+        self.bits_161 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_soul_get_by_boss(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_soul_get_by_boss(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_bullet_owner_by_object(&self) -> u8 {
-        (self.bits_161 >> 1) & 0b00000001
+    pub fn is_bullet_owner_by_object(&self) -> bool {
+        self.bits_161 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_bullet_owner_by_object(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_bullet_owner_by_object(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_low_hit_foot_ik(&self) -> u8 {
-        (self.bits_161 >> 2) & 0b00000001
+    pub fn is_use_low_hit_foot_ik(&self) -> bool {
+        self.bits_161 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_low_hit_foot_ik(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_use_low_hit_foot_ik(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_npc_player_calculate_pv_p_damage(&self) -> u8 {
-        (self.bits_161 >> 3) & 0b00000001
+    pub fn is_npc_player_calculate_pv_p_damage(&self) -> bool {
+        self.bits_161 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_npc_player_calculate_pv_p_damage(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_npc_player_calculate_pv_p_damage(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_integrate_raycast_check_roof(&self) -> u8 {
-        (self.bits_161 >> 4) & 0b00000001
+    pub fn is_integrate_raycast_check_roof(&self) -> bool {
+        self.bits_161 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_integrate_raycast_check_roof(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_integrate_raycast_check_roof(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_multilingual(&self) -> u8 {
-        (self.bits_161 >> 5) & 0b00000001
+    pub fn is_multilingual(&self) -> bool {
+        self.bits_161 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_multilingual(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_multilingual(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enable_fe(&self) -> u8 {
-        (self.bits_161 >> 6) & 0b00000001
+    pub fn is_enable_fe(&self) -> bool {
+        self.bits_161 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enable_fe(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_enable_fe(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_create_corpse_target(&self) -> u8 {
-        (self.bits_161 >> 7) & 0b00000001
+    pub fn is_create_corpse_target(&self) -> bool {
+        self.bits_161 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_create_corpse_target(&mut self, value: u8) {
-        self.bits_161 = (self.bits_161 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_create_corpse_target(&mut self, value: bool) {
+        self.bits_161 = (self.bits_161 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn def_dark(&self) -> u16 {
@@ -45426,93 +45426,93 @@ impl NPC_THINK_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_edge(&self) -> u8 {
-        (self.bits_60 >> 0) & 0b00000001
+    pub fn enable_navi_flg_edge(&self) -> bool {
+        self.bits_60 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_edge(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_navi_flg_edge(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_large_space(&self) -> u8 {
-        (self.bits_60 >> 1) & 0b00000001
+    pub fn enable_navi_flg_large_space(&self) -> bool {
+        self.bits_60 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_large_space(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_navi_flg_large_space(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_ladder(&self) -> u8 {
-        (self.bits_60 >> 2) & 0b00000001
+    pub fn enable_navi_flg_ladder(&self) -> bool {
+        self.bits_60 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_ladder(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_navi_flg_ladder(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_hole(&self) -> u8 {
-        (self.bits_60 >> 3) & 0b00000001
+    pub fn enable_navi_flg_hole(&self) -> bool {
+        self.bits_60 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_hole(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_enable_navi_flg_hole(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_door(&self) -> u8 {
-        (self.bits_60 >> 4) & 0b00000001
+    pub fn enable_navi_flg_door(&self) -> bool {
+        self.bits_60 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_door(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_enable_navi_flg_door(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_in_side_wall(&self) -> u8 {
-        (self.bits_60 >> 5) & 0b00000001
+    pub fn enable_navi_flg_in_side_wall(&self) -> bool {
+        self.bits_60 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_in_side_wall(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_enable_navi_flg_in_side_wall(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_underfloor(&self) -> u8 {
-        (self.bits_60 >> 6) & 0b00000001
+    pub fn enable_navi_flg_underfloor(&self) -> bool {
+        self.bits_60 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_underfloor(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_navi_flg_underfloor(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_edge_ordinary(&self) -> u8 {
-        (self.bits_60 >> 7) & 0b00000001
+    pub fn enable_navi_flg_edge_ordinary(&self) -> bool {
+        self.bits_60 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_edge_ordinary(&mut self, value: u8) {
-        self.bits_60 = (self.bits_60 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_enable_navi_flg_edge_ordinary(&mut self, value: bool) {
+        self.bits_60 = (self.bits_60 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_navi_flg_jump(&self) -> u8 {
-        (self.bits_61 >> 0) & 0b00000001
+    pub fn enable_navi_flg_jump(&self) -> bool {
+        self.bits_61 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_navi_flg_jump(&mut self, value: u8) {
-        self.bits_61 = (self.bits_61 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_navi_flg_jump(&mut self, value: bool) {
+        self.bits_61 = (self.bits_61 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
@@ -46182,143 +46182,143 @@ impl OBJECT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_save_break_state(&self) -> u8 {
-        (self.bits_9 >> 0) & 0b00000001
+    pub fn is_save_break_state(&self) -> bool {
+        self.bits_9 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_save_break_state(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_save_break_state(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_break_by_player_collide(&self) -> u8 {
-        (self.bits_9 >> 1) & 0b00000001
+    pub fn is_break_by_player_collide(&self) -> bool {
+        self.bits_9 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_break_by_player_collide(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_break_by_player_collide(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_anim_break(&self) -> u8 {
-        (self.bits_9 >> 2) & 0b00000001
+    pub fn is_anim_break(&self) -> bool {
+        self.bits_9 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_anim_break(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_anim_break(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_penetration_bullet_hit(&self) -> u8 {
-        (self.bits_9 >> 3) & 0b00000001
+    pub fn is_penetration_bullet_hit(&self) -> bool {
+        self.bits_9 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_penetration_bullet_hit(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_penetration_bullet_hit(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_attack_backlash(&self) -> u8 {
-        (self.bits_9 >> 5) & 0b00000001
+    pub fn is_attack_backlash(&self) -> bool {
+        self.bits_9 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_attack_backlash(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_attack_backlash(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_break_for_first_appear(&self) -> u8 {
-        (self.bits_9 >> 6) & 0b00000001
+    pub fn is_disable_break_for_first_appear(&self) -> bool {
+        self.bits_9 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_break_for_first_appear(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_disable_break_for_first_appear(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_ladder(&self) -> u8 {
-        (self.bits_9 >> 7) & 0b00000001
+    pub fn is_ladder(&self) -> bool {
+        self.bits_9 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_ladder(&mut self, value: u8) {
-        self.bits_9 = (self.bits_9 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_ladder(&mut self, value: bool) {
+        self.bits_9 = (self.bits_9 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_anim_pause_on_remo_play(&self) -> u8 {
-        (self.bits_a >> 0) & 0b00000001
+    pub fn is_anim_pause_on_remo_play(&self) -> bool {
+        self.bits_a & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_anim_pause_on_remo_play(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_anim_pause_on_remo_play(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_move_obj(&self) -> u8 {
-        (self.bits_a >> 2) & 0b00000001
+    pub fn is_move_obj(&self) -> bool {
+        self.bits_a & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_move_obj(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_move_obj(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_rope_bridge(&self) -> u8 {
-        (self.bits_a >> 3) & 0b00000001
+    pub fn is_rope_bridge(&self) -> bool {
+        self.bits_a & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_rope_bridge(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_rope_bridge(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_add_rigid_impulse_by_damage(&self) -> u8 {
-        (self.bits_a >> 4) & 0b00000001
+    pub fn is_add_rigid_impulse_by_damage(&self) -> bool {
+        self.bits_a & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_add_rigid_impulse_by_damage(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_add_rigid_impulse_by_damage(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_break_by_chr_ride(&self) -> u8 {
-        (self.bits_a >> 5) & 0b00000001
+    pub fn is_break_by_chr_ride(&self) -> bool {
+        self.bits_a & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_break_by_chr_ride(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_break_by_chr_ride(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_burn(&self) -> u8 {
-        (self.bits_a >> 6) & 0b00000001
+    pub fn is_burn(&self) -> bool {
+        self.bits_a & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_burn(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_burn(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_break_by_enemy_collide(&self) -> u8 {
-        (self.bits_a >> 7) & 0b00000001
+    pub fn is_break_by_enemy_collide(&self) -> bool {
+        self.bits_a & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_break_by_enemy_collide(&mut self, value: u8) {
-        self.bits_a = (self.bits_a & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_break_by_enemy_collide(&mut self, value: bool) {
+        self.bits_a = (self.bits_a & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn default_lod_param_id(&self) -> i8 {
@@ -46650,13 +46650,13 @@ impl OBJECT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_damage_cover(&self) -> u8 {
-        (self.bits_a8 >> 0) & 0b00000001
+    pub fn is_damage_cover(&self) -> bool {
+        self.bits_a8 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_damage_cover(&mut self, value: u8) {
-        self.bits_a8 = (self.bits_a8 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_damage_cover(&mut self, value: bool) {
+        self.bits_a8 = (self.bits_a8 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     pub fn is_user_physic_for_chr_collide(&self) -> u8 {
@@ -46772,33 +46772,33 @@ impl OBJECT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_enable_wall_jump(&self) -> u8 {
-        (self.bits_dc >> 0) & 0b00000001
+    pub fn is_enable_wall_jump(&self) -> bool {
+        self.bits_dc & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_enable_wall_jump(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_enable_wall_jump(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn does_stop_player_docked_move(&self) -> u8 {
-        (self.bits_dc >> 1) & 0b00000001
+    pub fn does_stop_player_docked_move(&self) -> bool {
+        self.bits_dc & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_does_stop_player_docked_move(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_does_stop_player_docked_move(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_env_map_capture(&self) -> u8 {
-        (self.bits_dc >> 2) & 0b00000001
+    pub fn is_disable_env_map_capture(&self) -> bool {
+        self.bits_dc & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_env_map_capture(&mut self, value: u8) {
-        self.bits_dc = (self.bits_dc & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_disable_env_map_capture(&mut self, value: bool) {
+        self.bits_dc = (self.bits_dc & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     pub fn auto_draw_group_pass_pixel(&self) -> i16 {
@@ -47412,23 +47412,23 @@ impl PLAY_REGION_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_yellow_costume_region(&self) -> u8 {
-        (self.bits_17 >> 0) & 0b00000001
+    pub fn b_yellow_costume_region(&self) -> bool {
+        self.bits_17 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_yellow_costume_region(&mut self, value: u8) {
-        self.bits_17 = (self.bits_17 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_b_yellow_costume_region(&mut self, value: bool) {
+        self.bits_17 = (self.bits_17 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_summon_pos_start_for_red(&self) -> u8 {
-        (self.bits_17 >> 1) & 0b00000001
+    pub fn is_summon_pos_start_for_red(&self) -> bool {
+        self.bits_17 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_summon_pos_start_for_red(&mut self, value: u8) {
-        self.bits_17 = (self.bits_17 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_summon_pos_start_for_red(&mut self, value: bool) {
+        self.bits_17 = (self.bits_17 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     pub fn warp_item_use_permit_bonfire_id_1(&self) -> i32 {
@@ -47512,33 +47512,33 @@ impl PLAY_REGION_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_bloodstain(&self) -> u8 {
-        (self.bits_40 >> 0) & 0b00000001
+    pub fn enable_bloodstain(&self) -> bool {
+        self.bits_40 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_bloodstain(&mut self, value: u8) {
-        self.bits_40 = (self.bits_40 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_enable_bloodstain(&mut self, value: bool) {
+        self.bits_40 = (self.bits_40 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_blood_message(&self) -> u8 {
-        (self.bits_40 >> 1) & 0b00000001
+    pub fn enable_blood_message(&self) -> bool {
+        self.bits_40 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_blood_message(&mut self, value: u8) {
-        self.bits_40 = (self.bits_40 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_enable_blood_message(&mut self, value: bool) {
+        self.bits_40 = (self.bits_40 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_ghost(&self) -> u8 {
-        (self.bits_40 >> 2) & 0b00000001
+    pub fn enable_ghost(&self) -> bool {
+        self.bits_40 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_ghost(&mut self, value: u8) {
-        self.bits_40 = (self.bits_40 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_enable_ghost(&mut self, value: bool) {
+        self.bits_40 = (self.bits_40 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     pub fn multi_play_has_host_limit_event_flag_id(&self) -> i32 {
@@ -51600,643 +51600,643 @@ impl SP_EFFECT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_self(&self) -> u8 {
-        (self.bits_167 >> 0) & 0b00000001
+    pub fn effect_target_self(&self) -> bool {
+        self.bits_167 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_self(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_effect_target_self(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_friend(&self) -> u8 {
-        (self.bits_167 >> 1) & 0b00000001
+    pub fn effect_target_friend(&self) -> bool {
+        self.bits_167 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_friend(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_effect_target_friend(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_enemy(&self) -> u8 {
-        (self.bits_167 >> 2) & 0b00000001
+    pub fn effect_target_enemy(&self) -> bool {
+        self.bits_167 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_enemy(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_effect_target_enemy(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_player(&self) -> u8 {
-        (self.bits_167 >> 3) & 0b00000001
+    pub fn effect_target_player(&self) -> bool {
+        self.bits_167 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_player(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_effect_target_player(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_ai(&self) -> u8 {
-        (self.bits_167 >> 4) & 0b00000001
+    pub fn effect_target_ai(&self) -> bool {
+        self.bits_167 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_ai(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_effect_target_ai(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_live(&self) -> u8 {
-        (self.bits_167 >> 5) & 0b00000001
+    pub fn effect_target_live(&self) -> bool {
+        self.bits_167 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_live(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_effect_target_live(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_ghost(&self) -> u8 {
-        (self.bits_167 >> 6) & 0b00000001
+    pub fn effect_target_ghost(&self) -> bool {
+        self.bits_167 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_ghost(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_effect_target_ghost(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_white_ghost(&self) -> u8 {
-        (self.bits_167 >> 7) & 0b00000001
+    pub fn effect_target_white_ghost(&self) -> bool {
+        self.bits_167 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_white_ghost(&mut self, value: u8) {
-        self.bits_167 = (self.bits_167 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_effect_target_white_ghost(&mut self, value: bool) {
+        self.bits_167 = (self.bits_167 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_black_ghost(&self) -> u8 {
-        (self.bits_168 >> 0) & 0b00000001
+    pub fn effect_target_black_ghost(&self) -> bool {
+        self.bits_168 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_black_ghost(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_effect_target_black_ghost(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_attacker(&self) -> u8 {
-        (self.bits_168 >> 1) & 0b00000001
+    pub fn effect_target_attacker(&self) -> bool {
+        self.bits_168 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_attacker(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_effect_target_attacker(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disp_icon_nonactive(&self) -> u8 {
-        (self.bits_168 >> 2) & 0b00000001
+    pub fn disp_icon_nonactive(&self) -> bool {
+        self.bits_168 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disp_icon_nonactive(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_disp_icon_nonactive(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_sp_effect_effect(&self) -> u8 {
-        (self.bits_168 >> 3) & 0b00000001
+    pub fn use_sp_effect_effect(&self) -> bool {
+        self.bits_168 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_sp_effect_effect(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_use_sp_effect_effect(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_adjust_magic_ablity(&self) -> u8 {
-        (self.bits_168 >> 4) & 0b00000001
+    pub fn b_adjust_magic_ablity(&self) -> bool {
+        self.bits_168 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_adjust_magic_ablity(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_b_adjust_magic_ablity(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_adjust_faith_ablity(&self) -> u8 {
-        (self.bits_168 >> 5) & 0b00000001
+    pub fn b_adjust_faith_ablity(&self) -> bool {
+        self.bits_168 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_adjust_faith_ablity(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_b_adjust_faith_ablity(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_game_clear_bonus(&self) -> u8 {
-        (self.bits_168 >> 6) & 0b00000001
+    pub fn b_game_clear_bonus(&self) -> bool {
+        self.bits_168 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_game_clear_bonus(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_b_game_clear_bonus(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn mag_param_change(&self) -> u8 {
-        (self.bits_168 >> 7) & 0b00000001
+    pub fn mag_param_change(&self) -> bool {
+        self.bits_168 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_mag_param_change(&mut self, value: u8) {
-        self.bits_168 = (self.bits_168 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_mag_param_change(&mut self, value: bool) {
+        self.bits_168 = (self.bits_168 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn miracle_param_change(&self) -> u8 {
-        (self.bits_169 >> 0) & 0b00000001
+    pub fn miracle_param_change(&self) -> bool {
+        self.bits_169 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_miracle_param_change(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_miracle_param_change(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn clear_soul(&self) -> u8 {
-        (self.bits_169 >> 1) & 0b00000001
+    pub fn clear_soul(&self) -> bool {
+        self.bits_169 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_clear_soul(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_clear_soul(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_sos(&self) -> u8 {
-        (self.bits_169 >> 2) & 0b00000001
+    pub fn request_sos(&self) -> bool {
+        self.bits_169 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_sos(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_request_sos(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_black_sos(&self) -> u8 {
-        (self.bits_169 >> 3) & 0b00000001
+    pub fn request_black_sos(&self) -> bool {
+        self.bits_169 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_black_sos(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_request_black_sos(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_force_join_black_sos(&self) -> u8 {
-        (self.bits_169 >> 4) & 0b00000001
+    pub fn request_force_join_black_sos(&self) -> bool {
+        self.bits_169 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_force_join_black_sos(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_request_force_join_black_sos(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_kick_session(&self) -> u8 {
-        (self.bits_169 >> 5) & 0b00000001
+    pub fn request_kick_session(&self) -> bool {
+        self.bits_169 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_kick_session(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_request_kick_session(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_leave_session(&self) -> u8 {
-        (self.bits_169 >> 6) & 0b00000001
+    pub fn request_leave_session(&self) -> bool {
+        self.bits_169 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_leave_session(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_request_leave_session(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_npc_inveda(&self) -> u8 {
-        (self.bits_169 >> 7) & 0b00000001
+    pub fn request_npc_inveda(&self) -> bool {
+        self.bits_169 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_npc_inveda(&mut self, value: u8) {
-        self.bits_169 = (self.bits_169 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_request_npc_inveda(&mut self, value: bool) {
+        self.bits_169 = (self.bits_169 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn no_dead(&self) -> u8 {
-        (self.bits_16a >> 0) & 0b00000001
+    pub fn no_dead(&self) -> bool {
+        self.bits_16a & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_no_dead(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_no_dead(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_curr_hp_independe_max_hp(&self) -> u8 {
-        (self.bits_16a >> 1) & 0b00000001
+    pub fn b_curr_hp_independe_max_hp(&self) -> bool {
+        self.bits_16a & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_curr_hp_independe_max_hp(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_b_curr_hp_independe_max_hp(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn corrosion_ignore(&self) -> u8 {
-        (self.bits_16a >> 2) & 0b00000001
+    pub fn corrosion_ignore(&self) -> bool {
+        self.bits_16a & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_corrosion_ignore(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_corrosion_ignore(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn sight_search_cut_ignore(&self) -> u8 {
-        (self.bits_16a >> 3) & 0b00000001
+    pub fn sight_search_cut_ignore(&self) -> bool {
+        self.bits_16a & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_sight_search_cut_ignore(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_sight_search_cut_ignore(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn hearing_search_cut_ignore(&self) -> u8 {
-        (self.bits_16a >> 4) & 0b00000001
+    pub fn hearing_search_cut_ignore(&self) -> bool {
+        self.bits_16a & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_hearing_search_cut_ignore(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_hearing_search_cut_ignore(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn anti_magic_ignore(&self) -> u8 {
-        (self.bits_16a >> 5) & 0b00000001
+    pub fn anti_magic_ignore(&self) -> bool {
+        self.bits_16a & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_anti_magic_ignore(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_anti_magic_ignore(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn fake_target_ignore(&self) -> u8 {
-        (self.bits_16a >> 6) & 0b00000001
+    pub fn fake_target_ignore(&self) -> bool {
+        self.bits_16a & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_fake_target_ignore(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_fake_target_ignore(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn fake_target_ignore_undead(&self) -> u8 {
-        (self.bits_16a >> 7) & 0b00000001
+    pub fn fake_target_ignore_undead(&self) -> bool {
+        self.bits_16a & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_fake_target_ignore_undead(&mut self, value: u8) {
-        self.bits_16a = (self.bits_16a & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_fake_target_ignore_undead(&mut self, value: bool) {
+        self.bits_16a = (self.bits_16a & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn fake_target_ignore_animal(&self) -> u8 {
-        (self.bits_16b >> 0) & 0b00000001
+    pub fn fake_target_ignore_animal(&self) -> bool {
+        self.bits_16b & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_fake_target_ignore_animal(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_fake_target_ignore_animal(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn grabity_ignore(&self) -> u8 {
-        (self.bits_16b >> 1) & 0b00000001
+    pub fn grabity_ignore(&self) -> bool {
+        self.bits_16b & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_grabity_ignore(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_grabity_ignore(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_poison(&self) -> u8 {
-        (self.bits_16b >> 2) & 0b00000001
+    pub fn disable_poison(&self) -> bool {
+        self.bits_16b & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_poison(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_disable_poison(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_disease(&self) -> u8 {
-        (self.bits_16b >> 3) & 0b00000001
+    pub fn disable_disease(&self) -> bool {
+        self.bits_16b & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_disease(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_disable_disease(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_blood(&self) -> u8 {
-        (self.bits_16b >> 4) & 0b00000001
+    pub fn disable_blood(&self) -> bool {
+        self.bits_16b & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_blood(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_disable_blood(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_curse(&self) -> u8 {
-        (self.bits_16b >> 5) & 0b00000001
+    pub fn disable_curse(&self) -> bool {
+        self.bits_16b & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_curse(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_disable_curse(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_charm(&self) -> u8 {
-        (self.bits_16b >> 6) & 0b00000001
+    pub fn enable_charm(&self) -> bool {
+        self.bits_16b & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_charm(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_enable_charm(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn enable_life_time(&self) -> u8 {
-        (self.bits_16b >> 7) & 0b00000001
+    pub fn enable_life_time(&self) -> bool {
+        self.bits_16b & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_enable_life_time(&mut self, value: u8) {
-        self.bits_16b = (self.bits_16b & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_enable_life_time(&mut self, value: bool) {
+        self.bits_16b = (self.bits_16b & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_pc_only_target(&self) -> u8 {
-        (self.bits_16c >> 0) & 0b00000001
+    pub fn effect_target_pc_only_target(&self) -> bool {
+        self.bits_16c & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_pc_only_target(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_effect_target_pc_only_target(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_fire_damage_cancel(&self) -> u8 {
-        (self.bits_16c >> 1) & 0b00000001
+    pub fn is_fire_damage_cancel(&self) -> bool {
+        self.bits_16c & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_fire_damage_cancel(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_fire_damage_cancel(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_extend_sp_effect_life(&self) -> u8 {
-        (self.bits_16c >> 2) & 0b00000001
+    pub fn is_extend_sp_effect_life(&self) -> bool {
+        self.bits_16c & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_extend_sp_effect_life(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_extend_sp_effect_life(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn request_leave_coliseum_session(&self) -> u8 {
-        (self.bits_16c >> 3) & 0b00000001
+    pub fn request_leave_coliseum_session(&self) -> bool {
+        self.bits_16c & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_request_leave_coliseum_session(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_request_leave_coliseum_session(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_adjust_strength_ablity(&self) -> u8 {
-        (self.bits_16c >> 4) & 0b00000001
+    pub fn b_adjust_strength_ablity(&self) -> bool {
+        self.bits_16c & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_adjust_strength_ablity(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_b_adjust_strength_ablity(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn b_adjust_agility_ablity(&self) -> u8 {
-        (self.bits_16c >> 5) & 0b00000001
+    pub fn b_adjust_agility_ablity(&self) -> bool {
+        self.bits_16c & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_b_adjust_agility_ablity(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_b_adjust_agility_ablity(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn charge_attack_param_change(&self) -> u8 {
-        (self.bits_16c >> 6) & 0b00000001
+    pub fn charge_attack_param_change(&self) -> bool {
+        self.bits_16c & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_charge_attack_param_change(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_charge_attack_param_change(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn throw_attack_param_change(&self) -> u8 {
-        (self.bits_16c >> 7) & 0b00000001
+    pub fn throw_attack_param_change(&self) -> bool {
+        self.bits_16c & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_throw_attack_param_change(&mut self, value: u8) {
-        self.bits_16c = (self.bits_16c & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_throw_attack_param_change(&mut self, value: bool) {
+        self.bits_16c = (self.bits_16c & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type0(&self) -> u8 {
-        (self.bits_16d >> 0) & 0b00000001
+    pub fn vow_type0(&self) -> bool {
+        self.bits_16d & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type0(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_vow_type0(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type1(&self) -> u8 {
-        (self.bits_16d >> 1) & 0b00000001
+    pub fn vow_type1(&self) -> bool {
+        self.bits_16d & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type1(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_vow_type1(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type2(&self) -> u8 {
-        (self.bits_16d >> 2) & 0b00000001
+    pub fn vow_type2(&self) -> bool {
+        self.bits_16d & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type2(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_vow_type2(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type3(&self) -> u8 {
-        (self.bits_16d >> 3) & 0b00000001
+    pub fn vow_type3(&self) -> bool {
+        self.bits_16d & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type3(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_vow_type3(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type4(&self) -> u8 {
-        (self.bits_16d >> 4) & 0b00000001
+    pub fn vow_type4(&self) -> bool {
+        self.bits_16d & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type4(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_vow_type4(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type5(&self) -> u8 {
-        (self.bits_16d >> 5) & 0b00000001
+    pub fn vow_type5(&self) -> bool {
+        self.bits_16d & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type5(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_vow_type5(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type6(&self) -> u8 {
-        (self.bits_16d >> 6) & 0b00000001
+    pub fn vow_type6(&self) -> bool {
+        self.bits_16d & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type6(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_vow_type6(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type7(&self) -> u8 {
-        (self.bits_16d >> 7) & 0b00000001
+    pub fn vow_type7(&self) -> bool {
+        self.bits_16d & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type7(&mut self, value: u8) {
-        self.bits_16d = (self.bits_16d & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_vow_type7(&mut self, value: bool) {
+        self.bits_16d = (self.bits_16d & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type8(&self) -> u8 {
-        (self.bits_16e >> 0) & 0b00000001
+    pub fn vow_type8(&self) -> bool {
+        self.bits_16e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type8(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_vow_type8(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type9(&self) -> u8 {
-        (self.bits_16e >> 1) & 0b00000001
+    pub fn vow_type9(&self) -> bool {
+        self.bits_16e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type9(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_vow_type9(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type10(&self) -> u8 {
-        (self.bits_16e >> 2) & 0b00000001
+    pub fn vow_type10(&self) -> bool {
+        self.bits_16e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type10(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_vow_type10(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type11(&self) -> u8 {
-        (self.bits_16e >> 3) & 0b00000001
+    pub fn vow_type11(&self) -> bool {
+        self.bits_16e & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type11(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_vow_type11(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type12(&self) -> u8 {
-        (self.bits_16e >> 4) & 0b00000001
+    pub fn vow_type12(&self) -> bool {
+        self.bits_16e & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type12(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_vow_type12(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type13(&self) -> u8 {
-        (self.bits_16e >> 5) & 0b00000001
+    pub fn vow_type13(&self) -> bool {
+        self.bits_16e & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type13(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_vow_type13(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type14(&self) -> u8 {
-        (self.bits_16e >> 6) & 0b00000001
+    pub fn vow_type14(&self) -> bool {
+        self.bits_16e & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type14(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_vow_type14(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn vow_type15(&self) -> u8 {
-        (self.bits_16e >> 7) & 0b00000001
+    pub fn vow_type15(&self) -> bool {
+        self.bits_16e & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_vow_type15(&mut self, value: u8) {
-        self.bits_16e = (self.bits_16e & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_vow_type15(&mut self, value: bool) {
+        self.bits_16e = (self.bits_16e & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn rep_atk_dmg_lv(&self) -> i8 {
@@ -52256,33 +52256,33 @@ impl SP_EFFECT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_oppose_target(&self) -> u8 {
-        (self.bits_174 >> 0) & 0b00000001
+    pub fn effect_target_oppose_target(&self) -> bool {
+        self.bits_174 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_oppose_target(&mut self, value: u8) {
-        self.bits_174 = (self.bits_174 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_effect_target_oppose_target(&mut self, value: bool) {
+        self.bits_174 = (self.bits_174 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_friendly_target(&self) -> u8 {
-        (self.bits_174 >> 1) & 0b00000001
+    pub fn effect_target_friendly_target(&self) -> bool {
+        self.bits_174 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_friendly_target(&mut self, value: u8) {
-        self.bits_174 = (self.bits_174 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_effect_target_friendly_target(&mut self, value: bool) {
+        self.bits_174 = (self.bits_174 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_self_target(&self) -> u8 {
-        (self.bits_174 >> 2) & 0b00000001
+    pub fn effect_target_self_target(&self) -> bool {
+        self.bits_174 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_self_target(&mut self, value: u8) {
-        self.bits_174 = (self.bits_174 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_effect_target_self_target(&mut self, value: bool) {
+        self.bits_174 = (self.bits_174 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     pub fn change_team_type(&self) -> i8 {
@@ -52918,83 +52918,83 @@ impl SP_EFFECT_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn disable_freeze(&self) -> u8 {
-        (self.bits_275 >> 0) & 0b00000001
+    pub fn disable_freeze(&self) -> bool {
+        self.bits_275 & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_disable_freeze(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_disable_freeze(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_status_ailment_atk_power_correct(&self) -> u8 {
-        (self.bits_275 >> 1) & 0b00000001
+    pub fn is_use_status_ailment_atk_power_correct(&self) -> bool {
+        self.bits_275 & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_status_ailment_atk_power_correct(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_use_status_ailment_atk_power_correct(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_atk_param_atk_power_correct(&self) -> u8 {
-        (self.bits_275 >> 2) & 0b00000001
+    pub fn is_use_atk_param_atk_power_correct(&self) -> bool {
+        self.bits_275 & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_atk_param_atk_power_correct(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_use_atk_param_atk_power_correct(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_target_pc_deceased(&self) -> u8 {
-        (self.bits_275 >> 3) & 0b00000001
+    pub fn effect_target_pc_deceased(&self) -> bool {
+        self.bits_275 & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_target_pc_deceased(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_effect_target_pc_deceased(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_contract_sp_effect_life(&self) -> u8 {
-        (self.bits_275 >> 4) & 0b00000001
+    pub fn is_contract_sp_effect_life(&self) -> bool {
+        self.bits_275 & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_contract_sp_effect_life(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_contract_sp_effect_life(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_wait_mode_delete(&self) -> u8 {
-        (self.bits_275 >> 5) & 0b00000001
+    pub fn is_wait_mode_delete(&self) -> bool {
+        self.bits_275 & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_wait_mode_delete(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_wait_mode_delete(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_ignore_no_damage(&self) -> u8 {
-        (self.bits_275 >> 6) & 0b00000001
+    pub fn is_ignore_no_damage(&self) -> bool {
+        self.bits_275 & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_ignore_no_damage(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_ignore_no_damage(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_disable_net_sync(&self) -> u8 {
-        (self.bits_275 >> 7) & 0b00000001
+    pub fn is_disable_net_sync(&self) -> bool {
+        self.bits_275 & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_disable_net_sync(&mut self, value: u8) {
-        self.bits_275 = (self.bits_275 & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_disable_net_sync(&mut self, value: bool) {
+        self.bits_275 = (self.bits_275 & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     pub fn eye_ang_upper_around(&self) -> u8 {
@@ -54272,153 +54272,153 @@ impl SP_EFFECT_VFX_PARAM_ST {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn exist_effect_for_large(&self) -> u8 {
-        (self.bits_2e >> 0) & 0b00000001
+    pub fn exist_effect_for_large(&self) -> bool {
+        self.bits_2e & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_exist_effect_for_large(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_exist_effect_for_large(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn exist_effect_for_soul(&self) -> u8 {
-        (self.bits_2e >> 1) & 0b00000001
+    pub fn exist_effect_for_soul(&self) -> bool {
+        self.bits_2e & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_exist_effect_for_soul(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_exist_effect_for_soul(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn effect_invisible_at_camouflage(&self) -> u8 {
-        (self.bits_2e >> 2) & 0b00000001
+    pub fn effect_invisible_at_camouflage(&self) -> bool {
+        self.bits_2e & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_effect_invisible_at_camouflage(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_effect_invisible_at_camouflage(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn use_camouflage(&self) -> u8 {
-        (self.bits_2e >> 3) & 0b00000001
+    pub fn use_camouflage(&self) -> bool {
+        self.bits_2e & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_use_camouflage(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_use_camouflage(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn invisible_at_friend_camouflage(&self) -> u8 {
-        (self.bits_2e >> 4) & 0b00000001
+    pub fn invisible_at_friend_camouflage(&self) -> bool {
+        self.bits_2e & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_invisible_at_friend_camouflage(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_invisible_at_friend_camouflage(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn add_map_area_block_offset(&self) -> u8 {
-        (self.bits_2e >> 5) & 0b00000001
+    pub fn add_map_area_block_offset(&self) -> bool {
+        self.bits_2e & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_add_map_area_block_offset(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_add_map_area_block_offset(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn half_camouflage(&self) -> u8 {
-        (self.bits_2e >> 6) & 0b00000001
+    pub fn half_camouflage(&self) -> bool {
+        self.bits_2e & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_half_camouflage(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_half_camouflage(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_full_body_transform_protector_id(&self) -> u8 {
-        (self.bits_2e >> 7) & 0b00000001
+    pub fn is_full_body_transform_protector_id(&self) -> bool {
+        self.bits_2e & (1 << 7) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_full_body_transform_protector_id(&mut self, value: u8) {
-        self.bits_2e = (self.bits_2e & !(0b00000001 << 7)) | ((value & 0b00000001) << 7);
+    pub fn set_is_full_body_transform_protector_id(&mut self, value: bool) {
+        self.bits_2e = (self.bits_2e & !(1 << 7)) | (u8::from(value) << 7);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_invisible_weapon(&self) -> u8 {
-        (self.bits_2f >> 0) & 0b00000001
+    pub fn is_invisible_weapon(&self) -> bool {
+        self.bits_2f & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_invisible_weapon(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_invisible_weapon(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_silence(&self) -> u8 {
-        (self.bits_2f >> 1) & 0b00000001
+    pub fn is_silence(&self) -> bool {
+        self.bits_2f & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_silence(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_silence(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_midst_fullbody(&self) -> u8 {
-        (self.bits_2f >> 2) & 0b00000001
+    pub fn is_midst_fullbody(&self) -> bool {
+        self.bits_2f & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_midst_fullbody(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_midst_fullbody(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_init_fullbody(&self) -> u8 {
-        (self.bits_2f >> 3) & 0b00000001
+    pub fn is_init_fullbody(&self) -> bool {
+        self.bits_2f & (1 << 3) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_init_fullbody(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 3)) | ((value & 0b00000001) << 3);
+    pub fn set_is_init_fullbody(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 3)) | (u8::from(value) << 3);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_finish_fullbody(&self) -> u8 {
-        (self.bits_2f >> 4) & 0b00000001
+    pub fn is_finish_fullbody(&self) -> bool {
+        self.bits_2f & (1 << 4) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_finish_fullbody(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 4)) | ((value & 0b00000001) << 4);
+    pub fn set_is_finish_fullbody(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 4)) | (u8::from(value) << 4);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_visible_dead_chr(&self) -> u8 {
-        (self.bits_2f >> 5) & 0b00000001
+    pub fn is_visible_dead_chr(&self) -> bool {
+        self.bits_2f & (1 << 5) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_visible_dead_chr(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 5)) | ((value & 0b00000001) << 5);
+    pub fn set_is_visible_dead_chr(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 5)) | (u8::from(value) << 5);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_use_offset_enchant_sfx_size(&self) -> u8 {
-        (self.bits_2f >> 6) & 0b00000001
+    pub fn is_use_offset_enchant_sfx_size(&self) -> bool {
+        self.bits_2f & (1 << 6) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_use_offset_enchant_sfx_size(&mut self, value: u8) {
-        self.bits_2f = (self.bits_2f & !(0b00000001 << 6)) | ((value & 0b00000001) << 6);
+    pub fn set_is_use_offset_enchant_sfx_size(&mut self, value: bool) {
+        self.bits_2f = (self.bits_2f & !(1 << 6)) | (u8::from(value) << 6);
     }
 
     pub fn decal_id1(&self) -> i32 {
@@ -59130,33 +59130,33 @@ impl THROW_INFO_BANK {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_turn_atker(&self) -> u8 {
-        (self.bits_3b >> 0) & 0b00000001
+    pub fn is_turn_atker(&self) -> bool {
+        self.bits_3b & (1 << 0) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_turn_atker(&mut self, value: u8) {
-        self.bits_3b = (self.bits_3b & !(0b00000001 << 0)) | ((value & 0b00000001) << 0);
+    pub fn set_is_turn_atker(&mut self, value: bool) {
+        self.bits_3b = (self.bits_3b & !(1 << 0)) | (u8::from(value) << 0);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_skip_wep_cate(&self) -> u8 {
-        (self.bits_3b >> 1) & 0b00000001
+    pub fn is_skip_wep_cate(&self) -> bool {
+        self.bits_3b & (1 << 1) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_skip_wep_cate(&mut self, value: u8) {
-        self.bits_3b = (self.bits_3b & !(0b00000001 << 1)) | ((value & 0b00000001) << 1);
+    pub fn set_is_skip_wep_cate(&mut self, value: bool) {
+        self.bits_3b = (self.bits_3b & !(1 << 1)) | (u8::from(value) << 1);
     }
 
     #[allow(clippy::identity_op)]
-    pub fn is_skip_sphere_cast(&self) -> u8 {
-        (self.bits_3b >> 2) & 0b00000001
+    pub fn is_skip_sphere_cast(&self) -> bool {
+        self.bits_3b & (1 << 2) != 0
     }
 
     #[allow(clippy::identity_op)]
-    pub fn set_is_skip_sphere_cast(&mut self, value: u8) {
-        self.bits_3b = (self.bits_3b & !(0b00000001 << 2)) | ((value & 0b00000001) << 2);
+    pub fn set_is_skip_sphere_cast(&mut self, value: bool) {
+        self.bits_3b = (self.bits_3b & !(1 << 2)) | (u8::from(value) << 2);
     }
 
     pub fn atk_sorb_dmy_id(&self) -> i16 {
