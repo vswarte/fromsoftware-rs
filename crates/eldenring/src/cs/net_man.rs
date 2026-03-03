@@ -1,11 +1,11 @@
 use std::ptr::NonNull;
 
 use crate::{
+    BasicVector, Vector,
     dltx::DLString,
     fd4::{FD4StepBase, FD4StepBaseInterface, FD4Time},
     position::BlockPosition,
     stl::DoublyLinkedList,
-    BasicVector, Vector,
 };
 use shared::{OwnedPtr, StepperStates};
 
