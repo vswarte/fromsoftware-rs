@@ -88,6 +88,7 @@ pub struct RvaBundle {
     pub param_res_cap_vmt: u32,
     pub player_ins_vmt: u32,
     pub register_task: u32,
+    pub solo_param_repository_vmt: u32,
     pub spawn_geometry: u32,
     pub world_area_chr_base_vmt: u32,
     pub world_area_chr_vmt: u32,

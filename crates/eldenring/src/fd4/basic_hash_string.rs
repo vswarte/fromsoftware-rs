@@ -3,17 +3,22 @@ use std::{cmp::PartialEq, fmt::Display};
 use crate::dltx::{DLString, DLStringKind, DLUTF16StringKind};
 
 #[repr(C)]
-/// Wraps a string to make it easier to use with hashmaps. Seemingly mostly used in the resource
-/// system but has some usage elsewhere too.
+/// A string wrapper that caches the associated hash code.
+///
+/// This is frequently used in the resource system, which is built on hash maps.
+/// It's occasioanlly used elsewhere as well.
 ///
 /// Source of name: RTTI
 pub struct FD4BasicHashString<T: DLStringKind = DLUTF16StringKind> {
     vftable: usize,
-    /// The contained string we're hashing for.
+
+    /// The inner string.
     pub inner: DLString<T>,
-    /// Hashed representation of the string field.
+
+    /// The string's hash code, or 0 if it hasn't yet been computed.
     pub hash: u32,
-    /// Indicates whether or not the hash field is populated.
+
+    /// Whether or not [Self::hash] has been computed.
     pub needs_hashing: bool,
     // _pad3d: [u8; 0x3],
 }
