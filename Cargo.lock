@@ -303,6 +303,7 @@ dependencies = [
  "encoding_rs",
  "fromsoftware-shared 0.12.0",
  "pelite",
+ "regex",
  "serde",
  "serde_derive",
  "thiserror 1.0.69",
@@ -319,7 +320,6 @@ dependencies = [
  "encoding_rs",
  "fromsoftware-shared 0.13.0",
  "pelite",
- "regex",
  "serde",
  "serde_derive",
  "thiserror 1.0.69",
@@ -1296,7 +1296,7 @@ dependencies = [
 
 [[package]]
 name = "tests"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "anyhow",
  "glob",
