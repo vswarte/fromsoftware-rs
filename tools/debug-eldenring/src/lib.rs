@@ -50,6 +50,7 @@ struct EldenRingDebugGui {
     // Game Data
     gaitem: StaticDebugger<CSGaitemImp>,
     game_data: StaticDebugger<GameDataMan>,
+    game_man: StaticDebugger<GameMan>,
 
     // Networking
     session: StaticDebugger<CSSessionManager>,
@@ -152,6 +153,7 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
             if let Some(item) = ui.tab_item("Game Data") {
                 gui.gaitem.render_debug(ui);
                 gui.game_data.render_debug(ui);
+                gui.game_man.render_debug(ui);
                 item.end();
             }
 
