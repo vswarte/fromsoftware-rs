@@ -88,8 +88,8 @@ impl DebugDisplay for GameMan {
 
             ui.header("Force Camera Direction", || {
                 ui.debug("Rotation Method", self.force_cam_rotation_method);
-                ui.display("Vertical Angle (rad)", self.force_cam_vertical_angle_rad);
-                ui.display(
+                ui.debug("Vertical Angle (rad)", self.force_cam_vertical_angle_rad);
+                ui.debug(
                     "Horizontal Angle (rad)",
                     self.force_cam_horizontal_angle_rad,
                 );
