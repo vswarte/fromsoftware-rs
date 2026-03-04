@@ -1,8 +1,9 @@
 use std::borrow::Cow;
 
-use shared::{FromStatic, InstanceResult, OwnedPtr, UnknownStruct};
+use pelite::pe64::Pe;
+use shared::{FromStatic, InstanceResult, OwnedPtr, Program, UnknownStruct};
 
-use super::PlayerGameData;
+use super::{ItemId, PlayerGameData};
 use crate::{Vector, fd4::FD4Time, rva};
 
 #[repr(C)]
@@ -74,6 +75,25 @@ pub struct GameDataMan {
     _unk15c: u32,
     _unk160: u16,
     _unk164: u32,
+}
+
+impl GameDataMan {
+    /// Removes `quantity` instances of `item` from the player's inventory.
+    pub fn remove_item(&mut self, item: ItemId, quantity: u32) {
+        // Because this function comes from the event manager, it takes the
+        // LuaEventMan as its first argument rather than GameDataMan. It instead
+        // accesses GameDataMan through the global variable. To avoid needing to
+        // mark this function unsafe, though, we make it a method on
+        // `GameDataMan` anyway. Since there's only one instance of this
+        // globally, if we have a mutable reference to it we know it's safe to
+        // run code that modifies it through the global variable.
+        let va = Program::current()
+            .rva_to_va(rva::get().lua_event_man_remove_item)
+            .unwrap();
+        let remove_item: extern "C" fn(usize, u32, u32, u32) = unsafe { std::mem::transmute(va) };
+
+        remove_item(0, (item.category() as u32) << 28, item.param_id(), quantity);
+    }
 }
 
 impl FromStatic for GameDataMan {

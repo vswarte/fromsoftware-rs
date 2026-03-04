@@ -14,6 +14,7 @@ pub struct RvaBundle {
     pub fd4res_cap_vmt: u32,
     pub game_data_man_ptr: u32,
     pub global_hinstance: u32,
+    pub lua_event_man_remove_item: u32,
     pub map_item_man_grant_item: u32,
     pub map_item_man_ptr: u32,
     pub param_res_cap_vmt: u32,
