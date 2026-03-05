@@ -1,4 +1,4 @@
-use std::{error::Error, ptr::NonNull, string::FromUtf8Error};
+use std::{ptr::NonNull, string::FromUtf8Error};
 
 use windows::core::PCWSTR;
 

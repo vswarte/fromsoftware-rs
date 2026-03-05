@@ -34,8 +34,8 @@ impl DebugDisplay for CSEventSosSignCtrl {
 
 impl DebugDisplay for CSEventSosSignData {
     fn render_debug(&self, ui: &Ui) {
-        ui.header("Sign Position", || self.sign_position.render_debug(ui));
-        ui.header("Sign Rotation", || self.sign_rotation.render_debug(ui));
+        ui.nested("Sign Position", self.sign_position);
+        ui.nested("Sign Rotation", self.sign_rotation);
         ui.debug("Multiplay type", self.multiplay_type);
         ui.display("Is Sign Active", self.is_sign_active);
         ui.display("Is Match Area", self.is_match_area_sign);
