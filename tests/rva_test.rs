@@ -104,7 +104,7 @@ fn all_rvas_generated() -> Result<()> {
             )
             .collect::<HashSet<_>>();
 
-        let mut crate_dir = PathBuf::from(profile_path.clone());
+        let mut crate_dir = profile_path.clone();
         crate_dir.pop();
         for rva_path in glob(&format!(
             "{}/src/rva/rva_*.rs",
