@@ -29,7 +29,6 @@ pub trait FD4TaskBaseVmt {
 pub struct FD4TaskBase {
     pub vftable: VPtr<dyn FD4TaskBaseVmt, Self>,
     unk8: u32,
-    _padc: u32,
 }
 
 impl FD4TaskBaseVmt for FD4TaskBase {
