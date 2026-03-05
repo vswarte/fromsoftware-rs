@@ -53,8 +53,7 @@ impl<T, A: crate::Allocator> List<T, A> {
     }
 
     pub fn push_back(&mut self, value: T) {
-        let alloc = self.allocator.allocate::<Node<T>>();
-        let new = NonNull::new(alloc).expect("allocator returned null");
+        let new = self.allocator.allocate::<Node<T>>().cast::<Node<T>>();
 
         let mut head = self.head;
         let mut tail = unsafe { head.as_ref() }.previous;
@@ -118,7 +117,7 @@ impl<T, A: crate::Allocator> List<T, A> {
             .expect("list length went below 0");
 
         let value = unsafe { (*node).value.assume_init_read() };
-        let _ = self.allocator.deallocate_raw(node as _);
+        self.allocator.deallocate_raw(node as _);
 
         value
     }
