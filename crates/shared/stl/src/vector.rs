@@ -67,7 +67,7 @@ impl<T, A: Sized> Deref for Vector<T, A> {
     fn deref(&self) -> &[T] {
         // Safety: both pointers belong to the same allocation
         let len = unsafe { self.last.offset_from(self.first) as usize };
-        // Safety: [first, last) is always a valid, initialised slice
+        // Safety: [first, last) is always a valid, initialized slice
         unsafe { std::slice::from_raw_parts(self.first, len) }
     }
 }
@@ -77,7 +77,7 @@ impl<T, A: Sized> DerefMut for Vector<T, A> {
     fn deref_mut(&mut self) -> &mut [T] {
         // Safety: both pointers belong to the same allocation
         let len = unsafe { self.last.offset_from(self.first) as usize };
-        // Safety: [first, last) is always a valid, initialised slice
+        // Safety: [first, last) is always a valid, initialized slice
         unsafe { std::slice::from_raw_parts_mut(self.first, len) }
     }
 }
