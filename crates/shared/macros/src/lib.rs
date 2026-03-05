@@ -321,8 +321,5 @@ pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream
 /// allow out of bounds access to the stepper array as well as cause unknown discriminants.
 #[proc_macro_derive(StepperStates)]
 pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
-    match stepper::stepper_states_helper(input) {
-        Ok(stream) => stream,
-        Err(err) => err.into_compile_error().into(),
-    }
+    stepper::stepper_states_helper(input).unwrap_or_else(|err| err.into_compile_error().into())
 }
