@@ -1,12 +1,14 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, mem::ManuallyDrop};
 
-#[derive(Clone, Copy, Debug)]
+use crate::{dlkr::DLAllocatorRef, dlut::DLReferencePointer, ez_state::EzStateSharedString};
+
+#[derive(Clone, Debug)]
 /// An argument or return value for an ESD event or query, represented as a safe enum. Use
 /// from()/into() to convert between this and the raw `EzStateRawValue` representation.
 pub enum EzStateValue {
     Float32(f32),
     Int32(i32),
-    Unk64(u64),
+    String(String),
 }
 
 impl From<EzStateValue> for f32 {
@@ -30,19 +32,18 @@ impl From<EzStateValue> for i32 {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy)]
 union EzStateRawValueValue {
     float32: f32,
     int32: i32,
-    unk64: u64,
+    string: ManuallyDrop<DLReferencePointer<EzStateSharedString>>,
 }
 
 #[repr(i32)]
-#[derive(Clone, Copy)]
+#[derive(PartialEq, Eq)]
 enum EzStateRawValueType {
     Float32 = 1,
     Int32 = 2,
-    Unk64 = 3,
+    String = 3,
 }
 
 impl Default for EzStateRawValue {
@@ -52,7 +53,6 @@ impl Default for EzStateRawValue {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy)]
 pub struct EzStateRawValue {
     value: EzStateRawValueValue,
     value_type: EzStateRawValueType,
@@ -60,19 +60,21 @@ pub struct EzStateRawValue {
 
 impl Debug for EzStateRawValue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        EzStateValue::from(*self).fmt(f)
+        EzStateValue::from(self).fmt(f)
     }
 }
 
-impl From<EzStateRawValue> for EzStateValue {
-    fn from(raw_value: EzStateRawValue) -> Self {
+impl From<&EzStateRawValue> for EzStateValue {
+    fn from(raw_value: &EzStateRawValue) -> Self {
         match raw_value.value_type {
             // Safety: can only be constucted by `From<EzStateValue>::from` which maintains the
             // invariant that `value` is the type specified by `value_type`, or the game, which
             // also holds this invariant.
             EzStateRawValueType::Float32 => Self::Float32(unsafe { raw_value.value.float32 }),
             EzStateRawValueType::Int32 => Self::Int32(unsafe { raw_value.value.int32 }),
-            EzStateRawValueType::Unk64 => Self::Unk64(unsafe { raw_value.value.unk64 }),
+            EzStateRawValueType::String => {
+                Self::String(unsafe { &raw_value.value.string }.to_str().unwrap())
+            }
         }
     }
 }
@@ -88,10 +90,25 @@ impl From<EzStateValue> for EzStateRawValue {
                 value: EzStateRawValueValue { int32 },
                 value_type: EzStateRawValueType::Int32,
             },
-            EzStateValue::Unk64(unk64) => EzStateRawValue {
-                value: EzStateRawValueValue { unk64 },
-                value_type: EzStateRawValueType::Unk64,
+            EzStateValue::String(string) => EzStateRawValue {
+                value: EzStateRawValueValue {
+                    string: ManuallyDrop::new({
+                        let allocator = DLAllocatorRef::runtime_heap_allocator();
+                        EzStateSharedString::from_str(allocator, &string).unwrap()
+                    }),
+                },
+                value_type: EzStateRawValueType::String,
             },
+        }
+    }
+}
+
+impl Drop for EzStateRawValue {
+    fn drop(&mut self) {
+        // Need to manually drop the union value if it's a string, which has a custom Drop
+        // implementation to do reference counting
+        if self.value_type == EzStateRawValueType::String {
+            unsafe { ManuallyDrop::drop(&mut self.value.string) };
         }
     }
 }
