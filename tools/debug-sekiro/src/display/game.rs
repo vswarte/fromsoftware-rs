@@ -3,10 +3,38 @@ use hudhook::imgui::Ui;
 use debug::UiExt;
 use sekiro::sprj::*;
 
-use super::{DebugDisplay, DisplayUiExt};
+use super::{DebugDisplay, DisplayUiExt, StatefulDebugDisplay};
 
-impl DebugDisplay for GameDataMan {
-    fn render_debug(&self, ui: &Ui) {
+#[derive(Default)]
+pub struct GameDataManDebugState {
+    item: String,
+}
+
+impl StatefulDebugDisplay for GameDataMan {
+    type State = GameDataManDebugState;
+
+    fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
+        {
+            let _tok = ui.push_item_width(150.);
+            ui.input_text("Item ID", &mut state.item).build();
+        }
+        ui.same_line();
+
+        let item_id = state
+            .item
+            .parse::<u32>()
+            .ok()
+            .and_then(|i| ItemId::try_from(i).ok());
+
+        ui.same_line_with_pos(ui.window_content_region_max()[0] - 140.);
+        {
+            let _tok = ui.begin_enabled(item_id.is_some());
+            if ui.button("Remove Item") {
+                let item_id = item_id.unwrap();
+                self.remove_item(item_id, 1);
+            }
+        }
+
         ui.nested("Options", &self.options_data);
         ui.nested("Local Player", self.local_player.as_ref());
     }

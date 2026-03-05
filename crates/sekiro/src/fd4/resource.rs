@@ -1,16 +1,14 @@
 use std::ptr::NonNull;
 
-use bitfield::bitfield;
-
+use super::FD4BasicHashString;
 use crate::dlkr::DLAllocatorRef;
-use crate::fd4::FD4BasicHashString;
 use shared::{Subclass, Superclass};
 
 /// Represents a managed resource. The data it represents is immediately handed
 /// over to other systems and the ResCap serves as a token for unloading things.
 ///
-/// For example, where the file associated with a gparam [FD4FileCap] is parsed,
-/// multiple [FD4ResCap]s are created from the [FD4FileCap], and the
+/// For example, where the file associated with a gparam `FD4FileCap` is parsed,
+/// multiple [FD4ResCap]s are created from the `FD4FileCap`, and the
 /// [FD4ResCap]s individually post the data they represent to associated
 /// sub-systems. For `GParamResCaps` that means posting the [FD4ResCap]s to the
 /// gparam blending system as well as a bunch of other GX structures.
@@ -33,25 +31,8 @@ pub struct FD4ResCap {
     /// element in the list.
     pub next_item: Option<NonNull<FD4ResCap>>,
 
-    /// Amount of references to this resource.
-    pub reference_count: u32,
-    unk5c: u32,
-    unk60: bool,
-    unk61: [u8; 7],
-    unk68: usize,
-    unk70: u8,
-    unk71: [u8; 7],
-}
-
-/// Manages a collection of ResCaps by wrapping a FD4ResCapHolder and defines some logic specific
-/// to T.
-///
-/// Source of name: RTTI
-#[repr(C)]
-#[derive(Superclass, Subclass)]
-pub struct FD4ResRep {
-    /// Repositories themselves inherit from ResCaps.
-    pub res_cap: FD4ResCap,
+    _unk58: u64,
+    _unk60: u64,
 }
 
 /// A hash table of [FD4ResCap]s indexed by [FD4ResCap::name].
@@ -86,9 +67,8 @@ where
     /// The allocator used to expand this if necessary while adding data.
     pub allocator: DLAllocatorRef,
 
-    /// A pointer to the repository that owns this holder.
-    pub owning_repository: Option<NonNull<FD4ResRep>>,
-    unk18: u32,
+    _unk10: u64,
+    _unk18: u32,
 
     /// The size of the array pointed to be [Self::buckets].
     pub bucket_count: u32,
@@ -205,48 +185,4 @@ where
             _marker: std::marker::PhantomData,
         }
     }
-}
-
-/// Represents file load state for this FD4FileCap.
-#[repr(u8)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum FD4FileCapState {
-    Initial = 0x0,
-    Queued = 0x1,
-    Processing = 0x2,
-    Unknown = 0x3,
-    Ready = 0x4,
-}
-
-bitfield! {
-    pub struct FD4FileCapUnk89Properties(u8);
-    impl Debug;
-
-    pub file_load_queue_index, set_file_load_queue_index: 4, 2;
-}
-
-bitfield! {
-    pub struct FD4FileCapUnk8AProperties(u16);
-    impl Debug;
-
-    pub use_secondary_repository, set_use_secondary_repository: 1;
-
-    u16;
-    pub mutex_index, set_mutex_index: 15, 3;
-}
-
-/// Represents a file resource be it on-disk or virtual. Responsible for parsing the files bytes
-/// and spawning ResCaps for the parsed resources.
-///
-/// Source of name: RTTI
-#[repr(C)]
-#[derive(Superclass, Subclass)]
-pub struct FD4FileCap {
-    pub res_cap: FD4ResCap,
-    load_process: usize,
-    load_task: usize,
-    pub load_state: FD4FileCapState,
-    unk89: FD4FileCapUnk89Properties,
-    unk8a: FD4FileCapUnk8AProperties,
-    unk8c: u32,
 }

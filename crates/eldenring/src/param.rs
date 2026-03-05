@@ -20,6 +20,9 @@ pub trait EquipParam {
         sort_group_id: u8,
         rarity: u8,
         sale_value: i32,
+        is_deposit: bool,
+        is_discard: bool,
+        is_drop: bool,
     }
 
     /// Returns this as an [EQUIP_PARAM_ACCESSORY_ST], if it is one.

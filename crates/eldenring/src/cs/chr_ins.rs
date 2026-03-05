@@ -186,9 +186,21 @@ pub struct ChrIns {
     pub tae_queued_use_item: OptionalItemId,
     unk164: u32,
     unk168: u32,
-    unk16c: u32,
-    unk170: u32,
-    unk174: u32,
+    /// Same as [`EQUIP_PARAM_GOODS_ST::cast_sfx_id`] with
+    /// additional state handling for multi-purpose items (eg multiplay items with on/off states)
+    ///
+    /// [`EQUIP_PARAM_GOODS_ST::cast_sfx_id`]: crate::param::EQUIP_PARAM_GOODS_ST::cast_sfx_id
+    pub item_use_cast_sfx_id: i32,
+    /// Same as [`EQUIP_PARAM_GOODS_ST::fire_sfx_id`] with
+    /// additional state handling for multi-purpose items (eg multiplay items with on/off states)
+    ///
+    /// [`EQUIP_PARAM_GOODS_ST::fire_sfx_id`]: crate::param::EQUIP_PARAM_GOODS_ST::fire_sfx_id
+    pub item_use_fire_sfx_id: i32,
+    /// Same as [`EQUIP_PARAM_GOODS_ST::effect_sfx_id`] with
+    /// additional state handling for multi-purpose items (eg multiplay items with on/off states)
+    ///
+    /// [`EQUIP_PARAM_GOODS_ST::effect_sfx_id`]: crate::param::EQUIP_PARAM_GOODS_ST::effect_sfx_id
+    pub item_use_effect_sfx_id: i32,
     /// Container for the speffects applied to this character.
     pub special_effect: OwnedPtr<SpecialEffect>,
     /// Refers to what field ins you were last hit by.

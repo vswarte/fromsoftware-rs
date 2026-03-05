@@ -19,13 +19,6 @@ bitflags.workspace = true
 encoding_rs.workspace = true
 cxx-stl.workspace = true
 
-[build-dependencies]
-serde_derive = "1"
-
-[build-dependencies.serde]
-version = "1"
-features = ["derive"]
-
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
 targets = ["x86_64-pc-windows-msvc"]

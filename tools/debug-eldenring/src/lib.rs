@@ -50,12 +50,13 @@ struct EldenRingDebugGui {
     // Game Data
     gaitem: StaticDebugger<CSGaitemImp>,
     game_data: StaticDebugger<GameDataMan>,
+    game_man: StaticDebugger<GameMan>,
 
     // Networking
     session: StaticDebugger<CSSessionManager>,
     net: StaticDebugger<CSNetMan>,
 
-    // Resource
+    // Resources
     task_group: StaticDebugger<CSTaskGroup>,
     task: StaticDebugger<CSTaskImp>,
     param_repository: StaticDebugger<FD4ParamRepository>,
@@ -152,6 +153,7 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
             if let Some(item) = ui.tab_item("Game Data") {
                 gui.gaitem.render_debug(ui);
                 gui.game_data.render_debug(ui);
+                gui.game_man.render_debug(ui);
                 item.end();
             }
 
@@ -161,7 +163,7 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
                 item.end();
             }
 
-            if let Some(item) = ui.tab_item("Resource") {
+            if let Some(item) = ui.tab_item("Resources") {
                 gui.task_group.render_debug(ui);
                 gui.task.render_debug(ui);
                 gui.param_repository.render_debug(ui);

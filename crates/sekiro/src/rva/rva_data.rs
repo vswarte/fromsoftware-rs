@@ -11,8 +11,14 @@ use super::RvaBundle;
 pub const RVAS: RvaBundle = RvaBundle {
     dlbuffered_input_stream_vmt: 0x2dd84d0,
     dlpseudo_async_input_stream_vmt: 0x2de30d8,
+    fd4param_res_cap_vmt: 0x3280eb0,
+    fd4res_cap_vmt: 0x3284610,
     game_data_man_ptr: 0x3d5aac0,
     global_hinstance: 0x3e9edb8,
+    lua_event_man_remove_item: 0x67b230,
     map_item_man_grant_item: 0x91c970,
     map_item_man_ptr: 0x3d6cdc0,
+    param_res_cap_vmt: 0x2b976b8,
+    register_task: 0x11df640,
+    solo_param_repository_vmt: 0x2b9ab48,
 };

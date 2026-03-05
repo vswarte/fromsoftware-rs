@@ -78,6 +78,8 @@ impl DebugDisplay for PlayerInfo {
             "Sen: {} (total {})",
             self.sen, self.total_sen_earned
         ));
+        ui.debug("Max Spirit Emblems", self.max_spirit_emblems);
+        ui.debug("Max Resurrections", self.max_resurrections);
 
         ui.header("Possibly Unused", || {
             ui.text(format!("MP: {}/{}", self.mp, self.max_mp));
