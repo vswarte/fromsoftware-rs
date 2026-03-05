@@ -50,6 +50,7 @@ encoding_rs = "0.8.35"
 libhotpatch = "1.1.0"
 cxx-stl = "4.4"
 toml = "1.0.3"
+num_enum = "0.7"
 
 [workspace.dependencies.serde]
 version = "1"

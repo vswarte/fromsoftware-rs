@@ -549,7 +549,12 @@ pub struct ChrCtrl {
     hover_warp_ctrl: usize,
     ai_jump_move_ctrl: usize,
     chr_model_pos_easing: usize,
-    unke8: [u8; 0x8],
+    unke8: u8,
+    /// Disables side to side movement and rotation of the character,
+    /// allowing only forward movement.
+    /// Set when character is on the ladder.
+    pub disable_move: bool,
+    unkea: [u8; 0x6],
     pub flags: ChrCtrlFlags,
     pub flags_copy: ChrCtrlFlags,
     unkf8: u32,
