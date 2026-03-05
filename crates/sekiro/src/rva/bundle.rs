@@ -10,6 +10,8 @@
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
+    pub dlbuffered_input_stream_vmt: u32,
+    pub dlpseudo_async_input_stream_vmt: u32,
     pub fd4param_res_cap_vmt: u32,
     pub fd4res_cap_vmt: u32,
     pub game_data_man_ptr: u32,

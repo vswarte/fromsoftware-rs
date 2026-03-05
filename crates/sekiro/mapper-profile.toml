@@ -1,4 +1,12 @@
 [[vmts]]
+class = "DLIO::DLBufferedInputStream"
+vftable = "dlbuffered_input_stream_vmt"
+
+[[vmts]]
+class = "DLIO::DLPseudoAsyncInputStream"
+vftable = "dlpseudo_async_input_stream_vmt"
+
+[[vmts]]
 class = "NS_SPRJ::ParamResCap"
 vftable = "param_res_cap_vmt"
 

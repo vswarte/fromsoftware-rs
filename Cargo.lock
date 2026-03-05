@@ -451,6 +451,7 @@ name = "eldenring"
 version = "0.13.0"
 dependencies = [
  "bitfield",
+ "bitflags 2.11.0",
  "cxx-stl 4.4.0",
  "encoding_rs",
  "fromsoftware-shared 0.13.0",
@@ -1162,6 +1163,7 @@ name = "sekiro"
 version = "0.13.0"
 dependencies = [
  "bitfield",
+ "bitflags 2.11.0",
  "cxx-stl 4.4.0",
  "encoding_rs",
  "fromsoftware-shared 0.13.0",

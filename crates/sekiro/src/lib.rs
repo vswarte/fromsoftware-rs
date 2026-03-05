@@ -1,5 +1,6 @@
 extern crate fromsoftware_shared as shared;
 
+pub mod dlio;
 pub mod dlkr;
 pub mod dltx;
 pub mod fd4;
