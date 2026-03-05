@@ -721,7 +721,7 @@ impl<'a, V> Iterator for RbTreeIter<'a, V> {
         }
         debug_assert!(!self.current.is_nil(), "iterator walked onto sentinel");
 
-        // SAFETY: `current`` is a valid non-nil node with an initialized value.
+        // SAFETY: `current` is a valid non-nil node with an initialized value.
         // The lifetime 'a ties this iterator to the tree borrow,
         // so the tree cannot be mutated or dropped while
         // this iterator is alive
