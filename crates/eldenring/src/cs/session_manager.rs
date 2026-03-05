@@ -34,14 +34,38 @@ pub enum LobbyState {
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ProtocolState {
-    Inactive = 0x0,
-    Unk1 = 0x1,
-    AwaitingWorldData = 0x2,
-    Unk3 = 0x3,
-    Unk4 = 0x4,
-    Unk5 = 0x5,
-    InWorld = 0x6,
-    Unk7 = 0x7,
+    /// セッションに参加してない
+    ///
+    /// Not joined in session
+    None = 0x0,
+    /// マルチプレイ開始チェック
+    ///
+    /// Check to start multiplayer
+    JoinCheck = 0x1,
+    /// 初期同期データ受信待ち
+    ///
+    /// Wait to receive initial synchronization data
+    WaitInitData = 0x2,
+    /// 召喚メッセージ
+    ///
+    /// Wait for summon message display to complete
+    WaitReloadWait = 0x3,
+    /// 再ロード開始～キャラ初期化まで待ち
+    ///
+    /// Wait from reload start to character initialization
+    WaitReload = 0x4,
+    /// キャラ初期化～再ロード完了まで待ち
+    ///
+    /// Wait from character initialization to reload completion
+    WaitReload2 = 0x5,
+    /// マルチプレイ中
+    ///
+    /// In multiplayer
+    Ingame = 0x6,
+    /// マルチ継続しつつマップ再入場中
+    ///
+    /// Re-entering map while continuing multiplayer
+    WaitReentryToMap = 0x7,
 }
 
 impl ProtocolState {
@@ -49,14 +73,14 @@ impl ProtocolState {
     #[allow(unused)]
     fn should_handle_some_packets(&self) -> bool {
         match self {
-            ProtocolState::Inactive => false,
-            ProtocolState::Unk1 => false,
-            ProtocolState::AwaitingWorldData => false,
-            ProtocolState::Unk3 => false,
-            ProtocolState::Unk4 => true,
-            ProtocolState::Unk5 => true,
-            ProtocolState::InWorld => false,
-            ProtocolState::Unk7 => true,
+            ProtocolState::None => false,
+            ProtocolState::JoinCheck => false,
+            ProtocolState::WaitInitData => false,
+            ProtocolState::WaitReloadWait => false,
+            ProtocolState::WaitReload => true,
+            ProtocolState::WaitReload2 => true,
+            ProtocolState::Ingame => false,
+            ProtocolState::WaitReentryToMap => true,
         }
     }
 }
