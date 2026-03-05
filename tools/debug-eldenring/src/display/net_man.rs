@@ -44,8 +44,7 @@ impl DebugDisplay for BreakInManager {
 impl DebugDisplay for BreakInTarget {
     fn render_debug(&self, ui: &Ui) {
         ui.display("Player ID", self.player_id);
-        let steam_id_str =
-            String::from_utf8(self.external_id.items().to_vec()).unwrap_or("Invalid".to_owned());
+        let steam_id_str = self.external_id_str().unwrap_or("Invalid".to_owned());
         ui.debug_copiable("Steam ID", steam_id_str);
         ui.display("Play Region", self.play_region)
     }
