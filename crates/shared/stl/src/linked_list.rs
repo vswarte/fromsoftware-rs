@@ -74,7 +74,7 @@ impl<T, A: crate::Allocator> List<T, A> {
         }
 
         // Safety: the user is probably more likely to run out of RAM before this :kekw:.
-        self.length.checked_add(1).expect("list length overflow");
+        self.length = self.length.checked_add(1).expect("list length overflow");
     }
 
     // TODO: insert that adds node after another
@@ -105,14 +105,17 @@ impl<T, A: crate::Allocator> List<T, A> {
 
         let node = node.as_ptr();
         let prev = unsafe { (*node).previous };
-        let next = unsafe { (*node).previous };
+        let next = unsafe { (*node).next };
 
         unsafe {
             (*prev.as_ptr()).next = next;
             (*next.as_ptr()).previous = prev;
         }
 
-        self.length.checked_sub(1).expect("list length went below 0");
+        self.length = self
+            .length
+            .checked_sub(1)
+            .expect("list length went below 0");
 
         let value = unsafe { (*node).value.assume_init_read() };
         let _ = self.allocator.deallocate_raw(node as _);
