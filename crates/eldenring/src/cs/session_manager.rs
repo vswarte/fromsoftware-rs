@@ -68,23 +68,6 @@ pub enum ProtocolState {
     WaitReentryToMap = 0x7,
 }
 
-impl ProtocolState {
-    /// Seems to be checked for packet 39,
-    #[allow(unused)]
-    fn should_handle_some_packets(&self) -> bool {
-        match self {
-            ProtocolState::None => false,
-            ProtocolState::JoinCheck => false,
-            ProtocolState::WaitInitData => false,
-            ProtocolState::WaitReloadWait => false,
-            ProtocolState::WaitReload => true,
-            ProtocolState::WaitReload2 => true,
-            ProtocolState::Ingame => false,
-            ProtocolState::WaitReentryToMap => true,
-        }
-    }
-}
-
 #[repr(C)]
 #[shared::singleton("CSSessionManager")]
 pub struct CSSessionManager {
