@@ -1,4 +1,4 @@
-use std::ptr::NonNull;
+use std::{error::Error, ptr::NonNull, string::FromUtf8Error};
 
 use windows::core::PCWSTR;
 
@@ -140,6 +140,12 @@ pub struct BreakInTarget {
     pub player_id: u32,
     pub external_id: BasicVector<u8>,
     pub play_region: u32,
+}
+
+impl BreakInTarget {
+    pub fn external_id_str(&self) -> Result<String, FromUtf8Error> {
+        String::from_utf8(self.external_id.items().to_vec())
+    }
 }
 
 #[repr(C)]

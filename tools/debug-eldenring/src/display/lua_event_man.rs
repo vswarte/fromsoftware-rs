@@ -54,9 +54,7 @@ impl DebugDisplay for CSLuaEventObserver {
                     } else {
                         format!("Condition {} [{}]", cond.condition_id, class_name)
                     };
-                ui.header(&header_text, || {
-                    cond.render_debug(ui);
-                });
+                ui.nested(header_text, cond);
             },
         );
 
@@ -64,9 +62,7 @@ impl DebugDisplay for CSLuaEventObserver {
             "Bonfire observees",
             self.bonfire_event_observees.iter(),
             |ui, _i, cond| {
-                ui.header(format!("Bonfire condition {}", cond.condition_id), || {
-                    cond.render_debug(ui);
-                });
+                ui.nested(format!("Bonfire condition {}", cond.condition_id), cond);
             },
         );
     }
@@ -92,9 +88,7 @@ impl DebugDisplay for CSLuaEventMsgMap {
             "EventMsgExec entries",
             self.event_msg_exec_list.iter(),
             |ui, _i, entry| {
-                ui.header(format!("Group {}", entry.event_group), || {
-                    entry.render_debug(ui);
-                });
+                ui.nested(format!("Group {}", entry.event_group), entry);
             },
         );
 
@@ -102,9 +96,7 @@ impl DebugDisplay for CSLuaEventMsgMap {
             "Deferred EventMsgExec entries",
             self.deferred_event_exec_list.iter(),
             |ui, _i, entry| {
-                ui.header(format!("Group {}", entry.event_group), || {
-                    entry.render_debug(ui);
-                });
+                ui.nested(format!("Group {}", entry.event_group), entry);
             },
         );
     }
@@ -129,16 +121,12 @@ impl DebugDisplay for EventMsgExecListEntry {
             .lua_event_msg_exec
             .as_subclass::<CSLuaEventMsgExec_Func>()
         {
-            ui.header("Executor: Function", || {
-                subclass.render_debug(ui);
-            });
+            ui.nested("Executor: Function", subclass);
         } else if let Some(subclass) = self
             .lua_event_msg_exec
             .as_subclass::<CSLuaEventMsgExec_String>()
         {
-            ui.header("Executor: Script string", || {
-                subclass.render_debug(ui);
-            });
+            ui.nested("Executor: Script string", subclass);
         } else {
             ui.text("Executor (unknown type)");
         }
