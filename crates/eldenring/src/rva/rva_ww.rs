@@ -89,6 +89,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     player_ins_vmt: 0x2a7cb40,
     register_task: 0xeb2000,
     runtime_heap_allocator: 0x4842d40,
+    solo_param_repository_vmt: 0x2bb53a8,
     spawn_geometry: 0x6a5150,
     world_area_chr_base_vmt: 0x2a4c1a0,
     world_area_chr_vmt: 0x2a4c0f0,

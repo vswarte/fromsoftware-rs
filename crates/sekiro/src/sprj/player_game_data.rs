@@ -195,9 +195,7 @@ pub struct PlayerInfo {
     pub region: u8,
     pub total_soul_over_for_old: bool,
     pub total_soul_over: bool,
-    _unk135: u8,
-    _unk136: u8,
-    _unk137: u8,
+    pub max_spirit_emblems: u16,
     _unk138: u32,
     _unk13c: [u8; 0x8],
     pub skill_level: i32,
@@ -209,7 +207,7 @@ pub struct PlayerInfo {
     pub skill_points: i32,
 
     _unk154: u32,
-    _unk158: u64,
+    pub max_resurrections: u32,
     _unk160: u64,
     _unk168: u8,
     _unk169: u8,
@@ -235,6 +233,17 @@ pub struct PlayerInfo {
     _unk17d: u8,
     _unk17e: u8,
     _unk17f: u8,
+}
+
+impl PlayerInfo {
+    /// Whether this is a default player info object, as opposed to one
+    /// representing the actual in-game player.
+    ///
+    /// Vanilla Sekiro only uses a default player to hold the main menu
+    /// settings.
+    pub fn is_default(&self) -> bool {
+        self.player_number == -1
+    }
 }
 
 #[repr(C)]

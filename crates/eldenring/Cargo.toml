@@ -20,7 +20,6 @@ cxx-stl.workspace = true
 
 [build-dependencies]
 serde_derive = "1"
-regex = "1"
 
 [build-dependencies.serde]
 version = "1"

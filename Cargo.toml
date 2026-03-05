@@ -17,6 +17,7 @@ members = [
     "examples/invoke-esd",
     "examples/spawn-asset",
     "examples/present-action-button",
+    "tests",
 ]
 
 [workspace.package]
@@ -47,6 +48,11 @@ bitfield = "0.19.2"
 encoding_rs = "0.8.35"
 libhotpatch = "1.1.0"
 cxx-stl = "4.4"
+toml = "1.0.3"
+
+[workspace.dependencies.serde]
+version = "1"
+features = ["derive"]
 
 [workspace.dependencies.windows]
 version = "0.54"
