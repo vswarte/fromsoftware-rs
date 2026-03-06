@@ -72,9 +72,11 @@ impl From<&EzStateRawValue> for EzStateValue {
             // also holds this invariant.
             EzStateRawValueType::Float32 => Self::Float32(unsafe { raw_value.value.float32 }),
             EzStateRawValueType::Int32 => Self::Int32(unsafe { raw_value.value.int32 }),
-            EzStateRawValueType::String => {
-                Self::String(unsafe { &raw_value.value.string }.to_str().unwrap())
-            }
+            EzStateRawValueType::String => Self::String(
+                unsafe { &raw_value.value.string }
+                    .to_string()
+                    .unwrap_or("INVALID STRING".to_owned()),
+            ),
         }
     }
 }

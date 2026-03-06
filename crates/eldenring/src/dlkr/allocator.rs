@@ -4,6 +4,7 @@ use std::{
     ptr::NonNull,
 };
 
+use fromsoftware_shared_stl::Allocator;
 use pelite::pe64::Pe;
 use shared::Program;
 use vtable_rs::VPtr;
@@ -100,13 +101,35 @@ impl DLAllocatorRef {
 unsafe impl GlobalAlloc for DLAllocatorRef {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let allocator = self.0.as_ptr();
-        unsafe { ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8 }
+        unsafe {
+            ((*allocator).vftable.allocate_aligned)(&mut *allocator, layout.size(), layout.align())
+                as *mut u8
+        }
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         let allocator = self.0.as_ptr();
         unsafe {
             ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
+        }
+    }
+}
+
+impl Allocator for DLAllocatorRef {
+    fn allocate_raw(&mut self, size: usize, allign: usize) -> NonNull<std::ffi::c_void> {
+        let allocator = self.0.as_ptr();
+        let allocation =
+            unsafe { ((*allocator).vftable.allocate_aligned)(&mut *allocator, size, allign) };
+        if allocation.is_null() {
+            panic!("DLAllocator returned null pointer")
+        }
+        unsafe { NonNull::new_unchecked(allocation as _) }
+    }
+
+    fn deallocate_raw(&mut self, ptr: *mut std::ffi::c_void) {
+        let allocator = self.0.as_ptr();
+        unsafe {
+            ((*allocator).vftable.deallocate)(&mut *allocator, ptr as _);
         }
     }
 }
