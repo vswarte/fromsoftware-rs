@@ -4,7 +4,7 @@ use vtable_rs::VPtr;
 
 use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::position::HavokPosition;
-use crate::{ChainingTree, DoublyLinkedList, Tree};
+use crate::{ChainingMap, DoublyLinkedList, Tree};
 use crate::{Vector, cs::ChrIns};
 use shared::{F32Vector4, OwnedPtr, Subclass, Superclass};
 
@@ -481,7 +481,7 @@ pub struct WorldGridAreaChr {
 pub struct SummonBuddyManager {
     /// Maps SpEffect IDs to BuddyParam IDs.
     /// Because multiple BuddyParams can share the same SpEffect, this is a chaining tree.
-    pub trigger_speffect_to_buddy_map: ChainingTree<i32, i32>,
+    pub trigger_speffect_to_buddy_map: ChainingMap<i32, i32>,
     /// ID of SpEffect used to request a summon.
     /// Written by TAE goods consume.
     pub request_summon_speffect_id: i32,

@@ -259,12 +259,12 @@ pub struct TreeNode<T> {
 }
 
 #[repr(C)]
-pub struct ChainingTree<K, V> {
+pub struct ChainingMap<K, V> {
     base: Tree<Pair<K, NonNull<ChainingMapBucketEntry<V>>>>,
     buckets: OwnedPtr<ArrayWithHeader<ChainingMapBucketEntry<V>>>,
 }
 
-impl<K, V> ChainingTree<K, V> {
+impl<K, V> ChainingMap<K, V> {
     pub fn len(&self) -> usize {
         self.base.len()
     }
