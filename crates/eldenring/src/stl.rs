@@ -259,12 +259,12 @@ pub struct TreeNode<T> {
 }
 
 #[repr(C)]
-pub struct ChainingTree<K, V> {
-    base: Tree<Pair<K, ChainingMapBucketEntry<V>>>,
+pub struct ChainingMap<K: Ord, V> {
+    base: DLMap<K, NonNull<ChainingMapBucketEntry<V>>>,
     buckets: OwnedPtr<ArrayWithHeader<ChainingMapBucketEntry<V>>>,
 }
 
-impl<K, V> ChainingTree<K, V> {
+impl<K: Ord, V> ChainingMap<K, V> {
     pub fn len(&self) -> usize {
         self.base.len()
     }
@@ -277,28 +277,42 @@ impl<K, V> ChainingTree<K, V> {
     /// Returns an iterator that yields `(&K, &V)` for each entry.
     pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
         self.base.iter().flat_map(|pair| {
-            let key = &pair.key;
-            pair.value.iter().map(move |value| (key, value))
+            let key = &pair.first;
+            let bucket = unsafe { pair.second.as_ref() };
+            bucket.iter().map(move |value| (key, value))
         })
-    }
-
-    pub fn buckets(&self) -> &[ChainingMapBucketEntry<V>] {
-        unsafe { self.buckets.as_slice() }
     }
 
     /// Iterates over all key-value pairs mutably, including all values in collision chains.
     /// Returns an iterator that yields `(&K, &mut V)` for each entry.
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> {
-        self.base.iter().flat_map(|pair| {
-            let key = &pair.key;
-            pair.value.iter_mut().map(move |value| (key, value))
+        self.base.iter_mut().flat_map(|pair| {
+            let key = &pair.first;
+            let bucket = unsafe { pair.second.as_mut() };
+            bucket.iter_mut().map(move |value| (key, value))
         })
     }
 
     /// Iterates over keys and their collision chain heads.
     /// Use this if you need to iterate collision chains separately.
     pub fn iter_chains(&self) -> impl Iterator<Item = (&K, &ChainingMapBucketEntry<V>)> {
-        self.base.iter().map(|pair| (&pair.key, &pair.value))
+        self.base
+            .iter()
+            .map(|pair| (&pair.first, unsafe { pair.second.as_ref() }))
+    }
+
+    /// Iterates over keys and their collision chain heads mutably.
+    /// Use this if you need to iterate collision chains separately.
+    pub fn iter_chains_mut(
+        &mut self,
+    ) -> impl Iterator<Item = (&K, &mut ChainingMapBucketEntry<V>)> {
+        self.base
+            .iter_mut()
+            .map(|pair| (&pair.first, unsafe { pair.second.as_mut() }))
+    }
+
+    pub fn buckets(&self) -> &[ChainingMapBucketEntry<V>] {
+        unsafe { self.buckets.as_slice() }
     }
 }
 
