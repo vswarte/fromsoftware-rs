@@ -260,7 +260,7 @@ pub struct TreeNode<T> {
 
 #[repr(C)]
 pub struct ChainingTree<K, V> {
-    base: Tree<Pair<K, ChainingMapBucketEntry<V>>>,
+    base: Tree<Pair<K, NonNull<ChainingMapBucketEntry<V>>>>,
     buckets: OwnedPtr<ArrayWithHeader<ChainingMapBucketEntry<V>>>,
 }
 
@@ -278,7 +278,7 @@ impl<K, V> ChainingTree<K, V> {
     pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
         self.base.iter().flat_map(|pair| {
             let key = &pair.key;
-            pair.value.iter().map(move |value| (key, value))
+            unsafe { pair.value.as_ref().iter().map(move |value| (key, value)) }
         })
     }
 
@@ -291,14 +291,21 @@ impl<K, V> ChainingTree<K, V> {
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> {
         self.base.iter().flat_map(|pair| {
             let key = &pair.key;
-            pair.value.iter_mut().map(move |value| (key, value))
+            unsafe {
+                pair.value
+                    .as_mut()
+                    .iter_mut()
+                    .map(move |value| (key, value))
+            }
         })
     }
 
     /// Iterates over keys and their collision chain heads.
     /// Use this if you need to iterate collision chains separately.
     pub fn iter_chains(&self) -> impl Iterator<Item = (&K, &ChainingMapBucketEntry<V>)> {
-        self.base.iter().map(|pair| (&pair.key, &pair.value))
+        self.base
+            .iter()
+            .map(|pair| (&pair.key, unsafe { pair.value.as_ref() }))
     }
 }
 
