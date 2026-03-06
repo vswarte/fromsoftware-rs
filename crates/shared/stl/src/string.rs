@@ -7,7 +7,7 @@ use std::ptr::NonNull;
 
 /// MSVC's `std::basic_string<C, char_traits<C>, A>` on x64.
 ///
-/// # Small String Optimisation (SSO)
+/// # Small String Optimization (SSO)
 ///
 /// The inline buffer is always 16 bytes. Capacity in code units:
 ///```text
