@@ -7,10 +7,8 @@ use std::ptr::NonNull;
 use crate::dlkr::DLAllocatorRef;
 
 use encoding_rs::{self, DecoderResult};
-
+use fromsoftware_shared_stl::{Allocator, NarrowString, Utf8String, Utf16String, Utf32String};
 use thiserror::Error;
-
-use cxx_stl::string::{CxxNarrowString, CxxUtf8String, CxxUtf16String, CxxUtf32String};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
@@ -58,22 +56,22 @@ pub enum DLStringEncodingError {
     UnsupportedEncoding(u8),
 }
 
-trait CxxString<CharType> {
-    fn new_in(allocator: DLAllocatorRef) -> Self;
-    fn from_chars_in(bytes: &[CharType], allocator: DLAllocatorRef) -> Self;
+trait CxxString<CharType, T: Allocator> {
+    fn new_in(allocator: T) -> Self;
+    fn from_chars_in(bytes: &[CharType], allocator: T) -> Self;
     fn as_u8_slice(&self) -> &[u8];
     fn as_chars(&self) -> &[CharType];
     fn len(&self) -> usize;
 }
 
 macro_rules! impl_cxx_string {
-    ($string_type:ty, $char_type:ty) => {
-        impl CxxString<$char_type> for $string_type {
-            fn new_in(allocator: DLAllocatorRef) -> Self {
+    ($string_type:ty, $char_type:ty, $allocator_type:ty) => {
+        impl CxxString<$char_type, $allocator_type> for $string_type {
+            fn new_in(allocator: $allocator_type) -> Self {
                 Self::new_in(allocator)
             }
 
-            fn from_chars_in(bytes: &[$char_type], allocator: DLAllocatorRef) -> Self {
+            fn from_chars_in(bytes: &[$char_type], allocator: $allocator_type) -> Self {
                 Self::from_bytes_in(bytes, allocator)
             }
             fn as_u8_slice(&self) -> &[u8] {
@@ -85,7 +83,7 @@ macro_rules! impl_cxx_string {
                 }
             }
             fn as_chars(&self) -> &[$char_type] {
-                self.as_bytes()
+                self.as_code_units()
             }
             fn len(&self) -> usize {
                 <$string_type>::len(self)
@@ -94,17 +92,16 @@ macro_rules! impl_cxx_string {
     };
 }
 
-impl_cxx_string!(CxxUtf16String<DLAllocatorRef>, u16);
-impl_cxx_string!(CxxUtf8String<DLAllocatorRef>, u8);
-impl_cxx_string!(CxxNarrowString<DLAllocatorRef>, u8);
-impl_cxx_string!(CxxUtf32String<DLAllocatorRef>, u32);
+impl_cxx_string!(Utf16String<DLAllocatorRef>, u16, DLAllocatorRef);
+impl_cxx_string!(NarrowString<DLAllocatorRef>, u8, DLAllocatorRef);
+impl_cxx_string!(Utf32String<DLAllocatorRef>, u32, DLAllocatorRef);
 
 /// This trait is used to seal the DLStringKind trait, preventing external implementations.
 trait DLStringKindSeal {}
 
 #[allow(private_bounds)]
 pub trait DLStringKind: DLStringKindSeal {
-    type InnerType: CxxString<Self::CharType>;
+    type InnerType: CxxString<Self::CharType, DLAllocatorRef>;
     type CharType: Sized + Copy;
     const ENCODING: DLCharacterSet;
 
@@ -190,7 +187,7 @@ pub trait DLStringKind: DLStringKindSeal {
 pub struct DLUTF8StringKind;
 impl DLStringKindSeal for DLUTF8StringKind {}
 impl DLStringKind for DLUTF8StringKind {
-    type InnerType = CxxUtf8String<DLAllocatorRef>;
+    type InnerType = Utf8String<DLAllocatorRef>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF8;
 }
@@ -198,7 +195,7 @@ impl DLStringKind for DLUTF8StringKind {
 pub struct DLISO8859_1StringKind;
 impl DLStringKindSeal for DLISO8859_1StringKind {}
 impl DLStringKind for DLISO8859_1StringKind {
-    type InnerType = CxxNarrowString<DLAllocatorRef>;
+    type InnerType = NarrowString<DLAllocatorRef>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::Iso8859_1;
 }
@@ -206,7 +203,7 @@ impl DLStringKind for DLISO8859_1StringKind {
 pub struct DLShiftJisStringKind;
 impl DLStringKindSeal for DLShiftJisStringKind {}
 impl DLStringKind for DLShiftJisStringKind {
-    type InnerType = CxxNarrowString<DLAllocatorRef>;
+    type InnerType = NarrowString<DLAllocatorRef>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::ShiftJis;
 }
@@ -214,7 +211,7 @@ impl DLStringKind for DLShiftJisStringKind {
 pub struct DLEucJpStringKind;
 impl DLStringKindSeal for DLEucJpStringKind {}
 impl DLStringKind for DLEucJpStringKind {
-    type InnerType = CxxNarrowString<DLAllocatorRef>;
+    type InnerType = NarrowString<DLAllocatorRef>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::EucJp;
 }
@@ -222,7 +219,7 @@ impl DLStringKind for DLEucJpStringKind {
 pub struct DLUTF16StringKind;
 impl DLStringKindSeal for DLUTF16StringKind {}
 impl DLStringKind for DLUTF16StringKind {
-    type InnerType = CxxUtf16String<DLAllocatorRef>;
+    type InnerType = Utf16String<DLAllocatorRef>;
     type CharType = u16;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF16;
 }
@@ -230,7 +227,7 @@ impl DLStringKind for DLUTF16StringKind {
 pub struct DLUTF32StringKind;
 impl DLStringKindSeal for DLUTF32StringKind {}
 impl DLStringKind for DLUTF32StringKind {
-    type InnerType = CxxUtf32String<DLAllocatorRef>;
+    type InnerType = Utf32String<DLAllocatorRef>;
     type CharType = u32;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF32;
 }
