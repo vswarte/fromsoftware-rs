@@ -11,7 +11,9 @@ pub trait TreeComparator<V> {
     }
 }
 
-/// Default [`RbTree`] comparator, equivalent to MSVC `std::less<V>`
+/// Default [`RbTree`] comparator, equivalent to MSVC [`std::less<V>`]
+///
+/// [`std::less<V>`]: https://en.cppreference.com/w/cpp/utility/functional/less.html
 pub struct Less;
 
 impl<V: Ord> TreeComparator<V> for Less {
@@ -22,7 +24,10 @@ impl<V: Ord> TreeComparator<V> for Less {
 }
 
 /// Comparator for `Map<K, V>` that orders by key only,
-/// equivalent to MSVC `std::less<K>` applied to MSVC `pair::first`
+/// equivalent to MSVC [`std::less<K>`] applied to [`std::pair::first`]
+///
+/// [`std::less<K>`]: https://en.cppreference.com/w/cpp/utility/functional/less.html
+/// [`std::pair::first`]: https://en.cppreference.com/w/cpp/utility/pair.html
 pub struct KeyLess;
 
 impl<K: Ord, V> TreeComparator<Pair<K, V>> for KeyLess {
@@ -213,13 +218,21 @@ pub struct RbTree<V, A: Sized, C: Sized, U: RbTreeUniqueness = Unique> {
     _uniqueness: std::marker::PhantomData<U>,
 }
 
-/// Implementation of MSVC `std::map`
+/// Implementation of MSVC [`std::map`]
+///
+/// [`std::map`]: https://en.cppreference.com/w/cpp/container/map.html
 pub type Map<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, Unique>;
-/// Implementation of MSVC `std::set`
+/// Implementation of MSVC [`std::set`]
+///
+/// [`std::set`]: https://en.cppreference.com/w/cpp/container/set.html
 pub type Set<K, A, C = Less> = RbTree<K, A, C, Unique>;
-/// Implementation of MSVC `std::multimap`
+/// Implementation of MSVC [`std::multimap`]
+///
+/// [`std::multimap`]: https://en.cppreference.com/w/cpp/container/multimap.html
 pub type MultiMap<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, Multi>;
-/// Implementation of MSVC `std::multiset`
+/// Implementation of MSVC [`std::multiset`]
+///
+/// [`std::multiset`]: https://en.cppreference.com/w/cpp/container/multiset.html
 pub type MultiSet<K, A, C = Less> = RbTree<K, A, C, Multi>;
 
 impl<V, A: Allocator, C: TreeComparator<V>, U: RbTreeUniqueness> RbTree<V, A, C, U> {

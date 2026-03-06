@@ -2,6 +2,9 @@ use crate::allocator::*;
 use std::ops::{Deref, DerefMut};
 
 #[repr(C)]
+/// Implementation of MSVC C++ [`std::vector`]
+///
+/// [`std::vector`]: https://en.cppreference.com/w/cpp/container/vector.html
 pub struct Vector<T, A: Sized> {
     #[cfg(not(feature = "msvc2012"))]
     allocator: A,

@@ -2,6 +2,9 @@ use crate::allocator::*;
 use std::{mem::MaybeUninit, ptr::NonNull};
 
 #[repr(C)]
+/// Implementation of MSVC C++ [`std::list`]
+///
+/// [`std::list`]: https://en.cppreference.com/w/cpp/container/list.html
 pub struct List<T, A: Sized> {
     #[cfg(not(feature = "msvc2012"))]
     allocator: A,

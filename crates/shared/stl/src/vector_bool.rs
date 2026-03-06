@@ -3,7 +3,9 @@ use crate::allocator::*;
 /// Bits per storage word, MSVC uses `unsigned int` (32-bit) as `_Vbase`.
 const VBITS: usize = u32::BITS as usize;
 
-/// MSVC `std::vector<bool>` specialization.
+/// MSVC [`std::vector<bool>`] specialization.
+///
+/// [`std::vector<bool>`]: https://en.cppreference.com/w/cpp/container/vector_bool.html
 #[repr(C)]
 pub struct VectorBool<A: Sized> {
     #[cfg(not(feature = "msvc2012"))]
