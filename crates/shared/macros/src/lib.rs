@@ -5,6 +5,7 @@ use syn::*;
 mod multi_param;
 
 mod for_all_subclasses;
+mod researching;
 mod subclass;
 mod superclass;
 mod utils;
@@ -299,6 +300,17 @@ pub fn derive_superclass(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream {
     match for_all_subclasses::for_all_subclasses_helper(input) {
+        Ok(stream) => stream,
+        Err(err) => err.into_compile_error().into(),
+    }
+}
+
+/// A derive macro for `fromsoftware_shared::Researching` that automatically
+/// makes all `unk` fields (public or private) available through
+/// `Researching::unknown_fields`.
+#[proc_macro_derive(Researching, attributes(superclass))]
+pub fn derive_researching(input: TokenStream) -> TokenStream {
+    match researching::researching_helper(input) {
         Ok(stream) => stream,
         Err(err) => err.into_compile_error().into(),
     }

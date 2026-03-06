@@ -1,5 +1,6 @@
 use std::fmt::{Debug, Display, Pointer};
 
+use fromsoftware_shared::Researching;
 use hudhook::imgui::{TableColumnSetup, TableFlags, TreeNodeFlags, Ui};
 
 /// Extension trait for UI helpers.
@@ -75,6 +76,14 @@ pub trait UiExt {
     ) where
         I: IntoIterator<Item = T>,
         Name: std::convert::AsRef<str>;
+
+    fn research<T: Researching>(&self, obj: &T) {
+        self.list(
+            "Unknown Fields",
+            obj.unknown_fields(),
+            |ui, _, (name, value)| ui.debug(name, value),
+        );
+    }
 }
 
 impl UiExt for Ui {
