@@ -1,4 +1,7 @@
 #[repr(C)]
+/// Implementation of MSVC C++ [`std::pair`]
+///
+/// [`std::pair`]: https://en.cppreference.com/w/cpp/utility/pair.html
 pub struct Pair<K, V> {
     pub first: K,
     pub second: V,

@@ -5,7 +5,7 @@ use std::hash::{Hash, Hasher};
 use std::mem::ManuallyDrop;
 use std::ptr::NonNull;
 
-/// MSVC's `std::basic_string<C, char_traits<C>, A>` on x64.
+/// MSVC's [`std::basic_string<C, char_traits<C>, A>`] on x64.
 ///
 /// # Small String Optimization (SSO)
 ///
@@ -23,6 +23,8 @@ use std::ptr::NonNull;
 ///```
 /// When `capacity < SSO_CAP` the data lives inline. Otherwise, `buffer`
 /// holds a heap pointer
+///
+/// [`std::basic_string<C, char_traits<C>, A>`]: https://en.cppreference.com/w/cpp/string/basic_string.html
 #[repr(C)]
 pub struct BasicString<C, A>
 where
@@ -152,12 +154,14 @@ where
         self.capacity
     }
 
-    /// Returns a pointer to the first code unit, equivalent to `c_str()`.
+    /// Returns a pointer to the first code unit, equivalent to [`std::string::c_str()`].
     ///
     /// # Safety
     ///
     /// The pointer is valid for `self.len()` initialized code units and is
     /// followed by a NUL terminator. It must not outlive `self`
+    ///
+    /// [`std::basic_string::c_str()`]: https://en.cppreference.com/w/cpp/string/basic_string/c_str.html
     #[inline]
     pub unsafe fn as_ptr(&self) -> *const C {
         // SAFETY: The SSO/heap variant is selected by the capacity invariant,
