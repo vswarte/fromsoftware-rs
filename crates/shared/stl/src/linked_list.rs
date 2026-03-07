@@ -6,11 +6,11 @@ use std::{mem::MaybeUninit, ptr::NonNull};
 ///
 /// [`std::list`]: https://en.cppreference.com/w/cpp/container/list.html
 pub struct List<T, A: Sized> {
-    #[cfg(not(feature = "msvc2012"))]
+    #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     head: NonNull<Node<T>>,
     length: usize,
-    #[cfg(feature = "msvc2012")]
+    #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
 }
 

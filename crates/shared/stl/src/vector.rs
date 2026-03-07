@@ -6,12 +6,12 @@ use std::ops::{Deref, DerefMut};
 ///
 /// [`std::vector`]: https://en.cppreference.com/w/cpp/container/vector.html
 pub struct Vector<T, A: Sized> {
-    #[cfg(not(feature = "msvc2012"))]
+    #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     first: *mut T,
     last: *mut T,
     end: *mut T,
-    #[cfg(feature = "msvc2012")]
+    #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
 }
 

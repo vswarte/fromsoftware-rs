@@ -29,12 +29,12 @@ where
     C: Copy + Default,
     A: Allocator + Clone,
 {
-    #[cfg(not(feature = "msvc2012"))]
+    #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     buffer: StringBuffer<C, SSO_CAP>,
     size: usize,
     capacity: usize,
-    #[cfg(feature = "msvc2012")]
+    #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
 }
 
@@ -59,7 +59,7 @@ pub type NarrowString<A> = BasicString<u8, A, 16>;
 
 /// MSVC `std::u8string` (C++20), explicitly UTF-8
 /// Identical layout to [`NarrowString`]
-#[cfg(not(feature = "msvc2012"))]
+#[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
 pub type Utf8String<A> = BasicString<u8, A, 16>;
 
 /// MSVC `std::wstring`, `wchar_t` (`ushort` on Windows) string
@@ -67,7 +67,7 @@ pub type WideString<A> = BasicString<u16, A, 8>;
 
 /// MSVC `std::u16string` (C++17), explicitly UTF-16LE
 /// Identical layout to [`WideString`]
-#[cfg(not(feature = "msvc2012"))]
+#[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
 pub type Utf16String<A> = BasicString<u16, A, 8>;
 
 /// MSVC `std::u32string`, UTF-32 string
