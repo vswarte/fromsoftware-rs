@@ -21,6 +21,42 @@ impl<T, A: Allocator> Vector<T, A> {
         unsafe { self.end.offset_from(self.first) as usize }
     }
 
+    /// Creates an empty vector backed by `allocator`.
+    ///
+    /// Equivalent to `std::vector<T>()` with a custom allocator
+    pub fn new_in(allocator: A) -> Self {
+        Self {
+            allocator,
+            first: std::ptr::null_mut(),
+            last: std::ptr::null_mut(),
+            end: std::ptr::null_mut(),
+        }
+    }
+
+    /// Creates a vector from a slice, copying all elements into it
+    pub fn from_slice_in(items: &[T], mut allocator: A) -> Self
+    where
+        T: Copy,
+    {
+        let len = items.len();
+
+        if len == 0 {
+            return Self::new_in(allocator);
+        }
+
+        let ptr = allocator.allocate_n::<T>(len).as_ptr() as *mut T;
+        unsafe {
+            std::ptr::copy_nonoverlapping(items.as_ptr(), ptr, len);
+        }
+
+        Self {
+            allocator,
+            first: ptr,
+            last: unsafe { ptr.add(len) },
+            end: unsafe { ptr.add(len) },
+        }
+    }
+
     pub fn push_back(&mut self, value: T) {
         if self.last == self.end {
             self.grow();
@@ -82,5 +118,19 @@ impl<T, A: Allocator> DerefMut for Vector<T, A> {
         let len = unsafe { self.last.offset_from(self.first) as usize };
         // Safety: [first, last) is always a valid, initialized slice
         unsafe { std::slice::from_raw_parts_mut(self.first, len) }
+    }
+}
+
+impl<T, A: Allocator> Drop for Vector<T, A> {
+    fn drop(&mut self) {
+        // Drop every live element in [first, last) before releasing the buffer
+        unsafe {
+            std::ptr::drop_in_place(std::ptr::slice_from_raw_parts_mut(self.first, self.len()));
+        }
+
+        // guard against empty vectors
+        if self.capacity() > 0 {
+            self.allocator.deallocate_raw(self.first as _);
+        }
     }
 }
