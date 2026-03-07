@@ -107,7 +107,6 @@ impl StatefulDebugDisplay for WorldChrMan {
         // and these are constantly changing, making it hard to keep track of which collapsing header is closed or open.
         ui.header("ChrInses by distance", || {
             self.chr_inses_by_distance
-                .items_mut()
                 .iter_mut()
                 .for_each(|entry| {
                     let distance = entry.distance;

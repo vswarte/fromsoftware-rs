@@ -72,7 +72,7 @@ impl DebugDisplay for GameDataMan {
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("DLC ID"),
                 ],
-                self.pending_dlc_list.items(),
+                self.pending_dlc_list.iter(),
                 |ui, i, dlc_id| {
                     ui.table_next_column();
                     ui.text(format!("{}", i));
