@@ -3,7 +3,7 @@ use std::ops::{Index, IndexMut};
 use shared::{CCallback, OwnedPtr};
 use vtable_rs::VPtr;
 
-use crate::{Vector, dlkr::DLRunnableVmt};
+use crate::{DLVector, dlkr::DLRunnableVmt};
 
 #[repr(C)]
 #[shared::singleton("CSTrophy")]
@@ -22,7 +22,7 @@ pub struct CSTrophyPlatformImp {
     /// Game specific achievement data.
     pub trophy_title_info: OwnedPtr<CSTrophyTitleInfo>,
     /// Seems to be related to some debug features.
-    unk10: Vector<()>,
+    unk10: DLVector<()>,
     unk30: isize,
 }
 

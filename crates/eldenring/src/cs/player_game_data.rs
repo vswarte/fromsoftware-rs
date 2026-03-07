@@ -5,7 +5,7 @@ use bitfield::bitfield;
 use thiserror::Error;
 
 use crate::{
-    BasicVector, Vector,
+    BasicVector, DLVector,
     cs::{ChrType, MultiplayRole},
 };
 use shared::{IsEmpty, MaybeEmpty, NonEmptyIteratorExt, NonEmptyIteratorMutExt, OwnedPtr};
@@ -355,7 +355,7 @@ pub struct EquipGameData {
     equip_gesture_data: usize,
     /// Tracker for the item replenishing from the chest
     pub item_replenish_state_tracker: Option<OwnedPtr<ItemReplenishStateTracker>>,
-    pub qm_item_backup_vector: OwnedPtr<Vector<QMItemBackupVectorItem>>,
+    pub qm_item_backup_vector: OwnedPtr<DLVector<QMItemBackupVectorItem>>,
     pub equipment_entries: ChrAsmEquipEntries,
     unk3e0: usize,
     unk3e8: usize,

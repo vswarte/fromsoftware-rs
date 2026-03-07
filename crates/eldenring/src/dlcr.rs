@@ -4,7 +4,7 @@ use shared::{FromStatic, OwnedPtr};
 
 use vtable_rs::VPtr;
 
-use crate::{Vector, dlkr::DLAllocatorBase, rva};
+use crate::{DLVector, dlkr::DLAllocatorBase, rva};
 
 #[vtable_rs::vtable]
 pub trait DLCipherKeyVmt {
@@ -286,8 +286,8 @@ pub struct DLKeyGeneratorSPI {
 
 #[repr(C)]
 pub struct CryptoSPIRegistry {
-    pub key_generators: Vector<NonNull<DLKeyGeneratorSPI>>,
-    pub cipher_spis: Vector<NonNull<DLCipherSPI>>,
+    pub key_generators: DLVector<NonNull<DLKeyGeneratorSPI>>,
+    pub cipher_spis: DLVector<NonNull<DLCipherSPI>>,
 }
 
 impl CryptoSPIRegistry {

@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use super::FieldInsHandle;
 use crate::{
-    Vector,
+    DLVector,
     cs::{CSRideNode, CSThrowNode, ChrIns},
     dlkr::DLPlainLightMutex,
     position::HavokPosition,
@@ -14,9 +14,9 @@ use vtable_rs::VPtr;
 #[repr(C)]
 #[shared::singleton("CSPairAnimManager")]
 pub struct CSPairAnimManager {
-    unk0: Vector<()>,
-    unk20: Vector<CSPairAnimManager20Entry>,
-    unk40: Vector<()>,
+    unk0: DLVector<()>,
+    unk20: DLVector<CSPairAnimManager20Entry>,
+    unk40: DLVector<()>,
     unk60: f32,
     unk64: f32,
     // Unknown 1-byte structure. Related to the p2p send but entirely unused?
@@ -25,7 +25,7 @@ pub struct CSPairAnimManager {
     // Referenced when receiving packet 18 (PairAnimStateUpdate) as well as packet 48 (ThrowEscHpUpdate).
     unk70: isize,
     pub mutex: DLPlainLightMutex,
-    unka8: Vector<()>,
+    unka8: DLVector<()>,
     unkc0: [u8; 0xB8],
 }
 

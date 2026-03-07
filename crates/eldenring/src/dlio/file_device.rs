@@ -7,7 +7,7 @@ use std::{
 use vtable_rs::VPtr;
 
 use crate::{
-    Vector,
+    DLVector,
     dlio::DLIOResult,
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
     dltx::DLString,
@@ -313,12 +313,12 @@ pub struct DLFileOperatorContainer {
 
 #[repr(C)]
 pub struct DLFileDeviceManager {
-    pub devices: Vector<NonNull<DLFileDeviceBase>>,
-    pub service_providers: Vector<NonNull<DLFileDeviceImageSPIBase>>,
+    pub devices: DLVector<NonNull<DLFileDeviceBase>>,
+    pub service_providers: DLVector<NonNull<DLFileDeviceImageSPIBase>>,
     pub msvc_file_device: OwnedPtr<DLFileDeviceBase>,
-    pub virtual_roots: Vector<[DLString; 2]>,
-    pub bnd3_files: Vector<BndEntry>,
-    pub bnd4_files: Vector<BndEntry>,
+    pub virtual_roots: DLVector<[DLString; 2]>,
+    pub bnd3_files: DLVector<BndEntry>,
+    pub bnd4_files: DLVector<BndEntry>,
     pub bnd3_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
     pub bnd4_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
     pub mutex: DLPlainLightMutex,
