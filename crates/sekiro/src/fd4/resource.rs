@@ -1,7 +1,8 @@
 use std::ptr::NonNull;
 
+use crate::dlkr::DLAllocatorBase;
+
 use super::FD4BasicHashString;
-use crate::dlkr::DLAllocatorRef;
 use shared::{Subclass, Superclass};
 
 /// Represents a managed resource. The data it represents is immediately handed
@@ -65,7 +66,7 @@ where
     vftable: usize,
 
     /// The allocator used to expand this if necessary while adding data.
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocatorBase>,
 
     _unk10: u64,
     _unk18: u32,
