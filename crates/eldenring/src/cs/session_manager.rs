@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use windows::Win32::Foundation::FILETIME;
 
 use crate::{
-    DoublyLinkedList, Vector,
+    DLList, DLVector,
     cs::{CSRandXorshift, MultiplayRole},
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
@@ -90,7 +90,7 @@ pub struct CSSessionManager {
     unk5c: u32,
     manager_impl_steam: usize,
     unk68: bool,
-    pub players: Vector<SessionManagerPlayerEntry>,
+    pub players: DLVector<SessionManagerPlayerEntry>,
     pub host_player: MaybeEmpty<SessionManagerPlayerEntryBase>,
     unk160: usize,
     unk168: usize,
@@ -154,7 +154,7 @@ pub struct CSSessionManager {
     pub enable_p2p_queue_stats: bool,
     unk2ee: u8,
     unk2ef: u8,
-    unk2f0: DoublyLinkedList<()>,
+    unk2f0: DLList<()>,
     unk308: u16,
     unk30a: u16,
     unk30c: u32,
@@ -238,7 +238,7 @@ pub struct CSStayInMultiplayAreaWarpData {
     /// Vector of remote player warp trackers.
     /// Used to check when player rendering should be disabled using bitflag on ChrIns at 0x1c5.
     /// When warp time is 0, player rendering is enabled back.
-    pub player_fade_tracker: Vector<StayInMultiplayFadeTrackerEntry>,
+    pub player_fade_tracker: DLVector<StayInMultiplayFadeTrackerEntry>,
     /// Sent by host to clients on connect in packet 90 (0x5A).
     /// Contains the ID of the play area the host was in when the client connected.
     /// If current multiplay area ID has different boss ID than this one, player will be warped to latest stored position.
@@ -267,7 +267,7 @@ pub struct CSStayInMultiplayAreaWarpData {
 
 #[repr(C)]
 pub struct CSSessionManagerP2PSendQueue {
-    pub queue: Vector<CSSessionManagerP2PSendQueueEntry>,
+    pub queue: DLVector<CSSessionManagerP2PSendQueueEntry>,
     unk20: CSSessionManager0x20,
     /// [crate::cs::GameMan::rand_xorshift]
     pub rand_xor_shift: NonNull<CSRandXorshift>,

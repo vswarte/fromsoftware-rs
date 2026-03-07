@@ -1,6 +1,8 @@
+use std::ops::{Deref, DerefMut};
+
 use shared::{F32Vector3, F32Vector4, OwnedPtr};
 
-use crate::{Tree, cs::BlockId};
+use crate::{DLSet, cs::BlockId};
 
 #[repr(C)]
 pub struct AutoInvadePoint {
@@ -19,6 +21,24 @@ impl AutoInvadePointBlockEntry {
     pub fn items(&self) -> &[AutoInvadePoint] {
         unsafe { std::slice::from_raw_parts(self.head.as_ptr(), self.count) }
     }
+
+    pub fn items_mut(&mut self) -> &mut [AutoInvadePoint] {
+        unsafe { std::slice::from_raw_parts_mut(self.head.as_ptr(), self.count) }
+    }
+}
+
+impl Deref for AutoInvadePointBlockEntry {
+    type Target = [AutoInvadePoint];
+
+    fn deref(&self) -> &Self::Target {
+        self.items()
+    }
+}
+
+impl DerefMut for AutoInvadePointBlockEntry {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.items_mut()
+    }
 }
 
 #[repr(C)]
@@ -28,7 +48,7 @@ impl AutoInvadePointBlockEntry {
 /// instead of looking for the point on msb
 #[shared::singleton("CSAutoInvadePoint")]
 pub struct CSAutoInvadePoint {
-    pub entries: Tree<AutoInvadePointBlockEntry>,
+    pub entries: DLSet<AutoInvadePointBlockEntry>,
     unk18: [u8; 0x28],
     unk40: F32Vector4,
     unk50: [u8; 0x20],

@@ -3,7 +3,7 @@ use std::{borrow::Cow, ptr::NonNull};
 use shared::{FromStatic, Subclass, Superclass, UnknownStruct};
 
 use super::{GaitemSelectBaseMenu, GaitemSelectMenu};
-use crate::{CxxVec, dlut::DLFixedVector, rva, sprj::SprjScaleformValue};
+use crate::{DLVector, dlut::DLFixedVector, rva, sprj::SprjScaleformValue};
 
 #[repr(C)]
 // Source of name: RTTI
@@ -92,8 +92,8 @@ pub struct MenuWindow {
     _unkd8: SceneObjProxy,
     _unk138: SceneObjProxy,
     _unk198: u64,
-    _unk1a0: CxxVec<u64>,
-    _unk1c0: CxxVec<u64>,
+    _unk1a0: DLVector<u64>,
+    _unk1c0: DLVector<u64>,
     _component_holder: usize,
     _unk1e8: [u8; 0x18],
     _unk200: SprjScaleformValue,

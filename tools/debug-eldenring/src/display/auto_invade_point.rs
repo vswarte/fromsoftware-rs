@@ -24,7 +24,7 @@ impl DebugDisplay for AutoInvadePointBlockEntry {
                 TableColumnSetup::new("Z"),
                 TableColumnSetup::new("Yaw"),
             ],
-            self.items().iter(),
+            self.iter(),
             |ui, i, item| {
                 ui.table_next_column();
                 ui.text(i.to_string());

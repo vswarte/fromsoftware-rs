@@ -16,7 +16,10 @@ vtable-rs.workspace = true
 windows.workspace = true
 bitfield.workspace = true
 encoding_rs.workspace = true
-cxx-stl.workspace = true
+
+[dependencies.fromsoftware-shared-stl]
+workspace = true
+features = ["msvc2015"]
 
 [build-dependencies]
 serde_derive = "1"

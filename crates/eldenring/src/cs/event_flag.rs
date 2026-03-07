@@ -1,6 +1,6 @@
 use std::mem::ManuallyDrop;
 
-use crate::Tree;
+use crate::DLSet;
 use shared::OwnedPtr;
 
 #[repr(transparent)]
@@ -16,11 +16,9 @@ impl EventFlag {
     pub fn group(&self) -> u32 {
         self.0 / 1000
     }
-
     pub fn byte(&self) -> u32 {
         (self.0 % 1000) / 8
     }
-
     pub fn bit(&self) -> u32 {
         7 - ((self.0 % 1000) % 8)
     }
@@ -54,7 +52,7 @@ pub struct CSFD4VirtualMemoryFlag {
     /// Top of the flag block structure.
     pub flag_blocks: *mut FlagBlock,
     /// Describes where to find a flag block.
-    pub flag_block_descriptors: Tree<FlagBlockDescriptor>,
+    pub flag_block_descriptors: DLSet<FlagBlockDescriptor>,
     unk38: [u8; 0x30],
 }
 
@@ -62,50 +60,27 @@ impl CSFD4VirtualMemoryFlag {
     /// Sets the event flag bit for a given event flag. Does not inherently network set flags.
     pub fn set_flag(&mut self, flag: impl Into<EventFlag>, state: bool) {
         let flag: EventFlag = flag.into();
-        let Some(group) = self
+        // Copy flag_blocks pointer before the immutable borrow of self via find_by
+        let base = self.flag_blocks;
+        let ptr = self
             .flag_block_descriptors
-            .iter()
-            .find(|d| d.group == flag.group())
-        else {
-            return;
-        };
+            .find_by(|d| d.group.cmp(&flag.group()))
+            .and_then(|d| unsafe { d.resolve(base) });
 
-        let Some(location) = self.flag_block(group) else {
-            return;
-        };
-
-        location.set(flag, state)
+        if let Some(block) = ptr {
+            unsafe { (*block).set(flag, state) };
+        }
     }
 
     /// Retrieves the event flag current state.
     pub fn get_flag(&self, flag: impl Into<EventFlag>) -> bool {
         let flag: EventFlag = flag.into();
-        let Some(group) = self
-            .flag_block_descriptors
-            .iter()
-            .find(|d| d.group == flag.group())
-        else {
-            return false;
-        };
-
-        let Some(location) = self.flag_block(group) else {
-            return false;
-        };
-
-        location.get(flag)
-    }
-
-    /// Locates a flag block for a given FlagBlockDescriptor.
-    fn flag_block<'a>(&self, descriptor: &'a mut FlagBlockDescriptor) -> Option<&'a mut FlagBlock> {
-        Some(match descriptor.location_mode {
-            1 => unsafe {
-                self.flag_blocks
-                    .add(descriptor.location.holder_offset as usize)
-                    .as_mut()?
-            },
-            2 => unsafe { (*descriptor.location.external_location).as_mut() },
-            _ => return None,
-        })
+        let base = self.flag_blocks;
+        self.flag_block_descriptors
+            .find_by(|d| d.group.cmp(&flag.group()))
+            .and_then(|d| unsafe { d.resolve(base) })
+            .map(|block| unsafe { (*block).get(flag) })
+            .unwrap_or(false)
     }
 }
 
@@ -120,14 +95,24 @@ pub struct FlagBlockDescriptor {
     location: FlagBlockLocationUnion,
 }
 
+impl FlagBlockDescriptor {
+    /// Resolves the descriptor to a raw `*mut FlagBlock`
+    ///
+    /// # Safety
+    ///
+    /// `base` must be a valid pointer to the flag block array
+    unsafe fn resolve(&self, base: *mut FlagBlock) -> Option<*mut FlagBlock> {
+        match self.location_mode {
+            1 => Some(unsafe { base.add(self.location.holder_offset as usize) }),
+            2 => Some(unsafe { self.location.external_location.as_ptr() }),
+            _ => None,
+        }
+    }
+}
+
 union FlagBlockLocationUnion {
     holder_offset: u32,
     external_location: ManuallyDrop<OwnedPtr<FlagBlock>>,
-}
-
-pub enum FlagBlockLocation {
-    HolderOffset(u32),
-    External(OwnedPtr<FlagBlock>),
 }
 
 #[repr(C)]

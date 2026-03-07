@@ -2,7 +2,7 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::{StateMap, UiExt};
 use eldenring::cs::{
-    ChrIns, ChrSet, FieldInsHandle, NetChrSetSync, SummonBuddyGroupEntry, SummonBuddyManager,
+    ChrIns, ChrSet, FieldInsHandle, NetChrSetSync, SummonBuddyGroup, SummonBuddyManager,
     SummonBuddyWarpEntry, SummonBuddyWarpManager, WorldChrMan,
 };
 use fromsoftware_shared::Subclass;
@@ -106,22 +106,17 @@ impl StatefulDebugDisplay for WorldChrMan {
         // We can't use .list here because it relies on entries being stable across frames
         // and these are constantly changing, making it hard to keep track of which collapsing header is closed or open.
         ui.header("ChrInses by distance", || {
-            self.chr_inses_by_distance
-                .items_mut()
-                .iter_mut()
-                .for_each(|entry| {
-                    let distance = entry.distance;
-                    let chr_ins = unsafe { entry.chr_ins.as_mut() };
-                    let label = format!("ChrIns {}", chr_ins.field_ins_handle);
-                    let _id = ui.push_id(&label);
-                    ui.header(&label, || {
-                        ui.display("Distance", distance);
-                        chr_ins.render_debug_mut(
-                            ui,
-                            state.chr_ins_states.get(chr_ins.field_ins_handle),
-                        );
-                    });
+            self.chr_inses_by_distance.iter_mut().for_each(|entry| {
+                let distance = entry.distance;
+                let chr_ins = unsafe { entry.chr_ins.as_mut() };
+                let label = format!("ChrIns {}", chr_ins.field_ins_handle);
+                let _id = ui.push_id(&label);
+                ui.header(&label, || {
+                    ui.display("Distance", distance);
+                    chr_ins
+                        .render_debug_mut(ui, state.chr_ins_states.get(chr_ins.field_ins_handle));
                 });
+            });
         });
 
         state.chr_ins_states.remove_unread();
@@ -206,11 +201,13 @@ where
                 ],
                 self.entity_id_mapping.iter(),
                 |ui, _i, e| {
-                    ui.table_next_column();
-                    ui.text(e.entity_id.to_string());
+                    let (entity_id, chr_set_entry) = e.into();
 
                     ui.table_next_column();
-                    let chr_ins = unsafe { e.chr_set_entry.as_ref().chr_ins.as_ref() };
+                    ui.text(entity_id.to_string());
+
+                    ui.table_next_column();
+                    let chr_ins = unsafe { chr_set_entry.as_ref().chr_ins.as_ref() };
                     ui.text(format!("{}", unsafe {
                         &chr_ins.unwrap().as_ref().superclass().field_ins_handle
                     }));
@@ -227,11 +224,12 @@ where
                 ],
                 self.group_id_mapping.iter(),
                 |ui, _i, e| {
+                    let (group_id, chr_set_entry) = e.into();
                     ui.table_next_column();
-                    ui.text(e.group_id.to_string());
+                    ui.text(group_id.to_string());
 
                     ui.table_next_column();
-                    let chr_ins = unsafe { e.chr_set_entry.as_ref().chr_ins.as_ref() };
+                    let chr_ins = unsafe { chr_set_entry.as_ref().chr_ins.as_ref() };
                     ui.text(format!("{}", unsafe {
                         &chr_ins.unwrap().as_ref().superclass().field_ins_handle
                     }));
@@ -261,7 +259,7 @@ impl DebugDisplay for SummonBuddyWarpManager {
     }
 }
 
-impl DebugDisplay for SummonBuddyGroupEntry {
+impl DebugDisplay for SummonBuddyGroup {
     fn render_debug(&self, ui: &Ui) {
         ui.display("Buddy param ID", self.buddy_param_id);
         ui.display("Has mount", self.has_mount);
@@ -321,8 +319,9 @@ impl DebugDisplay for SummonBuddyManager {
         });
 
         ui.list("Groups", self.groups.iter(), |ui, _i, group| {
-            ui.header(format!("Group {}", group.owner_event_id), || {
-                ui.list("Entries", group.entries.iter(), |ui, index, v| {
+            let (owner, entries) = group.into();
+            ui.header(format!("Owner chr event ID {}", owner), || {
+                ui.list("Entries", entries.iter(), |ui, index, v| {
                     ui.nested(format!("Entry {index}"), v);
                 });
             });
@@ -333,17 +332,14 @@ impl DebugDisplay for SummonBuddyManager {
             self.eliminate_target_entries.iter(),
             |ui, index, entry| {
                 ui.header(format!("Entry {index}"), || {
-                    ui.display("Buddy field ins handle", entry.buddy_field_ins_handle);
-                    ui.display(
-                        "Buddy stone param ID",
-                        entry.target_calc.buddy_stone_param_id,
-                    );
+                    ui.display("Buddy field ins handle", entry.first);
+                    ui.display("Buddy stone param ID", entry.second.buddy_stone_param_id);
                     ui.display(
                         "Target event entity ID",
-                        entry.target_calc.target_event_entity_id,
+                        entry.second.target_event_entity_id,
                     );
-                    ui.display("Target in range", entry.target_calc.target_in_range);
-                    ui.display("Range check counter", entry.target_calc.range_check_counter);
+                    ui.display("Target in range", entry.second.target_in_range);
+                    ui.display("Range check counter", entry.second.range_check_counter);
                 });
             },
         );

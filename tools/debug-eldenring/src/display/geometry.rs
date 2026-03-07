@@ -10,7 +10,10 @@ impl DebugDisplay for CSWorldGeomMan {
         ui.list(
             format!("Loaded blocks: {}", self.blocks.len()),
             self.blocks.iter(),
-            |ui, _i, block| ui.nested(format!("{}", block.block_id), &block.data),
+            |ui, _i, entry| {
+                let (block_id, data) = entry.into();
+                ui.nested(format!("{}", block_id), data)
+            },
         );
 
         ui.nested("Current Unk Block", &self.curent_99_block_data);
@@ -28,7 +31,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.list(
             format!("Geometry Vector ({})", self.geom_ins_vector.len()),
-            self.geom_ins_vector.items(),
+            self.geom_ins_vector.iter(),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins
@@ -56,7 +59,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.list(
             format!("Sign Geometry Vector ({})", self.sos_sign_geometry.len()),
-            self.sos_sign_geometry.items(),
+            self.sos_sign_geometry.iter(),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins

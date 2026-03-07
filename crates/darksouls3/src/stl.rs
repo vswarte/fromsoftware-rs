@@ -32,4 +32,16 @@ impl fromsoftware_shared_stl::Allocator for DLAllocatorForStl {
     }
 }
 
+/// An MSVC 2012-compatible vector that contains a custom DS3 allocator. This is
+/// the type of vector generally used in DS3.
 pub type DLVector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorForStl>;
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn proper_sizes() {
+        assert_eq!(0x20, size_of::<DLVector<usize>>());
+    }
+}

@@ -3,7 +3,7 @@ use std::{ptr::NonNull, slice};
 use thiserror::Error;
 
 use super::FieldArea;
-use crate::cxx_stl::CxxVec;
+use crate::stl::DLVector;
 use shared::{FromStatic, OwnedPtr, UnknownStruct};
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -231,7 +231,7 @@ impl FD4VirtualMemoryFlag {
 #[repr(C)]
 // Source of name: RTTI
 pub struct EventMakerEx {
-    _unk00: CxxVec<UnknownStruct<0x30>>,
+    _unk00: DLVector<UnknownStruct<0x30>>,
     _unk20: u64, // debug related?
 }
 
