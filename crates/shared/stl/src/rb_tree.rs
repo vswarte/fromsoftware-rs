@@ -67,9 +67,9 @@ pub enum RbColor {
 
 #[repr(C)]
 pub struct RbNode<V> {
-    left: NonNull<RbNode<V>>,
-    parent: NonNull<RbNode<V>>,
-    right: NonNull<RbNode<V>>,
+    left: NodePtr<V>,
+    parent: NodePtr<V>,
+    right: NodePtr<V>,
     color: RbColor,
     is_nil: bool,
     value: MaybeUninit<V>,
@@ -119,15 +119,15 @@ impl<V> NodePtr<V> {
     }
     #[inline]
     fn left(&self) -> NodePtr<V> {
-        NodePtr(self.get().left)
+        self.get().left
     }
     #[inline]
     fn right(&self) -> NodePtr<V> {
-        NodePtr(self.get().right)
+        self.get().right
     }
     #[inline]
     fn parent(&self) -> NodePtr<V> {
-        NodePtr(self.get().parent)
+        self.get().parent
     }
     #[inline]
     fn is_nil(&self) -> bool {
@@ -147,15 +147,15 @@ impl<V> NodePtr<V> {
     }
     #[inline]
     fn set_left(&mut self, n: NodePtr<V>) {
-        unsafe { self.get_mut().left = n.0 };
+        unsafe { self.get_mut().left = n };
     }
     #[inline]
     fn set_right(&mut self, n: NodePtr<V>) {
-        unsafe { self.get_mut().right = n.0 };
+        unsafe { self.get_mut().right = n };
     }
     #[inline]
     fn set_parent(&mut self, n: NodePtr<V>) {
-        unsafe { self.get_mut().parent = n.0 };
+        unsafe { self.get_mut().parent = n };
     }
     #[inline]
     fn is_left_child(&self) -> bool {
@@ -180,12 +180,12 @@ impl<V> NodePtr<V> {
     unsafe fn replace_in_parent(&mut self, mut replacement: NodePtr<V>, head: NodePtr<V>) {
         replacement.set_parent(self.parent());
         unsafe {
-            if self.parent().as_ptr() == head.as_ptr() {
-                self.parent().get_mut().parent = replacement.0;
+            if self.parent() == head {
+                self.parent().get_mut().parent = replacement;
             } else if self.is_left_child() {
-                self.parent().get_mut().left = replacement.0;
+                self.parent().get_mut().left = replacement;
             } else {
-                self.parent().get_mut().right = replacement.0;
+                self.parent().get_mut().right = replacement;
             }
         }
     }
@@ -219,7 +219,7 @@ pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
     comparator: C,
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
-    head: NonNull<RbNode<V>>,
+    head: NodePtr<V>,
     size: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
@@ -286,7 +286,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// and descend left, or descend right unconditionally
     fn bound_node_by<Q>(&self, query: &Q, go_left: impl Fn(&Q, &V) -> bool) -> Option<NodePtr<V>> {
         unsafe {
-            let mut node = NodePtr(self.head.as_ref().parent);
+            let mut node = self.head.get().parent;
             let mut result = None;
             loop {
                 if node.is_nil() {
@@ -333,7 +333,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     ///
     /// Duplicate values are ignored for [`UNIQUE: true`]
     pub fn insert(&mut self, value: V) -> &V {
-        let mut head = NodePtr(self.head);
+        let mut head = self.head;
         let mut parent = head;
         let mut node = head.parent();
         let mut insert_left = true;
@@ -361,9 +361,9 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             std::ptr::write(
                 new_node.as_ptr(),
                 RbNode {
-                    left: head.0,
-                    parent: parent.0,
-                    right: head.0,
+                    left: head,
+                    parent,
+                    right: head,
                     color: RbColor::Red,
                     is_nil: false,
                     value: MaybeUninit::new(value),
@@ -373,19 +373,19 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
 
         if parent == head {
             unsafe {
-                head.get_mut().parent = new_node.0;
-                head.get_mut().left = new_node.0;
-                head.get_mut().right = new_node.0;
+                head.get_mut().parent = new_node;
+                head.get_mut().left = new_node;
+                head.get_mut().right = new_node;
             }
         } else if insert_left {
             parent.set_left(new_node);
             if parent == head.left() {
-                unsafe { head.get_mut().left = new_node.0 };
+                unsafe { head.get_mut().left = new_node };
             }
         } else {
             parent.set_right(new_node);
             if parent == head.right() {
-                unsafe { head.get_mut().right = new_node.0 };
+                unsafe { head.get_mut().right = new_node };
             }
         }
 
@@ -401,11 +401,11 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     }
 
     pub fn pop_min(&mut self) -> Option<V> {
-        (self.size > 0).then(|| unsafe { self.extract_node(NodePtr(self.head).left()) })
+        (self.size > 0).then(|| unsafe { self.extract_node(self.head.left()) })
     }
 
     pub fn pop_max(&mut self) -> Option<V> {
-        (self.size > 0).then(|| unsafe { self.extract_node(NodePtr(self.head).right()) })
+        (self.size > 0).then(|| unsafe { self.extract_node(self.head.right()) })
     }
 
     fn find_node(&self, value: &V) -> Option<NodePtr<V>> {
@@ -421,7 +421,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// # Safety
     /// `erased` must be a live non-sentinel node belonging to this tree
     unsafe fn extract_node(&mut self, mut erased: NodePtr<V>) -> V {
-        let mut head = NodePtr(self.head);
+        let mut head = self.head;
         let successor = rb_successor(erased, head);
 
         let (fixnode, fixparent) = unsafe {
@@ -447,7 +447,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
                     if !fix.is_nil() {
                         fix.set_parent(sp);
                     }
-                    sp.get_mut().left = fix.0;
+                    sp.get_mut().left = fix;
                     succ.set_right(erased.right());
                     erased.right().set_parent(succ);
                     sp
@@ -467,7 +467,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             }
         };
 
-        let set = |ptr: &mut NonNull<RbNode<V>>, n: NodePtr<V>| *ptr = n.0;
+        let set = |ptr: &mut NodePtr<V>, n: NodePtr<V>| *ptr = n;
         if head.parent() == erased {
             unsafe { set(&mut head.get_mut().parent, fixnode) };
         }
@@ -502,7 +502,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
 impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     /// Inorder iterator, yields values in ascending comparator order
     pub fn iter(&self) -> RbTreeIter<'_, V> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         RbTreeIter {
             head,
             current: head.left(),
@@ -512,7 +512,7 @@ impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     }
 
     pub fn iter_mut(&mut self) -> RbTreeIterMut<'_, V> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         RbTreeIterMut {
             head,
             current: head.left(),
@@ -523,12 +523,12 @@ impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
 
     /// O(log n) seach by filter function
     pub fn find_by(&self, f: impl FnMut(&V) -> Ordering) -> Option<&V> {
-        rb_find_by(NodePtr(self.head), f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
+        rb_find_by(self.head, f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
     /// O(log n) search by ordering, returns mutable reference
     pub fn find_by_mut(&mut self, f: impl FnMut(&V) -> Ordering) -> Option<&mut V> {
-        rb_find_by(NodePtr(self.head), f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
+        rb_find_by(self.head, f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
     #[inline]
@@ -595,7 +595,7 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>, const UNIQUE: bool
 
 impl<K, V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<Pair<K, V>, A, C, UNIQUE> {
     pub fn find_key_by(&self, mut f: impl FnMut(&K) -> Ordering) -> Option<&Pair<K, V>> {
-        rb_find_by(NodePtr(self.head), |v| f(&v.first))
+        rb_find_by(self.head, |v| f(&v.first))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
@@ -603,7 +603,7 @@ impl<K, V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<Pair<K, V>, A, C, 
         &mut self,
         mut f: impl FnMut(&K) -> Ordering,
     ) -> Option<&mut Pair<K, V>> {
-        rb_find_by(NodePtr(self.head), |v| f(&v.first))
+        rb_find_by(self.head, |v| f(&v.first))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 }
@@ -613,7 +613,7 @@ impl<K, V, A: Allocator, C: Sized> RbTree<Pair<K, V>, A, C, false> {
         &self,
         mut f: impl FnMut(&K) -> Ordering,
     ) -> impl Iterator<Item = &Pair<K, V>> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = rb_find_multi_start_by(head, |v| f(&v.first));
         RbTreeIter {
             head,
@@ -628,7 +628,7 @@ impl<K, V, A: Allocator, C: Sized> RbTree<Pair<K, V>, A, C, false> {
         &mut self,
         mut f: impl FnMut(&K) -> Ordering,
     ) -> impl Iterator<Item = &mut Pair<K, V>> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = rb_find_multi_start_by(head, |v| f(&v.first));
         RbTreeIterMut {
             head,
@@ -648,7 +648,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
 
     /// Iterator over all elements equivalent to `value`
     pub fn find_multi(&self, value: &V) -> impl Iterator<Item = &V> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = self
             .bound_node_by(value, |v, nv| !self.comparator.lt(nv, v))
             .unwrap_or(head);
@@ -663,7 +663,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
     }
 
     pub fn find_multi_by(&self, mut f: impl FnMut(&V) -> Ordering) -> impl Iterator<Item = &V> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = rb_find_multi_start_by(head, &mut f);
         RbTreeIter {
             head,
@@ -678,7 +678,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
         &mut self,
         mut f: impl FnMut(&V) -> Ordering,
     ) -> impl Iterator<Item = &mut V> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = rb_find_multi_start_by(head, &mut f);
         RbTreeIterMut {
             head,
@@ -697,7 +697,7 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>,
     }
 
     pub fn find_multi_key(&self, key: &K) -> impl Iterator<Item = &Pair<K, V>> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = rb_find_multi_start_by(head, |v| {
             if self.comparator.lt_key_val(key, v) {
                 Ordering::Greater
@@ -719,7 +719,7 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>,
     }
 
     pub fn find_multi_key_mut(&mut self, key: &K) -> impl Iterator<Item = &mut Pair<K, V>> {
-        let head = NodePtr(self.head);
+        let head = self.head;
         let start = rb_find_multi_start_by(head, |v| {
             if self.comparator.lt_key_val(key, v) {
                 Ordering::Greater
