@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::{DLSet, Vector, dlrf::DLRuntimeClass};
+use crate::{DLSet, DLVector, dlrf::DLRuntimeClass};
 use shared::Superclass;
 
 use super::FD4Time;
@@ -51,7 +51,7 @@ pub struct FD4TaskQueue {
     vftable: usize,
     allocator: usize,
     pub entries_tree: DLSet<FD4TaskGroup>,
-    pub entries_vector: Vector<FD4TaskGroup>,
+    pub entries_vector: DLVector<FD4TaskGroup>,
 }
 
 #[repr(C)]

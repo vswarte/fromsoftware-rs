@@ -3,7 +3,7 @@ use std::{num::ParseIntError, ptr::NonNull};
 use crate::DLMap;
 use crate::cs::{BlockId, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType};
 use crate::fd4::FD4Time;
-use crate::{Vector, stl::DoublyLinkedList};
+use crate::{DLVector, stl::DLList};
 
 use shared::F32Vector3;
 
@@ -19,14 +19,14 @@ pub struct CSSosSignMan {
     pub sign_sfx: DLMap<i32, usize>,
     /// List of signs that were requested to be summoned
     /// Inserting values here will not do anything unless you also have data in `join_data`
-    pub summon_requests: DoublyLinkedList<i32>,
+    pub summon_requests: DLList<i32>,
     /// Type of multiplayer for summoning
     pub summon_param_type: SummonParamType,
     unk54: [u8; 4],
     /// List of data for join push notifications
-    pub join_data: DoublyLinkedList<NonNull<PhantomJoinData>>,
+    pub join_data: DLList<NonNull<PhantomJoinData>>,
     /// Completely unused, no reads or writes other then initialization and destruction
-    unk70: DoublyLinkedList<[u8; 0x28]>,
+    unk70: DLList<[u8; 0x28]>,
     unk88: [u8; 0x8],
     display_ghost: usize,
     timer: FD4Time,
@@ -38,7 +38,7 @@ pub struct CSSosSignMan {
     /// Each time your coop player dies and you have someone in your world
     /// you will get a cooldown depending on [crate::param::WHITE_SIGN_COOL_TIME_PARAM_ST].
     /// All this cooldown timers are stored in this vector.
-    pub signs_cooldown: Vector<f32>,
+    pub signs_cooldown: DLVector<f32>,
     /// Leftover from Dark Souls 3, never set to true or changed
     /// Source of names: Sekiro debug menu
     pub override_guardian_of_rosalia_count_enabled: bool,

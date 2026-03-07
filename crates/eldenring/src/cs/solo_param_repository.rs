@@ -1,7 +1,7 @@
 use shared::{OwnedPtr, Subclass};
 
 use crate::{
-    ArrayWithHeader, DLMap, DLMultiMap, Vector,
+    ArrayWithHeader, DLMap, DLMultiMap, DLVector,
     cs::BlockId,
     dlkr::DLAllocatorRef,
     fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile},
@@ -220,11 +220,11 @@ pub struct SoloParamRepository {
     /// Ordered list of buddy stone entity IDs and their associated buddy stone param indices.
     ///
     /// Can be used to search [crate::param::BUDDY_STONE_PARAM_ST] rows based on chr entity ID.
-    pub buddy_stone_entity_ids: Vector<BuddyStoneTalkChrEntityId>,
+    pub buddy_stone_entity_ids: DLVector<BuddyStoneTalkChrEntityId>,
     /// Ordered list of bonfire entity IDs and their associated bonfire warp param indices.
     ///
     /// Can be used to search [crate::param::BONFIRE_WARP_PARAM_ST] rows based on bonfire entity ID.
-    pub bonfire_warps: Vector<BonfireEntityId>,
+    pub bonfire_warps: DLVector<BonfireEntityId>,
     /// MultiMap groupping [WEATHER_ASSET_REPLACE_PARAM_ST] param row index by [BlockId].
     pub weather_asset_replaces: DLMultiMap<BlockId, u32>,
     /// MultiMap groupping [LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM] param row index by [BlockId].

@@ -5,7 +5,7 @@ use windows::core::PCWSTR;
 
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 use crate::position::BlockPosition;
-use crate::{DLMap, Vector, param::ASSET_GEOMETORY_PARAM_ST, rva};
+use crate::{DLMap, DLVector, param::ASSET_GEOMETORY_PARAM_ST, rva};
 use shared::{OwnedPtr, Subclass, Superclass, program::Program};
 
 #[repr(C)]
@@ -47,13 +47,13 @@ pub struct CSWorldGeomManBlockData {
     unk4: u32,
     pub world_block_info: usize,
     unk10: [u8; 0xF0],
-    unk100: Vector<()>,
-    unk120: Vector<()>,
-    unk140: Vector<()>,
-    pub activation_fade_modules: Vector<()>,
+    unk100: DLVector<()>,
+    unk120: DLVector<()>,
+    unk140: DLVector<()>,
+    pub activation_fade_modules: DLVector<()>,
     unk180: [u8; 0x108],
     /// Holds refs to some geometry instances for this map.
-    pub geom_ins_vector: Vector<OwnedPtr<CSWorldGeomIns>>,
+    pub geom_ins_vector: DLVector<OwnedPtr<CSWorldGeomIns>>,
     unk2a8: [u8; 0x20],
     pub geometry_array_count: u32,
     unk2cc: u32,
@@ -65,8 +65,8 @@ pub struct CSWorldGeomManBlockData {
     unk334: bool,
     _pad335: [u8; 3],
     unk338: [u8; 0x50],
-    pub sos_sign_geometry: Vector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
-    pub disable_on_singleplay_geometry: Vector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
+    pub sos_sign_geometry: DLVector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
+    pub disable_on_singleplay_geometry: DLVector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
     unk3c8: [u8; 0x2E0],
 }
 
