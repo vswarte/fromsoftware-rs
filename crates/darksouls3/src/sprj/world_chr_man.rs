@@ -3,7 +3,7 @@ use std::{mem::MaybeUninit, ptr::NonNull, slice};
 use shared::{OwnedPtr, Subclass, UnknownStruct, empty::*};
 
 use super::{ChrIns, PlayerIns, ReplayGhostIns, WorldAreaInfo, WorldBlockChr, WorldInfoOwner};
-use crate::CxxVec;
+use crate::DLVector;
 
 #[repr(C)]
 #[shared::singleton("WorldChrMan")]
@@ -83,7 +83,7 @@ pub struct WorldChrMan {
     _unk2fe0: u64,
     _unk2fe8: u64,
     _unk2ff0: i32,
-    _unk2ff8: CxxVec<usize>,
+    _unk2ff8: DLVector<usize>,
     _debug_chr_creator: usize,
     _debug_chr_perf_checker: usize,
     _unk3028: u64,
@@ -92,7 +92,7 @@ pub struct WorldChrMan {
     _unk3040: u32,
     _unk3048: u32,
     _unk304c: u16,
-    _unk3050: CxxVec<usize>,
+    _unk3050: DLVector<usize>,
     _unk3058: u64,
     _unk3060: u64,
     _unk3068: u64,

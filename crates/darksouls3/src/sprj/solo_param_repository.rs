@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use shared::UnknownStruct;
 
 use super::ParamResCap;
-use crate::{CxxVec, fd4::FD4BasicHashString};
+use crate::{DLVector, fd4::FD4BasicHashString};
 
 #[repr(C)]
 #[shared::singleton("SoloParamRepository")]
@@ -21,7 +21,7 @@ pub struct SoloParamRepository {
 
     pub params: [SoloParamCell; 0x61],
     _wep_reinforce_tree: UnknownStruct<0x18>,
-    _unk1bc8: CxxVec<u8>,
+    _unk1bc8: DLVector<u8>,
     _unk1be8: u64,
 }
 

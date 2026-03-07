@@ -4,7 +4,7 @@ use std::{borrow::Cow, iter, num::NonZero, ptr::NonNull, slice};
 use bitfield::bitfield;
 use shared::{FromStatic, InstanceResult, OwnedPtr, empty::*};
 
-use crate::CxxVec;
+use crate::DLVector;
 use crate::sprj::{ItemGetMenuMan, ItemId, OptionalItemId, PlayerIns};
 
 mod gesture;
@@ -30,7 +30,7 @@ pub struct PlayerGameData {
     pub gesture_data: OwnedPtr<GestureGameData>,
 
     _unk7c0: [u8; 0x58],
-    _unk810: CxxVec<u64>,
+    _unk810: DLVector<u64>,
     _unk830: [u8; 0xe8],
     _menu_ref_special_effect_1: usize,
     _menu_ref_special_effect_2: usize,

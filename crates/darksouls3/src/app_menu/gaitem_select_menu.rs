@@ -4,7 +4,7 @@ use std::sync::atomic::AtomicI32;
 use shared::{OwnedPtr, Subclass, Superclass, UnknownStruct};
 
 use super::{MenuWindow, MenuWindowCallback, SceneObjProxy};
-use crate::{CxxVec, sprj::ItemId};
+use crate::{DLVector, sprj::ItemId};
 
 #[repr(C)]
 #[derive(Superclass, Subclass)]
@@ -22,7 +22,7 @@ pub struct GaitemSelectBaseMenu {
     pub item_select_ctrl: ItemSelectCtrl,
     _unk1968: UnknownStruct<0x28>,
     _unk1990: UnknownStruct<0x80>,
-    _unk1a10: CxxVec<u64>,
+    _unk1a10: DLVector<u64>,
     pub detail_status_view: GaitemSelectDetailStatusView,
     _unk1ff0: UnknownStruct<0x90>,
 }
@@ -122,7 +122,7 @@ pub struct MenuGaitemList {
     pub ref_count: AtomicI32,
 
     /// The items in this list.
-    pub items: CxxVec<MenuGaitem>,
+    pub items: DLVector<MenuGaitem>,
 }
 
 #[repr(C)]
@@ -139,7 +139,7 @@ pub struct MenuGaitem {
     /// The cost in souls of each instance of this item.
     pub price: u64,
 
-    _unk18: CxxVec<u8>,
+    _unk18: DLVector<u8>,
     _unk38: u32,
 
     /// This item's ID.

@@ -1,6 +1,6 @@
 extern crate fromsoftware_shared as shared;
 
-mod cxx_stl;
+mod stl;
 
 pub mod app_menu;
 pub mod cs;
@@ -14,4 +14,4 @@ pub mod rva;
 pub mod sprj;
 pub mod util;
 
-pub use cxx_stl::*;
+pub use stl::*;
