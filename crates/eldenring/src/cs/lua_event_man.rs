@@ -8,7 +8,7 @@ use vtable_rs::VPtr;
 use crate::{
     DLList,
     cs::{BlockId, CSEzTask, CSEzVoidTask, DeathState, FullScreenMessage, SummonParamType},
-    dlkr::DLAllocatorRef,
+    dlkr::DLAllocatorBase,
     dlrf::DLRuntimeClassImpl,
     dltx::{DLShiftJisStringKind, DLString, DLUTF16StringKind},
     fd4::FD4Time,
@@ -165,7 +165,7 @@ pub struct CSDeathRestartEvent {
 pub struct CSLuaEventProxy {
     vftable: usize,
     pub lua_event_script_imitation_class: NonNull<DLRuntimeClassImpl>,
-    unk10: DLAllocatorRef,
+    unk10: NonNull<DLAllocatorBase>,
     unk18: [u8; 0x18],
     pub lua_event_msg_map: CSLuaEventMsgMap,
     /// Dummy field for the packet broadcast
