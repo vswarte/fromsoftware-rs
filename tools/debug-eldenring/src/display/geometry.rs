@@ -10,7 +10,10 @@ impl DebugDisplay for CSWorldGeomMan {
         ui.list(
             format!("Loaded blocks: {}", self.blocks.len()),
             self.blocks.iter(),
-            |ui, _i, block| ui.nested(format!("{}", block.block_id), &block.data),
+            |ui, _i, entry| {
+                let (block_id, data) = entry.into();
+                ui.nested(format!("{}", block_id), data)
+            },
         );
 
         ui.nested("Current Unk Block", &self.curent_99_block_data);

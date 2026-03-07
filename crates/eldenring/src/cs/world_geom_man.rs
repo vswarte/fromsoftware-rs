@@ -5,7 +5,7 @@ use windows::core::PCWSTR;
 
 use super::{BlockId, FieldInsHandle, WorldInfoOwner};
 use crate::position::BlockPosition;
-use crate::{Tree, Vector, param::ASSET_GEOMETORY_PARAM_ST, rva};
+use crate::{DLMap, Vector, param::ASSET_GEOMETORY_PARAM_ST, rva};
 use shared::{OwnedPtr, Subclass, Superclass, program::Program};
 
 #[repr(C)]
@@ -16,41 +16,22 @@ pub struct CSWorldGeomMan {
     unk8: usize,
     pub world_info_owner: NonNull<WorldInfoOwner>,
     /// A tree of loaded maps hosting their geometry instances.
-    pub blocks: Tree<CSWorldGeomManBlocksEntry>,
+    pub blocks: DLMap<BlockId, OwnedPtr<CSWorldGeomManBlockData>>,
     /// Seemingly points to the current overlay world tile's map data
     pub curent_99_block_data: OwnedPtr<CSWorldGeomManBlockData>,
 }
 
 impl CSWorldGeomMan {
     pub fn geom_block_data_by_id(&self, block_id: &BlockId) -> Option<&CSWorldGeomManBlockData> {
-        self.blocks.iter().find_map(|b| {
-            if &b.block_id == block_id {
-                Some(b.data.as_ref())
-            } else {
-                None
-            }
-        })
+        self.blocks.find(block_id).map(|entry| entry.as_ref())
     }
 
     pub fn geom_block_data_by_id_mut(
         &mut self,
         block_id: &BlockId,
     ) -> Option<&mut CSWorldGeomManBlockData> {
-        self.blocks.iter().find_map(|b| {
-            if &b.block_id == block_id {
-                Some(b.data.as_mut())
-            } else {
-                None
-            }
-        })
+        self.blocks.find_mut(block_id).map(|entry| entry.as_mut())
     }
-}
-
-#[repr(C)]
-pub struct CSWorldGeomManBlocksEntry {
-    pub block_id: BlockId,
-    _pad4: u32,
-    pub data: OwnedPtr<CSWorldGeomManBlockData>,
 }
 
 #[repr(C)]

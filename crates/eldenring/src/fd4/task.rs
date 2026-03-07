@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::{Tree, Vector, dlrf::DLRuntimeClass};
+use crate::{DLMap, Vector, dlrf::DLRuntimeClass};
 use shared::Superclass;
 
 use super::FD4Time;
@@ -49,7 +49,7 @@ impl FD4TaskBaseVmt for FD4TaskBase {
 pub struct FD4TaskQueue {
     vftable: usize,
     allocator: usize,
-    pub entries_tree: Tree<FD4TaskGroup>,
+    pub entries_tree: DLMap<u32, FD4TaskGroup>,
     pub entries_vector: Vector<FD4TaskGroup>,
 }
 

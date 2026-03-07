@@ -37,11 +37,9 @@ impl DebugDisplay for WorldInfoOwner {
                     format!("World Grid Area Info {}", entry.base.block_id),
                     || {
                         ui.list("Blocks", entry.blocks.iter(), |ui, _i, block_entry| {
-                            ui.header(format!("World Block Info {}", block_entry.block_id), || {
-                                ui.display(
-                                    "Center physics coords",
-                                    block_entry.block.physics_center,
-                                );
+                            let (block_id, data) = block_entry.into();
+                            ui.header(format!("World Block Info {}", block_id), || {
+                                ui.display("Center physics coords", data.physics_center);
                             });
                         });
                     },

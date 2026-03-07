@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use shared::{F32Vector3, F32Vector4, OwnedPtr};
 
-use crate::{Tree, cs::BlockId};
+use crate::{DLMap, cs::BlockId};
 
 #[repr(C)]
 pub struct AutoInvadePoint {
@@ -12,7 +12,6 @@ pub struct AutoInvadePoint {
 
 #[repr(C)]
 pub struct AutoInvadePointBlockEntry {
-    pub block_id: BlockId,
     pub count: usize,
     head: OwnedPtr<AutoInvadePoint>,
 }
@@ -48,7 +47,7 @@ impl DerefMut for AutoInvadePointBlockEntry {
 /// instead of looking for the point on msb
 #[shared::singleton("CSAutoInvadePoint")]
 pub struct CSAutoInvadePoint {
-    pub entries: Tree<AutoInvadePointBlockEntry>,
+    pub entries: DLMap<BlockId, AutoInvadePointBlockEntry>,
     unk18: [u8; 0x28],
     unk40: F32Vector4,
     unk50: [u8; 0x20],
