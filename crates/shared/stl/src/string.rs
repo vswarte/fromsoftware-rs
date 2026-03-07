@@ -186,3 +186,18 @@ where
         unsafe { std::slice::from_raw_parts(self.as_ptr(), self.size) }
     }
 }
+
+impl<C, A, const SSO_CAP: usize> Drop for BasicString<C, A, SSO_CAP>
+where
+    C: Copy + Default,
+    A: Allocator + Clone,
+{
+    fn drop(&mut self) {
+        if !self.is_sso() {
+            unsafe {
+                self.allocator
+                    .deallocate_raw(self.buffer.heap.as_ptr() as _);
+            }
+        }
+    }
+}
