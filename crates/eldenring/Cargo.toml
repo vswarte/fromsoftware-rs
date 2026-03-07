@@ -9,7 +9,6 @@ description = "Structures, bindings, and utilities for From Software's title Eld
 
 [dependencies]
 fromsoftware-shared.workspace = true
-fromsoftware-shared-stl.workspace = true
 thiserror.workspace = true
 glam.workspace = true
 pelite.workspace = true
@@ -17,7 +16,10 @@ vtable-rs.workspace = true
 windows.workspace = true
 bitfield.workspace = true
 encoding_rs.workspace = true
-cxx-stl.workspace = true
+
+[dependencies.fromsoftware-shared-stl]
+workspace = true
+features = ["msvc2015"]
 
 [build-dependencies]
 serde_derive = "1"

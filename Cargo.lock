@@ -454,7 +454,6 @@ name = "eldenring"
 version = "0.13.0"
 dependencies = [
  "bitfield",
- "cxx-stl 4.4.0",
  "encoding_rs",
  "fromsoftware-shared 0.13.0",
  "fromsoftware-shared-stl",
