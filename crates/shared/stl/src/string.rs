@@ -166,7 +166,7 @@ where
     /// The pointer is valid for `self.len()` initialized code units and is
     /// followed by a NUL terminator. It must not outlive `self`
     ///
-    /// [`std::basic_string::c_str()`]: https://en.cppreference.com/w/cpp/string/basic_string/c_str.html
+    /// [`std::string::c_str()`]: https://en.cppreference.com/w/cpp/string/basic_string/c_str.html
     #[inline]
     pub unsafe fn as_ptr(&self) -> *const C {
         // SAFETY: The SSO/heap variant is selected by the capacity invariant,
