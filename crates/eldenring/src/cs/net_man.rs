@@ -1,12 +1,12 @@
 use std::{ptr::NonNull, string::FromUtf8Error};
 
 use crate::{
-    BasicVector, Vector,
+    BasicVector, DLVector,
     cs::{MultiplayRole, MultiplayType, SummonParamType},
     dltx::DLString,
     fd4::{FD4StepBase, FD4StepBaseInterface, FD4Time},
     position::BlockPosition,
-    stl::DoublyLinkedList,
+    stl::DLList,
 };
 use shared::{OwnedPtr, StepperStates};
 
@@ -58,16 +58,16 @@ pub struct CSNetMan {
 pub struct CSNetBloodMessageDb {
     vftable: usize,
     // Contains all CSNetBloodMessageDbItem?
-    pub entries: DoublyLinkedList<OwnedPtr<CSNetBloodMessageDbItem>>,
+    pub entries: DLList<OwnedPtr<CSNetBloodMessageDbItem>>,
     unk20: usize,
     /// Seemingly contains message data for messages created by local user
-    pub created_data: DoublyLinkedList<usize>,
+    pub created_data: DLList<usize>,
     // Contains ???
-    unk40: DoublyLinkedList<usize>,
+    unk40: DLList<usize>,
     unk58: usize,
     blood_message_ins_man_1: usize,
     blood_message_ins_man_2: usize,
-    pub discovered_messages: DoublyLinkedList<OwnedPtr<OwnedPtr<CSNetBloodMessageDbItem>>>,
+    pub discovered_messages: DLList<OwnedPtr<OwnedPtr<CSNetBloodMessageDbItem>>>,
     unk88: [u8; 0xD0],
     /// Hosts any ongoing jobs for evaluations.
     evaluate_job: usize,
@@ -120,7 +120,7 @@ pub struct BreakInPointManager {
 
 #[repr(C)]
 pub struct BreakInAreaList {
-    pub areas: Vector<u32>,
+    pub areas: DLVector<u32>,
     pub count: u32,
 }
 
@@ -364,10 +364,10 @@ pub struct CSQuickMatchContext {
     pub spawn_data: QuickmatchSpawnData,
     /// Vector of arenas available for quickmatch to randomly select from.
     pub arena_list: BasicVector<QuickMatchArena>,
-    unk40: Vector<usize>,
-    unk60: Vector<usize>,
+    unk40: DLVector<usize>,
+    unk60: DLVector<usize>,
     /// All quickmatch participants.
-    pub participants: DoublyLinkedList<QuickmatchParticipant>,
+    pub participants: DLList<QuickmatchParticipant>,
     unk98: u8,
     /// Seems to be indicative of why some QM lobby failed
     pub error_state: u8,

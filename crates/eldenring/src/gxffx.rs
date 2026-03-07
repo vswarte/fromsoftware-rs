@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use crate::DoublyLinkedList;
+use crate::DLList;
 use shared::OwnedPtr;
 
 #[repr(C)]
@@ -21,7 +21,7 @@ pub struct FxrResourceContainer {
     pub allocator1: u64,
     pub scene_ctrl: NonNull<OwnedPtr<GXFfxSceneCtrl>>,
     unk10: u64,
-    pub fxr_definitions: DoublyLinkedList<FxrListNode>,
+    pub fxr_definitions: DLList<FxrListNode>,
 }
 
 #[repr(C)]

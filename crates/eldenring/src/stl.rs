@@ -3,9 +3,9 @@ use std::ptr::NonNull;
 use crate::dlkr::DLAllocatorRef;
 use shared::OwnedPtr;
 
-pub type DoublyLinkedList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
+pub type DLList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
 
-pub type Vector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorRef>;
+pub type DLVector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorRef>;
 
 pub type DLMap<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorRef>;
 pub type DLMultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorRef>;
@@ -168,12 +168,6 @@ impl<T> ChainingMapBucketEntry<T> {
             }
         })
     }
-}
-
-#[repr(C)]
-pub struct Pair<K, V> {
-    pub key: K,
-    pub value: V,
 }
 
 #[repr(C)]
