@@ -1,14 +1,13 @@
-use crate::CxxVec;
-use crate::dlkr::{DLAllocatorRef, DLPlainLightMutex};
+use crate::dlkr::DLPlainLightMutex;
 use crate::dlui::DynamicBitset;
 
 #[repr(C)]
 /// Source of name: RTTI
 pub struct DLUserInputDevice {
     _vftable: usize,
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocator>,
     _unk10: [u8; 0x50],
-    pub extensions: CxxVec<usize>,
+    pub extensions: DLVector<usize>,
 }
 
 #[repr(C)]
@@ -20,7 +19,7 @@ pub struct DLUserInputDeviceImpl {
     _unkc8: [u8; 0x8],
     _key_info1: VirtualAnalogKeyInfo,
     _key_info2: VirtualAnalogKeyInfo,
-    _unk120: CxxVec<u64>,
+    _unk120: DLVector<u64>,
     pub input_data: VirtualInputData,
 }
 
@@ -28,7 +27,7 @@ pub struct DLUserInputDeviceImpl {
 /// Source of name: RTTI
 struct VirtualAnalogKeyInfo {
     _vftable: usize,
-    _unk08: CxxVec<u64>,
+    _unk08: DLVector<u64>,
 }
 
 #[repr(C)]

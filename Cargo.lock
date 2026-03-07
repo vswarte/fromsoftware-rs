@@ -316,9 +316,9 @@ name = "darksouls3"
 version = "0.13.0"
 dependencies = [
  "bitfield",
- "cxx-stl 4.4.0",
  "encoding_rs",
  "fromsoftware-shared 0.13.0",
+ "fromsoftware-shared-stl",
  "pelite",
  "thiserror 1.0.69",
  "vtable-rs",
