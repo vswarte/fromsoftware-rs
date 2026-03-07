@@ -114,7 +114,7 @@ pub struct BreakInData {
 
 #[repr(C)]
 pub struct BreakInPointManager {
-    breakin_points: DoublyLinkedList<()>,
+    breakin_points: DLList<()>,
     unk18: [u8; 0x10],
 }
 
