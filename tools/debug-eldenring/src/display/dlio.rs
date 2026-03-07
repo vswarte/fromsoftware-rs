@@ -16,7 +16,7 @@ impl DebugDisplay for DLFileDeviceManager {
                     TableColumnSetup::new("Root"),
                     TableColumnSetup::new("Mount"),
                 ],
-                self.virtual_roots.items().iter(),
+                self.virtual_roots.iter(),
                 |ui, _i, vr| {
                     ui.table_next_column();
                     ui.text(format!("{}", vr[0]));
@@ -33,7 +33,7 @@ impl DebugDisplay for DLFileDeviceManager {
                     TableColumnSetup::new("Name"),
                     TableColumnSetup::new("File Size"),
                 ],
-                self.bnd4_files.items().iter(),
+                self.bnd4_files.iter(),
                 |ui, _i, file| {
                     ui.table_next_column();
                     ui.text(format!("{}", file.name));

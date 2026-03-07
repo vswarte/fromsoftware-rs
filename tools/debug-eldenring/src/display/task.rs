@@ -23,7 +23,7 @@ impl DebugDisplay for CSTaskImp {
                     TableColumnSetup::new("Name"),
                     TableColumnSetup::new("Active"),
                 ],
-                self.inner.task_base.task_groups.items(),
+                self.inner.task_base.task_groups.iter(),
                 |ui, _i, task_group| {
                     ui.table_next_column();
                     ui.text(format!("{:x}", task_group.index));

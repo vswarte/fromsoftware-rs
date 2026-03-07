@@ -115,7 +115,7 @@ impl DebugDisplay for SosSignMan {
 
         ui.list(
             "Sign Cooldowns",
-            self.signs_cooldown.items().iter(),
+            self.signs_cooldown.iter(),
             |ui, i, t| {
                 ui.text(format!("Cooldown {}: {:.2}s", i, t));
             },

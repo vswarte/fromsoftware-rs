@@ -28,7 +28,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.list(
             format!("Geometry Vector ({})", self.geom_ins_vector.len()),
-            self.geom_ins_vector.items(),
+            self.geom_ins_vector.iter(),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins
@@ -56,7 +56,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.list(
             format!("Sign Geometry Vector ({})", self.sos_sign_geometry.len()),
-            self.sos_sign_geometry.items(),
+            self.sos_sign_geometry.iter(),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins

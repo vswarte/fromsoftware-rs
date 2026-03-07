@@ -288,10 +288,9 @@ impl SoloParamRepository {
     ) -> Option<&crate::param::BUDDY_STONE_PARAM_ST> {
         let entry_index = self
             .buddy_stone_entity_ids
-            .items()
             .binary_search_by_key(&talk_chr_entity_id, |e| e.talk_chr_entity_id)
             .ok()?;
-        let entry = &self.buddy_stone_entity_ids.items()[entry_index];
+        let entry = &self.buddy_stone_entity_ids[entry_index];
         self.get_row_by_index::<BuddyStoneParam>(entry.buddy_stone_param_index as usize)
     }
 
@@ -301,10 +300,10 @@ impl SoloParamRepository {
     ) -> Option<&crate::param::BONFIRE_WARP_PARAM_ST> {
         let entry_index = self
             .bonfire_warps
-            .items()
+
             .binary_search_by_key(&bonfire_entity_id, |e| e.bonfire_entity_id)
             .ok()?;
-        let entry = &self.bonfire_warps.items()[entry_index];
+        let entry = &self.bonfire_warps[entry_index];
         self.get_row_by_index::<BonfireWarpParam>(entry.bonfire_warp_param_index as usize)
     }
 
