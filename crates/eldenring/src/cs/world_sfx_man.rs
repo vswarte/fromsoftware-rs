@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use crate::Tree;
+use crate::UnkDLTree;
 
 use super::{BlockId, WorldInfoOwner};
 
@@ -56,7 +56,7 @@ pub struct WorldAreaSfx {
 pub struct WorldGridAreaSfx {
     base: WorldAreaSfxBase,
     world_area_info: usize,
-    unk20: Tree<()>,
+    unk20: UnkDLTree<()>,
     unk38: usize,
 }
 

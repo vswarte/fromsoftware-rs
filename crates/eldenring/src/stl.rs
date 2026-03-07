@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, ptr::NonNull};
+use std::ptr::NonNull;
 
 use crate::dlkr::DLAllocatorRef;
 use shared::OwnedPtr;
@@ -7,11 +7,15 @@ pub type DoublyLinkedList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
 
 pub type Vector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorRef>;
 
-pub type Map<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorRef>;
-pub type MultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorRef>;
+pub type DLMap<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorRef>;
+pub type DLMultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorRef>;
 
-pub type Set<V> = fromsoftware_shared_stl::Set<V, DLAllocatorRef>;
-pub type MultiSet<V> = fromsoftware_shared_stl::MultiSet<V, DLAllocatorRef>;
+pub type DLSet<V> = fromsoftware_shared_stl::Set<V, DLAllocatorRef>;
+pub type DLMultiSet<V> = fromsoftware_shared_stl::MultiSet<V, DLAllocatorRef>;
+
+/// Special type for yet unspecified Red/Black tree where only allocator is known.
+pub type UnkDLTree<V> =
+    fromsoftware_shared_stl::RbTree<V, DLAllocatorForStl, fromsoftware_shared_stl::Less>;
 
 #[repr(C)]
 pub struct BasicVector<T>
@@ -64,142 +68,6 @@ where
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
-}
-
-#[repr(C)]
-pub struct Tree<T> {
-    allocator: usize,
-    head: NonNull<TreeNode<T>>,
-    size: usize,
-}
-
-impl<T> Tree<T> {
-    pub fn len(&self) -> usize {
-        self.size
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = &mut T> {
-        let mut current = unsafe {
-            let head = self.head;
-            let root = head.as_ref().parent;
-            let min = Self::min_node(root);
-            if min == head { None } else { Some(min) }
-        };
-
-        std::iter::from_fn(move || {
-            let mut node = current?;
-            unsafe {
-                let node_ref = node.as_mut();
-                let value_ref = &mut node_ref.value;
-
-                // Advance current to next in-order node
-                current = Self::next_inorder(node, self.head);
-
-                Some(value_ref)
-            }
-        })
-    }
-
-    /// Iterates over all entries that compare Equal against `cmp`,
-    /// using a lower-bound search to start in O(log n) time.
-    pub fn filtered_iter<'a, F>(&'a self, mut cmp: F) -> impl Iterator<Item = &'a T> + 'a
-    where
-        F: FnMut(&T) -> Ordering + 'a,
-    {
-        let head = self.head;
-
-        let mut current = unsafe {
-            let mut node = head.as_ref().parent;
-            let mut candidate: Option<NonNull<TreeNode<T>>> = None;
-
-            if node == head {
-                None
-            } else {
-                while node != head && node.as_ref().is_nil == 0 {
-                    match cmp(&node.as_ref().value) {
-                        Ordering::Less => {
-                            node = node.as_ref().right;
-                        }
-                        Ordering::Equal | Ordering::Greater => {
-                            candidate = Some(node);
-                            node = node.as_ref().left;
-                        }
-                    }
-                }
-                candidate
-            }
-        };
-
-        std::iter::from_fn(move || {
-            let mut node = current?;
-            unsafe {
-                loop {
-                    match cmp(&node.as_ref().value) {
-                        Ordering::Equal => {
-                            let value_ref = &node.as_ref().value;
-                            current = Self::next_inorder(node, head);
-                            return Some(value_ref);
-                        }
-                        Ordering::Greater => {
-                            current = None;
-                            return None;
-                        }
-                        Ordering::Less => {
-                            current = Self::next_inorder(node, head);
-                            node = current?;
-                        }
-                    }
-                }
-            }
-        })
-    }
-
-    /// Finds the minimum (leftmost) node in a subtree.
-    unsafe fn min_node(mut node: NonNull<TreeNode<T>>) -> NonNull<TreeNode<T>> {
-        unsafe {
-            while node.as_ref().is_nil == 0 && node.as_ref().left.as_ref().is_nil == 0 {
-                node = node.as_ref().left;
-            }
-        }
-        node
-    }
-
-    /// Returns the next in-order node from the given node.
-    /// `head` is the sentinel node.
-    unsafe fn next_inorder(
-        mut node: NonNull<TreeNode<T>>,
-        head: NonNull<TreeNode<T>>,
-    ) -> Option<NonNull<TreeNode<T>>> {
-        unsafe {
-            if node.as_ref().right.as_ref().is_nil == 0 {
-                // Go to the leftmost node in the right subtree
-                Some(Self::min_node(node.as_ref().right))
-            } else {
-                // Walk up the tree until we find a node that is a left child
-                loop {
-                    let parent = node.as_ref().parent;
-                    if parent == head || node != parent.as_ref().right {
-                        return if parent == head { None } else { Some(parent) };
-                    }
-                    node = parent;
-                }
-            }
-        }
-    }
-}
-
-#[repr(C)]
-pub struct TreeNode<T> {
-    left: NonNull<TreeNode<T>>,
-    parent: NonNull<TreeNode<T>>,
-    right: NonNull<TreeNode<T>>,
-    black_red: u8,
-    is_nil: u8,
-    value: T,
 }
 
 #[repr(C)]

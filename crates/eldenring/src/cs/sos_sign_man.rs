@@ -1,8 +1,9 @@
 use std::{num::ParseIntError, ptr::NonNull};
 
+use crate::DLMap;
 use crate::cs::{BlockId, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType};
 use crate::fd4::FD4Time;
-use crate::{Tree, Vector, stl::DoublyLinkedList};
+use crate::{Vector, stl::DoublyLinkedList};
 
 use shared::F32Vector3;
 
@@ -13,9 +14,9 @@ use shared::OwnedPtr;
 pub struct SosSignMan {
     vftable: usize,
     /// Tree of the sign entries
-    pub signs: Tree<SignTreeEntry>,
+    pub signs: DLMap<i32, OwnedPtr<SosSignData>>,
     /// Tree of sfx's for signs
-    pub sign_sfx: Tree<CSSosSignSfx>,
+    pub sign_sfx: DLMap<i32, usize>,
     /// List of signs that were requested to be summoned
     /// Inserting values here will not do anything unless you also have data in `join_data`
     pub summon_requests: DoublyLinkedList<i32>,
@@ -69,20 +70,6 @@ pub struct SosSignMan {
     pub override_red_summon_type_count_enabled: bool,
     // _pad111: [u8; 3],
     pub override_red_summon_type_count: u32,
-}
-
-#[repr(C)]
-pub struct SignTreeEntry {
-    pub sign_id: i32,
-    // _pad4: u32,
-    pub sign_data: OwnedPtr<SosSignData>,
-}
-
-#[repr(C)]
-pub struct CSSosSignSfx {
-    pub sign_id: i32,
-    // _pad4: u32,
-    fxhgsfx: usize,
 }
 
 #[repr(C)]

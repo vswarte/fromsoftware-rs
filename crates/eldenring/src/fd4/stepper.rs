@@ -2,7 +2,7 @@ use std::{marker::PhantomData, ptr::NonNull};
 
 use shared::StepperStates;
 
-use crate::Tree;
+use crate::UnkDLTree;
 use crate::dlkr::DLAllocatorRef;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
@@ -60,7 +60,7 @@ pub struct StepperFn<T> {
 #[repr(C)]
 pub struct FD4ComponentAttachSystem {
     vftable: *const (),
-    unk8: Tree<()>,
+    unk8: UnkDLTree<()>,
     pub allocator: DLAllocatorRef,
 }
 
