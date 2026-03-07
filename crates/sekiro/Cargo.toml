@@ -16,7 +16,10 @@ fromsoftware-shared.workspace = true
 thiserror.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
-cxx-stl.workspace = true
+
+[dependencies.fromsoftware-shared-stl]
+workspace = true
+features = ["msvc2015"]
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
