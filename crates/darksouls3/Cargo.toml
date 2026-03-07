@@ -16,7 +16,7 @@ thiserror.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
 
-[dependencies.cxx-stl]
+[dependencies.fromsoftware-shared-stl]
 workspace = true
 features = ["msvc2012"]
 

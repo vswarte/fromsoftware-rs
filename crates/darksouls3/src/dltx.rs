@@ -1,10 +1,11 @@
 use std::borrow::Cow;
 use std::fmt::Display;
-
-use crate::dlkr::DLAllocatorRef;
+use std::ptr::NonNull;
 
 use encoding_rs;
 use thiserror::Error;
+
+use crate::dlkr::DLAllocatorBase;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
@@ -128,7 +129,7 @@ pub struct DLString<T: DLStringKind = DLUTF16StringKind> {
     text: DLStringText<T>,
     length: usize,
     capacity: usize,
-    allocator: DLAllocatorRef,
+    allocator: NonNull<DLAllocatorBase>,
     encoding: DLCharacterSet,
 }
 

@@ -5,7 +5,7 @@ use std::{mem, ptr, ptr::NonNull, slice};
 
 use shared::{OwnedPtr, util::IncompleteArrayField};
 
-use crate::CxxVec;
+use crate::DLVector;
 use crate::fd4::FD4BasicHashString;
 use crate::param::{
     ATK_PARAM_ST, BEHAVIOR_PARAM_ST, EQUIP_PARAM_ACCESSORY_ST, EQUIP_PARAM_GOODS_ST,
@@ -19,7 +19,7 @@ use crate::sprj::{ItemCategory, ItemId};
 pub struct CSRegulationManager {
     _vftable: usize,
     _unk8: u64,
-    pub params: CxxVec<OwnedPtr<ParamResCap>>,
+    pub params: DLVector<OwnedPtr<ParamResCap>>,
 }
 
 impl CSRegulationManager {
