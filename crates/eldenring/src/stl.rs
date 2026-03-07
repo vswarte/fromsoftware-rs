@@ -7,6 +7,12 @@ pub type DoublyLinkedList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
 
 pub type Vector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorRef>;
 
+pub type Map<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorRef>;
+pub type MultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorRef>;
+
+pub type Set<V> = fromsoftware_shared_stl::Set<V, DLAllocatorRef>;
+pub type MultiSet<V> = fromsoftware_shared_stl::MultiSet<V, DLAllocatorRef>;
+
 #[repr(C)]
 pub struct BasicVector<T>
 where
