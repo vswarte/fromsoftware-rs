@@ -5,7 +5,7 @@ use std::ops::{Deref, DerefMut};
 /// Implementation of MSVC C++ [`std::vector`]
 ///
 /// [`std::vector`]: https://en.cppreference.com/w/cpp/container/vector.html
-pub struct Vector<T, A: Sized> {
+pub struct Vector<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     first: *mut T,
@@ -15,7 +15,7 @@ pub struct Vector<T, A: Sized> {
     allocator: A,
 }
 
-impl<T, A: crate::Allocator> Vector<T, A> {
+impl<T, A: Allocator> Vector<T, A> {
     #[inline]
     pub fn capacity(&self) -> usize {
         unsafe { self.end.offset_from(self.first) as usize }
@@ -63,7 +63,7 @@ impl<T, A: crate::Allocator> Vector<T, A> {
     }
 }
 
-impl<T, A: Sized> Deref for Vector<T, A> {
+impl<T, A: Allocator> Deref for Vector<T, A> {
     type Target = [T];
 
     #[inline]
@@ -75,7 +75,7 @@ impl<T, A: Sized> Deref for Vector<T, A> {
     }
 }
 
-impl<T, A: Sized> DerefMut for Vector<T, A> {
+impl<T, A: Allocator> DerefMut for Vector<T, A> {
     #[inline]
     fn deref_mut(&mut self) -> &mut [T] {
         // Safety: both pointers belong to the same allocation

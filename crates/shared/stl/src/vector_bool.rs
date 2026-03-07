@@ -7,7 +7,7 @@ const VBITS: usize = u32::BITS as usize;
 ///
 /// [`std::vector<bool>`]: https://en.cppreference.com/w/cpp/container/vector_bool.html
 #[repr(C)]
-pub struct VectorBool<A: Sized> {
+pub struct VectorBool<A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     first: *mut u32,

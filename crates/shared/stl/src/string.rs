@@ -27,7 +27,7 @@ use std::ptr::NonNull;
 pub struct BasicString<C, A, const SSO_CAP: usize>
 where
     C: Copy + Default,
-    A: Allocator + Clone,
+    A: Allocator,
 {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
@@ -76,7 +76,7 @@ pub type Utf32String<A> = BasicString<u32, A, 4>;
 impl<C, A, const SSO_CAP: usize> BasicString<C, A, SSO_CAP>
 where
     C: Copy + Default,
-    A: Allocator + Clone,
+    A: Allocator,
 {
     /// Creates an empty string backed by `allocator`.
     ///
@@ -190,7 +190,7 @@ where
 impl<C, A, const SSO_CAP: usize> Drop for BasicString<C, A, SSO_CAP>
 where
     C: Copy + Default,
-    A: Allocator + Clone,
+    A: Allocator,
 {
     fn drop(&mut self) {
         if !self.is_sso() {

@@ -4,7 +4,7 @@ use std::{
     ptr::NonNull,
 };
 
-pub trait Allocator {
+pub trait Allocator: Clone {
     fn allocate_raw(&mut self, size: usize, align: usize) -> NonNull<c_void>;
     fn deallocate_raw(&mut self, ptr: *mut c_void);
 }

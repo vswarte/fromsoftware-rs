@@ -207,7 +207,7 @@ impl<V> NodePtr<V> {
 
 #[repr(C)]
 /// Implementation of a basic MSVC Red-Black Tree
-pub struct RbTree<V, A: Sized, C: Sized, U: RbTreeUniqueness = Unique> {
+pub struct RbTree<V, A: Allocator, C: Sized, U: RbTreeUniqueness = Unique> {
     comparator: C,
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,

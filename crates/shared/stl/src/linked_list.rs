@@ -5,7 +5,7 @@ use std::{mem::MaybeUninit, ptr::NonNull};
 /// Implementation of MSVC C++ [`std::list`]
 ///
 /// [`std::list`]: https://en.cppreference.com/w/cpp/container/list.html
-pub struct List<T, A: Sized> {
+pub struct List<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     head: NonNull<Node<T>>,
@@ -21,7 +21,7 @@ struct Node<T> {
     value: MaybeUninit<T>,
 }
 
-impl<T, A: crate::Allocator> List<T, A> {
+impl<T, A: Allocator> List<T, A> {
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         let mut length = self.length;
         let mut current = unsafe { self.head.as_ref() };
