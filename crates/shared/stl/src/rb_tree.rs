@@ -209,11 +209,11 @@ impl<V> NodePtr<V> {
 /// Implementation of a basic MSVC Red-Black Tree
 pub struct RbTree<V, A: Sized, C: Sized, U: RbTreeUniqueness = Unique> {
     comparator: C,
-    #[cfg(not(feature = "msvc2012"))]
+    #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     head: NonNull<RbNode<V>>,
     size: usize,
-    #[cfg(feature = "msvc2012")]
+    #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
     _uniqueness: std::marker::PhantomData<U>,
 }

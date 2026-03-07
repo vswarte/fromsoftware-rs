@@ -31,12 +31,12 @@ where
     C: CodeUnit,
     A: Allocator,
 {
-    #[cfg(not(feature = "msvc2012"))]
+    #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
     buffer: StringBuffer<C>,
     size: usize,
     capacity: usize,
-    #[cfg(feature = "msvc2012")]
+    #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
 }
 
