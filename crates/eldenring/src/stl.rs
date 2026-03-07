@@ -1,10 +1,11 @@
 use std::{cmp::Ordering, ptr::NonNull};
 
-use crate::dlkr::{DLAllocatorBase, DLAllocatorRef};
+use crate::dlkr::DLAllocatorRef;
 use shared::OwnedPtr;
 
 pub type DoublyLinkedList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
 
+pub type Vector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorRef>;
 
 #[repr(C)]
 pub struct BasicVector<T>
@@ -56,33 +57,6 @@ where
 
     pub fn is_empty(&self) -> bool {
         self.len() == 0
-    }
-}
-
-#[repr(C)]
-pub struct Vector<T>
-where
-    T: Sized,
-{
-    allocator: NonNull<DLAllocatorBase>,
-    pub base: BasicVector<T>,
-}
-
-impl<T> Vector<T> {
-    pub fn items(&self) -> &[T] {
-        self.base.items()
-    }
-
-    pub fn items_mut(&mut self) -> &mut [T] {
-        self.base.items_mut()
-    }
-
-    pub fn len(&self) -> usize {
-        self.base.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.base.is_empty()
     }
 }
 

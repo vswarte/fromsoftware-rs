@@ -300,7 +300,7 @@ impl CryptoSPIRegistry {
         if !params.is_valid() {
             return None;
         }
-        for spi_ptr in self.cipher_spis.items().iter() {
+        for spi_ptr in self.cipher_spis.iter() {
             let cipher_spi = unsafe { spi_ptr.as_ref() };
             if let Some(decrypter) =
                 (cipher_spi.vftable.get_decrypter)(cipher_spi, params, key, allocator)
@@ -323,7 +323,7 @@ impl CryptoSPIRegistry {
 
         let rsa_key_len: u32 = rsa_key.len() as u32;
 
-        for spi_ptr in self.key_generators.items().iter() {
+        for spi_ptr in self.key_generators.iter() {
             let keygen_spi = unsafe { spi_ptr.as_ref() };
             if let Some(cipher_key) = (keygen_spi.vftable.get_cipher_key)(
                 keygen_spi,
