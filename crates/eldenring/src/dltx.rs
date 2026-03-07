@@ -4,11 +4,11 @@ use std::fmt::Display;
 use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
 
-use crate::dlkr::DLAllocatorRef;
-
 use encoding_rs::{self, DecoderResult};
 use fromsoftware_shared_stl::{Allocator, NarrowString, Utf8String, Utf16String, Utf32String};
 use thiserror::Error;
+
+use crate::DLAllocatorForStl;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
@@ -92,16 +92,16 @@ macro_rules! impl_cxx_string {
     };
 }
 
-impl_cxx_string!(Utf16String<DLAllocatorRef>, u16, DLAllocatorRef);
-impl_cxx_string!(NarrowString<DLAllocatorRef>, u8, DLAllocatorRef);
-impl_cxx_string!(Utf32String<DLAllocatorRef>, u32, DLAllocatorRef);
+impl_cxx_string!(Utf16String<DLAllocatorForStl>, u16, DLAllocatorForStl);
+impl_cxx_string!(NarrowString<DLAllocatorForStl>, u8, DLAllocatorForStl);
+impl_cxx_string!(Utf32String<DLAllocatorForStl>, u32, DLAllocatorForStl);
 
 /// This trait is used to seal the DLStringKind trait, preventing external implementations.
 trait DLStringKindSeal {}
 
 #[allow(private_bounds)]
 pub trait DLStringKind: DLStringKindSeal {
-    type InnerType: CxxString<Self::CharType, DLAllocatorRef>;
+    type InnerType: CxxString<Self::CharType, DLAllocatorForStl>;
     type CharType: Sized + Copy;
     const ENCODING: DLCharacterSet;
 
@@ -187,7 +187,7 @@ pub trait DLStringKind: DLStringKindSeal {
 pub struct DLUTF8StringKind;
 impl DLStringKindSeal for DLUTF8StringKind {}
 impl DLStringKind for DLUTF8StringKind {
-    type InnerType = Utf8String<DLAllocatorRef>;
+    type InnerType = Utf8String<DLAllocatorForStl>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF8;
 }
@@ -195,7 +195,7 @@ impl DLStringKind for DLUTF8StringKind {
 pub struct DLISO8859_1StringKind;
 impl DLStringKindSeal for DLISO8859_1StringKind {}
 impl DLStringKind for DLISO8859_1StringKind {
-    type InnerType = NarrowString<DLAllocatorRef>;
+    type InnerType = NarrowString<DLAllocatorForStl>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::Iso8859_1;
 }
@@ -203,7 +203,7 @@ impl DLStringKind for DLISO8859_1StringKind {
 pub struct DLShiftJisStringKind;
 impl DLStringKindSeal for DLShiftJisStringKind {}
 impl DLStringKind for DLShiftJisStringKind {
-    type InnerType = NarrowString<DLAllocatorRef>;
+    type InnerType = NarrowString<DLAllocatorForStl>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::ShiftJis;
 }
@@ -211,7 +211,7 @@ impl DLStringKind for DLShiftJisStringKind {
 pub struct DLEucJpStringKind;
 impl DLStringKindSeal for DLEucJpStringKind {}
 impl DLStringKind for DLEucJpStringKind {
-    type InnerType = NarrowString<DLAllocatorRef>;
+    type InnerType = NarrowString<DLAllocatorForStl>;
     type CharType = u8;
     const ENCODING: DLCharacterSet = DLCharacterSet::EucJp;
 }
@@ -219,7 +219,7 @@ impl DLStringKind for DLEucJpStringKind {
 pub struct DLUTF16StringKind;
 impl DLStringKindSeal for DLUTF16StringKind {}
 impl DLStringKind for DLUTF16StringKind {
-    type InnerType = Utf16String<DLAllocatorRef>;
+    type InnerType = Utf16String<DLAllocatorForStl>;
     type CharType = u16;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF16;
 }
@@ -227,7 +227,7 @@ impl DLStringKind for DLUTF16StringKind {
 pub struct DLUTF32StringKind;
 impl DLStringKindSeal for DLUTF32StringKind {}
 impl DLStringKind for DLUTF32StringKind {
-    type InnerType = Utf32String<DLAllocatorRef>;
+    type InnerType = Utf32String<DLAllocatorForStl>;
     type CharType = u32;
     const ENCODING: DLCharacterSet = DLCharacterSet::UTF32;
 }
@@ -239,14 +239,14 @@ pub struct DLString<T: DLStringKind = DLUTF16StringKind> {
 }
 
 impl<T: DLStringKind> DLString<T> {
-    pub fn new(allocator: DLAllocatorRef) -> Self {
+    pub fn new(allocator: DLAllocatorForStl) -> Self {
         Self {
             base: T::InnerType::new_in(allocator.clone()),
             encoding: T::ENCODING,
         }
     }
 
-    pub fn from_str(allocator: DLAllocatorRef, s: &str) -> Result<Self, DLStringEncodingError> {
+    pub fn from_str(allocator: DLAllocatorForStl, s: &str) -> Result<Self, DLStringEncodingError> {
         let encoded: Vec<T::CharType> = T::encode(s)?;
 
         Ok(Self {
@@ -261,7 +261,7 @@ impl<T: DLStringKind> DLString<T> {
     }
 
     pub fn copy<U: DLStringKind>(
-        allocator: DLAllocatorRef,
+        allocator: DLAllocatorForStl,
         other: &DLString<U>,
     ) -> Result<Self, DLStringEncodingError> {
         // If the encodings match, we can directly copy the bytes

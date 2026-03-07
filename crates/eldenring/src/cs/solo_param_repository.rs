@@ -1,9 +1,11 @@
+use std::ptr::NonNull;
+
 use shared::{OwnedPtr, Subclass};
 
 use crate::{
     ArrayWithHeader, DLMap, DLMultiMap, DLVector,
     cs::BlockId,
-    dlkr::DLAllocatorRef,
+    dlkr::DLAllocatorBase,
     fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile},
     param::ParamDef,
 };
@@ -29,7 +31,7 @@ pub struct WeaponUpgradeIndexMapEntry {
 ///
 pub struct CSWepReinforceTree {
     vftable: usize,
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocatorBase>,
     /// Array of map entries, one for each weapon param row.
     /// The index corresponds to the weapon param row index.
     pub index_map: ArrayWithHeader<WeaponUpgradeIndexMapEntry>,
