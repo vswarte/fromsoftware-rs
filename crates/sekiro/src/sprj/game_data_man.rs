@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use shared::{FromStatic, InstanceResult, OwnedPtr, UnknownStruct};
 
 use super::PlayerGameData;
-use crate::{Vector, fd4::FD4Time, rva};
+use crate::{DLVector, fd4::FD4Time, rva};
 
 #[repr(C)]
 // Source of name: RTTI
@@ -64,7 +64,7 @@ pub struct GameDataMan {
     _unke8: u8,
     _unke9: [u8; 0x7],
     _unkf0: u16,
-    _unkf8: Vector<()>,
+    _unkf8: DLVector<()>,
     _unk118: UnknownStruct<0x28>,
     _unk140: u8,
     _unk148: u64,

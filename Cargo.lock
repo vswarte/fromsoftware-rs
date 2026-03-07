@@ -284,22 +284,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "cxx-stl"
-version = "4.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e42cf6d86f92c165eaf2d4afa54382ec9b8d1cdef39f4265bc938cd055198f83"
-dependencies = [
- "cstl-sys",
-]
-
-[[package]]
 name = "darksouls3"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46d3df52b6a59631a6032d09b76637c8b0ef9b289596c8a174bba1badf450020"
 dependencies = [
  "bitfield",
- "cxx-stl 3.4.0",
+ "cxx-stl",
  "encoding_rs",
  "fromsoftware-shared 0.12.0",
  "pelite",
@@ -1157,9 +1148,9 @@ name = "sekiro"
 version = "0.13.0"
 dependencies = [
  "bitfield",
- "cxx-stl 4.4.0",
  "encoding_rs",
  "fromsoftware-shared 0.13.0",
+ "fromsoftware-shared-stl",
  "pelite",
  "serde",
  "serde_derive",
