@@ -4,8 +4,8 @@ use vtable_rs::VPtr;
 
 use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::position::HavokPosition;
-use crate::{ChainingMap, DLMap, DoublyLinkedList, UnkDLTree};
-use crate::{Vector, cs::ChrIns};
+use crate::{ChainingMap, DLList, DLMap, UnkDLTree};
+use crate::{DLVector, cs::ChrIns};
 use shared::{F32Vector4, OwnedPtr, Subclass, Superclass};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
@@ -97,10 +97,10 @@ pub struct WorldChrMan {
     // WorldChrMan tasks
     unk1ece8: [u8; 0x4e8],
     /// A list of ChrIns references sorted by distance to the main player.
-    pub chr_inses_by_distance: Vector<ChrInsDistanceEntry>,
+    pub chr_inses_by_distance: DLVector<ChrInsDistanceEntry>,
     unk1f1f0: [u8; 0x10],
     /// A list of ChrIns references sorted by their update priority.
-    pub chr_inses_by_update_priority: Vector<NonNull<ChrIns>>,
+    pub chr_inses_by_update_priority: DLVector<NonNull<ChrIns>>,
     /// The remaining budget for characters that can receive high-detail (NORMAL) updates this frame.
     pub omission_update_budget_near: u32,
     /// The remaining budget for characters that can receive medium-detail (LVL2) updates this frame.
@@ -482,7 +482,7 @@ pub struct SummonBuddyManager {
     unk60: usize,
     unk68: usize,
     /// Maps character event id to summon buddy groups it owns
-    pub groups: DLMap<i32, DoublyLinkedList<SummonBuddyGroup>>,
+    pub groups: DLMap<i32, DLList<SummonBuddyGroup>>,
     unk88: i32,
     /// Delay before the buddy disappears after being requested to disappear.
     pub buddy_disappear_delay_sec: f32,

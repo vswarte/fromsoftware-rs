@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::DoublyLinkedList;
+use crate::DLList;
 use crate::dlkr::DLPlainLightMutex;
 use crate::fd4::{FD4BasicHashString, FD4FileCap, FD4ResCap, FD4ResCapHolder, FD4ResRep};
 use shared::{OwnedPtr, Subclass};
@@ -61,7 +61,7 @@ pub struct CSFileRepository {
     pub res_rep: FD4ResRep,
     pub res_cap_holder: FD4ResCapHolder<FD4FileCap>,
     pub holder2: FD4ResCapHolder<FD4FileCap>,
-    unkc8: DoublyLinkedList<()>,
+    unkc8: DLList<()>,
     pub mutexes: [OwnedPtr<CSFileRepositoryMutex>; 5],
     file_load_event_queues: [OwnedPtr<usize>; 5],
 }
