@@ -2,9 +2,15 @@ use crate::allocator::*;
 use std::{mem::MaybeUninit, ptr::NonNull};
 
 #[repr(C)]
-/// Implementation of MSVC C++ [`std::list`]
+/// Implementation of MSVC C++ `std::list`.
 ///
-/// [`std::list`]: https://en.cppreference.com/w/cpp/container/list.html
+/// # References
+///
+/// - [cppreference - `std::list`]
+/// - [Raymond Chen's breakdown of `std::list`]
+///
+/// [cppreference - `std::list`]: https://en.cppreference.com/w/cpp/container/list.html
+/// [Raymond Chen's breakdown of `std::list`]: https://devblogs.microsoft.com/oldnewthing/20230804-00/?p=108547
 pub struct List<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
@@ -56,7 +62,7 @@ impl<T, A: Allocator> List<T, A> {
     }
 
     pub fn push_back(&mut self, value: T) {
-        let new = self.allocator.allocate::<Node<T>>().cast::<Node<T>>();
+        let new = unsafe { self.allocator.allocate::<Node<T>>().cast::<Node<T>>() };
 
         let mut head = self.head;
         let mut tail = unsafe { head.as_ref() }.previous;
@@ -101,7 +107,7 @@ impl<T, A: Allocator> List<T, A> {
 
     /// # Safety
     ///
-    /// `node` must be a node and to belong this list and not be the sentinel node.
+    /// `node` must be a node and belong this list and not be the sentinel node.
     unsafe fn detach_node(&mut self, node: NonNull<Node<T>>) -> T {
         debug_assert!(node != self.head, "attempted to remove sentinel node");
 
@@ -120,7 +126,7 @@ impl<T, A: Allocator> List<T, A> {
             .expect("list length went below 0");
 
         let value = unsafe { (*node).value.assume_init_read() };
-        self.allocator.deallocate_raw(node as _);
+        unsafe { self.allocator.deallocate_raw(node as _) };
 
         value
     }

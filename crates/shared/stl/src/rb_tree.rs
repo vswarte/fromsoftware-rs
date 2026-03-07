@@ -1,13 +1,13 @@
 use crate::{Pair, allocator::*};
-use std::{cmp::Ordering, mem::MaybeUninit, ptr::NonNull};
+use std::{cmp::Ordering, iter::FusedIterator, mem::MaybeUninit, ptr::NonNull};
 
 /// Comparator trait for use in MSVC `std::tree` [`RbTree`]
 pub trait TreeComparator<V> {
-    fn less(&self, a: &V, b: &V) -> bool;
+    fn lt(&self, a: &V, b: &V) -> bool;
 
     #[inline]
-    fn equiv(&self, a: &V, b: &V) -> bool {
-        !self.less(a, b) && !self.less(b, a)
+    fn eq(&self, a: &V, b: &V) -> bool {
+        !self.lt(a, b) && !self.lt(b, a)
     }
 }
 
@@ -18,7 +18,7 @@ pub struct Less;
 
 impl<V: Ord> TreeComparator<V> for Less {
     #[inline]
-    fn less(&self, a: &V, b: &V) -> bool {
+    fn lt(&self, a: &V, b: &V) -> bool {
         a < b
     }
 }
@@ -32,47 +32,30 @@ pub struct KeyLess;
 
 impl<K: Ord, V> TreeComparator<Pair<K, V>> for KeyLess {
     #[inline]
-    fn less(&self, a: &Pair<K, V>, b: &Pair<K, V>) -> bool {
+    fn lt(&self, a: &Pair<K, V>, b: &Pair<K, V>) -> bool {
         a.first < b.first
     }
 }
 
 pub trait TreeComparatorKey<K, V>: TreeComparator<V> {
-    fn less_key_val(&self, key: &K, val: &V) -> bool;
-    fn less_val_key(&self, val: &V, key: &K) -> bool;
+    fn lt_key_val(&self, key: &K, val: &V) -> bool;
+    fn lt_val_key(&self, val: &V, key: &K) -> bool;
 
     #[inline]
-    fn equiv_key(&self, key: &K, val: &V) -> bool {
-        !self.less_key_val(key, val) && !self.less_val_key(val, key)
+    fn eq_key(&self, key: &K, val: &V) -> bool {
+        !self.lt_key_val(key, val) && !self.lt_val_key(val, key)
     }
 }
 
 impl<K: Ord, V> TreeComparatorKey<K, Pair<K, V>> for KeyLess {
     #[inline]
-    fn less_key_val(&self, key: &K, val: &Pair<K, V>) -> bool {
+    fn lt_key_val(&self, key: &K, val: &Pair<K, V>) -> bool {
         key < &val.first
     }
     #[inline]
-    fn less_val_key(&self, val: &Pair<K, V>, key: &K) -> bool {
+    fn lt_val_key(&self, val: &Pair<K, V>, key: &K) -> bool {
         val.first < *key
     }
-}
-
-/// Trait to control uniqueness of values in Red/Black trees
-pub trait RbTreeUniqueness {
-    const UNIQUE: bool;
-}
-
-/// Marker type for Red/Black tree to force unique values
-pub struct Unique;
-/// Marker type for Red/Black tree to allow duplicate values
-pub struct Multi;
-
-impl RbTreeUniqueness for Unique {
-    const UNIQUE: bool = true;
-}
-impl RbTreeUniqueness for Multi {
-    const UNIQUE: bool = false;
 }
 
 #[repr(u8)]
@@ -122,6 +105,11 @@ impl<V> NodePtr<V> {
         unsafe { self.0.as_ref() }
     }
     #[inline]
+    /// # Safety
+    ///
+    /// No other reference to the node this pointer points to may exist
+    /// at the same time. Since `NodePtr` is `Copy`, the borrow checker
+    /// cannot enforce this, the caller must guarantee it
     unsafe fn get_mut(&mut self) -> &mut RbNode<V> {
         unsafe { self.0.as_mut() }
     }
@@ -177,17 +165,31 @@ impl<V> NodePtr<V> {
     fn is_right_child(&self) -> bool {
         *self == self.parent().right()
     }
-    #[allow(unsafe_op_in_unsafe_fn)]
+
+    /// Splices `replacement` into this node's position in the tree.
+    ///
+    /// Sets `replacement`'s parent pointer to `self`'s parent, then updates
+    /// the parent's child pointer (or the root pointer via `head`) to point at
+    /// `replacement` instead of `self`. Does not update `self`'s own pointers,
+    /// so `self` should be considered detached after this call.
+    ///
+    /// # Safety
+    ///
+    /// `self` must be a live non-sentinel node belonging to the tree rooted at `head`.
+    /// `replacement` must be a valid node (may be the sentinel).
     unsafe fn replace_in_parent(&mut self, mut replacement: NodePtr<V>, head: NodePtr<V>) {
         replacement.set_parent(self.parent());
-        if self.parent().as_ptr() == head.as_ptr() {
-            self.parent().get_mut().parent = replacement.0;
-        } else if self.is_left_child() {
-            self.parent().get_mut().left = replacement.0;
-        } else {
-            self.parent().get_mut().right = replacement.0;
+        unsafe {
+            if self.parent().as_ptr() == head.as_ptr() {
+                self.parent().get_mut().parent = replacement.0;
+            } else if self.is_left_child() {
+                self.parent().get_mut().left = replacement.0;
+            } else {
+                self.parent().get_mut().right = replacement.0;
+            }
         }
     }
+
     fn leftmost(&self) -> NodePtr<V> {
         let mut n = *self;
         while !n.left().is_nil() {
@@ -206,8 +208,14 @@ impl<V> NodePtr<V> {
 }
 
 #[repr(C)]
-/// Implementation of a basic MSVC Red-Black Tree
-pub struct RbTree<V, A: Allocator, C: Sized, U: RbTreeUniqueness = Unique> {
+/// Implementation of a basic MSVC C++ Red-Black Tree
+///
+/// # References
+///
+/// - [Raymond Chen's breakdown of `xtree`]
+///
+/// [Raymond Chen's breakdown of `xtree`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
+pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
     comparator: C,
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
@@ -215,27 +223,50 @@ pub struct RbTree<V, A: Allocator, C: Sized, U: RbTreeUniqueness = Unique> {
     size: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     allocator: A,
-    _uniqueness: std::marker::PhantomData<U>,
 }
 
-/// Implementation of MSVC [`std::map`]
+/// Implementation of MSVC C++ `std::map`
 ///
-/// [`std::map`]: https://en.cppreference.com/w/cpp/container/map.html
-pub type Map<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, Unique>;
-/// Implementation of MSVC [`std::set`]
+/// # References
 ///
-/// [`std::set`]: https://en.cppreference.com/w/cpp/container/set.html
-pub type Set<K, A, C = Less> = RbTree<K, A, C, Unique>;
-/// Implementation of MSVC [`std::multimap`]
+/// - [cppreference - `std::map`]
+/// - [Raymond Chen's breakdown of `std::map`]
 ///
-/// [`std::multimap`]: https://en.cppreference.com/w/cpp/container/multimap.html
-pub type MultiMap<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, Multi>;
-/// Implementation of MSVC [`std::multiset`]
+/// [cppreference - `std::map`]: https://en.cppreference.com/w/cpp/container/map.html
+/// [Raymond Chen's breakdown of `std::map`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
+pub type Map<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, true>;
+/// Implementation of MSVC C++ `std::set`
 ///
-/// [`std::multiset`]: https://en.cppreference.com/w/cpp/container/multiset.html
-pub type MultiSet<K, A, C = Less> = RbTree<K, A, C, Multi>;
+/// # References
+///
+/// - [cppreference - `std::set`]
+/// - [Raymond Chen's breakdown of `std::set`]
+///
+/// [cppreference - `std::set`]: https://en.cppreference.com/w/cpp/container/set.html
+/// [Raymond Chen's breakdown of `std::set`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
+pub type Set<K, A, C = Less> = RbTree<K, A, C, true>;
+/// Implementation of MSVC C++ `std:multimap`
+///
+/// # References
+///
+/// - [cppreference - `std::multimap`]
+/// - [Raymond Chen's breakdown of `std::multimap`]
+///
+/// [cppreference - `std::multimap`]: https://en.cppreference.com/w/cpp/container/multimap.html
+/// [Raymond Chen's breakdown of `std::multimap`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
+pub type MultiMap<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, false>;
+/// Implementation of MSVC C++ `std::multiset`
+///
+/// # References
+///
+/// - [cppreference - `std::multiset`]
+/// - [Raymond Chen's breakdown of `std::multiset`]
+///
+/// [cppreference - `std::multiset`]: https://en.cppreference.com/w/cpp/container/multiset.html
+/// [Raymond Chen's breakdown of `std::multiset`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
+pub type MultiSet<K, A, C = Less> = RbTree<K, A, C, false>;
 
-impl<V, A: Allocator, C: TreeComparator<V>, U: RbTreeUniqueness> RbTree<V, A, C, U> {
+impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     pub fn contains(&self, value: &V) -> bool {
         self.find_node(value).is_some()
     }
@@ -275,32 +306,32 @@ impl<V, A: Allocator, C: TreeComparator<V>, U: RbTreeUniqueness> RbTree<V, A, C,
     /// First element `>= value`
     pub fn lower_bound(&self, value: &V) -> Option<&V> {
         // Go left when node_val >= value, so when node_val is NOT less than value
-        self.bound_node_by(value, |v, node_val| !self.comparator.less(node_val, v))
+        self.bound_node_by(value, |v, node_val| !self.comparator.lt(node_val, v))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
     /// First element `>= value`
     pub fn lower_bound_mut(&mut self, value: &V) -> Option<&mut V> {
-        self.bound_node_by(value, |v, node_val| !self.comparator.less(node_val, v))
+        self.bound_node_by(value, |v, node_val| !self.comparator.lt(node_val, v))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
     /// First element `> value`
     pub fn upper_bound(&self, value: &V) -> Option<&V> {
         // Go left only when node_val > value, so when value is strictly less
-        self.bound_node_by(value, |v, node_val| self.comparator.less(v, node_val))
+        self.bound_node_by(value, |v, node_val| self.comparator.lt(v, node_val))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
     /// First element `> value`
     pub fn upper_bound_mut(&mut self, value: &V) -> Option<&mut V> {
-        self.bound_node_by(value, |v, node_val| self.comparator.less(v, node_val))
+        self.bound_node_by(value, |v, node_val| self.comparator.lt(v, node_val))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
     /// Insert a value, returning a reference to it
     ///
-    /// Duplicate values are ignored for [`Unique`]
+    /// Duplicate values are ignored for [`UNIQUE: true`]
     pub fn insert(&mut self, value: V) -> &V {
         let mut head = NodePtr(self.head);
         let mut parent = head;
@@ -311,21 +342,21 @@ impl<V, A: Allocator, C: TreeComparator<V>, U: RbTreeUniqueness> RbTree<V, A, C,
             parent = node;
             let node_val = unsafe { (*node.as_ptr()).value.assume_init_ref() };
 
-            if self.comparator.less(&value, node_val) {
+            if self.comparator.lt(&value, node_val) {
                 insert_left = true;
                 node = node.left();
-            } else if !U::UNIQUE || self.comparator.less(node_val, &value) {
-                // Multi: always go right
-                // Unique: only go right if node_val < value
+            } else if !UNIQUE || self.comparator.lt(node_val, &value) {
+                // false: always go right
+                // UNIQUE: true: only go right if node_val < value
                 insert_left = false;
                 node = node.right();
             } else {
-                // Return existing if Unique and equal
+                // Return existing if UNIQUE: true and equal
                 return unsafe { (*node.as_ptr()).value.assume_init_ref() };
             }
         }
 
-        let new_node = NodePtr(self.allocator.allocate::<RbNode<V>>().cast());
+        let new_node = NodePtr(unsafe { self.allocator.allocate::<RbNode<V>>().cast() });
         unsafe {
             std::ptr::write(
                 new_node.as_ptr(),
@@ -378,10 +409,10 @@ impl<V, A: Allocator, C: TreeComparator<V>, U: RbTreeUniqueness> RbTree<V, A, C,
     }
 
     fn find_node(&self, value: &V) -> Option<NodePtr<V>> {
-        self.bound_node_by(value, |v, nv| !self.comparator.less(nv, v))
+        self.bound_node_by(value, |v, nv| !self.comparator.lt(nv, v))
             .filter(|n| {
                 self.comparator
-                    .equiv(value, unsafe { (*n.as_ptr()).value.assume_init_ref() })
+                    .eq(value, unsafe { (*n.as_ptr()).value.assume_init_ref() })
             })
     }
 
@@ -463,12 +494,12 @@ impl<V, A: Allocator, C: TreeComparator<V>, U: RbTreeUniqueness> RbTree<V, A, C,
 
         self.size -= 1;
         let value = unsafe { (*erased.as_ptr()).value.assume_init_read() };
-        self.allocator.deallocate_raw(erased.as_ptr() as _);
+        unsafe { self.allocator.deallocate_raw(erased.as_ptr() as _) };
         value
     }
 }
 
-impl<V, A: Allocator, C: Sized, U: RbTreeUniqueness> RbTree<V, A, C, U> {
+impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     /// Inorder iterator, yields values in ascending comparator order
     pub fn iter(&self) -> RbTreeIter<'_, V> {
         let head = NodePtr(self.head);
@@ -511,14 +542,14 @@ impl<V, A: Allocator, C: Sized, U: RbTreeUniqueness> RbTree<V, A, C, U> {
     }
 }
 
-impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>, U: RbTreeUniqueness>
-    RbTree<Pair<K, V>, A, C, U>
+impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>, const UNIQUE: bool>
+    RbTree<Pair<K, V>, A, C, UNIQUE>
 {
     fn find_node_key(&self, key: &K) -> Option<NodePtr<Pair<K, V>>> {
-        self.bound_node_by(key, |k, val| !self.comparator.less_val_key(val, k))
+        self.bound_node_by(key, |k, val| !self.comparator.lt_val_key(val, k))
             .filter(|n| {
                 self.comparator
-                    .equiv_key(key, unsafe { (*n.as_ptr()).value.assume_init_ref() })
+                    .eq_key(key, unsafe { (*n.as_ptr()).value.assume_init_ref() })
             })
     }
 
@@ -537,22 +568,22 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>, U: RbTreeUniquenes
     }
 
     pub fn lower_bound_key(&self, key: &K) -> Option<&Pair<K, V>> {
-        self.bound_node_by(key, |k, val| !self.comparator.less_val_key(val, k))
+        self.bound_node_by(key, |k, val| !self.comparator.lt_val_key(val, k))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
     pub fn lower_bound_key_mut(&mut self, key: &K) -> Option<&mut Pair<K, V>> {
-        self.bound_node_by(key, |k, val| !self.comparator.less_val_key(val, k))
+        self.bound_node_by(key, |k, val| !self.comparator.lt_val_key(val, k))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
     pub fn upper_bound_key(&self, key: &K) -> Option<&Pair<K, V>> {
-        self.bound_node_by(key, |k, val| self.comparator.less_key_val(k, val))
+        self.bound_node_by(key, |k, val| self.comparator.lt_key_val(k, val))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
     pub fn upper_bound_key_mut(&mut self, key: &K) -> Option<&mut Pair<K, V>> {
-        self.bound_node_by(key, |k, val| self.comparator.less_key_val(k, val))
+        self.bound_node_by(key, |k, val| self.comparator.lt_key_val(k, val))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
@@ -562,7 +593,7 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>, U: RbTreeUniquenes
     }
 }
 
-impl<K, V, A: Allocator, C: Sized, U: RbTreeUniqueness> RbTree<Pair<K, V>, A, C, U> {
+impl<K, V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<Pair<K, V>, A, C, UNIQUE> {
     pub fn find_key_by(&self, mut f: impl FnMut(&K) -> Ordering) -> Option<&Pair<K, V>> {
         rb_find_by(NodePtr(self.head), |v| f(&v.first))
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
@@ -577,7 +608,7 @@ impl<K, V, A: Allocator, C: Sized, U: RbTreeUniqueness> RbTree<Pair<K, V>, A, C,
     }
 }
 
-impl<K, V, A: Allocator, C: Sized> RbTree<Pair<K, V>, A, C, Multi> {
+impl<K, V, A: Allocator, C: Sized> RbTree<Pair<K, V>, A, C, false> {
     pub fn find_multi_key_by(
         &self,
         mut f: impl FnMut(&K) -> Ordering,
@@ -609,7 +640,7 @@ impl<K, V, A: Allocator, C: Sized> RbTree<Pair<K, V>, A, C, Multi> {
     }
 }
 
-impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, Multi> {
+impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
     /// Removes all elements equivalent to `value`, returns the count removed
     pub fn remove_all(&mut self, value: &V) -> usize {
         std::iter::from_fn(|| self.remove(value)).count()
@@ -619,7 +650,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, Multi> {
     pub fn find_multi(&self, value: &V) -> impl Iterator<Item = &V> {
         let head = NodePtr(self.head);
         let start = self
-            .bound_node_by(value, |v, nv| !self.comparator.less(nv, v))
+            .bound_node_by(value, |v, nv| !self.comparator.lt(nv, v))
             .unwrap_or(head);
         let end = self.upper_bound(value);
         RbTreeIter {
@@ -659,7 +690,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, Multi> {
     }
 }
 
-impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>, A, C, Multi> {
+impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>, A, C, false> {
     /// Removes all elements with `K` equals `key`, returns the count removed
     pub fn remove_all_key(&mut self, key: &K) -> usize {
         std::iter::from_fn(|| self.remove_key(key)).count()
@@ -668,9 +699,9 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>,
     pub fn find_multi_key(&self, key: &K) -> impl Iterator<Item = &Pair<K, V>> {
         let head = NodePtr(self.head);
         let start = rb_find_multi_start_by(head, |v| {
-            if self.comparator.less_key_val(key, v) {
+            if self.comparator.lt_key_val(key, v) {
                 Ordering::Greater
-            } else if self.comparator.less_val_key(v, key) {
+            } else if self.comparator.lt_val_key(v, key) {
                 Ordering::Less
             } else {
                 Ordering::Equal
@@ -683,16 +714,16 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>,
             _marker: std::marker::PhantomData,
         }
         .take_while(move |v| {
-            !self.comparator.less_key_val(key, v) && !self.comparator.less_val_key(v, key)
+            !self.comparator.lt_key_val(key, v) && !self.comparator.lt_val_key(v, key)
         })
     }
 
     pub fn find_multi_key_mut(&mut self, key: &K) -> impl Iterator<Item = &mut Pair<K, V>> {
         let head = NodePtr(self.head);
         let start = rb_find_multi_start_by(head, |v| {
-            if self.comparator.less_key_val(key, v) {
+            if self.comparator.lt_key_val(key, v) {
                 Ordering::Greater
-            } else if self.comparator.less_val_key(v, key) {
+            } else if self.comparator.lt_val_key(v, key) {
                 Ordering::Less
             } else {
                 Ordering::Equal
@@ -705,12 +736,12 @@ impl<K, V, A: Allocator, C: TreeComparatorKey<K, Pair<K, V>>> RbTree<Pair<K, V>,
             _marker: std::marker::PhantomData,
         }
         .take_while(move |v| {
-            !self.comparator.less_key_val(key, v) && !self.comparator.less_val_key(v, key)
+            !self.comparator.lt_key_val(key, v) && !self.comparator.lt_val_key(v, key)
         })
     }
 }
 
-impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, Unique> {
+impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, true> {
     /// Returns the existing element if already present, otherwise inserts and
     /// returns a reference to the new value.
     pub fn get_or_insert(&mut self, value: V) -> &V {
@@ -750,6 +781,7 @@ impl<'a, V> Iterator for RbTreeIter<'a, V> {
 }
 
 impl<'a, V> ExactSizeIterator for RbTreeIter<'a, V> {}
+impl<'a, V> FusedIterator for RbTreeIter<'a, V> {}
 
 pub struct RbTreeIterMut<'a, V> {
     head: NodePtr<V>,
@@ -784,8 +816,11 @@ impl<'a, V> Iterator for RbTreeIterMut<'a, V> {
 }
 
 impl<V> ExactSizeIterator for RbTreeIterMut<'_, V> {}
+impl<'a, V> FusedIterator for RbTreeIterMut<'a, V> {}
 
-impl<'a, V, A: Allocator, C: Sized, U: RbTreeUniqueness> IntoIterator for &'a RbTree<V, A, C, U> {
+impl<'a, V, A: Allocator, C: Sized, const UNIQUE: bool> IntoIterator
+    for &'a RbTree<V, A, C, UNIQUE>
+{
     type Item = &'a V;
     type IntoIter = RbTreeIter<'a, V>;
 
@@ -794,8 +829,8 @@ impl<'a, V, A: Allocator, C: Sized, U: RbTreeUniqueness> IntoIterator for &'a Rb
     }
 }
 
-impl<'a, V, A: Allocator, C: Sized, U: RbTreeUniqueness> IntoIterator
-    for &'a mut RbTree<V, A, C, U>
+impl<'a, V, A: Allocator, C: Sized, const UNIQUE: bool> IntoIterator
+    for &'a mut RbTree<V, A, C, UNIQUE>
 {
     type Item = &'a mut V;
     type IntoIter = RbTreeIterMut<'a, V>;

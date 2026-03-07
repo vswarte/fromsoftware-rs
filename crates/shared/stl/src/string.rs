@@ -1,15 +1,16 @@
-use crate::AllocatorExt;
 use crate::allocator::Allocator;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::mem::ManuallyDrop;
 use std::ptr::NonNull;
 
-/// MSVC's [`std::basic_string<C, char_traits<C>, A>`] on x64.
+/// Implementation of MSVC C++ `std::basic_string`
 ///
 /// # Small String Optimization (SSO)
 ///
-/// The inline buffer is always 16 bytes. Capacity in code units:
+/// The inline buffer is always 16 bytes. When `capacity < SSO_CAP` the data
+/// lives inline, otherwise `buffer` holds a heap pointer. Capacity in code units:
+///
 ///```text
 /// ┌──────────────┬───────┬─────────┬───────────────────┐
 /// │    Alias     │   C   │ SSO_CAP │ Max inline length │
@@ -21,10 +22,14 @@ use std::ptr::NonNull;
 /// │ U32String    │  u32  │   4     │   3  code units   │
 /// └──────────────┴───────┴─────────┴───────────────────┘
 ///```
-/// When `capacity < SSO_CAP` the data lives inline. Otherwise, `buffer`
-/// holds a heap pointer
 ///
-/// [`std::basic_string<C, char_traits<C>, A>`]: https://en.cppreference.com/w/cpp/string/basic_string.html
+/// # References
+///
+/// - [cppreference - `std::basic_string`]
+/// - [Raymond Chen's breakdown of `std::basic_string`]
+///
+/// [cppreference - `std::basic_string`]: https://en.cppreference.com/w/cpp/string/basic_string.html
+/// [Raymond Chen's breakdown of `std::basic_string`]: https://devblogs.microsoft.com/oldnewthing/20230803-00/?p=108532
 #[repr(C)]
 pub struct BasicString<C, A>
 where
@@ -64,9 +69,9 @@ impl CodeUnit for u32 {
 ///
 /// # Safety
 ///
-/// [`sso`] is only valid when `capacity < SSO_CAP`
+/// [`inline`] is only valid when `capacity < SSO_CAP`
 ///
-/// [`heap`] is only valid when `capacity >= SSO_CAP`
+/// [`pointer`] is only valid when `capacity >= SSO_CAP`
 ///
 /// The active variant is determined solely by [`BasicString::capacity`], there is no
 /// discriminant. Reading the wrong variant is immediate UB
@@ -156,14 +161,9 @@ where
 
     /// Returns a pointer to the first code unit, equivalent to [`std::string::c_str()`].
     ///
-    /// # Safety
-    ///
-    /// The pointer is valid for `self.len()` initialized code units and is
-    /// followed by a NUL terminator. It must not outlive `self`
-    ///
-    /// [`std::basic_string::c_str()`]: https://en.cppreference.com/w/cpp/string/basic_string/c_str.html
+    /// [`std::string::c_str()`]: https://en.cppreference.com/w/cpp/string/basic_string/c_str.html
     #[inline]
-    pub unsafe fn as_ptr(&self) -> *const C {
+    pub fn as_ptr(&self) -> *const C {
         // SAFETY: The SSO/heap variant is selected by the capacity invariant,
         // which is maintained by all constructors and mutations
         if self.is_sso() {
