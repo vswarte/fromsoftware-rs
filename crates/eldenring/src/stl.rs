@@ -1,46 +1,10 @@
 use std::{cmp::Ordering, ptr::NonNull};
 
-use crate::dlkr::DLAllocatorBase;
+use crate::dlkr::{DLAllocatorBase, DLAllocatorRef};
 use shared::OwnedPtr;
 
-#[repr(C)]
-pub struct DoublyLinkedListNode<T> {
-    pub next: NonNull<DoublyLinkedListNode<T>>,
-    pub previous: NonNull<DoublyLinkedListNode<T>>,
-    pub value: T,
-}
+pub type DoublyLinkedList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
 
-#[repr(C)]
-pub struct DoublyLinkedList<T> {
-    allocator: usize,
-    pub head: NonNull<DoublyLinkedListNode<T>>,
-    pub count: u64,
-}
-
-impl<T> DoublyLinkedList<T> {
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
-        let mut count = self.count;
-        let mut current = unsafe { self.head.as_ref() };
-
-        std::iter::from_fn(move || {
-            current = unsafe { current.next.as_ref() };
-            if count == 0 {
-                None
-            } else {
-                count -= 1;
-                Some(&current.value)
-            }
-        })
-    }
-
-    pub fn len(&self) -> usize {
-        self.count as usize
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-}
 
 #[repr(C)]
 pub struct BasicVector<T>
