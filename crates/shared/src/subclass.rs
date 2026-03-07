@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use pelite::pe64::{Pe, Rva, Va, msvc::RTTICompleteObjectLocator};
 use thiserror::Error;
 
-use crate::{Program, is_base_class};
+use crate::{Program, is_base_class, vftable_classname};
 
 /// The error type returend when a superclass isn't an instance of a subclass.
 #[derive(Error, Debug)]
@@ -54,6 +54,11 @@ pub unsafe trait Superclass: Sized {
     /// Returns the [Va] for the runtime virtual method table for this.
     fn vmt(&self) -> Va {
         *unsafe { NonNull::from_ref(self).cast::<Va>().as_ref() }
+    }
+
+    /// Returns the RTTI name of this type's class.
+    fn classname(&self) -> Option<String> {
+        vftable_classname(&Program::current(), self.vmt() as _)
     }
 
     /// Returns whether this is an instance of `T`.
