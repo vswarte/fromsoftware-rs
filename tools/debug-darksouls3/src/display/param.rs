@@ -15,7 +15,7 @@ impl DebugDisplay for CSRegulationManager {
                     TableColumnSetup::new("Row Count"),
                     TableColumnSetup::new("Bytes"),
                 ],
-                &self.params,
+                self.params.iter(),
                 |ui, _, res_cap| {
                     let table = &res_cap.param.table;
                     ui.table_next_column();
