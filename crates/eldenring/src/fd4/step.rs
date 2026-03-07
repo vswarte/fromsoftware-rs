@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use windows::core::PCWSTR;
 
-use crate::{Tree, dlkr::DLAllocatorBase, dltx::DLString};
+use crate::{UnkDLTree, dlkr::DLAllocatorBase, dltx::DLString};
 
 use super::FD4TaskBase;
 
@@ -51,7 +51,7 @@ impl<T> StepperFn<T> {
 #[repr(C)]
 pub struct FD4StepTemplateBase0x18 {
     unk0: NonNull<()>,
-    unk8: Tree<()>,
+    unk8: UnkDLTree<()>,
     unk20: NonNull<DLAllocatorBase>,
     unk28: NonNull<DLAllocatorBase>,
 }

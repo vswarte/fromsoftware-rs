@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use crate::{Tree, param::CEREMONY_PARAM_ST, position::HavokPosition};
+use crate::{DLMap, UnkDLTree, param::CEREMONY_PARAM_ST, position::HavokPosition};
 use shared::{OwnedPtr, Subclass, Superclass};
 
 use super::BlockId;
@@ -81,13 +81,15 @@ impl WorldInfo {
             true => self
                 .world_grid_area_info()
                 .iter()
-                .flat_map(|a| a.blocks.iter())
-                .find(|b| b.block_id.0 == map.0)
-                .map(|b| b.block.as_ref()),
-            false => self
-                .world_block_info()
-                .iter()
-                .find(|b| b.block_id.0 == map.0),
+                .find_map(|a| a.blocks.find_key_by(|k| k.0.cmp(&map.0)))
+                .map(|pair| pair.second.as_ref()),
+            false => {
+                let blocks = self.world_block_info();
+                let index = blocks
+                    .binary_search_by(|entry| entry.block_id.0.cmp(&map.0))
+                    .ok()?;
+                Some(&blocks[index])
+            }
         }
     }
 }
@@ -139,18 +141,11 @@ pub struct WorldGridAreaInfo {
     unk6c: [f32; 4],
     pub skybox_block_id: BlockId,
     pub skybox_block_info: NonNull<WorldBlockInfo>,
-    pub blocks: Tree<WorldGridAreaInfoBlockElement>,
-    unka0: Tree<()>,
+    pub blocks: DLMap<BlockId, OwnedPtr<WorldBlockInfo>>,
+    unka0: UnkDLTree<()>,
     unkb8: u64,
-    unkc0: Tree<()>,
+    unkc0: UnkDLTree<()>,
     unkd8: u64,
-}
-
-#[repr(C)]
-pub struct WorldGridAreaInfoBlockElement {
-    pub block_id: BlockId,
-    _pad4: u32,
-    pub block: OwnedPtr<WorldBlockInfo>,
 }
 
 // Source of name: RTTI

@@ -1,6 +1,6 @@
 use std::mem::ManuallyDrop;
 
-use crate::Set;
+use crate::DLSet;
 use shared::OwnedPtr;
 
 #[repr(transparent)]
@@ -52,7 +52,7 @@ pub struct CSFD4VirtualMemoryFlag {
     /// Top of the flag block structure.
     pub flag_blocks: *mut FlagBlock,
     /// Describes where to find a flag block.
-    pub flag_block_descriptors: Set<FlagBlockDescriptor>,
+    pub flag_block_descriptors: DLSet<FlagBlockDescriptor>,
     unk38: [u8; 0x30],
 }
 
