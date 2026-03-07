@@ -9,6 +9,8 @@ use super::RvaBundle;
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub const RVAS: RvaBundle = RvaBundle {
+    app_menu_new_menu_system_ptr: 0x3d8a140,
+    component_proxy_vmt: 0x2aa3738,
     dlbuffered_input_stream_vmt: 0x2dd84d0,
     dlpseudo_async_input_stream_vmt: 0x2de30d8,
     fd4param_res_cap_vmt: 0x3280eb0,
@@ -18,7 +20,9 @@ pub const RVAS: RvaBundle = RvaBundle {
     lua_event_man_remove_item: 0x67b230,
     map_item_man_grant_item: 0x91c970,
     map_item_man_ptr: 0x3d6cdc0,
+    menu_window_vmt: 0x2aa6308,
     param_res_cap_vmt: 0x2b976b8,
     register_task: 0x11df640,
+    scene_obj_proxy_vmt: 0x2aa7088,
     solo_param_repository_vmt: 0x2b9ab48,
 };
