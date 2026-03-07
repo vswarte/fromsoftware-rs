@@ -1,17 +1,63 @@
-use std::ptr::NonNull;
+use std::{ffi::c_void, mem::transmute, ptr::NonNull};
 
-use crate::dlkr::DLAllocatorRef;
-use shared::OwnedPtr;
+use pelite::pe64::Pe;
+use shared::{OwnedPtr, Program};
 
-pub type DLList<T> = fromsoftware_shared_stl::List<T, DLAllocatorRef>;
+use crate::{dlkr::DLAllocatorBase, rva};
 
-pub type DLVector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorRef>;
+#[derive(Clone)]
+#[repr(transparent)]
+/// Special type to use in std types.
+pub struct DLAllocatorForStl(NonNull<DLAllocatorBase>);
 
-pub type DLMap<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorRef>;
-pub type DLMultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorRef>;
+impl From<NonNull<DLAllocatorBase>> for DLAllocatorForStl {
+    fn from(ptr: NonNull<DLAllocatorBase>) -> Self {
+        Self(ptr)
+    }
+}
 
-pub type DLSet<V> = fromsoftware_shared_stl::Set<V, DLAllocatorRef>;
-pub type DLMultiSet<V> = fromsoftware_shared_stl::MultiSet<V, DLAllocatorRef>;
+impl fromsoftware_shared_stl::Allocator for DLAllocatorForStl {
+    unsafe fn allocate_raw(&mut self, size: usize, allign: usize) -> *mut c_void {
+        let allocator = self.0.as_ptr();
+        let allocation =
+            unsafe { ((*allocator).vftable.allocate_aligned)(&mut *allocator, size, allign) };
+        if allocation.is_null() {
+            panic!("DLAllocator returned null pointer")
+        }
+        allocation as _
+    }
+
+    unsafe fn deallocate_raw(&mut self, ptr: *mut c_void) {
+        let allocator = self.0.as_ptr();
+        unsafe {
+            ((*allocator).vftable.deallocate)(&mut *allocator, ptr as _);
+        }
+    }
+}
+
+impl DLAllocatorForStl {
+    /// Returns the global instance of DLAllocator that uses the
+    /// standard MSVC malloc()/free() implementation for heap management
+    pub fn runtime_heap_allocator() -> Self {
+        unsafe {
+            transmute::<u64, Self>(
+                Program::current()
+                    .rva_to_va(rva::get().runtime_heap_allocator)
+                    .unwrap(),
+            )
+        }
+    }
+}
+
+pub type DLList<T> = fromsoftware_shared_stl::List<T, DLAllocatorForStl>;
+
+pub type DLVector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorForStl>;
+
+pub type DLMap<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorForStl>;
+pub type DLMultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorForStl>;
+
+pub type DLSet<V> = fromsoftware_shared_stl::Set<V, DLAllocatorForStl>;
+pub type DLMultiSet<V> = fromsoftware_shared_stl::MultiSet<V, DLAllocatorForStl>;
 
 /// Special type for yet unspecified Red/Black tree where only allocator is known.
 pub type UnkDLTree<V> =

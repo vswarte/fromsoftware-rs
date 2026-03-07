@@ -1,14 +1,13 @@
 use std::{
-    alloc::{GlobalAlloc, Layout},
-    mem::MaybeUninit,
     ops::{Deref, DerefMut},
     ptr::NonNull,
     sync::atomic::{AtomicU32, Ordering},
 };
 
+use fromsoftware_shared_stl::Allocator;
 use vtable_rs::VPtr;
 
-use crate::dlkr::DLAllocatorRef;
+use crate::DLAllocatorForStl;
 
 #[repr(transparent)]
 /// A reference counted pointer to an object that implements `DLReferenceCountObject`
@@ -17,8 +16,8 @@ use crate::dlkr::DLAllocatorRef;
 pub struct DLReferencePointer<T: DLReferenceCountObject>(NonNull<T>);
 
 impl<T: DLReferenceCountObject> DLReferencePointer<T> {
-    pub fn new(allocator: DLAllocatorRef, data: T) -> Self {
-        let new = unsafe { &mut *allocator.alloc(Layout::new::<T>()).cast::<MaybeUninit<_>>() };
+    pub fn new(mut allocator: DLAllocatorForStl, data: T) -> Self {
+        let new = unsafe { allocator.allocate::<T>().as_mut() };
         Self(NonNull::from_ref(new.write(data)))
     }
 }

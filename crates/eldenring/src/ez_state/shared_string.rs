@@ -9,7 +9,7 @@ use shared::Program;
 use vtable_rs::VPtr;
 
 use crate::{
-    dlkr::DLAllocatorRef,
+    DLAllocatorForStl,
     dltx::{DLString, DLStringError},
     dlut::{DLReferenceCountObject, DLReferenceCountObjectVmt, DLReferencePointer},
     rva,
@@ -27,7 +27,7 @@ pub struct EzStateSharedString {
 
 impl EzStateSharedString {
     pub fn from_str(
-        allocator: DLAllocatorRef,
+        allocator: DLAllocatorForStl,
         string: &str,
     ) -> Result<DLReferencePointer<Self>, DLStringError> {
         let new = Self {
