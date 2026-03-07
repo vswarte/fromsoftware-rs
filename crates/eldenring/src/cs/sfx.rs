@@ -1,5 +1,5 @@
 use crate::gxffx::GXFfxSceneCtrl;
-use crate::{Tree, Vector};
+use crate::{UnkDLTree, Vector};
 use shared::OwnedPtr;
 
 #[repr(C)]
@@ -8,8 +8,8 @@ use shared::OwnedPtr;
 pub struct CSSfxImp {
     vftable: usize,
     unk8: usize,
-    unk10: Tree<()>,
-    unk28: Tree<()>,
+    unk10: UnkDLTree<()>,
+    unk28: UnkDLTree<()>,
     unk40: usize,
     unk48: usize,
     unk50: usize,
@@ -32,7 +32,7 @@ pub struct CSSfxImp {
     unka4: u32,
     unka8: u32,
     unkac: u32,
-    unkb0: Tree<()>,
+    unkb0: UnkDLTree<()>,
     unkc8: usize,
     unkd0: Vector<usize>,
     unkf0: Vector<usize>,

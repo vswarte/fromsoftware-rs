@@ -7,8 +7,9 @@ use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for CSAutoInvadePoint {
     fn render_debug(&self, ui: &Ui) {
-        ui.list("Entries", self.entries.iter(), |ui, _i, block_entry| {
-            ui.nested(format!("Block {}", block_entry.block_id), block_entry);
+        ui.list("Entries", self.entries.iter(), |ui, _i, entry| {
+            let (block_id, block_entry) = entry.into();
+            ui.nested(format!("Block {}", block_id), block_entry);
         });
     }
 }
