@@ -10,6 +10,7 @@ mod r#static;
 pub mod steam;
 mod subclass;
 pub mod task;
+mod unknown_pointer;
 pub mod util;
 
 pub use arxan::*;
@@ -23,6 +24,7 @@ pub use r#static::*;
 pub use steam::*;
 pub use subclass::*;
 pub use task::*;
+pub use unknown_pointer::*;
 pub use util::*;
 
 pub use from_singleton::FromSingleton;
