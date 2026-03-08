@@ -443,7 +443,6 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// `erased` must be a live non-sentinel node belonging to this tree
     unsafe fn extract_node(&mut self, mut erased: NodePtr<V>) -> V {
         let mut head = self.head;
-        let successor = rb_successor(erased, head);
 
         let (fixnode, fixparent) = unsafe {
             if erased.left().is_nil() || erased.right().is_nil() {
@@ -458,7 +457,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
                 }
                 (fix, erased.parent())
             } else {
-                let mut succ = successor;
+                let mut succ = rb_successor(erased, head);
                 let mut fix = succ.right();
 
                 let fixparent = if succ == erased.right() {
@@ -487,9 +486,8 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             }
         };
 
-        let set = |ptr: &mut NodePtr<V>, n: NodePtr<V>| *ptr = n;
         if head.parent() == erased {
-            unsafe { set(&mut head.get_mut().parent, fixnode) };
+            unsafe { head.get_mut().parent = fixnode };
         }
         if head.left() == erased {
             let m = if fixnode.is_nil() {
@@ -497,7 +495,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             } else {
                 fixnode.leftmost()
             };
-            unsafe { set(&mut head.get_mut().left, m) };
+            unsafe { head.get_mut().left = m };
         }
         if head.right() == erased {
             let m = if fixnode.is_nil() {
@@ -505,14 +503,14 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             } else {
                 fixnode.rightmost()
             };
-            unsafe { set(&mut head.get_mut().right, m) };
+            unsafe { head.get_mut().right = m };
         }
 
         if erased.get().color == RbColor::Black {
             rb_erase_fixup(fixnode, fixparent, head);
         }
 
-        self.size -= 1;
+        self.size = self.size.checked_sub(1).expect("tree size went bellow 0");
         let value = unsafe { (*erased.as_ptr()).value.assume_init_read() };
         unsafe { self.allocator.deallocate_raw(erased.as_ptr() as _) };
         value
@@ -570,12 +568,12 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, true> {
     }
 
     /// O(log n) search by ordering function
-    pub fn find_by(&self, f: impl FnMut(&V) -> Ordering) -> Option<&V> {
+    pub fn find_by(&self, f: impl Fn(&V) -> Ordering) -> Option<&V> {
         rb_find_by(self.head, f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
     }
 
     /// O(log n) search by ordering function
-    pub fn find_by_mut(&mut self, f: impl FnMut(&V) -> Ordering) -> Option<&mut V> {
+    pub fn find_by_mut(&mut self, f: impl Fn(&V) -> Ordering) -> Option<&mut V> {
         rb_find_by(self.head, f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
@@ -622,9 +620,9 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
     }
 
     /// O(log n) search by ordering function, returns an iterator over all matches
-    pub fn find_by(&self, mut f: impl FnMut(&V) -> Ordering) -> impl Iterator<Item = &V> {
+    pub fn find_by(&self, f: impl Fn(&V) -> Ordering) -> impl Iterator<Item = &V> {
         let head = self.head;
-        let start = rb_find_multi_start_by(head, &mut f);
+        let start = rb_find_multi_start_by(head, &f);
         RbTreeIter {
             head,
             current: start,
@@ -634,12 +632,9 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
         .take_while(move |v| f(v) == Ordering::Equal)
     }
 
-    pub fn find_by_mut(
-        &mut self,
-        mut f: impl FnMut(&V) -> Ordering,
-    ) -> impl Iterator<Item = &mut V> {
+    pub fn find_by_mut(&mut self, f: impl Fn(&V) -> Ordering) -> impl Iterator<Item = &mut V> {
         let head = self.head;
-        let start = rb_find_multi_start_by(head, &mut f);
+        let start = rb_find_multi_start_by(head, &f);
         RbTreeIterMut {
             head,
             current: start,
@@ -800,7 +795,7 @@ fn rb_rotate_right<V>(mut node: NodePtr<V>, head: NodePtr<V>) {
     node.set_parent(left);
 }
 
-fn rb_fixup_side<V>(node: &mut NodePtr<V>, head: NodePtr<V>, ops: RotationPair<V>) {
+fn rb_fixup_side<V>(node: NodePtr<V>, head: NodePtr<V>, ops: RotationPair<V>) -> NodePtr<V> {
     let mut parent = node.parent();
     let mut grandparent = parent.parent();
     let mut uncle = if parent.is_left_child() {
@@ -813,7 +808,7 @@ fn rb_fixup_side<V>(node: &mut NodePtr<V>, head: NodePtr<V>, ops: RotationPair<V
         parent.set_black();
         uncle.set_black();
         grandparent.set_red();
-        *node = grandparent;
+        grandparent
     } else {
         let node_is_inner = if parent.is_left_child() {
             node.is_right_child()
@@ -821,41 +816,43 @@ fn rb_fixup_side<V>(node: &mut NodePtr<V>, head: NodePtr<V>, ops: RotationPair<V
             node.is_left_child()
         };
 
-        if node_is_inner {
-            *node = parent;
-            (ops.toward)(*node, head);
-        }
-        let mut new_parent = node.parent();
-        let mut new_grandparent = new_parent.parent();
+        let (fix_node, mut new_parent) = if node_is_inner {
+            (ops.toward)(node, head);
+            let p = node.parent();
+            (p, p.parent())
+        } else {
+            (node, parent)
+        };
+
         new_parent.set_black();
-        new_grandparent.set_red();
-        (ops.away)(new_grandparent, head);
+        new_parent.parent().set_red();
+        (ops.away)(new_parent.parent(), head);
+        fix_node
     }
 }
 
 fn rb_insert_fixup<V>(mut node: NodePtr<V>, head: NodePtr<V>) {
     while node.parent().is_red() {
-        if node.parent().is_left_child() {
+        node = if node.parent().is_left_child() {
             rb_fixup_side(
-                &mut node,
+                node,
                 head,
                 RotationPair {
                     toward: rb_rotate_left,
                     away: rb_rotate_right,
                 },
-            );
+            )
         } else {
             rb_fixup_side(
-                &mut node,
+                node,
                 head,
                 RotationPair {
                     toward: rb_rotate_right,
                     away: rb_rotate_left,
                 },
-            );
-        }
+            )
+        };
     }
-
     head.parent().set_black();
 }
 
@@ -942,7 +939,7 @@ fn rb_successor<V>(node: NodePtr<V>, head: NodePtr<V>) -> NodePtr<V> {
     }
 }
 
-fn rb_find_by<V>(head: NodePtr<V>, mut f: impl FnMut(&V) -> Ordering) -> Option<NodePtr<V>> {
+fn rb_find_by<V>(head: NodePtr<V>, f: impl Fn(&V) -> Ordering) -> Option<NodePtr<V>> {
     let mut node = head.parent();
     loop {
         if node.is_nil() {
@@ -957,7 +954,7 @@ fn rb_find_by<V>(head: NodePtr<V>, mut f: impl FnMut(&V) -> Ordering) -> Option<
     }
 }
 
-fn rb_find_multi_start_by<V>(head: NodePtr<V>, mut f: impl FnMut(&V) -> Ordering) -> NodePtr<V> {
+fn rb_find_multi_start_by<V>(head: NodePtr<V>, f: impl Fn(&V) -> Ordering) -> NodePtr<V> {
     let mut node = head.parent();
     let mut start = head;
     while !node.is_nil() {
