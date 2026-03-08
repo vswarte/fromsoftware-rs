@@ -26,4 +26,5 @@ pub struct RvaBundle {
     pub register_task: u32,
     pub scene_obj_proxy_vmt: u32,
     pub solo_param_repository_vmt: u32,
+    pub sprj_menu_man_ptr: u32,
 }

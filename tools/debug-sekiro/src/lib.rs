@@ -39,6 +39,7 @@ struct SekiroDebugGui {
     game_data: StaticDebugger<GameDataMan>,
 
     // Menu
+    menu_man: StaticDebugger<MenuMan>,
     new_menu_system: StaticDebugger<NewMenuSystem>,
 
     // Resources
@@ -102,6 +103,7 @@ unsafe fn render_live_reload(gui: &mut SekiroDebugGui, ui: &mut Ui) {
             }
 
             if let Some(item) = ui.tab_item("Menu") {
+                gui.menu_man.render_debug(ui);
                 gui.new_menu_system.render_debug(ui);
                 item.end();
             }

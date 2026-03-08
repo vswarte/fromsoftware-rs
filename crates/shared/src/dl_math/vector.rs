@@ -1,18 +1,19 @@
+use std::fmt;
 use std::ops::{Add, Sub};
 
 #[repr(C, align(16))]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct F32Vector4(pub f32, pub f32, pub f32, pub f32);
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct F32Vector3(pub f32, pub f32, pub f32);
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct F32Vector2(pub f32, pub f32);
 
-macro_rules! impl_add_sub {
+macro_rules! impl_common_traits {
     ($t:ident, $($i:tt),+ $(,)?) => {
         impl Add<$t> for $t {
             type Output = $t;
@@ -29,12 +30,18 @@ macro_rules! impl_add_sub {
                 $t($(self.$i - rhs.$i),+)
             }
         }
+
+        impl fmt::Debug for $t {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+                ($(self.$i),+).fmt(f)
+            }
+        }
     };
 }
 
-impl_add_sub!(F32Vector4, 0, 1, 2, 3);
-impl_add_sub!(F32Vector3, 0, 1, 2);
-impl_add_sub!(F32Vector2, 0, 1);
+impl_common_traits!(F32Vector4, 0, 1, 2, 3);
+impl_common_traits!(F32Vector3, 0, 1, 2);
+impl_common_traits!(F32Vector2, 0, 1);
 
 impl From<F32Vector4> for glam::Vec4 {
     #[inline]

@@ -61,3 +61,7 @@ captures = ["", "register_task"]
 [[patterns]]
 pattern = "48 8b 9e 90 37 13 00 48 85 db 74 % { 48 89 2d $ { ' } }"
 captures = ["", "app_menu_new_menu_system_ptr"]
+
+[[patterns]]
+pattern = "48 8b 05 $ { ' } c7 80 c4 02 00 00 00 00 00 00 c3"
+captures = ["", "sprj_menu_man_ptr"]
