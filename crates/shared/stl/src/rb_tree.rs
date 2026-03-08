@@ -4,6 +4,10 @@ use std::{iter::FusedIterator, mem::MaybeUninit, ops::Bound, ptr::NonNull};
 /// Comparator trait for use in MSVC `std::tree` [`RbTree`]
 pub trait TreeComparator<V> {
     type Key: ?Sized;
+    type Value: ?Sized;
+
+    fn to_value(value: &V) -> &Self::Value;
+    fn to_value_mut(value: &mut V) -> &mut Self::Value;
 
     fn lt(&self, a: &V, b: &V) -> bool;
     fn lt_key_val(&self, key: &Self::Key, val: &V) -> bool;
@@ -27,6 +31,17 @@ pub struct Less;
 
 impl<V: Ord> TreeComparator<V> for Less {
     type Key = V;
+    type Value = V;
+
+    #[inline]
+    fn to_value(value: &V) -> &Self::Value {
+        value
+    }
+
+    #[inline]
+    fn to_value_mut(value: &mut V) -> &mut Self::Value {
+        value
+    }
 
     #[inline]
     fn lt(&self, a: &V, b: &V) -> bool {
@@ -50,6 +65,17 @@ pub struct KeyLess;
 
 impl<K: Ord, V> TreeComparator<Pair<K, V>> for KeyLess {
     type Key = K;
+    type Value = V;
+
+    #[inline]
+    fn to_value(value: &Pair<K, V>) -> &Self::Value {
+        &value.second
+    }
+
+    #[inline]
+    fn to_value_mut(value: &mut Pair<K, V>) -> &mut Self::Value {
+        &mut value.second
+    }
 
     #[inline]
     fn lt(&self, a: &Pair<K, V>, b: &Pair<K, V>) -> bool {
@@ -556,21 +582,15 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, true> {
     }
 
     /// Returns a reference to an element matching `key` or `None`
-    pub fn find(&self, key: &C::Key) -> Option<&V> {
+    pub fn find(&self, key: &C::Key) -> Option<&C::Value> {
         self.find_node(key)
-            .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
+            .map(|n| C::to_value(unsafe { (*n.as_ptr()).value.assume_init_ref() }))
     }
 
     /// Returns a mutable reference to an element matching `key` or `None`
-    pub fn find_mut(&mut self, key: &C::Key) -> Option<&mut V> {
+    pub fn find_mut(&mut self, key: &C::Key) -> Option<&mut C::Value> {
         self.find_node(key)
-            .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
-    }
-
-    /// Returns the existing element if already present, otherwise inserts and
-    /// returns a reference to the new value
-    pub fn get_or_insert(&mut self, value: V) -> &V {
-        self.insert(value)
+            .map(|n| C::to_value_mut(unsafe { (*n.as_ptr()).value.assume_init_mut() }))
     }
 }
 
@@ -580,7 +600,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
     }
 
     /// Returns an iterator over all elements matching `key`
-    pub fn find(&self, key: &C::Key) -> impl Iterator<Item = &V> {
+    pub fn find(&self, key: &C::Key) -> impl Iterator<Item = &C::Value> {
         let head = self.head;
         let start = self
             .bound_node::<true>(Bound::Included(key))
@@ -592,10 +612,11 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
             _marker: std::marker::PhantomData,
         }
         .take_while(|v| self.comparator.eq_key(key, v))
+        .map(C::to_value)
     }
 
     /// Returns an iterator over all elements matching `key`
-    pub fn find_mut(&mut self, key: &C::Key) -> impl Iterator<Item = &mut V> {
+    pub fn find_mut(&mut self, key: &C::Key) -> impl Iterator<Item = &mut C::Value> {
         let head = self.head;
         let start = self
             .bound_node::<true>(Bound::Included(key))
@@ -607,6 +628,7 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
             _marker: std::marker::PhantomData,
         }
         .take_while(|v| self.comparator.eq_key(key, v))
+        .map(C::to_value_mut)
     }
 
     /// Removes all elements matching `key`, returns the count removed
