@@ -165,6 +165,15 @@ impl<A: Allocator> VectorBool<A> {
     }
 }
 
+impl<'a, A: Allocator> IntoIterator for &'a VectorBool<A> {
+    type Item = bool;
+    type IntoIter = VectorBoolIter<'a, A>;
+
+    fn into_iter(self) -> VectorBoolIter<'a, A> {
+        self.iter()
+    }
+}
+
 pub struct VectorBoolIter<'a, A: Allocator> {
     vec: &'a VectorBool<A>,
     index: usize,
