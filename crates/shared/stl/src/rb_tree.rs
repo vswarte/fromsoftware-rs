@@ -1,5 +1,5 @@
 use crate::{Pair, allocator::*};
-use std::{cmp::Ordering, iter::FusedIterator, mem::MaybeUninit, ops::Bound, ptr::NonNull};
+use std::{iter::FusedIterator, mem::MaybeUninit, ops::Bound, ptr::NonNull};
 
 /// Comparator trait for use in MSVC `std::tree` [`RbTree`]
 pub trait TreeComparator<V> {
@@ -567,16 +567,6 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, true> {
             .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
     }
 
-    /// O(log n) search by ordering function
-    pub fn find_by(&self, f: impl Fn(&V) -> Ordering) -> Option<&V> {
-        rb_find_by(self.head, f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
-    }
-
-    /// O(log n) search by ordering function
-    pub fn find_by_mut(&mut self, f: impl Fn(&V) -> Ordering) -> Option<&mut V> {
-        rb_find_by(self.head, f).map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
-    }
-
     /// Returns the existing element if already present, otherwise inserts and
     /// returns a reference to the new value
     pub fn get_or_insert(&mut self, value: V) -> &V {
@@ -617,31 +607,6 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
             _marker: std::marker::PhantomData,
         }
         .take_while(|v| self.comparator.eq_key(key, v))
-    }
-
-    /// O(log n) search by ordering function, returns an iterator over all matches
-    pub fn find_by(&self, f: impl Fn(&V) -> Ordering) -> impl Iterator<Item = &V> {
-        let head = self.head;
-        let start = rb_find_multi_start_by(head, &f);
-        RbTreeIter {
-            head,
-            current: start,
-            remaining: self.size,
-            _marker: std::marker::PhantomData,
-        }
-        .take_while(move |v| f(v) == Ordering::Equal)
-    }
-
-    pub fn find_by_mut(&mut self, f: impl Fn(&V) -> Ordering) -> impl Iterator<Item = &mut V> {
-        let head = self.head;
-        let start = rb_find_multi_start_by(head, &f);
-        RbTreeIterMut {
-            head,
-            current: start,
-            remaining: self.size,
-            _marker: std::marker::PhantomData,
-        }
-        .take_while(move |v| f(v) == Ordering::Equal)
     }
 
     /// Removes all elements matching `key`, returns the count removed
@@ -937,36 +902,4 @@ fn rb_successor<V>(node: NodePtr<V>, head: NodePtr<V>) -> NodePtr<V> {
         }
         parent
     }
-}
-
-fn rb_find_by<V>(head: NodePtr<V>, f: impl Fn(&V) -> Ordering) -> Option<NodePtr<V>> {
-    let mut node = head.parent();
-    loop {
-        if node.is_nil() {
-            return None;
-        }
-        let val = unsafe { (*node.as_ptr()).value.assume_init_ref() };
-        match f(val) {
-            Ordering::Equal => return Some(node),
-            Ordering::Less => node = node.right(),
-            Ordering::Greater => node = node.left(),
-        }
-    }
-}
-
-fn rb_find_multi_start_by<V>(head: NodePtr<V>, f: impl Fn(&V) -> Ordering) -> NodePtr<V> {
-    let mut node = head.parent();
-    let mut start = head;
-    while !node.is_nil() {
-        let val = unsafe { (*node.as_ptr()).value.assume_init_ref() };
-        match f(val) {
-            Ordering::Equal => {
-                start = node;
-                node = node.left();
-            }
-            Ordering::Less => node = node.right(),
-            Ordering::Greater => node = node.left(),
-        }
-    }
-    start
 }
