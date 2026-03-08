@@ -1,7 +1,8 @@
 use crate::allocator::*;
 
 /// Bits per storage word, MSVC uses `unsigned int` (32-bit) as `_Vbase`.
-const VBITS: usize = u32::BITS as usize;
+type VBase = u32;
+const VBITS: usize = VBase::BITS as usize;
 
 /// Implementation of MSVC C++ `std::vector<bool>`.
 ///
@@ -16,7 +17,7 @@ const VBITS: usize = u32::BITS as usize;
 pub struct VectorBool<A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
     allocator: A,
-    first: *mut u32,
+    first: *mut VBase,
     last: usize,
     end: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
@@ -84,8 +85,8 @@ impl<A: Allocator> VectorBool<A> {
     #[inline]
     pub fn all(&self) -> bool {
         let (words, tail_word) = self.word_parts();
-        let mask = (1u32 << (self.last % VBITS)).wrapping_sub(1);
-        words.iter().all(|&w| w == u32::MAX) && tail_word == mask
+        let mask = ((1 as VBase) << (self.last % VBITS)).wrapping_sub(1);
+        words.iter().all(|&w| w == VBase::MAX) && tail_word == mask
     }
 
     pub fn push_back(&mut self, value: bool) {
@@ -126,24 +127,24 @@ impl<A: Allocator> VectorBool<A> {
     #[inline]
     unsafe fn set_bit(&mut self, index: usize, value: bool) {
         let word = unsafe { &mut *self.first.add(index / VBITS) };
-        let mask = 1u32 << (index % VBITS);
-        *word = (*word & !mask) | (u32::from(value) << (index % VBITS));
+        let mask = (1 as VBase) << (index % VBITS);
+        *word = (*word & !mask) | (VBase::from(value) << (index % VBITS));
     }
 
-    fn word_parts(&self) -> (&[u32], u32) {
+    fn word_parts(&self) -> (&[VBase], VBase) {
         let full = self.last / VBITS;
         let tail = self.last % VBITS;
         let words = unsafe { std::slice::from_raw_parts(self.first, full) };
-        let mask = (1u32 << tail).wrapping_sub(1);
+        let mask = ((1 as VBase) << tail).wrapping_sub(1);
         let tail_word = unsafe { *self.first.add(full) } & mask;
         (words, tail_word)
     }
 
-    fn word_parts_mut(&mut self) -> (&mut [u32], u32) {
+    fn word_parts_mut(&mut self) -> (&mut [VBase], VBase) {
         let full = self.last / VBITS;
         let tail = self.last % VBITS;
         let words = unsafe { std::slice::from_raw_parts_mut(self.first, full) };
-        let mask = (1u32 << tail).wrapping_sub(1);
+        let mask = ((1 as VBase) << tail).wrapping_sub(1);
         (words, mask)
     }
 
@@ -153,7 +154,8 @@ impl<A: Allocator> VectorBool<A> {
         let new_bits = (self.end + self.end / 2).max(VBITS).next_multiple_of(VBITS);
         let new_words = bits_to_words(new_bits);
 
-        let new_ptr = unsafe { self.allocator.allocate_n::<u32>(new_words).as_ptr() } as *mut u32;
+        let new_ptr =
+            unsafe { self.allocator.allocate_n::<VBase>(new_words).as_ptr() } as *mut VBase;
         unsafe {
             std::ptr::copy_nonoverlapping(self.first, new_ptr, old_words);
             if old_words > 0 {
