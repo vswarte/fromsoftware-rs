@@ -5,8 +5,8 @@ use syn::*;
 mod multi_param;
 
 mod for_all_subclasses;
-mod stepper;
 mod researching;
+mod stepper;
 mod subclass;
 mod superclass;
 mod utils;
