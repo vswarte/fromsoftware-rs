@@ -18,6 +18,11 @@ pub trait EquipParam {
         sale_value: i32,
         first_get_event_flag_id: i32,
         item_ui_display_type: u8,
+        is_discard: bool,
+        is_deposit: bool,
+        is_drop: bool,
+        is_notice_log: bool,
+        is_notice_dialog: bool,
     }
 
     /// Returns this as an [EQUIP_PARAM_GOODS_ST], if it is one.
@@ -83,5 +88,7 @@ pub trait EquipParamItem: EquipParam {
         action_unlock_param_id: i32,
         icon_id: u16,
         trophy_seq_id: i16,
+        is_auto_equip: bool,
+        is_enhance: bool,
     }
 }

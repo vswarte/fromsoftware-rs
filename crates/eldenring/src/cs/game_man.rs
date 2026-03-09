@@ -14,7 +14,8 @@ pub struct GameMan {
     vftable: usize,
     unk8: usize,
     pub warp_requested: bool,
-    unk14: BlockId,
+    /// Target block ID for `MoveMapStep` to load/warp to.
+    pub move_map_target: BlockId,
     unk18: BlockId,
     unk1c: [u8; 0x4],
     /// Backup of local time when player is in someone else's world.
@@ -138,9 +139,10 @@ pub struct GameMan {
     unkbbc: u32,
     unkbc0: u32,
     unkbc4: u32,
+    /// Whether or not you are in online mode
     pub is_in_online_mode: bool,
-    /// True when connection to EOS server is lost and error should be shown.
-    pub disconnect_eos_server: bool,
+    /// Whether server connection is enabled in general
+    pub server_connection_enabled: bool,
     pub event_world_type: EventWorldType,
     unkbcb: u8,
     unkbcc: u8,
@@ -157,7 +159,7 @@ pub struct GameMan {
     ///
     /// [`ShowTextOnLoadingScreen`]: https://soulsmods.github.io/emedf/er-emedf.html#ShowTextOnLoadingScreen
     pub simple_loading_screen: bool,
-    unkbf6: [u8; 0x4],
+    unkbf6: [u8; 0xa],
     /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).
     pub stay_in_multiplay_area_saved_position: F32Vector3,
     /// See [CSStayInMultiplayAreaWarpData](crate::cs::CSStayInMultiplayAreaWarpData).

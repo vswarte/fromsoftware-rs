@@ -9,6 +9,7 @@ description = "Raw structures and bindings for From Software's title Sekiro: Sha
 
 [dependencies]
 bitfield.workspace = true
+bitflags.workspace = true
 encoding_rs.workspace = true
 pelite.workspace = true
 fromsoftware-shared.workspace = true
@@ -16,13 +17,6 @@ thiserror.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
 cxx-stl.workspace = true
-
-[build-dependencies]
-serde_derive = "1"
-
-[build-dependencies.serde]
-version = "1"
-features = ["derive"]
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"

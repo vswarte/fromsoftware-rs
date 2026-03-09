@@ -15,15 +15,10 @@ pelite.workspace = true
 vtable-rs.workspace = true
 windows.workspace = true
 bitfield.workspace = true
+bitflags.workspace = true
 encoding_rs.workspace = true
 cxx-stl.workspace = true
-
-[build-dependencies]
-serde_derive = "1"
-
-[build-dependencies.serde]
-version = "1"
-features = ["derive"]
+num_enum.workspace = true
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"

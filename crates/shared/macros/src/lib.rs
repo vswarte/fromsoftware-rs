@@ -6,6 +6,7 @@ mod multi_param;
 
 mod for_all_subclasses;
 mod stepper;
+mod researching;
 mod subclass;
 mod superclass;
 mod utils;
@@ -322,4 +323,15 @@ pub fn for_all_subclasses(_args: TokenStream, input: TokenStream) -> TokenStream
 #[proc_macro_derive(StepperStates)]
 pub fn derive_stepper_states(input: TokenStream) -> TokenStream {
     stepper::stepper_states_helper(input).unwrap_or_else(|err| err.into_compile_error().into())
+}
+
+/// A derive macro for `fromsoftware_shared::Researching` that automatically
+/// makes all `unk` fields (public or private) available through
+/// `Researching::unknown_fields`.
+#[proc_macro_derive(Researching, attributes(superclass))]
+pub fn derive_researching(input: TokenStream) -> TokenStream {
+    match researching::researching_helper(input) {
+        Ok(stream) => stream,
+        Err(err) => err.into_compile_error().into(),
+    }
 }

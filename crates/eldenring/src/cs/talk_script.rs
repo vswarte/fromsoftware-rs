@@ -101,7 +101,7 @@ impl TalkScript {
 
         let mut env_result = MaybeUninit::<EzStateRawValue>::uninit();
         (self.env.vftable.invoke)(&mut self.env, &mut env_result, &env_args);
-        unsafe { env_result.assume_init() }.into()
+        (&(unsafe { env_result.assume_init() })).into()
     }
 
     /// Execute a single ESD event with the given arguments, or return an error if the data
