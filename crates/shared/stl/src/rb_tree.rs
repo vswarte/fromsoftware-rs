@@ -1,13 +1,14 @@
 use crate::{Pair, allocator::*};
-use std::{iter::FusedIterator, mem::MaybeUninit, ops::Bound, ptr::NonNull};
+use std::{
+    iter::FusedIterator,
+    mem::MaybeUninit,
+    ops::{Bound, Deref, DerefMut},
+    ptr::NonNull,
+};
 
 /// Comparator trait for use in MSVC `std::tree` [`RbTree`]
 pub trait TreeComparator<V> {
     type Key: ?Sized;
-    type Value: ?Sized;
-
-    fn to_value(value: &V) -> &Self::Value;
-    fn to_value_mut(value: &mut V) -> &mut Self::Value;
 
     fn lt(&self, a: &V, b: &V) -> bool;
     fn lt_key_val(&self, key: &Self::Key, val: &V) -> bool;
@@ -27,21 +28,11 @@ pub trait TreeComparator<V> {
 /// Default [`RbTree`] comparator, equivalent to MSVC [`std::less<V>`]
 ///
 /// [`std::less<V>`]: https://en.cppreference.com/w/cpp/utility/functional/less.html
+#[derive(Default)]
 pub struct Less;
 
 impl<V: Ord> TreeComparator<V> for Less {
     type Key = V;
-    type Value = V;
-
-    #[inline]
-    fn to_value(value: &V) -> &Self::Value {
-        value
-    }
-
-    #[inline]
-    fn to_value_mut(value: &mut V) -> &mut Self::Value {
-        value
-    }
 
     #[inline]
     fn lt(&self, a: &V, b: &V) -> bool {
@@ -56,26 +47,17 @@ impl<V: Ord> TreeComparator<V> for Less {
         val < key
     }
 }
+
 /// Comparator for `Map<K, V>` that orders by key only,
 /// equivalent to MSVC [`std::less<K>`] applied to [`std::pair::first`]
 ///
 /// [`std::less<K>`]: https://en.cppreference.com/w/cpp/utility/functional/less.html
 /// [`std::pair::first`]: https://en.cppreference.com/w/cpp/utility/pair.html
+#[derive(Default)]
 pub struct KeyLess;
 
 impl<K: Ord, V> TreeComparator<Pair<K, V>> for KeyLess {
     type Key = K;
-    type Value = V;
-
-    #[inline]
-    fn to_value(value: &Pair<K, V>) -> &Self::Value {
-        &value.second
-    }
-
-    #[inline]
-    fn to_value_mut(value: &mut Pair<K, V>) -> &mut Self::Value {
-        &mut value.second
-    }
 
     #[inline]
     fn lt(&self, a: &Pair<K, V>, b: &Pair<K, V>) -> bool {
@@ -124,7 +106,6 @@ impl<V> PartialEq for NodePtr<V> {
     }
 }
 impl<V> Eq for NodePtr<V> {}
-
 impl<V> Copy for NodePtr<V> {}
 impl<V> Clone for NodePtr<V> {
     fn clone(&self) -> Self {
@@ -137,12 +118,12 @@ impl<V> NodePtr<V> {
     fn get(&self) -> &RbNode<V> {
         unsafe { self.0.as_ref() }
     }
-    #[inline]
     /// # Safety
     ///
     /// No other reference to the node this pointer points to may exist
     /// at the same time. Since `NodePtr` is `Copy`, the borrow checker
     /// cannot enforce this, the caller must guarantee it
+    #[inline]
     unsafe fn get_mut(&mut self) -> &mut RbNode<V> {
         unsafe { self.0.as_mut() }
     }
@@ -198,6 +179,29 @@ impl<V> NodePtr<V> {
     fn is_right_child(&self) -> bool {
         *self == self.parent().right()
     }
+    /// # Safety
+    ///
+    /// Must not be called on the head/sentinel node
+    #[inline]
+    unsafe fn value<'a>(self) -> &'a V {
+        unsafe { &*(*self.as_ptr()).value.as_ptr() }
+    }
+    /// # Safety
+    ///
+    /// Must not be called on the head/sentinel node. No other reference to
+    /// this node's value may exist at the same time
+    #[inline]
+    unsafe fn value_mut<'a>(self) -> &'a mut V {
+        unsafe { &mut *(*self.as_ptr()).value.as_mut_ptr() }
+    }
+    /// # Safety
+    ///
+    /// Must not be called on the head/sentinel node. The node must not be
+    /// accessed again after this call
+    #[inline]
+    unsafe fn value_read(self) -> V {
+        unsafe { (*self.as_ptr()).value.assume_init_read() }
+    }
 
     /// Splices `replacement` into this node's position in the tree.
     ///
@@ -209,9 +213,11 @@ impl<V> NodePtr<V> {
     /// # Safety
     ///
     /// `self` must be a live non-sentinel node belonging to the tree rooted at `head`.
-    /// `replacement` must be a valid node (may be the sentinel).
+    /// `replacement` must be a valid node
     unsafe fn replace_in_parent(&mut self, mut replacement: NodePtr<V>, head: NodePtr<V>) {
-        replacement.set_parent(self.parent());
+        if !replacement.is_nil() {
+            replacement.set_parent(self.parent());
+        }
         unsafe {
             if self.parent() == head {
                 self.parent().get_mut().parent = replacement;
@@ -240,14 +246,17 @@ impl<V> NodePtr<V> {
     }
 }
 
-#[repr(C)]
-/// Implementation of a basic MSVC C++ Red-Black Tree
+/// Internal MSVC C++ Red-Black Tree implementation.
+///
+/// Prefer the [`Map`], [`Set`], [`MultiMap`], [`MultiSet`] newtypes over using
+/// this type directly.
 ///
 /// # References
 ///
 /// - [Raymond Chen's breakdown of `xtree`]
 ///
 /// [Raymond Chen's breakdown of `xtree`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
+#[repr(C)]
 pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
     comparator: C,
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
@@ -267,7 +276,10 @@ pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
 ///
 /// [cppreference - `std::map`]: https://en.cppreference.com/w/cpp/container/map.html
 /// [Raymond Chen's breakdown of `std::map`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
-pub type Map<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, true>;
+#[repr(transparent)]
+pub struct Map<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> = KeyLess>(
+    RbTree<Pair<K, V>, A, C, true>,
+);
 /// Implementation of MSVC C++ `std::set`
 ///
 /// # References
@@ -277,8 +289,9 @@ pub type Map<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, true>;
 ///
 /// [cppreference - `std::set`]: https://en.cppreference.com/w/cpp/container/set.html
 /// [Raymond Chen's breakdown of `std::set`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
-pub type Set<K, A, C = Less> = RbTree<K, A, C, true>;
-/// Implementation of MSVC C++ `std:multimap`
+#[repr(transparent)]
+pub struct Set<K, A: Allocator, C: TreeComparator<K> = Less>(RbTree<K, A, C, true>);
+/// Implementation of MSVC C++ `std::multimap`
 ///
 /// # References
 ///
@@ -287,7 +300,10 @@ pub type Set<K, A, C = Less> = RbTree<K, A, C, true>;
 ///
 /// [cppreference - `std::multimap`]: https://en.cppreference.com/w/cpp/container/multimap.html
 /// [Raymond Chen's breakdown of `std::multimap`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
-pub type MultiMap<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, false>;
+#[repr(transparent)]
+pub struct MultiMap<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> = KeyLess>(
+    RbTree<Pair<K, V>, A, C, false>,
+);
 /// Implementation of MSVC C++ `std::multiset`
 ///
 /// # References
@@ -297,7 +313,92 @@ pub type MultiMap<K, V, A, C = KeyLess> = RbTree<Pair<K, V>, A, C, false>;
 ///
 /// [cppreference - `std::multiset`]: https://en.cppreference.com/w/cpp/container/multiset.html
 /// [Raymond Chen's breakdown of `std::multiset`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
-pub type MultiSet<K, A, C = Less> = RbTree<K, A, C, false>;
+#[repr(transparent)]
+pub struct MultiSet<K, A: Allocator, C: TreeComparator<K> = Less>(RbTree<K, A, C, false>);
+
+impl<V, A: Allocator, C: TreeComparator<V> + Default, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
+    /// Creates an empty tree using the provided allocator and a default-constructed comparator
+    pub fn new_in(mut allocator: A) -> Self {
+        let head = Self::alloc_sentinel(&mut allocator);
+        Self {
+            comparator: C::default(),
+            allocator,
+            head,
+            size: 0,
+        }
+    }
+}
+
+impl<V, A: Allocator, C: Sized, const UNIQUE: bool> Drop for RbTree<V, A, C, UNIQUE> {
+    fn drop(&mut self) {
+        let root = self.head.parent();
+        if !root.is_nil() {
+            unsafe { self.drop_subtree(root) };
+        }
+        // Free the sentinel itself (its value field is never initialized)
+        unsafe { self.allocator.deallocate_raw(self.head.as_ptr() as _) };
+    }
+}
+
+impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
+    /// Creates an empty tree using the provided allocator and comparator
+    pub fn new_in_with(mut allocator: A, comparator: C) -> Self {
+        let head = Self::alloc_sentinel(&mut allocator);
+        Self {
+            comparator,
+            allocator,
+            head,
+            size: 0,
+        }
+    }
+
+    fn alloc_sentinel(allocator: &mut A) -> NodePtr<V> {
+        // Safety: we immediately initialize every field
+        let node: NodePtr<V> =
+            NodePtr(unsafe { allocator.allocate::<RbNode<V>>().cast::<RbNode<V>>() });
+        unsafe {
+            std::ptr::write(
+                node.as_ptr(),
+                RbNode {
+                    left: node,
+                    parent: node,
+                    right: node,
+                    color: RbColor::Black,
+                    is_nil: true,
+                    value: MaybeUninit::uninit(),
+                },
+            );
+        }
+        node
+    }
+
+    unsafe fn drop_subtree(&mut self, root: NodePtr<V>) {
+        if root.is_nil() {
+            return;
+        }
+
+        // "Unbalance" the tree by repeatedly rotating left children up.
+        // Then drop all right nodes
+        let mut current = root;
+        while !current.is_nil() {
+            if !current.left().is_nil() {
+                // Right-rotate: bring left child up, push current down-right
+                let mut left = current.left();
+                current.set_left(left.right());
+                left.set_right(current);
+                current = left;
+            } else {
+                // No left child -> drop value, free node, advance right
+                let next = current.right();
+                unsafe {
+                    std::ptr::drop_in_place((*current.as_ptr()).value.as_mut_ptr());
+                    self.allocator.deallocate_raw(current.as_ptr() as _);
+                }
+                current = next;
+            }
+        }
+    }
+}
 
 impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     fn bound_node<const LEFT: bool>(&self, bound: Bound<&C::Key>) -> Option<NodePtr<V>> {
@@ -319,7 +420,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             if node.is_nil() {
                 return result;
             }
-            let nv = unsafe { (*node.as_ptr()).value.assume_init_ref() };
+            let nv = unsafe { node.value() };
             let go = match (LEFT, included) {
                 (true, true) => !self.comparator.lt_val_key(nv, v),
                 (true, false) => self.comparator.lt_key_val(v, nv),
@@ -341,8 +442,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// - `Excluded(k)` -> first element with key `> k`
     /// - `Unbounded`   -> first element in the tree
     pub fn lower_bound(&self, bound: Bound<&C::Key>) -> Option<&V> {
-        self.bound_node::<true>(bound)
-            .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
+        self.bound_node::<true>(bound).map(|n| unsafe { n.value() })
     }
 
     /// Returns a mutable reference to the first element satisfying the bound.
@@ -352,7 +452,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// - `Unbounded`   -> first element in the tree
     pub fn lower_bound_mut(&mut self, bound: Bound<&C::Key>) -> Option<&mut V> {
         self.bound_node::<true>(bound)
-            .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
+            .map(|n| unsafe { n.value_mut() })
     }
 
     /// Returns a reference to the last element satisfying the bound.
@@ -362,7 +462,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// - `Unbounded`   -> last element in the tree
     pub fn upper_bound(&self, bound: Bound<&C::Key>) -> Option<&V> {
         self.bound_node::<false>(bound)
-            .map(|n| unsafe { (*n.as_ptr()).value.assume_init_ref() })
+            .map(|n| unsafe { n.value() })
     }
 
     /// Returns a mutable reference to the last element satisfying the bound.
@@ -372,13 +472,12 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     /// - `Unbounded`   -> last element in the tree
     pub fn upper_bound_mut(&mut self, bound: Bound<&C::Key>) -> Option<&mut V> {
         self.bound_node::<false>(bound)
-            .map(|n| unsafe { (*n.as_ptr()).value.assume_init_mut() })
+            .map(|n| unsafe { n.value_mut() })
     }
 
-    /// Insert a value, returning a reference to it.
-    ///
-    /// Duplicate values are ignored when `UNIQUE = true`
-    pub fn insert(&mut self, value: V) -> &V {
+    /// Returns `Ok(new_node)` on insertion, or `Err((existing_node, value))`
+    /// on collision when `UNIQUE = true`
+    fn _try_insert(&mut self, value: V) -> Result<NodePtr<V>, (NodePtr<V>, V)> {
         let mut head = self.head;
         let mut parent = head;
         let mut node = head.parent();
@@ -386,7 +485,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
 
         while !node.is_nil() {
             parent = node;
-            let node_val = unsafe { (*node.as_ptr()).value.assume_init_ref() };
+            let node_val = unsafe { node.value() };
 
             if self.comparator.lt(&value, node_val) {
                 insert_left = true;
@@ -398,7 +497,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
                 node = node.right();
             } else {
                 // Return existing if UNIQUE: true and equal
-                return unsafe { (*node.as_ptr()).value.assume_init_ref() };
+                return Err((node, value));
             }
         }
 
@@ -438,10 +537,10 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
         self.size = self.size.checked_add(1).expect("tree size overflow");
         rb_insert_fixup(new_node, head);
         // Safety: only the root node should have an uninitialized value
-        unsafe { (*new_node.as_ptr()).value.assume_init_ref() }
+        Ok(new_node)
     }
 
-    /// Removes the element if `key` matches it
+    /// Removes the element matching `key`, returning it if present
     pub fn remove(&mut self, key: &C::Key) -> Option<V> {
         let node = self.find_node(key)?;
         Some(unsafe { self.extract_node(node) })
@@ -456,10 +555,8 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
     }
 
     fn find_node(&self, key: &C::Key) -> Option<NodePtr<V>> {
-        self.bound_node::<true>(Bound::Included(key)).filter(|n| {
-            self.comparator
-                .eq_key(key, unsafe { (*n.as_ptr()).value.assume_init_ref() })
-        })
+        self.bound_node::<true>(Bound::Included(key))
+            .filter(|n| self.comparator.eq_key(key, unsafe { n.value() }))
     }
 
     /// Port of MSVC `_Tree_val::_Extract` + `_Tree_node::_Freenode`
@@ -536,8 +633,8 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             rb_erase_fixup(fixnode, fixparent, head);
         }
 
-        self.size = self.size.checked_sub(1).expect("tree size went bellow 0");
-        let value = unsafe { (*erased.as_ptr()).value.assume_init_read() };
+        self.size = self.size.checked_sub(1).expect("tree size went below 0");
+        let value = unsafe { erased.value_read() };
         unsafe { self.allocator.deallocate_raw(erased.as_ptr() as _) };
         value
     }
@@ -576,31 +673,47 @@ impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     }
 }
 
-impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, true> {
+// Set API
+impl<V, A: Allocator, C: TreeComparator<V>> Set<V, A, C> {
     pub fn contains(&self, key: &C::Key) -> bool {
         self.find_node(key).is_some()
     }
 
-    /// Returns a reference to an element matching `key` or `None`
-    pub fn find(&self, key: &C::Key) -> Option<&C::Value> {
-        self.find_node(key)
-            .map(|n| C::to_value(unsafe { (*n.as_ptr()).value.assume_init_ref() }))
+    /// Returns a reference to the element matching `key` or `None`
+    pub fn find(&self, key: &C::Key) -> Option<&V> {
+        self.find_node(key).map(|n| unsafe { n.value() })
     }
 
-    /// Returns a mutable reference to an element matching `key` or `None`
-    pub fn find_mut(&mut self, key: &C::Key) -> Option<&mut C::Value> {
-        self.find_node(key)
-            .map(|n| C::to_value_mut(unsafe { (*n.as_ptr()).value.assume_init_mut() }))
+    /// Returns a mutable reference to the element matching `key` or `None`
+    pub fn find_mut(&mut self, key: &C::Key) -> Option<&mut V> {
+        self.find_node(key).map(|n| unsafe { n.value_mut() })
+    }
+
+    /// Adds a value to the set.
+    ///
+    /// Returns `true` if the value was newly inserted, `false` if it already existed
+    pub fn insert(&mut self, value: V) -> bool {
+        self._try_insert(value).is_ok()
+    }
+
+    /// Returns the existing element if already present, otherwise inserts and
+    /// returns a reference to the new value
+    pub fn get_or_insert(&mut self, value: V) -> &V {
+        let node = match self._try_insert(value) {
+            Ok(n) | Err((n, _)) => n,
+        };
+        unsafe { node.value() }
     }
 }
 
-impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
+// MultiSet API
+impl<V, A: Allocator, C: TreeComparator<V>> MultiSet<V, A, C> {
     pub fn contains(&self, key: &C::Key) -> bool {
         self.find_node(key).is_some()
     }
 
     /// Returns an iterator over all elements matching `key`
-    pub fn find(&self, key: &C::Key) -> impl Iterator<Item = &C::Value> {
+    pub fn find(&self, key: &C::Key) -> impl Iterator<Item = &V> {
         let head = self.head;
         let start = self
             .bound_node::<true>(Bound::Included(key))
@@ -612,11 +725,10 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
             _marker: std::marker::PhantomData,
         }
         .take_while(|v| self.comparator.eq_key(key, v))
-        .map(C::to_value)
     }
 
-    /// Returns an iterator over all elements matching `key`
-    pub fn find_mut(&mut self, key: &C::Key) -> impl Iterator<Item = &mut C::Value> {
+    /// Returns an iterator over mutable references to all elements matching `key`
+    pub fn find_mut(&mut self, key: &C::Key) -> impl Iterator<Item = &mut V> {
         let head = self.head;
         let start = self
             .bound_node::<true>(Bound::Included(key))
@@ -628,11 +740,120 @@ impl<V, A: Allocator, C: TreeComparator<V>> RbTree<V, A, C, false> {
             _marker: std::marker::PhantomData,
         }
         .take_while(|v| self.comparator.eq_key(key, v))
-        .map(C::to_value_mut)
+    }
+
+    /// Inserts a value (duplicates are allowed)
+    pub fn insert(&mut self, value: V) {
+        // UNIQUE=false so insert_inner always returns Ok
+        let _ = self._try_insert(value);
     }
 
     /// Removes all elements matching `key`, returns the count removed
     pub fn remove_all(&mut self, key: &C::Key) -> usize {
+        std::iter::from_fn(|| self.remove(key)).count()
+    }
+}
+
+// Map API
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>, Key = K>> Map<K, V, A, C> {
+    pub fn contains(&self, key: &K) -> bool {
+        self.find_node(key).is_some()
+    }
+
+    /// Returns a reference to the value associated with `key`, or `None`
+    pub fn find(&self, key: &K) -> Option<&V> {
+        self.find_node(key).map(|n| unsafe { &n.value().second })
+    }
+
+    /// Returns a mutable reference to the value associated with `key`, or `None`
+    pub fn find_mut(&mut self, key: &K) -> Option<&mut V> {
+        self.find_node(key)
+            .map(|n| unsafe { &mut n.value_mut().second })
+    }
+
+    /// Inserts a key-value pair.
+    ///
+    /// If the key was not present, returns `None`.
+    /// If the key was already present, replaces the value and returns the old one
+    pub fn insert(&mut self, key: K, value: V) -> Option<V> {
+        match self._try_insert(Pair {
+            first: key,
+            second: value,
+        }) {
+            Ok(_) => None,
+            Err((node, new_pair)) => {
+                let old = unsafe { std::ptr::read(&node.value_mut().second) };
+                unsafe { std::ptr::write(&mut node.value_mut().second, new_pair.second) };
+                Some(old)
+            }
+        }
+    }
+
+    /// Tries to insert a key-value pair.
+    ///
+    /// Returns `Ok(&mut V)` if the key was newly inserted \
+    /// Returns `Err(&mut V)` with a reference to the existing value if the key was already present
+    pub fn try_insert(&mut self, key: K, value: V) -> Result<&mut V, &mut V> {
+        match self._try_insert(Pair {
+            first: key,
+            second: value,
+        }) {
+            Ok(node) => Ok(unsafe { &mut node.value_mut().second }),
+            Err((node, _)) => Err(unsafe { &mut node.value_mut().second }),
+        }
+    }
+}
+
+// MultiMap API
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>, Key = K>> MultiMap<K, V, A, C> {
+    pub fn contains(&self, key: &K) -> bool {
+        self.find_node(key).is_some()
+    }
+
+    /// Returns an iterator over all values associated with `key`
+    pub fn find(&self, key: &K) -> impl Iterator<Item = &V> {
+        let head = self.head;
+        let start = self
+            .bound_node::<true>(Bound::Included(key))
+            .unwrap_or(head);
+        let cmp = &self.comparator;
+        RbTreeIter {
+            head,
+            current: start,
+            remaining: self.size,
+            _marker: std::marker::PhantomData,
+        }
+        .take_while(|v| cmp.eq_key(key, v))
+        .map(|p| &p.second)
+    }
+
+    /// Returns an iterator over mutable references to all values associated with `key`
+    pub fn find_mut(&mut self, key: &K) -> impl Iterator<Item = &mut V> {
+        let head = self.head;
+        let start = self
+            .bound_node::<true>(Bound::Included(key))
+            .unwrap_or(head);
+        let cmp = &self.comparator;
+        RbTreeIterMut {
+            head,
+            current: start,
+            remaining: self.size,
+            _marker: std::marker::PhantomData,
+        }
+        .take_while(|v| cmp.eq_key(key, v))
+        .map(|p| &mut p.second)
+    }
+
+    /// Inserts a key-value pair (duplicates are allowed)
+    pub fn insert(&mut self, key: K, value: V) {
+        let _ = self._try_insert(Pair {
+            first: key,
+            second: value,
+        });
+    }
+
+    /// Removes all elements matching `key`, returns the count removed
+    pub fn remove_all(&mut self, key: &K) -> usize {
         std::iter::from_fn(|| self.remove(key)).count()
     }
 }
@@ -657,7 +878,7 @@ impl<'a, V> Iterator for RbTreeIter<'a, V> {
         // The lifetime 'a ties this iterator to the tree borrow,
         // so the tree cannot be mutated or dropped while
         // this iterator is alive
-        let value = unsafe { (*self.current.as_ptr()).value.assume_init_ref() };
+        let value = unsafe { self.current.value() };
         self.remaining -= 1;
         self.current = rb_successor(self.current, self.head);
         Some(value)
@@ -668,8 +889,8 @@ impl<'a, V> Iterator for RbTreeIter<'a, V> {
     }
 }
 
-impl<'a, V> ExactSizeIterator for RbTreeIter<'a, V> {}
-impl<'a, V> FusedIterator for RbTreeIter<'a, V> {}
+impl<V> ExactSizeIterator for RbTreeIter<'_, V> {}
+impl<V> FusedIterator for RbTreeIter<'_, V> {}
 
 pub struct RbTreeIterMut<'a, V> {
     head: NodePtr<V>,
@@ -692,7 +913,7 @@ impl<'a, V> Iterator for RbTreeIterMut<'a, V> {
         // so the tree cannot be mutated or dropped while
         // this iterator is alive. Each node is visited exactly once,
         // so no two mutable references to the same node can coexist.
-        let value = unsafe { (*self.current.as_ptr()).value.assume_init_mut() };
+        let value = unsafe { self.current.value_mut() };
         self.remaining -= 1;
         self.current = rb_successor(self.current, self.head);
         Some(value)
@@ -704,14 +925,13 @@ impl<'a, V> Iterator for RbTreeIterMut<'a, V> {
 }
 
 impl<V> ExactSizeIterator for RbTreeIterMut<'_, V> {}
-impl<'a, V> FusedIterator for RbTreeIterMut<'a, V> {}
+impl<V> FusedIterator for RbTreeIterMut<'_, V> {}
 
 impl<'a, V, A: Allocator, C: Sized, const UNIQUE: bool> IntoIterator
     for &'a RbTree<V, A, C, UNIQUE>
 {
     type Item = &'a V;
     type IntoIter = RbTreeIter<'a, V>;
-
     fn into_iter(self) -> RbTreeIter<'a, V> {
         self.iter()
     }
@@ -722,9 +942,143 @@ impl<'a, V, A: Allocator, C: Sized, const UNIQUE: bool> IntoIterator
 {
     type Item = &'a mut V;
     type IntoIter = RbTreeIterMut<'a, V>;
-
     fn into_iter(self) -> RbTreeIterMut<'a, V> {
         self.iter_mut()
+    }
+}
+
+impl<'a, K, A: Allocator, C: TreeComparator<K>> IntoIterator for &'a Set<K, A, C> {
+    type Item = &'a K;
+    type IntoIter = RbTreeIter<'a, K>;
+    fn into_iter(self) -> RbTreeIter<'a, K> {
+        self.0.iter()
+    }
+}
+impl<'a, K, A: Allocator, C: TreeComparator<K>> IntoIterator for &'a mut Set<K, A, C> {
+    type Item = &'a mut K;
+    type IntoIter = RbTreeIterMut<'a, K>;
+    fn into_iter(self) -> RbTreeIterMut<'a, K> {
+        self.0.iter_mut()
+    }
+}
+
+impl<'a, K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> IntoIterator for &'a Map<K, V, A, C> {
+    type Item = &'a Pair<K, V>;
+    type IntoIter = RbTreeIter<'a, Pair<K, V>>;
+    fn into_iter(self) -> RbTreeIter<'a, Pair<K, V>> {
+        self.0.iter()
+    }
+}
+impl<'a, K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> IntoIterator
+    for &'a mut Map<K, V, A, C>
+{
+    type Item = &'a mut Pair<K, V>;
+    type IntoIter = RbTreeIterMut<'a, Pair<K, V>>;
+    fn into_iter(self) -> RbTreeIterMut<'a, Pair<K, V>> {
+        self.0.iter_mut()
+    }
+}
+
+impl<'a, K, A: Allocator, C: TreeComparator<K>> IntoIterator for &'a MultiSet<K, A, C> {
+    type Item = &'a K;
+    type IntoIter = RbTreeIter<'a, K>;
+    fn into_iter(self) -> RbTreeIter<'a, K> {
+        self.0.iter()
+    }
+}
+impl<'a, K, A: Allocator, C: TreeComparator<K>> IntoIterator for &'a mut MultiSet<K, A, C> {
+    type Item = &'a mut K;
+    type IntoIter = RbTreeIterMut<'a, K>;
+    fn into_iter(self) -> RbTreeIterMut<'a, K> {
+        self.0.iter_mut()
+    }
+}
+
+impl<'a, K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> IntoIterator
+    for &'a MultiMap<K, V, A, C>
+{
+    type Item = &'a Pair<K, V>;
+    type IntoIter = RbTreeIter<'a, Pair<K, V>>;
+    fn into_iter(self) -> RbTreeIter<'a, Pair<K, V>> {
+        self.0.iter()
+    }
+}
+impl<'a, K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> IntoIterator
+    for &'a mut MultiMap<K, V, A, C>
+{
+    type Item = &'a mut Pair<K, V>;
+    type IntoIter = RbTreeIterMut<'a, Pair<K, V>>;
+    fn into_iter(self) -> RbTreeIterMut<'a, Pair<K, V>> {
+        self.0.iter_mut()
+    }
+}
+
+impl<K, A: Allocator, C: TreeComparator<K>> Deref for Set<K, A, C> {
+    type Target = RbTree<K, A, C, true>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<K, A: Allocator, C: TreeComparator<K>> DerefMut for Set<K, A, C> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> Deref for Map<K, V, A, C> {
+    type Target = RbTree<Pair<K, V>, A, C, true>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> DerefMut for Map<K, V, A, C> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl<K, A: Allocator, C: TreeComparator<K>> Deref for MultiSet<K, A, C> {
+    type Target = RbTree<K, A, C, false>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<K, A: Allocator, C: TreeComparator<K>> DerefMut for MultiSet<K, A, C> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> Deref for MultiMap<K, V, A, C> {
+    type Target = RbTree<Pair<K, V>, A, C, false>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>>> DerefMut for MultiMap<K, V, A, C> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl<K, A: Allocator, C: TreeComparator<K> + Default> Set<K, A, C> {
+    pub fn new_in(allocator: A) -> Self {
+        Set(RbTree::new_in(allocator))
+    }
+}
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> + Default> Map<K, V, A, C> {
+    pub fn new_in(allocator: A) -> Self {
+        Map(RbTree::new_in(allocator))
+    }
+}
+impl<K, A: Allocator, C: TreeComparator<K> + Default> MultiSet<K, A, C> {
+    pub fn new_in(allocator: A) -> Self {
+        MultiSet(RbTree::new_in(allocator))
+    }
+}
+impl<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> + Default> MultiMap<K, V, A, C> {
+    pub fn new_in(allocator: A) -> Self {
+        MultiMap(RbTree::new_in(allocator))
     }
 }
 
@@ -735,8 +1089,8 @@ struct RotationPair<V> {
     away: fn(NodePtr<V>, NodePtr<V>),
 }
 
-/// Left rotation around `node`. `node`'s right child takes its place
-///```text
+/// Left rotation around `node`. `node`'s right child takes its place.
+/// ```text
 ///   Before:          After:
 ///
 ///     node           right
@@ -747,19 +1101,17 @@ struct RotationPair<V> {
 /// ```
 fn rb_rotate_left<V>(mut node: NodePtr<V>, head: NodePtr<V>) {
     let mut right = node.right();
-
     node.set_right(right.left());
     if !right.left().is_nil() {
         right.left().set_parent(node);
     }
-
     unsafe { node.replace_in_parent(right, head) };
     right.set_left(node);
     node.set_parent(right);
 }
 
-/// Right rotation around `node`. `node`'s left child takes its place
-///```text
+/// Right rotation around `node`. `node`'s left child takes its place.
+/// ```text
 ///   Before:       After:
 ///
 ///       node      left
@@ -770,14 +1122,11 @@ fn rb_rotate_left<V>(mut node: NodePtr<V>, head: NodePtr<V>) {
 /// ```
 fn rb_rotate_right<V>(mut node: NodePtr<V>, head: NodePtr<V>) {
     let mut left = node.left();
-
     node.set_left(left.right());
     if !left.right().is_nil() {
         left.right().set_parent(node);
     }
-
     unsafe { node.replace_in_parent(left, head) };
-
     left.set_right(node);
     node.set_parent(left);
 }
@@ -804,9 +1153,8 @@ fn rb_fixup_side<V>(node: NodePtr<V>, head: NodePtr<V>, ops: RotationPair<V>) ->
         };
 
         let (fix_node, mut new_parent) = if node_is_inner {
-            (ops.toward)(node, head);
-            let p = node.parent();
-            (p, p.parent())
+            (ops.toward)(parent, head);
+            (parent, node)
         } else {
             (node, parent)
         };
@@ -818,7 +1166,8 @@ fn rb_fixup_side<V>(node: NodePtr<V>, head: NodePtr<V>, ops: RotationPair<V>) ->
     }
 }
 
-fn rb_insert_fixup<V>(mut node: NodePtr<V>, head: NodePtr<V>) {
+fn rb_insert_fixup<V>(node: NodePtr<V>, head: NodePtr<V>) {
+    let mut node = node;
     while node.parent().is_red() {
         node = if node.parent().is_left_child() {
             rb_fixup_side(
