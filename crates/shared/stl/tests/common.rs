@@ -61,3 +61,41 @@ impl Allocator for StdAlloc {
         self.live.fetch_sub(1, Ordering::Relaxed);
     }
 }
+
+/// Wrapper that increments a counter when dropped.
+/// Used to verify that `V::drop` is called the correct number of times.
+#[allow(dead_code)]
+pub struct DropCount<'a> {
+    counter: &'a AtomicUsize,
+    value: i32,
+}
+
+impl<'a> DropCount<'a> {
+    #[allow(dead_code)]
+    pub fn new(counter: &'a AtomicUsize, value: i32) -> Self {
+        Self { counter, value }
+    }
+}
+
+impl Drop for DropCount<'_> {
+    fn drop(&mut self) {
+        self.counter.fetch_add(1, Ordering::Relaxed);
+    }
+}
+
+impl PartialEq for DropCount<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+    }
+}
+impl Eq for DropCount<'_> {}
+impl PartialOrd for DropCount<'_> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for DropCount<'_> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.value.cmp(&other.value)
+    }
+}

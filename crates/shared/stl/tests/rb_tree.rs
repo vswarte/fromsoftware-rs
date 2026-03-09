@@ -2,9 +2,12 @@ mod common;
 
 use fromsoftware_shared_stl::{Map, MultiMap, MultiSet, Pair, Set};
 
-use std::{ops::Bound, sync::atomic::AtomicUsize};
+use std::{
+    ops::Bound,
+    sync::atomic::{AtomicUsize, Ordering},
+};
 
-use crate::common::StdAlloc;
+use crate::common::{DropCount, StdAlloc};
 
 static COUNTER: AtomicUsize = AtomicUsize::new(0);
 fn std_alloc() -> StdAlloc {
@@ -295,5 +298,154 @@ fn map_large_no_leak() {
             assert_eq!(map.find(&i), Some(&(i * 2)));
         }
     }
+    assert_eq!(a.live_count(), 0);
+}
+
+#[test]
+fn set_drop_calls_value_destructors() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    {
+        let mut set: Set<DropCount, _> = Set::new_in(a.clone());
+        for i in 0..16 {
+            set.insert(DropCount::new(&drop_count, i));
+        }
+        assert_eq!(
+            drop_count.load(Ordering::Relaxed),
+            0,
+            "no drops before tree drop"
+        );
+    }
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        16,
+        "not all values were dropped"
+    );
+    assert_eq!(a.live_count(), 0, "allocations leaked");
+}
+
+#[test]
+fn set_remove_calls_value_destructor() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut set: Set<DropCount, _> = Set::new_in(a.clone());
+    for i in 0..8 {
+        set.insert(DropCount::new(&drop_count, i));
+    }
+    let key = DropCount::new(&drop_count, 0);
+    set.remove(&key);
+    // remove returns the value which is then dropped at end of statement
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        1,
+        "removed value not dropped"
+    );
+    drop(key);
+    drop(set);
+    // prev 1 + remaining 7 + the key passed to remove
+    assert_eq!(drop_count.load(Ordering::Relaxed), 1 + 7 + 1);
+}
+
+#[test]
+fn set_pop_min_max_calls_destructor() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut set: Set<DropCount, _> = Set::new_in(a.clone());
+    for i in 0..4 {
+        set.insert(DropCount::new(&drop_count, i));
+    }
+    drop(set.pop_min()); // value dropped at end of statement
+    assert_eq!(drop_count.load(Ordering::Relaxed), 1);
+    drop(set.pop_max());
+    assert_eq!(drop_count.load(Ordering::Relaxed), 2);
+    drop(set); // remaining 2
+    assert_eq!(drop_count.load(Ordering::Relaxed), 4);
+    assert_eq!(a.live_count(), 0);
+}
+
+#[test]
+fn set_large_drop_all_destructors_called() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    const N: i32 = 256;
+    {
+        let mut set: Set<DropCount, _> = Set::new_in(a.clone());
+        // Insert in reverse to test rebalancing
+        for i in (0..N).rev() {
+            set.insert(DropCount::new(&drop_count, i));
+        }
+        assert_eq!(set.len(), N as usize);
+        assert_eq!(drop_count.load(Ordering::Relaxed), 0);
+    }
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        N as usize,
+        "not all values dropped"
+    );
+    assert_eq!(a.live_count(), 0, "allocations leaked");
+}
+
+#[test]
+fn map_insert_replace_drops_old_value() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut map: Map<i32, DropCount, _> = Map::new_in(a.clone());
+    map.insert(1, DropCount::new(&drop_count, 10));
+    assert_eq!(drop_count.load(Ordering::Relaxed), 0);
+    // Replace old value returned and immediately drop
+    drop(map.insert(1, DropCount::new(&drop_count, 20)));
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        1,
+        "replaced value not dropped"
+    );
+    drop(map); // drops the current value (20)
+    assert_eq!(drop_count.load(Ordering::Relaxed), 2);
+    assert_eq!(a.live_count(), 0);
+}
+
+#[test]
+fn map_drop_calls_all_value_destructors() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    {
+        let mut map: Map<i32, DropCount, _> = Map::new_in(a.clone());
+        for i in 0..32 {
+            map.insert(i, DropCount::new(&drop_count, i));
+        }
+        assert_eq!(drop_count.load(Ordering::Relaxed), 0);
+    }
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        32,
+        "not all map values dropped"
+    );
+    assert_eq!(a.live_count(), 0);
+}
+
+#[test]
+fn multiset_remove_all_drops_all_matching() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut ms: MultiSet<DropCount, _> = MultiSet::new_in(a.clone());
+    for _ in 0..4 {
+        ms.insert(DropCount::new(&drop_count, 42));
+    }
+    ms.insert(DropCount::new(&drop_count, 1));
+    ms.insert(DropCount::new(&drop_count, 2));
+
+    let removed = ms.remove_all(&DropCount::new(&drop_count, 42));
+    assert_eq!(removed, 4);
+    // The 4 removed values + the temporary key passed to remove_all
+    assert_eq!(drop_count.load(Ordering::Relaxed), 4 + 1);
+    drop(ms); // remaining 2
+    assert_eq!(drop_count.load(Ordering::Relaxed), 4 + 1 + 2);
     assert_eq!(a.live_count(), 0);
 }
