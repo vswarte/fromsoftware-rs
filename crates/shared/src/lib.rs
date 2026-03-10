@@ -11,6 +11,7 @@ pub mod steam;
 pub mod stepper;
 mod subclass;
 pub mod task;
+mod unknown_pointer;
 pub mod util;
 
 pub use arxan::*;
@@ -25,6 +26,7 @@ pub use steam::*;
 pub use stepper::*;
 pub use subclass::*;
 pub use task::*;
+pub use unknown_pointer::*;
 pub use util::*;
 
 pub use from_singleton::FromSingleton;
