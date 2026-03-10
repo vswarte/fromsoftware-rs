@@ -107,9 +107,11 @@ impl<T, A: Allocator> Vector<T, A> {
 
 impl<T, A: Allocator> Deref for Vector<T, A> {
     type Target = [T];
-
     #[inline]
     fn deref(&self) -> &[T] {
+        if self.first.is_null() {
+            return &[];
+        }
         // Safety: both pointers belong to the same allocation
         let len = unsafe { self.last.offset_from(self.first) as usize };
         // Safety: [first, last) is always a valid, initialized slice
@@ -120,6 +122,9 @@ impl<T, A: Allocator> Deref for Vector<T, A> {
 impl<T, A: Allocator> DerefMut for Vector<T, A> {
     #[inline]
     fn deref_mut(&mut self) -> &mut [T] {
+        if self.first.is_null() {
+            return &mut [];
+        }
         // Safety: both pointers belong to the same allocation
         let len = unsafe { self.last.offset_from(self.first) as usize };
         // Safety: [first, last) is always a valid, initialized slice
