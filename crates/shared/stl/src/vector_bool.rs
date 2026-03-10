@@ -25,6 +25,18 @@ pub struct VectorBool<A: Allocator> {
 }
 
 impl<A: Allocator> VectorBool<A> {
+    /// Creates an empty `vector<bool>` backed by `allocator`.
+    ///
+    /// Equivalent to `std::vector<bool>()` with a custom allocator
+    pub fn new_in(allocator: A) -> Self {
+        Self {
+            allocator,
+            first: std::ptr::null_mut(),
+            last: 0,
+            end: 0,
+        }
+    }
+
     #[inline]
     pub fn len(&self) -> usize {
         self.last
@@ -203,4 +215,12 @@ impl<A: Allocator> ExactSizeIterator for VectorBoolIter<'_, A> {}
 #[inline]
 const fn bits_to_words(bits: usize) -> usize {
     bits.div_ceil(VBITS)
+}
+
+impl<A: Allocator> Drop for VectorBool<A> {
+    fn drop(&mut self) {
+        if self.end > 0 {
+            unsafe { self.allocator.deallocate_raw(self.first as _) };
+        }
+    }
 }
