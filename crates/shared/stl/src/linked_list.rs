@@ -28,6 +28,29 @@ struct Node<T> {
 }
 
 impl<T, A: Allocator> List<T, A> {
+    /// Creates an empty list backed by `allocator`.
+    ///
+    /// Equivalent to `std::list<T>()` with a custom allocator
+    pub fn new_in(mut allocator: A) -> Self {
+        // Allocate the sentinel head node. Its value is never initialized
+        let head = unsafe { allocator.allocate::<Node<T>>().cast::<Node<T>>() };
+        unsafe {
+            std::ptr::write(
+                head.as_ptr(),
+                Node {
+                    next: head,
+                    previous: head,
+                    value: MaybeUninit::uninit(),
+                },
+            );
+        }
+        Self {
+            allocator,
+            head,
+            length: 0,
+        }
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         let mut length = self.length;
         let mut current = unsafe { self.head.as_ref() };
@@ -48,6 +71,26 @@ impl<T, A: Allocator> List<T, A> {
                 // Safety: only the root node should have an uninitialized value.
                 Some(unsafe { current.value.assume_init_ref() })
             }
+        })
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut T> {
+        let mut length = self.length;
+        let mut current = unsafe { self.head.as_ref() }.next;
+        let head = self.head;
+
+        std::iter::from_fn(move || {
+            if length == 0 {
+                return None;
+            }
+
+            debug_assert!(current != head, "attempted to use sentinel node value");
+
+            // Safety: only the root node should have an uninitialized value.
+            let value = unsafe { (*current.as_ptr()).value.assume_init_mut() };
+            length -= 1;
+            current = unsafe { current.as_ref() }.next;
+            Some(value)
         })
     }
 
@@ -85,7 +128,27 @@ impl<T, A: Allocator> List<T, A> {
         self.length = self.length.checked_add(1).expect("list length overflow");
     }
 
-    // TODO: insert that adds node after another
+    pub fn push_front(&mut self, value: T) {
+        let new = unsafe { self.allocator.allocate::<Node<T>>().cast::<Node<T>>() };
+
+        let mut head = self.head;
+        let mut first = unsafe { head.as_ref() }.next;
+
+        unsafe {
+            std::ptr::write(
+                new.as_ptr(),
+                Node {
+                    next: first,
+                    previous: head,
+                    value: MaybeUninit::new(value),
+                },
+            );
+            head.as_mut().next = new;
+            first.as_mut().previous = new;
+        }
+
+        self.length = self.length.checked_add(1).expect("list length overflow");
+    }
 
     pub fn pop_front(&mut self) -> Option<T> {
         if self.length == 0 {
@@ -129,5 +192,20 @@ impl<T, A: Allocator> List<T, A> {
         unsafe { self.allocator.deallocate_raw(node as _) };
 
         value
+    }
+}
+
+impl<T, A: Allocator> Drop for List<T, A> {
+    fn drop(&mut self) {
+        let mut current = unsafe { self.head.as_ref() }.next;
+        while current != self.head {
+            let next = unsafe { current.as_ref() }.next;
+            unsafe {
+                std::ptr::drop_in_place((*current.as_ptr()).value.as_mut_ptr());
+                self.allocator.deallocate_raw(current.as_ptr() as _);
+            }
+            current = next;
+        }
+        unsafe { self.allocator.deallocate_raw(self.head.as_ptr() as _) };
     }
 }
