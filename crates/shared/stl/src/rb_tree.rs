@@ -253,8 +253,10 @@ impl<V> NodePtr<V> {
 ///
 /// # References
 ///
+/// - [MSVC STL source - `xtree`]
 /// - [Raymond Chen's breakdown of `xtree`]
 ///
+/// [MSVC STL source - `xtree`]: https://github.com/microsoft/STL/blob/main/stl/inc/xtree
 /// [Raymond Chen's breakdown of `xtree`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
 #[repr(C)]
 pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
@@ -272,9 +274,11 @@ pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
 /// # References
 ///
 /// - [cppreference - `std::map`]
+/// - [MSVC STL source - `map`]
 /// - [Raymond Chen's breakdown of `std::map`]
 ///
 /// [cppreference - `std::map`]: https://en.cppreference.com/w/cpp/container/map.html
+/// [MSVC STL source - `map`]: https://github.com/microsoft/STL/blob/main/stl/inc/map
 /// [Raymond Chen's breakdown of `std::map`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
 #[repr(transparent)]
 pub struct Map<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> = KeyLess>(
@@ -285,9 +289,11 @@ pub struct Map<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> = KeyLess>(
 /// # References
 ///
 /// - [cppreference - `std::set`]
+/// - [MSVC STL source - `set`]
 /// - [Raymond Chen's breakdown of `std::set`]
 ///
 /// [cppreference - `std::set`]: https://en.cppreference.com/w/cpp/container/set.html
+/// [MSVC STL source - `set`]: https://github.com/microsoft/STL/blob/main/stl/inc/set
 /// [Raymond Chen's breakdown of `std::set`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
 #[repr(transparent)]
 pub struct Set<K, A: Allocator, C: TreeComparator<K> = Less>(RbTree<K, A, C, true>);
@@ -296,9 +302,11 @@ pub struct Set<K, A: Allocator, C: TreeComparator<K> = Less>(RbTree<K, A, C, tru
 /// # References
 ///
 /// - [cppreference - `std::multimap`]
+/// - [MSVC STL source - `multimap`]
 /// - [Raymond Chen's breakdown of `std::multimap`]
 ///
 /// [cppreference - `std::multimap`]: https://en.cppreference.com/w/cpp/container/multimap.html
+/// [MSVC STL source - `multimap`]: https://github.com/microsoft/STL/blob/main/stl/inc/map
 /// [Raymond Chen's breakdown of `std::multimap`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
 #[repr(transparent)]
 pub struct MultiMap<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> = KeyLess>(
@@ -309,9 +317,11 @@ pub struct MultiMap<K, V, A: Allocator, C: TreeComparator<Pair<K, V>> = KeyLess>
 /// # References
 ///
 /// - [cppreference - `std::multiset`]
+/// - [MSVC STL source - `multiset`]
 /// - [Raymond Chen's breakdown of `std::multiset`]
 ///
 /// [cppreference - `std::multiset`]: https://en.cppreference.com/w/cpp/container/multiset.html
+/// [MSVC STL source - `multiset`]: https://github.com/microsoft/STL/blob/main/stl/inc/set
 /// [Raymond Chen's breakdown of `std::multiset`]: https://devblogs.microsoft.com/oldnewthing/20230807-00/?p=108562
 #[repr(transparent)]
 pub struct MultiSet<K, A: Allocator, C: TreeComparator<K> = Less>(RbTree<K, A, C, false>);

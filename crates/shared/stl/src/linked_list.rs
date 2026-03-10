@@ -7,9 +7,11 @@ use std::{mem::MaybeUninit, ptr::NonNull};
 /// # References
 ///
 /// - [cppreference - `std::list`]
+/// - [MSVC STL source - `list`]
 /// - [Raymond Chen's breakdown of `std::list`]
 ///
 /// [cppreference - `std::list`]: https://en.cppreference.com/w/cpp/container/list.html
+/// [MSVC STL source - `list`]: https://github.com/microsoft/STL/blob/main/stl/inc/list
 /// [Raymond Chen's breakdown of `std::list`]: https://devblogs.microsoft.com/oldnewthing/20230804-00/?p=108547
 pub struct List<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]

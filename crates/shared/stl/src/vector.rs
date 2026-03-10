@@ -7,9 +7,11 @@ use std::ops::{Deref, DerefMut};
 /// # References
 ///
 /// - [cppreference - `std::vector`]
+/// - [MSVC STL source - `vector`]
 /// - [Raymond Chen's breakdown of `std::vector`]
 ///
 /// [cppreference - `std::vector`]: https://en.cppreference.com/w/cpp/container/vector.html
+/// [MSVC STL source - `vector`]: https://github.com/microsoft/STL/blob/main/stl/inc/vector
 /// [Raymond Chen's breakdown of `std::vector`]: https://devblogs.microsoft.com/oldnewthing/20230802-00/?p=108524
 pub struct Vector<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]

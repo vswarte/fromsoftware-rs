@@ -26,9 +26,11 @@ use std::ptr::NonNull;
 /// # References
 ///
 /// - [cppreference - `std::basic_string`]
+/// - [MSVC STL source - `xstring`]
 /// - [Raymond Chen's breakdown of `std::basic_string`]
 ///
 /// [cppreference - `std::basic_string`]: https://en.cppreference.com/w/cpp/string/basic_string.html
+/// [MSVC STL source - `xstring`]: https://github.com/microsoft/STL/blob/main/stl/inc/xstring
 /// [Raymond Chen's breakdown of `std::basic_string`]: https://devblogs.microsoft.com/oldnewthing/20230803-00/?p=108532
 #[repr(C)]
 pub struct BasicString<C, A>

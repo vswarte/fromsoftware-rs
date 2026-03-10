@@ -9,9 +9,11 @@ const VBITS: usize = VBase::BITS as usize;
 /// # References
 ///
 /// - [cppreference - `std::vector<bool>`]
+/// - [MSVC STL source - `vector<bool>`]
 /// - [Raymond Chen's breakdown of `std::vector<bool>`]
 ///
 /// [cppreference - `std::vector<bool>`]: https://en.cppreference.com/w/cpp/container/vector_bool.html
+/// [MSVC STL source - `vector<bool>`]: https://github.com/microsoft/STL/blob/main/stl/inc/vector
 /// [Raymond Chen's breakdown of `std::vector<bool>`]: https://devblogs.microsoft.com/oldnewthing/20200313-00/?p=103559
 #[repr(C)]
 pub struct VectorBool<A: Allocator> {

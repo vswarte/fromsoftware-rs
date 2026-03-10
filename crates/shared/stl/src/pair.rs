@@ -4,9 +4,11 @@
 /// # References
 ///
 /// - [cppreference - `std::pair`]
+/// - [MSVC STL source - `pair`]
 /// - [Raymond Chen's breakdown of `std::pair`]
 ///
 /// [cppreference - `std::pair`]: https://en.cppreference.com/w/cpp/utility/pair.html
+/// [MSVC STL source - `pair`]: https://github.com/microsoft/STL/blob/main/stl/inc/utility
 /// [Raymond Chen's breakdown of `std::pair`]: https://devblogs.microsoft.com/oldnewthing/20230801-00/?p=108509
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Pair<K, V> {
