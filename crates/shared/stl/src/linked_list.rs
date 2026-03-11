@@ -35,7 +35,7 @@ impl<T, A: Allocator> List<T, A> {
     /// Equivalent to `std::list<T>()` with a custom allocator
     pub fn new_in(mut allocator: A) -> Self {
         // Allocate the sentinel head node. Its value is never initialized
-        let head = unsafe { allocator.allocate::<Node<T>>().cast::<Node<T>>() };
+        let head = allocator.allocate::<Node<T>>();
         unsafe {
             std::ptr::write(
                 head.as_ptr(),
@@ -107,7 +107,7 @@ impl<T, A: Allocator> List<T, A> {
     }
 
     pub fn push_back(&mut self, value: T) {
-        let new = unsafe { self.allocator.allocate::<Node<T>>().cast::<Node<T>>() };
+        let new = self.allocator.allocate::<Node<T>>();
 
         let mut head = self.head;
         let mut tail = unsafe { head.as_ref() }.previous;
@@ -131,7 +131,7 @@ impl<T, A: Allocator> List<T, A> {
     }
 
     pub fn push_front(&mut self, value: T) {
-        let new = unsafe { self.allocator.allocate::<Node<T>>().cast::<Node<T>>() };
+        let new = self.allocator.allocate::<Node<T>>();
 
         let mut head = self.head;
         let mut first = unsafe { head.as_ref() }.next;

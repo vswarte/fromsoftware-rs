@@ -52,7 +52,7 @@ impl<T, A: Allocator> Vector<T, A> {
             return Self::new_in(allocator);
         }
 
-        let ptr = unsafe { allocator.allocate_n::<T>(len).as_ptr() } as *mut T;
+        let ptr = allocator.allocate_n::<T>(len).as_ptr() as _;
         unsafe {
             std::ptr::copy_nonoverlapping(items.as_ptr(), ptr, len);
         }
@@ -92,7 +92,7 @@ impl<T, A: Allocator> Vector<T, A> {
         let old_cap = self.capacity();
         let new_cap = (old_cap + old_cap / 2).max(old_cap + 1).max(4);
 
-        let new_ptr = unsafe { self.allocator.allocate_n::<T>(new_cap).as_ptr() } as _;
+        let new_ptr = self.allocator.allocate_n::<T>(new_cap).as_ptr() as _;
 
         unsafe {
             std::ptr::copy_nonoverlapping(self.first, new_ptr, old_len);

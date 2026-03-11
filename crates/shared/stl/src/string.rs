@@ -48,23 +48,21 @@ where
 }
 
 pub trait CodeUnit: Copy + Default + 'static {
-    const SSO_CAP: usize;
+    /// Inline buffer is always exactly 16 bytes
+    const SSO_CAP: usize = 16 / size_of::<Self>();
     type InlineBuffer: AsRef<[Self]> + AsMut<[Self]> + Default;
 }
 
 impl CodeUnit for u8 {
-    const SSO_CAP: usize = 16;
-    type InlineBuffer = [Self; 16];
+    type InlineBuffer = [Self; Self::SSO_CAP];
 }
 
 impl CodeUnit for u16 {
-    const SSO_CAP: usize = 8;
-    type InlineBuffer = [Self; 8];
+    type InlineBuffer = [Self; Self::SSO_CAP];
 }
 
 impl CodeUnit for u32 {
-    const SSO_CAP: usize = 4;
-    type InlineBuffer = [Self; 4];
+    type InlineBuffer = [Self; Self::SSO_CAP];
 }
 
 /// Small String Optimization union.
@@ -125,7 +123,7 @@ where
                 allocator,
             }
         } else {
-            let ptr = unsafe { allocator.allocate_n::<C>(len + 1).cast::<C>() };
+            let ptr = allocator.allocate_n::<C>(len + 1).cast::<C>();
             unsafe {
                 std::ptr::copy_nonoverlapping(chars.as_ptr(), ptr.as_ptr(), len);
                 ptr.as_ptr().add(len).write(C::default());
@@ -229,7 +227,7 @@ where
     }
 
     fn reallocate(&mut self, new_cap: usize) {
-        let new_ptr = unsafe { self.allocator.allocate_n::<C>(new_cap + 1).cast::<C>() };
+        let new_ptr = self.allocator.allocate_n::<C>(new_cap + 1).cast::<C>();
         // Copy existing data + NUL terminator in one shot
         unsafe {
             std::ptr::copy_nonoverlapping(self.as_ptr(), new_ptr.as_ptr(), self.size + 1);
@@ -631,18 +629,19 @@ impl<A: Allocator> fmt::Display for BasicString<u8, A> {
 }
 
 impl<A: Allocator> fmt::Debug for BasicString<u16, A> {
-    /// Displays printable characters as glyphs and non-printable ones as `\u{XXXX}`.
-    /// Lone surrogates (invalid UTF-16) are shown as `\x{FFFD(XXXX)}`.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "WideString[\"")?;
+        write!(f, "L\"")?;
         for r in char::decode_utf16(self.as_code_units().iter().cloned()) {
-            match r {
-                Ok(c) if !c.is_control() => write!(f, "{c}")?,
-                Ok(c) => write!(f, "\\u{{{:04X}}}", c as u32)?,
-                Err(s) => write!(f, "\\x{{FFFD({:04X})}}", s.unpaired_surrogate())?,
+            let cp = match r {
+                Ok(c) => c as u32,
+                Err(s) => s.unpaired_surrogate() as u32,
+            };
+            match char::from_u32(cp).filter(|c| !c.is_control()) {
+                Some(c) => write!(f, "{c}")?,
+                None => write!(f, "\\u{{{:04X}}}", cp)?,
             }
         }
-        write!(f, "\"]")
+        write!(f, "\"")
     }
 }
 

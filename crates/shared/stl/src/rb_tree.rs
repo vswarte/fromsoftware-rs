@@ -15,8 +15,13 @@ pub trait TreeComparator<V> {
     fn lt_val_key(&self, val: &V, key: &Self::Key) -> bool;
 
     #[inline]
-    fn eq(&self, a: &V, b: &V) -> bool {
-        !self.lt(a, b) && !self.lt(b, a)
+    fn gte_key_val(&self, key: &Self::Key, val: &V) -> bool {
+        !self.lt_key_val(key, val)
+    }
+
+    #[inline]
+    fn gte_val_key(&self, val: &V, key: &Self::Key) -> bool {
+        !self.lt_val_key(val, key)
     }
 
     #[inline]
@@ -75,13 +80,13 @@ impl<K: Ord, V> TreeComparator<Pair<K, V>> for KeyLess {
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum RbColor {
+enum RbColor {
     Red = 0,
     Black = 1,
 }
 
 #[repr(C)]
-pub struct RbNode<V> {
+struct RbNode<V> {
     left: NodePtr<V>,
     parent: NodePtr<V>,
     right: NodePtr<V>,
@@ -363,9 +368,7 @@ impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     }
 
     fn alloc_sentinel(allocator: &mut A) -> NodePtr<V> {
-        // Safety: we immediately initialize every field
-        let node: NodePtr<V> =
-            NodePtr(unsafe { allocator.allocate::<RbNode<V>>().cast::<RbNode<V>>() });
+        let node: NodePtr<V> = NodePtr(allocator.allocate::<RbNode<V>>());
         unsafe {
             std::ptr::write(
                 node.as_ptr(),
@@ -432,9 +435,9 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             }
             let nv = unsafe { node.value() };
             let go = match (LEFT, included) {
-                (true, true) => !self.comparator.lt_val_key(nv, v),
+                (true, true) => self.comparator.gte_val_key(nv, v),
                 (true, false) => self.comparator.lt_key_val(v, nv),
-                (false, true) => !self.comparator.lt_key_val(v, nv),
+                (false, true) => self.comparator.gte_key_val(v, nv),
                 (false, false) => self.comparator.lt_val_key(nv, v),
             };
             if go {
@@ -511,7 +514,7 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             }
         }
 
-        let new_node = NodePtr(unsafe { self.allocator.allocate::<RbNode<V>>().cast() });
+        let new_node = NodePtr(self.allocator.allocate::<RbNode<V>>().cast());
         unsafe {
             std::ptr::write(
                 new_node.as_ptr(),

@@ -168,8 +168,7 @@ impl<A: Allocator> VectorBool<A> {
         let new_bits = (self.end + self.end / 2).max(VBITS).next_multiple_of(VBITS);
         let new_words = bits_to_words(new_bits);
 
-        let new_ptr =
-            unsafe { self.allocator.allocate_n::<VBase>(new_words).as_ptr() } as *mut VBase;
+        let new_ptr = self.allocator.allocate_n::<VBase>(new_words).as_ptr() as _;
         unsafe {
             std::ptr::copy_nonoverlapping(self.first, new_ptr, old_words);
             if old_words > 0 {

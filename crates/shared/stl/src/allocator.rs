@@ -1,6 +1,6 @@
 use std::{
     ffi::c_void,
-    mem::{MaybeUninit, align_of, size_of},
+    mem::{align_of, size_of},
     ptr::NonNull,
 };
 
@@ -16,27 +16,26 @@ pub trait Allocator: Clone {
     /// on the same allocator instance. It must not be used after this call
     unsafe fn deallocate_raw(&mut self, ptr: *mut c_void);
 
-    /// # Safety
-    ///
-    /// Caller must initialize the returned `MaybeUninit<T>` before reading it.
-    unsafe fn allocate<T>(&mut self) -> NonNull<MaybeUninit<T>> {
+    /// `T` must not be a zero-sized type.
+    fn allocate<T>(&mut self) -> NonNull<T> {
         unsafe {
             self.allocate_raw(size_of::<T>(), align_of::<T>())
-                .cast::<MaybeUninit<T>>()
+                .cast::<T>()
         }
     }
-    /// # Safety
-    ///
-    /// `count` must be non-zero. Caller must initialize all `count` elements
-    /// of the returned slice before reading any of them
-    unsafe fn allocate_n<T>(&mut self, count: usize) -> NonNull<[MaybeUninit<T>]> {
+
+    /// Allocates `count` elemets. Panics if `count` is zero
+    fn allocate_n<T>(&mut self, count: usize) -> NonNull<[T]> {
+        if count == 0 {
+            panic!("allocate_n called with 0 elements")
+        }
         let size = size_of::<T>()
             .checked_mul(count)
             .expect("allocation size overflow");
 
         let ptr = unsafe {
             self.allocate_raw(size, align_of::<T>())
-                .cast::<MaybeUninit<T>>()
+                .cast::<T>()
                 .as_ptr()
         };
 
