@@ -29,4 +29,6 @@ pub struct RvaBundle {
     pub register_task: u32,
     pub replay_ghost_ins_vmt: u32,
     pub sprj_menu_man_ptr: u32,
+    pub world_info_vmt: u32,
+    pub world_res_vmt: u32,
 }

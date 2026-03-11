@@ -28,4 +28,6 @@ pub const RVAS: RvaBundle = RvaBundle {
     register_task: 0xf0fa50,
     replay_ghost_ins_vmt: 0x2858aa8,
     sprj_menu_man_ptr: 0x4763258,
+    world_info_vmt: 0x27d7a50,
+    world_res_vmt: 0x27d7fb8,
 };

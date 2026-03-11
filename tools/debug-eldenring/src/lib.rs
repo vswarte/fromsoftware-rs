@@ -2,9 +2,9 @@ use std::ffi::c_void;
 use std::sync::Once;
 use std::time::Duration;
 
-use hudhook::imgui::{Condition, Context, Ui, sys as imgui_sys};
+use hudhook::imgui::{Condition, Context, Io, Ui, sys as imgui_sys};
 use hudhook::windows::Win32::Foundation::HINSTANCE;
-use hudhook::{ImguiRenderLoop, eject, hooks::dx12::ImguiDx12Hooks};
+use hudhook::{ImguiRenderLoop, MessageFilter, eject, hooks::dx12::ImguiDx12Hooks};
 use pelite::pe64::Pe;
 use rva::RVA_GLOBAL_FIELD_AREA;
 
@@ -117,6 +117,10 @@ impl ImguiRenderLoop for EldenRingDebugGui {
         unsafe {
             render_live_reload(self, ui);
         }
+    }
+
+    fn message_filter(&self, _io: &Io) -> MessageFilter {
+        MessageFilter::InputAll
     }
 }
 

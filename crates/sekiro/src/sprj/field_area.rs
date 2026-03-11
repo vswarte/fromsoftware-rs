@@ -1,6 +1,6 @@
 use std::{borrow::Cow, ptr::NonNull};
 
-use super::WorldInfoOwner;
+use super::WorldRes;
 use crate::rva;
 use shared::*;
 
@@ -8,9 +8,9 @@ use shared::*;
 pub struct FieldArea {
     _vftable: usize,
 
-    pub world_info_owner: OwnedPtr<WorldInfoOwner>,
+    pub world_info_owner: OwnedPtr<WorldRes>,
 
-    _world_info_owner_2: NonNull<WorldInfoOwner>, // Always the same as [world_info_owner], apparently
+    _world_info_owner_2: Option<NonNull<WorldRes>>, // Always the same as [world_res], apparently
 
     _game_rend: u64,
     _unk20: u32,

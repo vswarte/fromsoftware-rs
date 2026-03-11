@@ -3,8 +3,8 @@ use std::{ptr::NonNull, slice};
 use thiserror::Error;
 
 use super::FieldArea;
-use crate::cxx_stl::CxxVec;
-use shared::{FromStatic, OwnedPtr, UnknownStruct};
+use crate::Vector;
+use shared::*;
 
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum EventFlagError {
@@ -28,13 +28,13 @@ impl EventFlag {
         ((self.0 / 10000000) % 10) as u8
     }
 
-    /// The [WorldAreaInfo.area_number] for the area that this selects. Always
+    /// The `WorldAreaInfo.area_number` for the area that this selects. Always
     /// less than 90.
     pub fn area(&self) -> u8 {
         ((self.0 / 100000) % 100) as u8
     }
 
-    /// The [BlockInfo.group] for the area that this selects. Always in `0..10`.
+    /// The `BlockInfo.group` for the area that this selects. Always in `0..10`.
     pub fn group(&self) -> u8 {
         ((self.0 / 10000) % 10) as u8
     }
@@ -59,20 +59,6 @@ impl EventFlag {
         // Flag IDs themselves are little-endian, so we have to subtract them
         // from 31 to make them usable in the more ergonomic big-endian way.
         31 - ((self.0 % 1000) % 32) as u8
-    }
-
-    /// Gets the block index to use when there's no global FieldArea currently
-    /// available.
-    fn global_block_index(&self) -> Option<u8> {
-        Some(match (self.area(), self.group()) {
-            (12, 1) => 0,
-            (20, 1) => 1,
-            (21, 0) => 3,
-            (29, 0) => 4,
-            (29, 1) => 5,
-            (29, 2) => 6,
-            _ => return None,
-        })
     }
 }
 
@@ -107,9 +93,9 @@ pub struct SprjEventFlagMan {
     /// A struct that owns the actual flag data.
     pub flags: FD4VirtualMemoryFlag,
 
-    _unk230: [u8; 0x20],
-
     pub event_maker: EventMakerEx,
+
+    _unk2a8: bool,
 }
 
 impl SprjEventFlagMan {
@@ -167,23 +153,16 @@ impl SprjEventFlagMan {
     }
 
     /// Returns the index of the [EventBlock] that contains `flag`.
-    pub fn get_event_block_index(&self, flag: EventFlag) -> Option<u32> {
-        Some(if flag.area() == 0 && flag.group() == 0 {
-            0
-            // Safety: If the event man is being accessed safely, the field area
-            // should be accessible as well.
-        } else if let Ok(field_area) = unsafe { FieldArea::instance() } {
-            let (_, block_infos) = field_area
-                .world_info_owner
-                .area_and_block_info()
-                .find(|(area_infos, _)| area_infos.area_number == flag.area())?;
-            let block_info = block_infos.iter().find(|bi| {
-                bi.block_id.group() == flag.group() && bi.block_id.area() == flag.area()
-            })?;
-            block_info.world_block_index + 1
-        } else {
-            (flag.global_block_index()? + 1).into()
-        })
+    fn get_event_block_index(&self, flag: EventFlag) -> Option<u32> {
+        let (_, block_infos) = unsafe { FieldArea::instance() }
+            .ok()?
+            .world_info_owner
+            .area_and_block_info()
+            .find(|(area_infos, _)| area_infos.area_number == flag.area())?;
+        let block_info = block_infos
+            .iter()
+            .find(|bi| bi.block_id.group() == flag.group() && bi.block_id.area() == flag.area())?;
+        Some(block_info.world_block_index + 1)
     }
 }
 
@@ -224,6 +203,9 @@ pub struct FD4VirtualMemoryFlag {
 
     /// Whether this class's data has been initialized.
     pub is_initialized: bool,
+
+    _unk229: [u8; 0x3],
+    _unk22c: [UnknownStruct<0x14>; 4],
 }
 
 impl FD4VirtualMemoryFlag {
@@ -239,19 +221,19 @@ impl FD4VirtualMemoryFlag {
 }
 
 #[repr(C)]
-// Source of name: RTTI
-pub struct EventMakerEx {
-    _unk00: CxxVec<UnknownStruct<0x30>>,
-    _unk20: u64, // debug related?
-}
-
-#[repr(C)]
 pub struct EventWorld {
     pub regions: [EventRegion; 10],
 
     /// The length (in bytes) of the [FD4VirtualMemoryFlag] corresponding to
     /// this world.
     pub data_length: usize,
+}
+
+#[repr(C)]
+// Source of name: RTTI
+pub struct EventMakerEx {
+    _unk00: Vector<u8>,
+    _unk20: u64,
 }
 
 #[repr(C)]
@@ -262,7 +244,7 @@ pub struct EventRegion {
     /// The length of the [blocks](Self.blocks) array.
     pub blocks_length: u32,
 
-    _blocks_length_times_1280: u64,
+    _unk10: u64,
 }
 
 impl EventRegion {
@@ -299,6 +281,18 @@ pub struct EventZone {
     _unka0: u64,
 }
 
+impl EventZone {
+    /// The words in this zone.
+    pub fn words(&self) -> &[u32] {
+        self.words.as_ref()
+    }
+
+    /// The mutable words in this zone.
+    pub fn words_mut(&mut self) -> &mut [u32] {
+        self.words.as_mut()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -310,7 +304,7 @@ mod test {
         assert_eq!(0xa8, size_of::<EventBlock>());
         assert_eq!(0x10, size_of::<EventZone>());
         assert_eq!(0x28, size_of::<EventMakerEx>());
-        assert_eq!(0x230, size_of::<FD4VirtualMemoryFlag>());
-        assert_eq!(0x278, size_of::<SprjEventFlagMan>());
+        assert_eq!(0x280, size_of::<FD4VirtualMemoryFlag>());
+        assert_eq!(0x2b0, size_of::<SprjEventFlagMan>());
     }
 }

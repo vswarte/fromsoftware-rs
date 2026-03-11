@@ -22,6 +22,14 @@ vftable = "player_ins_vmt"
 class = "NS_SPRJ::ReplayGhostIns"
 vftable = "replay_ghost_ins_vmt"
 
+[[vmts]]
+class = "NS_SPRJ::WorldInfo"
+vftable = "world_info_vmt"
+
+[[vmts]]
+class = "NS_SPRJ::WorldRes"
+vftable = "world_res_vmt"
+
 [[patterns]]
 pattern = "48 8b 05 $ { ' } 48 85 c0 74 ? 80 b8 ? ? ? ? ? 0f 95 c0 c3"
 captures = ["", "app_menu_new_menu_system_ptr"]
