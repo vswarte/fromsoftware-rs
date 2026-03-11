@@ -1,4 +1,4 @@
-use std::{num::ParseIntError, ptr::NonNull};
+use std::num::ParseIntError;
 
 use crate::DLMap;
 use crate::cs::{BlockId, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType};
@@ -24,7 +24,7 @@ pub struct SosSignMan {
     pub summon_param_type: SummonParamType,
     unk54: [u8; 4],
     /// List of data for join push notifications
-    pub join_data: DLList<NonNull<PhantomJoinData>>,
+    pub join_data: DLList<OwnedPtr<PhantomJoinData>>,
     /// Completely unused, no reads or writes other then initialization and destruction
     unk70: DLList<[u8; 0x28]>,
     unk88: u8,
