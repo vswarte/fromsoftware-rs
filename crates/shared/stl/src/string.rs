@@ -39,12 +39,12 @@ where
     A: Allocator,
 {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
-    allocator: A,
+    pub allocator: A,
     buffer: StringBuffer<C>,
     size: usize,
     capacity: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
-    allocator: A,
+    pub allocator: A,
 }
 
 pub trait CodeUnit: Copy + Default + 'static {

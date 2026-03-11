@@ -15,11 +15,11 @@ use std::{mem::MaybeUninit, ptr::NonNull};
 /// [Raymond Chen's breakdown of `std::list`]: https://devblogs.microsoft.com/oldnewthing/20230804-00/?p=108547
 pub struct List<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
-    allocator: A,
+    pub allocator: A,
     head: NonNull<Node<T>>,
     length: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
-    allocator: A,
+    pub allocator: A,
 }
 
 #[repr(C)]

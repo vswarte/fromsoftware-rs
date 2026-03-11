@@ -15,12 +15,12 @@ use std::ops::{Deref, DerefMut};
 /// [Raymond Chen's breakdown of `std::vector`]: https://devblogs.microsoft.com/oldnewthing/20230802-00/?p=108524
 pub struct Vector<T, A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
-    allocator: A,
+    pub allocator: A,
     first: *mut T,
     last: *mut T,
     end: *mut T,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
-    allocator: A,
+    pub allocator: A,
 }
 
 impl<T, A: Allocator> Vector<T, A> {

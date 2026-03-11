@@ -18,12 +18,12 @@ const VBITS: usize = VBase::BITS as usize;
 #[repr(C)]
 pub struct VectorBool<A: Allocator> {
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
-    allocator: A,
+    pub allocator: A,
     first: *mut VBase,
     last: usize,
     end: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
-    allocator: A,
+    pub allocator: A,
 }
 
 impl<A: Allocator> VectorBool<A> {

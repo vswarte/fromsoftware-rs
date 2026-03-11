@@ -267,11 +267,11 @@ impl<V> NodePtr<V> {
 pub struct RbTree<V, A: Allocator, C: Sized, const UNIQUE: bool = true> {
     comparator: C,
     #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
-    allocator: A,
+    pub allocator: A,
     head: NodePtr<V>,
     size: usize,
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
-    allocator: A,
+    pub allocator: A,
 }
 
 /// Implementation of MSVC C++ `std::map`
