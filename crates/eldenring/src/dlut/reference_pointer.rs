@@ -17,8 +17,9 @@ pub struct DLReferencePointer<T: DLReferenceCountObject>(NonNull<T>);
 
 impl<T: DLReferenceCountObject> DLReferencePointer<T> {
     pub fn new(mut allocator: DLAllocatorForStl, data: T) -> Self {
-        let new = unsafe { allocator.allocate::<T>().as_mut() };
-        Self(NonNull::from_ref(new.write(data)))
+        let new = allocator.allocate::<T>();
+        unsafe { new.write(data) }
+        Self(new)
     }
 }
 
