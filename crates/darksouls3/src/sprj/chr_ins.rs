@@ -257,7 +257,10 @@ impl FromStatic for PlayerIns {
     unsafe fn instance() -> InstanceResult<&'static mut Self> {
         unsafe {
             WorldChrMan::instance()
-                .and_then(|man| man.main_player.ok_or(InstanceError::NotFound))
+                .and_then(|man| {
+                    man.main_player
+                        .ok_or(InstanceError::NotFound(Cow::Borrowed("PlayerIns")))
+                })
                 .map(|mut ptr| ptr.as_mut())
         }
     }
