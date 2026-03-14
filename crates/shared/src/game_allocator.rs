@@ -101,8 +101,7 @@ pub trait GameAllocator {
 
 /// A [`GameAllocator`] that never actually allocates or drops memory.
 ///
-/// [`allocate`] always returns [`AllocError`]. [`deallocate`] panics if
-/// `cfg!(debug_assertions)` is set and leaks memory otherwise.
+/// [`allocate`] always returns [`AllocError`] and [`deallocate`] always panics.
 ///
 /// [`allocate`]: Self::allocate
 /// [`deallocate`]: Self::deallocate
@@ -124,10 +123,8 @@ impl GameAllocator for NoOpAllocator {
         Err(AllocError)
     }
 
-    /// Panics if `cfg!(debug_assertions)` is set and leaks memory otherwise.
+    /// Always panics.
     unsafe fn deallocate(_ptr: NonNull<u8>, _layout: Layout) {
-        if cfg!(debug_assertions) {
-            panic!("Can't drop data with NoOpAllocator");
-        }
+        panic!("Can't drop data with NoOpAllocator");
     }
 }

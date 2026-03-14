@@ -10,6 +10,8 @@ use crate::{GameAllocator, NoOpAllocator};
 ///
 /// ## Safety
 ///
+/// ### `OwnedPtr` in FFI
+///
 /// When declaring definitions of C++ structs and functions that use this type,
 /// the author must ensure several invariants hold true:
 ///
@@ -32,6 +34,26 @@ use crate::{GameAllocator, NoOpAllocator};
 ///   `A` is set explicitly.
 ///
 /// [`FromStatic::instance`]: crate::FromStatic::instance
+///
+/// ### `OwnedPtr` and `Drop`
+///
+/// For any type `T` where Rust code might take ownership over an `OwnedPtr<T>`,
+/// the author should be sure that `T`'s [Drop] implementation is correct. (This
+/// is true in general for FFI types that Rust code can own.) There are two
+/// concerns here:
+///
+/// * Generally, C++ code will declare a specific destroy function for each
+///   type. In addition to calling the destructor method (`~T()`), this destroys
+///   any fields as well.
+///
+/// * Rust drops fields in declaration order but C++ destroys them in reverse
+///   declaration order.
+///
+/// To mitigate these issues, all fields with non-trivial drop/destructor
+/// implementations should by wrapped in [ManuallyDrop]. If the C++ code has a
+/// destroy method, it should be called from [Drop::drop]; otherwise, the
+/// implementation of [Drop::drop] should drop these fields in reverse
+/// declaration order.
 #[repr(transparent)]
 pub struct OwnedPtr<T, A: GameAllocator = NoOpAllocator> {
     ptr: NonNull<T>,
@@ -42,6 +64,10 @@ impl<T, A: GameAllocator> OwnedPtr<T, A> {
     /// Allocates memory with `A` and places `value` into it.
     ///
     /// This doesn’t actually allocate if `T` is zero-sized.
+    ///
+    /// **Important:** any type constructed this way should have an appropriate
+    /// [Drop::drop] implementation defined. [See above](#ownedptr-and-drop) for
+    /// details.
     pub fn new(value: T) -> Self {
         let layout = Layout::new::<T>();
         if layout.size() == 0 {
@@ -121,5 +147,5 @@ impl<T, A: GameAllocator> Drop for OwnedPtr<T, A> {
     }
 }
 
-unsafe impl<T, A: GameAllocator> Send for OwnedPtr<T, A> {}
-unsafe impl<T, A: GameAllocator> Sync for OwnedPtr<T, A> where T: Sync {}
+unsafe impl<T: Send, A: GameAllocator + Send> Send for OwnedPtr<T, A> {}
+unsafe impl<T: Sync, A: GameAllocator + Sync> Sync for OwnedPtr<T, A> where T: Sync {}
