@@ -254,6 +254,13 @@ impl FromStatic for PlayerIns {
 
     /// Returns the singleton instance of `PlayerIns` for the main player
     /// character, if it exists.
+    ///
+    /// ## Safety
+    /// 
+    /// In addition to [`FromStatic::instance`] safety requirements, 
+    /// the caller must ensure that no other references to [`WorldChrMan`] are
+    /// held at the time of calling. This method mutably borrows [`WorldChrMan`]
+    /// internally to reach `main_player`.
     unsafe fn instance() -> InstanceResult<&'static mut Self> {
         unsafe {
             WorldChrMan::instance()
