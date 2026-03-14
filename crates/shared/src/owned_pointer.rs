@@ -50,9 +50,9 @@ use crate::{GameAllocator, NoOpAllocator};
 ///   declaration order.
 ///
 /// To mitigate these issues, all fields with non-trivial drop/destructor
-/// implementations should by wrapped in [ManuallyDrop]. If the C++ code has a
-/// destroy method, it should be called from [Drop::drop]; otherwise, the
-/// implementation of [Drop::drop] should drop these fields in reverse
+/// implementations should by wrapped in [std::mem::ManuallyDrop]. If the C++
+/// code has a destroy method, it should be called from [Drop::drop]; otherwise,
+/// the implementation of [Drop::drop] should drop these fields in reverse
 /// declaration order.
 #[repr(transparent)]
 pub struct OwnedPtr<T, A: GameAllocator = NoOpAllocator> {
