@@ -34,7 +34,7 @@ impl BlockId {
     }
 
     /// Constructs a BlockId from seperate parts.
-    pub fn from_parts(area: u8, block: u8, region: u8, index: u8) -> Self {
+    pub const fn from_parts(area: u8, block: u8, region: u8, index: u8) -> Self {
         let mut blockid = BlockId(0);
         blockid.set_area(area);
         blockid.set_block(block);
@@ -43,7 +43,7 @@ impl BlockId {
         blockid
     }
 
-    pub fn is_overworld(&self) -> bool {
+    pub const fn is_overworld(&self) -> bool {
         let area = self.area();
         (50..89).contains(&area)
     }
