@@ -2,6 +2,7 @@ use bitfield::bitfield;
 use std::fmt::Display;
 use std::mem::transmute;
 use std::ptr::NonNull;
+use std::borrow::Cow;
 
 use pelite::pe64::Pe;
 use vtable_rs::VPtr;
@@ -12,7 +13,7 @@ use crate::cs::player_game_data::{ChrAsm, PlayerGameData};
 use crate::cs::session_manager::SessionManagerPlayerEntryBase;
 use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
-use crate::cs::world_chr_man::ChrSetEntry;
+use crate::cs::world_chr_man::{ChrSetEntry, WorldChrMan};
 use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
@@ -21,8 +22,8 @@ use crate::position::{BlockPosition, HavokPosition};
 use crate::rva;
 use shared::program::Program;
 use shared::{
-    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPtr, Subclass, Superclass,
-    for_all_subclasses,
+    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, FromStatic, InstanceError, InstanceResult,
+    OwnedPtr, Subclass, Superclass, for_all_subclasses,
 };
 
 mod module;
@@ -388,6 +389,11 @@ pub impl ChrInsExt for Subclass<ChrIns> {
             base.saturating_mul(10_000)
                 .saturating_add(character_type as u32) as i32
         }
+    }
+
+    /// Set this character's HP to zero, killing it.
+    fn kill(&mut self) {
+        self.superclass_mut().module_container.data.hp = 0;
     }
 }
 
@@ -906,6 +912,28 @@ pub struct PlayerIns {
     /// Will decrease `opacity_keyframes_timer` and set `ChrIns.opacity_keyframes_multiplier` to 0
     pub enable_arena_chr_rendering: bool,
     unk718: [u8; 0x27],
+}
+
+impl FromStatic for PlayerIns {
+    fn name() -> Cow<'static, str> {
+        "PlayerIns".into()
+    }
+
+    /// Returns the singleton instance of `PlayerIns` for the main player
+    /// character, if it exists.
+    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+        unsafe {
+            let Ok(world_chr_man) = WorldChrMan::instance() else {
+                return Err(InstanceError::NotFound);
+            };
+
+            let Some(main_player) = &mut world_chr_man.main_player else {
+                return Err(InstanceError::NotFound);
+            };
+            
+            Ok(main_player)
+        }
+    }
 }
 
 #[repr(u32)]
