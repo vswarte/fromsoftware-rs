@@ -114,7 +114,9 @@ impl<T, A: GameAllocator> Drop for OwnedPtr<T, A> {
     fn drop(&mut self) {
         unsafe {
             self.ptr.drop_in_place();
-            A::deallocate(self.ptr.cast::<u8>(), Layout::new::<T>());
+            if Layout::new::<T>().size() > 0 {
+                A::deallocate(self.ptr.cast::<u8>(), Layout::new::<T>());
+            }
         }
     }
 }
