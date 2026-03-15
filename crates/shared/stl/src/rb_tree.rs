@@ -9,21 +9,33 @@ use std::{
 /// Comparator trait for use in MSVC `std::tree` [`RbTree`]
 pub trait TreeComparator<V> {
     type Key: ?Sized;
-
+    /// Returns `true` if `a < b`.
     fn lt(&self, a: &V, b: &V) -> bool;
+    /// Returns `true` if `key < val`.
     fn lt_key_val(&self, key: &Self::Key, val: &V) -> bool;
+    /// Returns `true` if `val < key`.
     fn lt_val_key(&self, val: &V, key: &Self::Key) -> bool;
-
+    /// Returns `true` if `val > key`, i.e. `key < val`.
     #[inline]
-    fn gte_key_val(&self, key: &Self::Key, val: &V) -> bool {
-        !self.lt_key_val(key, val)
+    fn gt_val_key(&self, val: &V, key: &Self::Key) -> bool {
+        self.lt_key_val(key, val)
     }
-
+    /// Returns `true` if `val >= key`, i.e. `!(val < key)`.
     #[inline]
     fn gte_val_key(&self, val: &V, key: &Self::Key) -> bool {
         !self.lt_val_key(val, key)
     }
-
+    /// Returns `true` if `val <= key`, i.e. `!(key < val)`.
+    #[inline]
+    fn lte_val_key(&self, val: &V, key: &Self::Key) -> bool {
+        !self.lt_key_val(key, val)
+    }
+    /// Returns `true` if `key >= val`, i.e. `!(key < val)`.
+    #[inline]
+    fn gte_key_val(&self, key: &Self::Key, val: &V) -> bool {
+        !self.lt_key_val(key, val)
+    }
+    /// Returns `true` if `key == val`, i.e. `!(key < val) && !(val < key)`.
     #[inline]
     fn eq_key(&self, key: &Self::Key, val: &V) -> bool {
         !self.lt_key_val(key, val) && !self.lt_val_key(val, key)
@@ -436,8 +448,8 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
             let nv = unsafe { node.value() };
             let go = match (LEFT, included) {
                 (true, true) => self.comparator.gte_val_key(nv, v),
-                (true, false) => self.comparator.lt_key_val(v, nv),
-                (false, true) => self.comparator.gte_key_val(v, nv),
+                (true, false) => self.comparator.gt_val_key(nv, v),
+                (false, true) => self.comparator.lte_val_key(nv, v),
                 (false, false) => self.comparator.lt_val_key(nv, v),
             };
             if go {
@@ -582,15 +594,12 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
 
         let (fixnode, fixparent) = unsafe {
             if erased.left().is_nil() || erased.right().is_nil() {
-                let mut fix = if erased.left().is_nil() {
+                let fix = if erased.left().is_nil() {
                     erased.right()
                 } else {
                     erased.left()
                 };
                 erased.replace_in_parent(fix, head);
-                if !fix.is_nil() {
-                    fix.set_parent(erased.parent());
-                }
                 (fix, erased.parent())
             } else {
                 let mut succ = rb_successor(erased, head);
@@ -612,7 +621,6 @@ impl<V, A: Allocator, C: TreeComparator<V>, const UNIQUE: bool> RbTree<V, A, C, 
                 succ.set_left(erased.left());
                 erased.left().set_parent(succ);
                 erased.replace_in_parent(succ, head);
-                succ.set_parent(erased.parent());
 
                 let (ec, sc) = (erased.get().color, succ.get().color);
                 succ.get_mut().color = ec;
