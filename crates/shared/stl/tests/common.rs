@@ -1,7 +1,6 @@
 use std::{
     alloc::{Layout, alloc, dealloc},
     ffi::c_void,
-    ptr::NonNull,
     sync::atomic::{AtomicUsize, Ordering},
 };
 
@@ -32,7 +31,7 @@ impl StdAlloc {
 const HEADER: usize = std::mem::size_of::<[usize; 2]>();
 
 impl Allocator for StdAlloc {
-    unsafe fn allocate_raw(&mut self, size: usize, align: usize) -> NonNull<c_void> {
+    unsafe fn allocate_raw(&mut self, size: usize, align: usize) -> *mut c_void {
         // Allocate with extra room for the header
         let full_align = align.max(std::mem::align_of::<usize>());
         let full_size = HEADER + size;
@@ -46,7 +45,7 @@ impl Allocator for StdAlloc {
         }
         self.live.fetch_add(1, Ordering::Relaxed);
         // Return pointer to the region after the header
-        unsafe { NonNull::new_unchecked(raw.add(HEADER) as *mut c_void) }
+        unsafe { raw.add(HEADER) as *mut c_void }
     }
 
     unsafe fn deallocate_raw(&mut self, ptr: *mut c_void) {

@@ -9,7 +9,7 @@ pub trait Allocator: Clone {
     ///
     /// `size` must be non-zero. `align` must be a power of two.
     /// The returned pointer is valid for `size` bytes and aligned to `align`
-    unsafe fn allocate_raw(&mut self, size: usize, align: usize) -> NonNull<c_void>;
+    unsafe fn allocate_raw(&mut self, size: usize, align: usize) -> *mut c_void;
     /// # Safety
     ///
     /// `ptr` must have been obtained from a previous call to `allocate_raw`
@@ -18,10 +18,8 @@ pub trait Allocator: Clone {
 
     /// `T` must not be a zero-sized type.
     fn allocate<T>(&mut self) -> NonNull<T> {
-        unsafe {
-            self.allocate_raw(size_of::<T>(), align_of::<T>())
-                .cast::<T>()
-        }
+        unsafe { NonNull::new(self.allocate_raw(size_of::<T>(), align_of::<T>()) as _) }
+            .expect("Allocator returned null pointer")
     }
 
     /// Allocates `count` elemets. Panics if `count` is zero
@@ -33,11 +31,10 @@ pub trait Allocator: Clone {
             .checked_mul(count)
             .expect("allocation size overflow");
 
-        let ptr = unsafe {
-            self.allocate_raw(size, align_of::<T>())
-                .cast::<T>()
-                .as_ptr()
-        };
+        let ptr = unsafe { self.allocate_raw(size, align_of::<T>()).cast::<T>() };
+        if ptr.is_null() {
+            panic!("Allocator returned null pointer")
+        }
 
         // Safety: ptr is non-null and we own `count` elements
         unsafe { NonNull::new_unchecked(std::ptr::slice_from_raw_parts_mut(ptr, count)) }
