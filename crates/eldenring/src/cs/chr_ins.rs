@@ -429,6 +429,10 @@ bitfield! {
     #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct ChrInsFlags1c6(u8);
     impl Debug;
+    /// Flags that prevents dead character from dropping item lot twice
+    pub has_dropped_item, set_had_dropped_item: 0;
+    /// Flags that prevents dead character from rewarding runes twice
+    pub has_dropped_runes, set_has_dropped_runes: 1;
     /// This flag is used to determine if the character tag (name, hp, etc) should be
     /// rendered on the side of the screen instead of above the character.
     /// Works only on friendly characters tags, not lock on ones.
