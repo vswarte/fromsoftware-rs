@@ -2,7 +2,6 @@ use bitfield::bitfield;
 use std::fmt::Display;
 use std::mem::transmute;
 use std::ptr::NonNull;
-use std::borrow::Cow;
 
 use pelite::pe64::Pe;
 use vtable_rs::VPtr;
@@ -22,8 +21,8 @@ use crate::position::{BlockPosition, HavokPosition};
 use crate::rva;
 use shared::program::Program;
 use shared::{
-    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, FromStatic, InstanceError, InstanceResult,
-    OwnedPtr, Subclass, Superclass, for_all_subclasses,
+    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, FromStatic, InstanceError,
+    InstanceResult, OwnedPtr, Subclass, Superclass, for_all_subclasses,
 };
 
 mod module;
@@ -914,31 +913,24 @@ pub struct PlayerIns {
     unk718: [u8; 0x27],
 }
 
-impl FromStatic for PlayerIns {
-    fn name() -> Cow<'static, str> {
-        "PlayerIns".into()
-    }
-
-    /// Returns the singleton instance of `PlayerIns` for the main player
-    /// character, if it exists.
-    /// 
+impl PlayerIns {
+    /// Gets the local player if held by [`WorldChrMan`]
+    ///
     /// ## Safety
-    /// 
-    /// In addition to [`FromStatic::instance`] safety requirements, 
-    /// the caller must ensure that no other references to [`WorldChrMan`] are
-    /// held at the time of calling. This method mutably borrows [`WorldChrMan`]
-    /// internally to reach `main_player`.
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    ///
+    /// The caller must ensure that no references to [`WorldChrMan`] are
+    /// held at the time of calling as this method mutably borrows [`WorldChrMan`]
+    /// to reach `main_player`.
+    pub unsafe fn local_player() -> InstanceResult<&'static mut Self> {
         unsafe {
             let Ok(world_chr_man) = WorldChrMan::instance() else {
                 return Err(InstanceError::NotFound);
             };
 
-            let Some(main_player) = &mut world_chr_man.main_player else {
-                return Err(InstanceError::NotFound);
-            };
-            
-            Ok(main_player)
+            world_chr_man
+                .main_player
+                .as_deref_mut()
+                .ok_or(InstanceError::NotFound)
         }
     }
 }
