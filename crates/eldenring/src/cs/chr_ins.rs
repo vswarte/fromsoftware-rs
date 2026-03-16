@@ -389,11 +389,6 @@ pub impl ChrInsExt for Subclass<ChrIns> {
                 .saturating_add(character_type as u32) as i32
         }
     }
-
-    /// Set this character's HP to zero, killing it.
-    fn kill(&mut self) {
-        self.superclass_mut().module_container.data.hp = 0;
-    }
 }
 
 bitfield! {
