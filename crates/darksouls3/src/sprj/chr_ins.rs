@@ -1,4 +1,4 @@
-use std::{borrow::Cow, ptr::NonNull};
+use std::ptr::NonNull;
 
 use shared::{
     FromStatic, InstanceError, InstanceResult, OwnedPtr, Subclass, Superclass, UnknownStruct,
@@ -247,25 +247,25 @@ pub struct PlayerIns {
     _unk2188: [u8; 0x18],
 }
 
-impl FromStatic for PlayerIns {
-    fn name() -> Cow<'static, str> {
-        "PlayerIns".into()
-    }
-
-    /// Returns the singleton instance of `PlayerIns` for the main player
-    /// character, if it exists.
+impl PlayerIns {
+    /// Gets the local player if held by [`WorldChrMan`]
     ///
     /// ## Safety
-    /// 
-    /// In addition to [`FromStatic::instance`] safety requirements, 
-    /// the caller must ensure that no other references to [`WorldChrMan`] are
-    /// held at the time of calling. This method mutably borrows [`WorldChrMan`]
-    /// internally to reach `main_player`.
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    ///
+    /// The caller must ensure that no references to [`WorldChrMan`] are
+    /// held at the time of calling as this method mutably borrows [`WorldChrMan`]
+    /// to reach `main_player`.
+    pub unsafe fn local_player() -> InstanceResult<&'static mut Self> {
         unsafe {
-            WorldChrMan::instance()
-                .and_then(|man| man.main_player.ok_or(InstanceError::NotFound))
-                .map(|mut ptr| ptr.as_mut())
+            let Ok(world_chr_man) = WorldChrMan::instance() else {
+                return Err(InstanceError::NotFound);
+            };
+
+            let Some(mut player) = world_chr_man.main_player else {
+                return Err(InstanceError::NotFound);
+            };
+
+            Ok(player.as_mut())
         }
     }
 }
