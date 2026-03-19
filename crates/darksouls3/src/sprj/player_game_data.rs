@@ -60,7 +60,7 @@ impl FromStatic for PlayerGameData {
     /// menu.
     unsafe fn instance() -> InstanceResult<&'static mut Self> {
         // Go through PlayerIns because it doesn't exist on the main menu.
-        unsafe { PlayerIns::instance().map(|ins| ins.player_game_data.as_mut()) }
+        unsafe { PlayerIns::local_player().map(|ins| ins.player_game_data.as_mut()) }
     }
 }
 

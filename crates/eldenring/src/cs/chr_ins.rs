@@ -12,7 +12,7 @@ use crate::cs::player_game_data::{ChrAsm, PlayerGameData};
 use crate::cs::session_manager::SessionManagerPlayerEntryBase;
 use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
-use crate::cs::world_chr_man::ChrSetEntry;
+use crate::cs::world_chr_man::{ChrSetEntry, WorldChrMan};
 use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
@@ -21,8 +21,8 @@ use crate::position::{BlockPosition, HavokPosition};
 use crate::rva;
 use shared::program::Program;
 use shared::{
-    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, OwnedPtr, Subclass, Superclass,
-    for_all_subclasses,
+    Aabb, F32Matrix4x4, F32ModelMatrix, F32Vector3, F32Vector4, FromStatic, InstanceError,
+    InstanceResult, OwnedPtr, Subclass, Superclass, for_all_subclasses,
 };
 
 mod module;
@@ -910,6 +910,28 @@ pub struct PlayerIns {
     /// Will decrease `opacity_keyframes_timer` and set `ChrIns.opacity_keyframes_multiplier` to 0
     pub enable_arena_chr_rendering: bool,
     unk718: [u8; 0x27],
+}
+
+impl PlayerIns {
+    /// Gets the local player if held by [`WorldChrMan`]
+    ///
+    /// ## Safety
+    ///
+    /// The caller must ensure that no references to [`WorldChrMan`] are
+    /// held at the time of calling as this method mutably borrows [`WorldChrMan`]
+    /// to reach `main_player`.
+    pub unsafe fn local_player() -> InstanceResult<&'static mut Self> {
+        unsafe {
+            let Ok(world_chr_man) = WorldChrMan::instance() else {
+                return Err(InstanceError::NotFound);
+            };
+
+            world_chr_man
+                .main_player
+                .as_deref_mut()
+                .ok_or(InstanceError::NotFound)
+        }
+    }
 }
 
 #[repr(u32)]
