@@ -7,7 +7,7 @@ use std::{
 use vtable_rs::VPtr;
 
 use crate::{
-    Vector,
+    DLVector,
     dlio::DLIOResult,
     dlkr::{DLAllocatorBase, DLPlainLightMutex},
     dltx::DLString,
@@ -280,7 +280,8 @@ where
             owning_operator_container: NonNull::from(operator_container),
             io_state: DLFileOperatorIOState::default(),
             owning_file_device: NonNull::from(file_device),
-            path: DLString::copy(allocator.into(), path).expect("Failed to copy DLString"),
+            path: DLString::transcode_from(path, allocator.into())
+                .expect("Failed to copy DLString"),
         }
     }
 }
@@ -312,12 +313,12 @@ pub struct DLFileOperatorContainer {
 
 #[repr(C)]
 pub struct DLFileDeviceManager {
-    pub devices: Vector<NonNull<DLFileDeviceBase>>,
-    pub service_providers: Vector<NonNull<DLFileDeviceImageSPIBase>>,
+    pub devices: DLVector<NonNull<DLFileDeviceBase>>,
+    pub service_providers: DLVector<NonNull<DLFileDeviceImageSPIBase>>,
     pub msvc_file_device: OwnedPtr<DLFileDeviceBase>,
-    pub virtual_roots: Vector<[DLString; 2]>,
-    pub bnd3_files: Vector<BndEntry>,
-    pub bnd4_files: Vector<BndEntry>,
+    pub virtual_roots: DLVector<[DLString; 2]>,
+    pub bnd3_files: DLVector<BndEntry>,
+    pub bnd4_files: DLVector<BndEntry>,
     pub bnd3_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
     pub bnd4_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
     pub mutex: DLPlainLightMutex,
@@ -417,8 +418,8 @@ where
         self.base.io_state.0 &= 0xfffffff9;
         self.base.io_state.0 |= (((param_4 as u32 & 1) * 2) | (param_3 as u32 & 1)) * 2;
 
-        self.base.path =
-            DLString::copy(self.base.allocator.into(), path).expect("Failed to copy DLString");
+        self.base.path = DLString::transcode_from(path, self.base.allocator.into())
+            .expect("Failed to copy DLString");
 
         true
     }

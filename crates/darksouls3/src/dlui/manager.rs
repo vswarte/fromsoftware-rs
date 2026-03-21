@@ -1,7 +1,6 @@
 use shared::OwnedPtr;
 
-use crate::CxxVec;
-use crate::dlkr::{DLAllocatorRef, DLPlainLightMutex};
+use crate::dlkr::DLPlainLightMutex;
 use crate::dlui::DLUserInputDeviceImpl;
 
 #[repr(C)]
@@ -9,11 +8,11 @@ use crate::dlui::DLUserInputDeviceImpl;
 pub struct DLUserInputManager {
     _vftable: usize,
     pub mutex: DLPlainLightMutex,
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocatorBase>,
     _unk48: u64,
-    _unk50: CxxVec<u64>,
-    _unk70: CxxVec<u64>,
-    pub devices: CxxVec<OwnedPtr<DLUserInputDeviceImpl>>,
+    _unk50: DLVector<u64>,
+    _unk70: DLVector<u64>,
+    pub devices: DLVector<OwnedPtr<DLUserInputDeviceImpl>>,
     _unkb0: u64,
     pub dummy_device: DLUserInputDeviceImpl,
     pub com_initialized: bool,
@@ -22,6 +21,6 @@ pub struct DLUserInputManager {
     _unk24c: bool,
     pub window_active: bool,
     _unk24e: [u8; 0xA],
-    _unk258: CxxVec<u64>,
+    _unk258: DLVector<u64>,
     _unk278: [u8; 0x50],
 }

@@ -1,16 +1,14 @@
 use std::borrow::Cow;
-use std::cmp::PartialEq;
-use std::fmt::Display;
+use std::fmt;
+use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
 
-use crate::dlkr::DLAllocatorRef;
-
-use encoding_rs::{self, DecoderResult};
-
+use encoding_rs::DecoderResult;
+use fromsoftware_shared_stl::{BasicString, CodeUnit};
 use thiserror::Error;
 
-use cxx_stl::string::{CxxNarrowString, CxxUtf8String, CxxUtf16String, CxxUtf32String};
+use crate::DLAllocatorForStl;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
@@ -44,247 +42,349 @@ impl DLCharacterSet {
 }
 
 #[derive(Error, Debug)]
-pub enum DLStringEncodingError {
-    #[error("Invalid encoding; expected {expected:?} but got {actual}")]
-    InvalidEncoding {
-        expected: DLCharacterSet,
-        actual: u8,
-    },
-    #[error("Error decoding string")]
+pub enum DLStringError {
+    #[error("Failed to decode string")]
     DecodeError,
-    #[error("Error encoding string")]
+    #[error("Failed to encode string")]
     EncodeError,
-    #[error("Unsupported encoding: {0}")]
-    UnsupportedEncoding(u8),
 }
 
-trait CxxString<CharType> {
-    fn new_in(allocator: DLAllocatorRef) -> Self;
-    fn from_chars_in(bytes: &[CharType], allocator: DLAllocatorRef) -> Self;
-    fn as_u8_slice(&self) -> &[u8];
-    fn as_chars(&self) -> &[CharType];
-    fn len(&self) -> usize;
+mod seal {
+    pub trait Sealed {}
 }
 
-macro_rules! impl_cxx_string {
-    ($string_type:ty, $char_type:ty) => {
-        impl CxxString<$char_type> for $string_type {
-            fn new_in(allocator: DLAllocatorRef) -> Self {
-                Self::new_in(allocator)
-            }
+pub trait DLStringKind: seal::Sealed {
+    type Unit: CodeUnit + PartialEq + Hash + 'static;
+    const ENCODING: DLCharacterSet;
 
-            fn from_chars_in(bytes: &[$char_type], allocator: DLAllocatorRef) -> Self {
-                Self::from_bytes_in(bytes, allocator)
+    /// Encode a Rust `&str` into this kind's code units
+    fn encode(s: &str) -> Result<Vec<Self::Unit>, DLStringError>;
+    /// Decode a raw byte buffer (in this kind's encoding) to a UTF-8 `Cow<str>`
+    fn decode(bytes: &[u8]) -> Result<Cow<'_, str>, DLStringError>;
+}
+
+macro_rules! def_kind {
+    ($name:ident,  $unit:ty, $enc:expr) => {
+        pub struct $name;
+        impl seal::Sealed for $name {}
+        impl DLStringKind for $name {
+            type Unit = $unit;
+            const ENCODING: DLCharacterSet = $enc;
+            fn encode(s: &str) -> Result<Vec<$unit>, DLStringError> {
+                encode_str(s, $enc)
             }
-            fn as_u8_slice(&self) -> &[u8] {
-                unsafe {
-                    std::slice::from_raw_parts(
-                        self.as_ptr() as *const u8,
-                        self.len() * std::mem::size_of::<$char_type>(),
-                    )
-                }
-            }
-            fn as_chars(&self) -> &[$char_type] {
-                self.as_bytes()
-            }
-            fn len(&self) -> usize {
-                <$string_type>::len(self)
+            fn decode(b: &[u8]) -> Result<Cow<'_, str>, DLStringError> {
+                decode_bytes(b, $enc)
             }
         }
     };
 }
 
-impl_cxx_string!(CxxUtf16String<DLAllocatorRef>, u16);
-impl_cxx_string!(CxxUtf8String<DLAllocatorRef>, u8);
-impl_cxx_string!(CxxNarrowString<DLAllocatorRef>, u8);
-impl_cxx_string!(CxxUtf32String<DLAllocatorRef>, u32);
+def_kind!(DLUTF8StringKind, u8, DLCharacterSet::UTF8);
+def_kind!(DLISO8859_1StringKind, u8, DLCharacterSet::Iso8859_1);
+def_kind!(DLShiftJisStringKind, u8, DLCharacterSet::ShiftJis);
+def_kind!(DLEucJpStringKind, u8, DLCharacterSet::EucJp);
+def_kind!(DLUTF16StringKind, u16, DLCharacterSet::UTF16);
+def_kind!(DLUTF32StringKind, u32, DLCharacterSet::UTF32);
 
-/// This trait is used to seal the DLStringKind trait, preventing external implementations.
-trait DLStringKindSeal {}
-
-#[allow(private_bounds)]
-pub trait DLStringKind: DLStringKindSeal {
-    type InnerType: CxxString<Self::CharType>;
-    type CharType: Sized + Copy;
-    const ENCODING: DLCharacterSet;
-
-    fn encode(s: &str) -> Result<Vec<Self::CharType>, DLStringEncodingError> {
-        match Self::ENCODING {
-            DLCharacterSet::UTF16 => {
-                let mut bytes: Vec<u16> = Vec::with_capacity(s.len() * size_of::<u16>());
-                bytes.extend(s.encode_utf16());
-                // SAFETY: Transmuting Vec<u16> to Vec<Self::CharType> is safe
-                // because the UTF16 arm ensures CharType is u16.
-                Ok(unsafe { std::mem::transmute::<Vec<u16>, Vec<Self::CharType>>(bytes) })
+fn encode_str<U: Copy>(s: &str, enc: DLCharacterSet) -> Result<Vec<U>, DLStringError> {
+    // These transmutes are safe: each arm only executes when U is the
+    // exact type the transmute targets (enforced by the def_kind! macro).
+    match enc {
+        DLCharacterSet::UTF16 => {
+            let v: Vec<u16> = s.encode_utf16().collect();
+            Ok(unsafe { std::mem::transmute::<Vec<u16>, Vec<U>>(v) })
+        }
+        DLCharacterSet::UTF32 => {
+            let v: Vec<u32> = s.chars().map(|c| c as u32).collect();
+            Ok(unsafe { std::mem::transmute::<Vec<u32>, Vec<U>>(v) })
+        }
+        DLCharacterSet::UTF8 => {
+            let v = s.as_bytes().to_vec();
+            Ok(unsafe { std::mem::transmute::<Vec<u8>, Vec<U>>(v) })
+        }
+        _ => {
+            let (encoded, _, errors) = enc.encoding().unwrap().encode(s);
+            if errors {
+                return Err(DLStringError::EncodeError);
             }
-            DLCharacterSet::UTF32 => {
-                let mut bytes: Vec<u32> = Vec::with_capacity(s.len() * size_of::<u32>());
-                bytes.extend(s.chars().map(|c| c as u32));
-                // SAFETY: Transmuting Vec<u32> to Vec<Self::CharType> is safe
-                // because the UTF32 arm ensures CharType is u32.
-                Ok(unsafe { std::mem::transmute::<Vec<u32>, Vec<Self::CharType>>(bytes) })
-            }
-            DLCharacterSet::UTF8 => {
-                // We can just slice the string as UTF-8 bytes because Rust's `str` is UTF-8 encoded.
-                let bytes = s.as_bytes().to_vec();
-                // SAFETY: Transmuting Vec<u8> to Vec<Self::CharType> is safe
-                // because this arm ensures CharType is u8.
-                Ok(unsafe { std::mem::transmute::<Vec<u8>, Vec<Self::CharType>>(bytes) })
-            }
-            _ => {
-                let (encoded_bytes, _, had_errors) = Self::ENCODING.encoding().unwrap().encode(s);
-                if had_errors {
-                    return Err(DLStringEncodingError::EncodeError);
-                }
-
-                // SAFETY: Transmuting Vec<u8> to Vec<Self::CharType> is safe
-                // because this arm ensures CharType is u8.
-                Ok(unsafe {
-                    std::mem::transmute::<Vec<u8>, Vec<Self::CharType>>(encoded_bytes.into_owned())
-                })
-            }
+            Ok(unsafe { std::mem::transmute::<Vec<u8>, Vec<U>>(encoded.into_owned()) })
         }
     }
+}
 
-    fn decode(s: &[u8]) -> Result<Cow<'_, str>, DLStringEncodingError> {
-        match Self::ENCODING {
-            DLCharacterSet::UTF16 => {
-                if !s.len().is_multiple_of(std::mem::size_of::<u16>()) {
-                    return Err(DLStringEncodingError::DecodeError);
-                }
-                let u16_slice =
-                    unsafe { std::slice::from_raw_parts(s.as_ptr() as *const u16, s.len() / 2) };
-                char::decode_utf16(u16_slice.iter().cloned())
-                    .map(|r| r.map_err(|_| DLStringEncodingError::DecodeError))
-                    .collect::<Result<String, _>>()
-                    .map(Cow::Owned)
+fn decode_bytes(bytes: &[u8], enc: DLCharacterSet) -> Result<Cow<'_, str>, DLStringError> {
+    match enc {
+        DLCharacterSet::UTF16 => {
+            if !bytes.len().is_multiple_of(2) {
+                return Err(DLStringError::DecodeError);
             }
-            DLCharacterSet::UTF32 => {
-                if !s.len().is_multiple_of(std::mem::size_of::<u32>()) {
-                    return Err(DLStringEncodingError::DecodeError);
-                }
-                let u32_slice =
-                    unsafe { std::slice::from_raw_parts(s.as_ptr() as *const u32, s.len() / 4) };
-                u32_slice
-                    .iter()
-                    .map(|&c| std::char::from_u32(c).ok_or(DLStringEncodingError::DecodeError))
-                    .collect::<Result<String, _>>()
-                    .map(Cow::Owned)
+            let units = unsafe {
+                std::slice::from_raw_parts(bytes.as_ptr() as *const u16, bytes.len() / 2)
+            };
+            char::decode_utf16(units.iter().cloned())
+                .map(|r| r.map_err(|_| DLStringError::DecodeError))
+                .collect::<Result<String, _>>()
+                .map(Cow::Owned)
+        }
+        DLCharacterSet::UTF32 => {
+            if !bytes.len().is_multiple_of(4) {
+                return Err(DLStringError::DecodeError);
             }
-            DLCharacterSet::UTF8 => {
-                let s = std::str::from_utf8(s).map_err(|_| DLStringEncodingError::DecodeError)?;
-                Ok(Cow::Borrowed(s))
-            }
-            _ => {
-                let (cow, _, had_errors) = Self::ENCODING.encoding().unwrap().decode(s);
-                if had_errors {
-                    Err(DLStringEncodingError::DecodeError)
-                } else {
-                    Ok(cow)
-                }
+            let units = unsafe {
+                std::slice::from_raw_parts(bytes.as_ptr() as *const u32, bytes.len() / 4)
+            };
+            units
+                .iter()
+                .map(|&c| char::from_u32(c).ok_or(DLStringError::DecodeError))
+                .collect::<Result<String, _>>()
+                .map(Cow::Owned)
+        }
+        DLCharacterSet::UTF8 => std::str::from_utf8(bytes)
+            .map(Cow::Borrowed)
+            .map_err(|_| DLStringError::DecodeError),
+        _ => {
+            let (cow, _, errors) = enc.encoding().unwrap().decode(bytes);
+            if errors {
+                Err(DLStringError::DecodeError)
+            } else {
+                Ok(cow)
             }
         }
     }
 }
 
-pub struct DLUTF8StringKind;
-impl DLStringKindSeal for DLUTF8StringKind {}
-impl DLStringKind for DLUTF8StringKind {
-    type InnerType = CxxUtf8String<DLAllocatorRef>;
-    type CharType = u8;
-    const ENCODING: DLCharacterSet = DLCharacterSet::UTF8;
-}
+/// Compare a raw byte buffer (in `enc` encoding) against a UTF-8 string
+/// without allocating
+fn bytes_eq_str(bytes: &[u8], enc: DLCharacterSet, other: &str) -> bool {
+    match enc {
+        DLCharacterSet::UTF8 => bytes == other.as_bytes(),
 
-pub struct DLISO8859_1StringKind;
-impl DLStringKindSeal for DLISO8859_1StringKind {}
-impl DLStringKind for DLISO8859_1StringKind {
-    type InnerType = CxxNarrowString<DLAllocatorRef>;
-    type CharType = u8;
-    const ENCODING: DLCharacterSet = DLCharacterSet::Iso8859_1;
-}
+        DLCharacterSet::UTF16 => {
+            if !bytes.len().is_multiple_of(2) {
+                return false;
+            }
+            let units = unsafe {
+                std::slice::from_raw_parts(bytes.as_ptr() as *const u16, bytes.len() / 2)
+            };
+            let mut their = other.chars();
+            for r in char::decode_utf16(units.iter().cloned()) {
+                match (r, their.next()) {
+                    (Ok(a), Some(b)) if a == b => {}
+                    _ => return false,
+                }
+            }
+            their.next().is_none()
+        }
 
-pub struct DLShiftJisStringKind;
-impl DLStringKindSeal for DLShiftJisStringKind {}
-impl DLStringKind for DLShiftJisStringKind {
-    type InnerType = CxxNarrowString<DLAllocatorRef>;
-    type CharType = u8;
-    const ENCODING: DLCharacterSet = DLCharacterSet::ShiftJis;
-}
+        DLCharacterSet::UTF32 => {
+            if !bytes.len().is_multiple_of(4) {
+                return false;
+            }
+            let units = unsafe {
+                std::slice::from_raw_parts(bytes.as_ptr() as *const u32, bytes.len() / 4)
+            };
+            let mut their = other.chars();
+            for &cp in units {
+                match (char::from_u32(cp), their.next()) {
+                    (Some(a), Some(b)) if a == b => {}
+                    _ => return false,
+                }
+            }
+            their.next().is_none()
+        }
 
-pub struct DLEucJpStringKind;
-impl DLStringKindSeal for DLEucJpStringKind {}
-impl DLStringKind for DLEucJpStringKind {
-    type InnerType = CxxNarrowString<DLAllocatorRef>;
-    type CharType = u8;
-    const ENCODING: DLCharacterSet = DLCharacterSet::EucJp;
-}
-
-pub struct DLUTF16StringKind;
-impl DLStringKindSeal for DLUTF16StringKind {}
-impl DLStringKind for DLUTF16StringKind {
-    type InnerType = CxxUtf16String<DLAllocatorRef>;
-    type CharType = u16;
-    const ENCODING: DLCharacterSet = DLCharacterSet::UTF16;
-}
-
-pub struct DLUTF32StringKind;
-impl DLStringKindSeal for DLUTF32StringKind {}
-impl DLStringKind for DLUTF32StringKind {
-    type InnerType = CxxUtf32String<DLAllocatorRef>;
-    type CharType = u32;
-    const ENCODING: DLCharacterSet = DLCharacterSet::UTF32;
+        _ => {
+            let mut decoder = enc.encoding().unwrap().new_decoder();
+            match decoder.max_utf8_buffer_length_without_replacement(bytes.len()) {
+                Some(m) if m >= other.len() => {}
+                _ => return false,
+            }
+            let mut src = bytes;
+            let mut their = other.as_bytes().iter();
+            let mut buf = [0u8; 64];
+            loop {
+                let (result, read, written) =
+                    decoder.decode_to_utf8_without_replacement(src, &mut buf, src.len() <= 64);
+                if matches!(result, DecoderResult::Malformed(_, _)) {
+                    return false;
+                }
+                for &b in &buf[..written] {
+                    match their.next() {
+                        Some(&t) if t == b => {}
+                        _ => return false,
+                    }
+                }
+                if matches!(result, DecoderResult::InputEmpty) {
+                    return their.next().is_none();
+                }
+                src = &src[read..];
+            }
+        }
+    }
 }
 
 #[repr(C)]
 pub struct DLString<T: DLStringKind = DLUTF16StringKind> {
-    base: T::InnerType,
+    base: BasicString<T::Unit, DLAllocatorForStl>,
     encoding: DLCharacterSet,
 }
 
 impl<T: DLStringKind> DLString<T> {
-    pub fn new(allocator: DLAllocatorRef) -> Self {
+    fn decode_storage(&self) -> Result<Cow<'_, str>, DLStringError> {
+        T::decode(self.as_bytes())
+    }
+
+    pub fn new(allocator: DLAllocatorForStl) -> Self {
         Self {
-            base: T::InnerType::new_in(allocator.clone()),
+            base: BasicString::new_in(allocator),
             encoding: T::ENCODING,
         }
     }
 
-    pub fn from_str(allocator: DLAllocatorRef, s: &str) -> Result<Self, DLStringEncodingError> {
-        let encoded: Vec<T::CharType> = T::encode(s)?;
-
+    pub fn from_str(
+        s: impl AsRef<str>,
+        allocator: DLAllocatorForStl,
+    ) -> Result<Self, DLStringError> {
+        let units = T::encode(s.as_ref())?;
         Ok(Self {
-            base: T::InnerType::from_chars_in(&encoded, allocator.clone()),
+            base: BasicString::from_units_in(&units, allocator),
             encoding: T::ENCODING,
         })
     }
 
-    pub fn to_str(&self) -> Result<String, DLStringEncodingError> {
-        let bytes = self.base.as_u8_slice();
-        T::decode(bytes).map(|cow| cow.into_owned())
+    // Replaces the entire content by encoding a UTF-8 string.
+    ///
+    /// Accepts `&str`, `String`, `Cow<str>`, etc.
+    /// Reuses the existing allocation if capacity is sufficient.
+    pub fn assign_str(&mut self, s: impl AsRef<str>) -> Result<(), DLStringError> {
+        let units = T::encode(s.as_ref())?;
+        self.base.assign(&units);
+        Ok(())
     }
 
-    pub fn copy<U: DLStringKind>(
-        allocator: DLAllocatorRef,
+    /// Decodes the stored bytes to an owned UTF-8 `String`
+    pub fn to_string(&self) -> Result<String, DLStringError> {
+        self.decode_storage().map(Cow::into_owned)
+    }
+
+    /// Transcodes from a `DLString` of a different kind.
+    /// If the encodings match the bytes are copied directly without going
+    /// through UTF-8
+    pub fn transcode_from<U: DLStringKind>(
         other: &DLString<U>,
-    ) -> Result<Self, DLStringEncodingError> {
-        // If the encodings match, we can directly copy the bytes
+        allocator: DLAllocatorForStl,
+    ) -> Result<Self, DLStringError> {
         if T::ENCODING == U::ENCODING {
-            // SAFETY: T::ENCODING == U::ENCODING implies T::CharType is compatible with U::CharType.
-            let bytes: &[T::CharType] = unsafe { std::mem::transmute(other.base.as_chars()) };
+            // Safety: T::Unit and U::Unit are guaranteed to be the same here
+            let units: &[<T as DLStringKind>::Unit] =
+                unsafe { std::mem::transmute(other.as_code_units()) };
             Ok(Self {
-                base: T::InnerType::from_chars_in(bytes, allocator.clone()),
+                base: BasicString::from_units_in(units, allocator),
                 encoding: T::ENCODING,
             })
         } else {
-            // If encodings differ, we need to decode and re-encode
-            let decoded = T::decode(other.base.as_u8_slice())?;
-            DLString::from_str(allocator, &decoded)
+            Self::from_str(other.decode_storage()?, allocator)
         }
+    }
+
+    #[inline]
+    pub fn encoding(&self) -> DLCharacterSet {
+        self.encoding
+    }
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.base.is_empty()
+    }
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.base.len()
+    }
+
+    /// Returns `true` if the decoded content contains `needle`
+    pub fn contains_str(&self, needle: impl AsRef<str>) -> bool {
+        self.to_string().is_ok_and(|s| s.contains(needle.as_ref()))
+    }
+
+    /// Returns `true` if the decoded content starts with `prefix`
+    pub fn starts_with_str(&self, prefix: impl AsRef<str>) -> bool {
+        self.to_string()
+            .is_ok_and(|s| s.starts_with(prefix.as_ref()))
+    }
+
+    /// Returns `true` if the decoded content ends with `suffix`
+    pub fn ends_with_str(&self, suffix: impl AsRef<str>) -> bool {
+        self.to_string().is_ok_and(|s| s.ends_with(suffix.as_ref()))
+    }
+
+    /// Returns the char index of the first occurrence of `needle`, or `None`
+    pub fn find_str(&self, needle: impl AsRef<str>) -> Option<usize> {
+        self.to_string().ok()?.find(needle.as_ref())
+    }
+
+    /// Returns a new `DLString` with all occurrences of `from` replaced by `to`
+    pub fn replace_str(
+        &self,
+        from: impl AsRef<str>,
+        to: impl AsRef<str>,
+        allocator: DLAllocatorForStl,
+    ) -> Result<Self, DLStringError> {
+        Self::from_str(
+            self.to_string()?.replace(from.as_ref(), to.as_ref()),
+            allocator,
+        )
+    }
+
+    /// Returns a new `DLString` with the first occurrence of `from` replaced by `to`
+    pub fn replace_first_str(
+        &self,
+        from: impl AsRef<str>,
+        to: impl AsRef<str>,
+        allocator: DLAllocatorForStl,
+    ) -> Result<Self, DLStringError> {
+        Self::from_str(
+            self.to_string()?.replacen(from.as_ref(), to.as_ref(), 1),
+            allocator,
+        )
+    }
+
+    /// Splits on `delimiter`, returning each part as a new `DLString`
+    pub fn split_str(
+        &self,
+        delimiter: impl AsRef<str>,
+        allocator: DLAllocatorForStl,
+    ) -> Result<Vec<Self>, DLStringError> {
+        self.to_string()?
+            .split(delimiter.as_ref())
+            .map(|part| Self::from_str(part, allocator.clone()))
+            .collect()
+    }
+
+    /// Returns a new `DLString` with leading and trailing whitespace removed
+    pub fn trim_str(&self, allocator: DLAllocatorForStl) -> Result<Self, DLStringError> {
+        Self::from_str(self.to_string()?.trim(), allocator)
+    }
+
+    /// Returns a new `DLString` with the content uppercased (Unicode-aware)
+    pub fn to_uppercase_str(&self, allocator: DLAllocatorForStl) -> Result<Self, DLStringError> {
+        Self::from_str(self.to_string()?.to_uppercase(), allocator)
+    }
+
+    /// Returns a new `DLString` with the content lowercased (Unicode-aware)
+    pub fn to_lowercase_str(&self, allocator: DLAllocatorForStl) -> Result<Self, DLStringError> {
+        Self::from_str(self.to_string()?.to_lowercase(), allocator)
+    }
+}
+
+impl<T: DLStringKind> TryFrom<(&str, DLAllocatorForStl)> for DLString<T> {
+    type Error = DLStringError;
+    fn try_from((s, alloc): (&str, DLAllocatorForStl)) -> Result<Self, Self::Error> {
+        Self::from_str(s, alloc)
     }
 }
 
 impl<T: DLStringKind> Deref for DLString<T> {
-    type Target = T::InnerType;
+    type Target = BasicString<T::Unit, DLAllocatorForStl>;
 
     fn deref(&self) -> &Self::Target {
         &self.base
@@ -297,91 +397,63 @@ impl<T: DLStringKind> DerefMut for DLString<T> {
     }
 }
 
-impl<T: DLStringKind> Display for DLString<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.to_str() {
-            Ok(s) => write!(f, "{s}"),
-            Err(_) => Err(std::fmt::Error),
+impl<T: DLStringKind> fmt::Display for DLString<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_string() {
+            Ok(s) => f.write_str(&s),
+            Err(_) => Err(fmt::Error),
         }
     }
 }
 
-impl<T: DLStringKind, S: AsRef<str>> PartialEq<S> for DLString<T> {
-    fn eq(&self, other: &S) -> bool {
-        let other = other.as_ref();
-        match T::ENCODING {
-            DLCharacterSet::UTF8 => self.base.as_u8_slice() == other.as_bytes(),
-            DLCharacterSet::UTF32 => {
-                // Safety: If this is UTF32, its characters are u32s.
-                unsafe { std::mem::transmute::<&[T::CharType], &[u32]>(self.base.as_chars()) }
-                    .iter()
-                    .map(|c| char::try_from(*c))
-                    .eq(other.chars().map(Ok))
-            }
-            _ => {
-                // Do equality comparisons byte-by-byte on the UTF-8
-                // representations of each string. It would be simpler to just
-                // convert to a string and compare that, but it would be
-                // substantially less efficient because it would involve an
-                // allocation for eqach comparison.
+impl<T: DLStringKind> fmt::Debug for DLString<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_string() {
+            Ok(s) => write!(f, "DLString({:?}, {:?})", T::ENCODING, s),
+            Err(_) => write!(f, "DLString({:?}, <decode error>)", T::ENCODING),
+        }
+    }
+}
 
-                let mut decoder = T::ENCODING.encoding().unwrap().new_decoder();
-                if decoder
-                    .max_utf8_buffer_length_without_replacement(self.base.len())
-                    .map(|len| len < other.len())
-                    .unwrap_or(true)
-                {
-                    // If the other string is big enough that this string can't
-                    // possibly decode to it, exit early without even attempting
-                    // to decode. This is most likely if this is the empty
-                    // string.
-                    return false;
-                }
-
-                let mut our_bytes = self.base.as_u8_slice();
-                let mut other_bytes = other.as_bytes().iter();
-                let mut output: [u8; 0x20] = [0; 0x20];
-                loop {
-                    let (result, bytes_read, bytes_written) =
-                        decoder.decode_to_utf8_without_replacement(our_bytes, &mut output, true);
-                    if matches!(result, DecoderResult::Malformed(_, _)) {
-                        // Malformed strings are never equal to valid UTF-8.
-                        return false;
-                    }
-
-                    for &our_byte in output.iter().take(bytes_written) {
-                        let Some(&their_byte) = other_bytes.next() else {
-                            // If this string has more bytes than the other
-                            // string, they're not equal.
-                            return false;
-                        };
-
-                        if our_byte != their_byte {
-                            // If this string has different bytes than the other
-                            // string, they're not equal.
-                            return false;
-                        }
-                    }
-
-                    if matches!(result, DecoderResult::InputEmpty) {
-                        // If this string has fewer bytes than the other string,
-                        // they're not equal, but if it has the same number and
-                        // they've been equivalent up to this point then they
-                        // are equal.
-                        return other_bytes.next().is_none();
-                    }
-
-                    our_bytes = &our_bytes[bytes_read..];
-                }
+/// `DLString<T> == DLString<U>`: byte comparison when same encoding,
+/// UTF-8 round-trip when different.
+impl<T: DLStringKind, U: DLStringKind> PartialEq<DLString<U>> for DLString<T> {
+    fn eq(&self, other: &DLString<U>) -> bool {
+        if T::ENCODING == U::ENCODING {
+            self.base.as_bytes() == other.base.as_bytes()
+        } else {
+            match (self.to_string(), other.to_string()) {
+                (Ok(a), Ok(b)) => a == b,
+                _ => false,
             }
         }
+    }
+}
+
+impl<T: DLStringKind> Eq for DLString<T> {}
+
+/// `DLString == &str`, `DLString == String`, `DLString == Cow<str>`, etc.
+///
+/// For UTF-8/16/32 this is allocation-free.
+/// For legacy encodings (Shift-JIS, EUC-JP, ISO-8859-1) it uses a
+/// stack-allocated 64-byte decode buffer.
+impl<T: DLStringKind, S: AsRef<str>> PartialEq<S> for DLString<T> {
+    fn eq(&self, other: &S) -> bool {
+        bytes_eq_str(self.base.as_bytes(), T::ENCODING, other.as_ref())
+    }
+}
+
+impl<T: DLStringKind> Hash for DLString<T> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        T::ENCODING.hash(state);
+        self.base.as_code_units().hash(state);
     }
 }
 
 #[repr(C)]
 pub struct DLRawString<T: DLStringKind = DLUTF16StringKind> {
     vftable: usize,
-    backing_string: Option<NonNull<T::CharType>>,
+    backing_string: Option<NonNull<T::Unit>>,
     pub length: usize,
     unk18: u32,
     pub char_size: u16,
@@ -390,46 +462,135 @@ pub struct DLRawString<T: DLStringKind = DLUTF16StringKind> {
 }
 
 impl<T: DLStringKind> DLRawString<T> {
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.length == 0
     }
-    pub fn to_str(&self) -> Result<String, DLStringEncodingError> {
-        let bytes: &[u8] = self.backing_string.as_ref().map_or(&[], |ptr| unsafe {
-            std::slice::from_raw_parts(
-                ptr.as_ptr() as *const u8,
-                self.length * std::mem::size_of::<T::CharType>(),
-            )
-        });
-        T::decode(bytes).map(|cow| cow.into_owned())
+
+    pub fn units(&self) -> &[T::Unit] {
+        self.backing_string.map_or(&[], |ptr| unsafe {
+            std::slice::from_raw_parts(ptr.as_ptr(), self.length)
+        })
+    }
+
+    pub fn as_bytes(&self) -> &[u8] {
+        let u = self.units();
+        unsafe { std::slice::from_raw_parts(u.as_ptr() as *const u8, std::mem::size_of_val(u)) }
+    }
+
+    pub fn to_string(&self) -> Result<String, DLStringError> {
+        T::decode(self.as_bytes()).map(Cow::into_owned)
+    }
+
+    pub fn contains_str(&self, needle: impl AsRef<str>) -> bool {
+        self.to_string().is_ok_and(|s| s.contains(needle.as_ref()))
+    }
+    pub fn starts_with_str(&self, prefix: impl AsRef<str>) -> bool {
+        self.to_string()
+            .is_ok_and(|s| s.starts_with(prefix.as_ref()))
+    }
+    pub fn ends_with_str(&self, suffix: impl AsRef<str>) -> bool {
+        self.to_string().is_ok_and(|s| s.ends_with(suffix.as_ref()))
+    }
+    pub fn find_str(&self, needle: impl AsRef<str>) -> Option<usize> {
+        self.to_string().ok()?.find(needle.as_ref())
     }
 }
 
-impl<T: DLStringKind> Display for DLRawString<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.to_str() {
-            Ok(s) => write!(f, "{s}"),
-            Err(_) => Err(std::fmt::Error),
+impl<T: DLStringKind, S: AsRef<str>> PartialEq<S> for DLRawString<T> {
+    fn eq(&self, other: &S) -> bool {
+        bytes_eq_str(self.as_bytes(), T::ENCODING, other.as_ref())
+    }
+}
+
+impl<T: DLStringKind, U: DLStringKind> PartialEq<DLRawString<U>> for DLRawString<T> {
+    fn eq(&self, other: &DLRawString<U>) -> bool {
+        if T::ENCODING == U::ENCODING {
+            self.as_bytes() == other.as_bytes()
+        } else {
+            match (self.to_string(), other.to_string()) {
+                (Ok(a), Ok(b)) => a == b,
+                _ => false,
+            }
         }
     }
 }
+
+impl<T: DLStringKind> Eq for DLRawString<T> {}
+
+impl<T: DLStringKind> fmt::Display for DLRawString<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_string() {
+            Ok(s) => f.write_str(&s),
+            Err(_) => Err(fmt::Error),
+        }
+    }
+}
+
+impl<T: DLStringKind> fmt::Debug for DLRawString<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_string() {
+            Ok(s) => write!(f, "DLRawString({:?}, {:?})", T::ENCODING, s),
+            Err(_) => write!(f, "DLRawString({:?}, <decode error>)", T::ENCODING),
+        }
+    }
+}
+
 pub type DLCodedString<T> = DLRawString<T>;
 
 #[repr(C)]
-/// Source of name: RTTI
-/// In original code, generic type was something like `DLInplaceStr<1,16,DLTX::DLCodedStr<1>>`
-/// Where 1 is DLCharacterSet::UTF16 and 16 is the size of the inline buffer in characters.
-/// This version uses StringKind trait to get the character set and size.
 pub struct DLInplaceStr<T: DLStringKind, const N: usize> {
-    /// Underlying DLCodedString used for all operations.
     pub base: DLCodedString<T>,
-    /// Buffer used to store the string data.
-    /// backing_string in base is a pointer to this buffer.
-    pub bytes: [T::CharType; N],
+    pub bytes: [T::Unit; N],
     unk: usize,
 }
 
-impl<T: DLStringKind, const N: usize> Display for DLInplaceStr<T, N> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<T: DLStringKind, const N: usize> DLInplaceStr<T, N> {
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.base.is_empty()
+    }
+    pub fn to_string(&self) -> Result<String, DLStringError> {
+        self.base.to_string()
+    }
+    pub fn contains_str(&self, n: impl AsRef<str>) -> bool {
+        self.base.contains_str(n)
+    }
+    pub fn starts_with_str(&self, p: impl AsRef<str>) -> bool {
+        self.base.starts_with_str(p)
+    }
+    pub fn ends_with_str(&self, s: impl AsRef<str>) -> bool {
+        self.base.ends_with_str(s)
+    }
+    pub fn find_str(&self, n: impl AsRef<str>) -> Option<usize> {
+        self.base.find_str(n)
+    }
+}
+
+impl<T: DLStringKind, const N: usize, S: AsRef<str>> PartialEq<S> for DLInplaceStr<T, N> {
+    fn eq(&self, other: &S) -> bool {
+        self.base == other.as_ref()
+    }
+}
+
+impl<T: DLStringKind, U: DLStringKind, const N: usize, const M: usize> PartialEq<DLInplaceStr<U, M>>
+    for DLInplaceStr<T, N>
+{
+    fn eq(&self, other: &DLInplaceStr<U, M>) -> bool {
+        self.base == other.base
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Eq for DLInplaceStr<T, N> {}
+
+impl<T: DLStringKind, const N: usize> fmt::Display for DLInplaceStr<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.base.fmt(f)
+    }
+}
+
+impl<T: DLStringKind, const N: usize> fmt::Debug for DLInplaceStr<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.base.fmt(f)
     }
 }

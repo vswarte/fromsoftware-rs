@@ -2,8 +2,8 @@ use std::{marker::PhantomData, ptr::NonNull};
 
 use shared::StepperStates;
 
-use crate::Tree;
-use crate::dlkr::DLAllocatorRef;
+use crate::UnkDLTree;
+use crate::dlkr::DLAllocatorBase;
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 
@@ -24,7 +24,7 @@ pub struct FD4StepTemplateBase<Subject, Base, States: StepperStates> {
     unk48: u8,
 
     // Seemingly all debug stuff after this point.
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocatorBase>,
     unk58: usize,
     unk60: i8,
     unk61: bool,
@@ -60,8 +60,8 @@ pub struct StepperFn<T> {
 #[repr(C)]
 pub struct FD4ComponentAttachSystem {
     vftable: *const (),
-    unk8: Tree<()>,
-    pub allocator: DLAllocatorRef,
+    unk8: UnkDLTree<()>,
+    pub allocator: NonNull<DLAllocatorBase>,
 }
 
 /// Source of name: RTTI
@@ -69,5 +69,5 @@ pub struct FD4ComponentAttachSystem {
 #[repr(C)]
 pub struct FD4ComponentAttachSystem_Step {
     pub base: FD4ComponentAttachSystem,
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocatorBase>,
 }

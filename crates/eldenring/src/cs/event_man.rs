@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use shared::{F32Vector3, FromStatic, OwnedPtr};
 
 use crate::{
-    DoublyLinkedList,
+    DLList,
     cs::{BlockId, MultiplayType, SummonParamType, WorldAreaTime},
 };
 
@@ -48,13 +48,13 @@ pub struct CSEventManImp {
 #[repr(C)]
 pub struct CSEventScriptEventInfo {
     vftable: usize,
-    pub event_info_by_block_id: DoublyLinkedList<OwnedPtr<EventInfoEntry>>,
+    pub event_info_by_block_id: DLList<OwnedPtr<EventInfoEntry>>,
 }
 
 #[repr(C)]
 pub struct EventInfoEntry {
     pub block_id: BlockId,
-    pub event_ids: DoublyLinkedList<u32>,
+    pub event_ids: DLList<u32>,
 }
 #[repr(C)]
 pub struct CSEventSosSignData {

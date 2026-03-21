@@ -6,7 +6,7 @@ use shared::{
 };
 
 use super::{ChrInsModuleContainer, ChrSetEntry, PlayerGameData, WorldChrMan};
-use crate::{dlkr::DLAllocatorRef, fd4::FD4Time};
+use crate::{dlkr::DLAllocatorBase, fd4::FD4Time};
 
 #[repr(C)]
 #[derive(Superclass)]
@@ -104,11 +104,11 @@ pub struct ChrIns {
     _unk1ad8: u32,
     _unk1adc: u16,
     _chr_attach_sys: ChrAttachSys,
-    _allocator1: DLAllocatorRef,
+    _allocator1: NonNull<DLAllocatorBase>,
     _unk1b10: [u8; 8],
     _unk1b18: u64,
     _unk1b20: u64,
-    _allocator2: DLAllocatorRef,
+    _allocator2: NonNull<DLAllocatorBase>,
     _unk1b30: u32,
     _unk1b34: u32,
     _unk1b38: [u8; 8],

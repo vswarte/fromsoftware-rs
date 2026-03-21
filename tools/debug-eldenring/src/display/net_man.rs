@@ -60,7 +60,7 @@ impl DebugDisplay for BreakInAreaList {
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Area"),
                 ],
-                self.areas.items(),
+                self.areas.iter(),
                 |ui, i, e| {
                     ui.table_next_column();
                     ui.text(format!("{i}"));

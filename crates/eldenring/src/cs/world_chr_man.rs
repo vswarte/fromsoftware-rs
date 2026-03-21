@@ -4,8 +4,8 @@ use vtable_rs::VPtr;
 
 use crate::cs::{CSEzTask, CSEzVoidTask};
 use crate::position::HavokPosition;
-use crate::{ChainingTree, DoublyLinkedList, Tree};
-use crate::{Vector, cs::ChrIns};
+use crate::{ChainingMap, DLList, DLMap, UnkDLTree};
+use crate::{DLVector, cs::ChrIns};
 use shared::{F32Vector4, OwnedPtr, Subclass, Superclass};
 
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
@@ -97,10 +97,10 @@ pub struct WorldChrMan {
     // WorldChrMan tasks
     unk1ece8: [u8; 0x4e8],
     /// A list of ChrIns references sorted by distance to the main player.
-    pub chr_inses_by_distance: Vector<ChrInsDistanceEntry>,
+    pub chr_inses_by_distance: DLVector<ChrInsDistanceEntry>,
     unk1f1f0: [u8; 0x10],
     /// A list of ChrIns references sorted by their update priority.
-    pub chr_inses_by_update_priority: Vector<NonNull<ChrIns>>,
+    pub chr_inses_by_update_priority: DLVector<NonNull<ChrIns>>,
     /// The remaining budget for characters that can receive high-detail (NORMAL) updates this frame.
     pub omission_update_budget_near: u32,
     /// The remaining budget for characters that can receive medium-detail (LVL2) updates this frame.
@@ -182,7 +182,7 @@ pub struct CSDebugChrCreator {
     vftable: usize,
     stepper_fns: usize,
     unk10: usize,
-    unk18_tree: Tree<()>,
+    unk18_tree: UnkDLTree<()>,
     unk30: [u8; 0x14],
     pub spawn: bool,
     unk45: [u8; 0x3],
@@ -339,29 +339,9 @@ where
     unk20: i32,
     _pad24: u32,
     /// Maps ChrSetEntry's to their event entity IDs.
-    pub entity_id_mapping: Tree<ChrSetEntityIdMapping<T>>,
+    pub entity_id_mapping: DLMap<u32, NonNull<ChrSetEntry<T>>>,
     /// Maps ChrSetEntry's to a group.
-    pub group_id_mapping: Tree<ChrSetGroupMapping<T>>,
-}
-
-#[repr(C)]
-pub struct ChrSetEntityIdMapping<T>
-where
-    T: Subclass<ChrIns> + 'static,
-{
-    pub entity_id: u32,
-    _pad4: u32,
-    pub chr_set_entry: NonNull<ChrSetEntry<T>>,
-}
-
-#[repr(C)]
-pub struct ChrSetGroupMapping<T>
-where
-    T: Subclass<ChrIns> + 'static,
-{
-    pub group_id: u32,
-    _pad4: u32,
-    pub chr_set_entry: NonNull<ChrSetEntry<T>>,
+    pub group_id_mapping: DLMap<u32, NonNull<ChrSetEntry<T>>>,
 }
 
 impl<T> ChrSet<T>
@@ -441,7 +421,7 @@ pub enum ChrUpdateType {
 pub struct OpenFieldChrSet {
     pub base: ChrSet<ChrIns>,
     // TODO: type needs fact-checking
-    unk58: Tree<()>,
+    unk58: UnkDLTree<()>,
     unk70: f32,
     pad74: u32,
     list1: [OpenFieldChrSetList1Entry; 1500],
@@ -473,7 +453,7 @@ pub struct OpenFieldChrSetList2Entry {
 pub struct WorldGridAreaChr {
     pub base: WorldAreaChrBase,
     pub world_grid_area_info: usize,
-    unk_tree: Tree<()>,
+    unk_tree: UnkDLTree<()>,
 }
 
 #[repr(C)]
@@ -481,7 +461,7 @@ pub struct WorldGridAreaChr {
 pub struct SummonBuddyManager {
     /// Maps SpEffect IDs to BuddyParam IDs.
     /// Because multiple BuddyParams can share the same SpEffect, this is a chaining tree.
-    pub trigger_speffect_to_buddy_map: ChainingTree<i32, i32>,
+    pub trigger_speffect_to_buddy_map: ChainingMap<i32, i32>,
     /// ID of SpEffect used to request a summon.
     /// Written by TAE goods consume.
     pub request_summon_speffect_id: i32,
@@ -501,8 +481,8 @@ pub struct SummonBuddyManager {
     unk58: usize,
     unk60: usize,
     unk68: usize,
-    /// Describes the groups of summons.
-    pub groups: Tree<SummonBuddyGroup>,
+    /// Maps character event id to summon buddy groups it owns
+    pub groups: DLMap<i32, DLList<SummonBuddyGroup>>,
     unk88: i32,
     /// Delay before the buddy disappears after being requested to disappear.
     pub buddy_disappear_delay_sec: f32,
@@ -529,7 +509,8 @@ pub struct SummonBuddyManager {
     pub last_buddy_slot: u32,
     unkc0: f32,
     unkc4: f32,
-    pub eliminate_target_entries: Tree<SummonBuddyStoneEliminateTargetEntry>,
+    /// Map of summon buddy handle to it's buddy stones eliminate target is in range
+    pub eliminate_target_entries: DLMap<FieldInsHandle, CSBuddyStoneEliminateTargetCalc>,
     /// ID of the summon goods that was requested to be used by TAE.
     pub requested_summon_goods_id: i32,
     /// ID of the currently active summon goods.
@@ -544,7 +525,7 @@ pub struct SummonBuddyManager {
 
 #[repr(C)]
 pub struct SummonBuddyWarpManager {
-    pub entries: Tree<SummonBuddyWarpEntry>,
+    pub entries: DLMap<FieldInsHandle, SummonBuddyWarpEntry>,
     /// See: [crate::param::GAME_SYSTEM_COMMON_PARAM_ST::buddy_warp_trigger_time_ray_blocked]
     pub trigger_time_ray_block: f32,
     /// See: [crate::param::GAME_SYSTEM_COMMON_PARAM_ST::buddy_warp_trigger_dist_to_player]
@@ -560,10 +541,9 @@ pub struct SummonBuddyWarpManager {
 
 #[repr(C)]
 pub struct SummonBuddyWarpEntry {
-    pub handle: FieldInsHandle,
-    unk8: usize,
+    unk0: usize,
     pub warp_stage: SummonBuddyWarpStage,
-    unk18: usize,
+    unk10: usize,
     pub target_position: HavokPosition,
     pub q_target_rotation: F32Vector4,
     pub flags: u32,
@@ -586,14 +566,6 @@ pub enum SummonBuddyWarpStage {
 
 #[repr(C)]
 pub struct SummonBuddyGroup {
-    /// Event ID of the owner.
-    pub owner_event_id: i32,
-    /// List of group entries
-    pub entries: DoublyLinkedList<SummonBuddyGroupEntry>,
-}
-
-#[repr(C)]
-pub struct SummonBuddyGroupEntry {
     /// ChrIns this group entry is for.
     pub chr_ins: NonNull<ChrIns>,
     unk8: bool,
@@ -627,15 +599,6 @@ pub struct SummonBuddyGroupEntry {
     /// Whether creator of this SummonBuddy has the Mogh's Great Rune buff.
     pub has_mogh_great_rune_buff: bool,
     unk2d: bool,
-}
-
-#[repr(C)]
-/// Source of name: RTTI
-pub struct SummonBuddyStoneEliminateTargetEntry {
-    /// Refers to the SummonBuddy this entry represents.
-    pub buddy_field_ins_handle: FieldInsHandle,
-    /// Keeps track of if the buddy stones eliminate target is in range.
-    pub target_calc: CSBuddyStoneEliminateTargetCalc,
 }
 
 #[repr(C)]
@@ -710,8 +673,6 @@ mod test {
     #[test]
     fn proper_sizes() {
         assert_eq!(0x20, size_of::<CSBuddyStoneEliminateTargetCalc>());
-        assert_eq!(0x28, size_of::<SummonBuddyStoneEliminateTargetEntry>());
-        assert_eq!(0x30, size_of::<SummonBuddyGroupEntry>());
         assert_eq!(0x20, size_of::<SummonBuddyGroup>());
         assert_eq!(0x70, size_of::<SummonBuddyWarpEntry>());
         assert_eq!(0x38, size_of::<SummonBuddyWarpManager>());
