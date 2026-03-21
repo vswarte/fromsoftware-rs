@@ -26,6 +26,14 @@ vftable = "param_res_cap_vmt"
 class = "NS_SPRJ::SoloParamRepositoryImp"
 vftable = "solo_param_repository_vmt"
 
+[[vmts]]
+class = "NS_SPRJ::WorldInfo"
+vftable = "world_info_vmt"
+
+[[vmts]]
+class = "NS_SPRJ::WorldRes"
+vftable = "world_res_vmt"
+
 [[patterns]]
 pattern = "48 83 ec 20 48 8d 05 ${ ' } 48 8b f9 48 89 01 48 8b ca 48 8b 02 ff 50 10"
 captures = ["", "fd4res_cap_vmt"]
@@ -33,6 +41,10 @@ captures = ["", "fd4res_cap_vmt"]
 [[patterns]]
 pattern = "c6 47 60 00 48 8d 05 $ { ' } 48 89 07 33 f6 48 89 77 68 48 89 77 70 48 89 77 78"
 captures = ["", "fd4param_res_cap_vmt"]
+
+[[patterns]]
+pattern = "0f 29 74 24 30 40 80 fe 01 0f ? ? ? ? ? 48 8b 05 $ { ' }"
+captures = ["", "field_area_ptr"]
 
 [[patterns]]
 pattern = "c7 44 24 20 00 00 00 00 48 8b 05 $ { ' } 48 8b 58 08 8b 02"

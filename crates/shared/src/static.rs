@@ -36,10 +36,7 @@ pub trait FromStatic {
     /// The name of this object. Used for debugging purposes.
     fn name() -> Cow<'static, str>;
 
-    /// Looks up the single global instance of this object.
-    ///
-    /// Implementations may cache information about the object's location to
-    /// make this more efficient in future calls.
+    /// Looks up the single global instance of this object as a reference.
     ///
     /// ## Safety
     ///

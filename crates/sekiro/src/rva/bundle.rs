@@ -16,6 +16,7 @@ pub struct RvaBundle {
     pub dlpseudo_async_input_stream_vmt: u32,
     pub fd4param_res_cap_vmt: u32,
     pub fd4res_cap_vmt: u32,
+    pub field_area_ptr: u32,
     pub game_data_man_ptr: u32,
     pub global_hinstance: u32,
     pub lua_event_man_remove_item: u32,
@@ -27,4 +28,6 @@ pub struct RvaBundle {
     pub scene_obj_proxy_vmt: u32,
     pub solo_param_repository_vmt: u32,
     pub sprj_menu_man_ptr: u32,
+    pub world_info_vmt: u32,
+    pub world_res_vmt: u32,
 }

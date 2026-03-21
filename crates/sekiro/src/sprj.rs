@@ -1,3 +1,5 @@
+mod event_flag;
+mod field_area;
 mod game_data_man;
 mod item;
 mod item_id;
@@ -7,7 +9,10 @@ mod scaleform_value;
 mod solo_param_repository;
 mod task;
 mod window;
+mod world_info;
 
+pub use event_flag::*;
+pub use field_area::*;
 pub use game_data_man::*;
 pub use item::*;
 pub use item_id::*;
@@ -17,3 +22,4 @@ pub use scaleform_value::*;
 pub use solo_param_repository::*;
 pub use task::*;
 pub use window::*;
+pub use world_info::*;

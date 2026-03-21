@@ -51,8 +51,6 @@ pub struct WorldInfo {
     ///
     /// Use [Self::block_info] to access this safely.
     pub world_block_info: [MaybeUninit<WorldBlockInfo>; 0x20],
-
-    _unk1290: u64,
 }
 
 impl WorldInfo {
@@ -127,10 +125,111 @@ impl WorldInfo {
 }
 
 #[repr(C)]
+#[derive(Subclass)]
+/// Source of name: RTTI
+pub struct WorldRes {
+    pub world_info: WorldInfo,
+
+    /// The number of defined entries in [world_area_res](Self::world_area_res).
+    ///
+    /// Use [Self::area_res] to access this safely.
+    pub world_area_res_len: u32,
+
+    /// A pointer to the beginning of [world_area_res](Self::world_area_res).
+    ///
+    /// Use [Self::area_res] to access this safely.
+    pub world_area_res_list_ptr: NonNull<WorldAreaRes>,
+
+    /// This name comes from debug data, but the behavior isn't yet well-understood.
+    pub remaining_time_to_activation: u32,
+
+    /// This name comes from debug data, but the behavior isn't yet well-understood.
+    pub time_between_activations: u32,
+
+    /// The number of defined entries in
+    /// [world_block_res](Self::world_block_res).
+    ///
+    /// Use [Self::block_res] to access this safely.
+    pub world_block_res_len: u32,
+
+    /// A pointer to the beginning of [world_block_res](Self::world_block_res).
+    ///
+    /// Use [Self::block_res] to access this safely.
+    pub world_block_res_list_ptr: NonNull<WorldBlockRes>,
+
+    _unk1ab8: u32,
+    _unk1abc: u8,
+    _unk1ac0: u64,
+    _unk1ac8: u16,
+    _unk1aca: u8,
+    _unk1acb: u8,
+    _unk1acc: u8,
+    _unk1ad0: u32,
+    _unk1ad4: [u8; 0xc],
+
+    /// The pool of [WorldAreaRes]es. Only the first
+    /// [world_area_res_len](Self::world_area_res_len) are initialized.
+    ///
+    /// Use [Self::area_res] to access this safely.
+    pub world_area_res: [MaybeUninit<WorldAreaRes>; 0x14],
+
+    /// The pool of [WorldBlockRes]es. Only the first
+    /// [world_block_res_len](Self::world_block_res_len) are initialized.
+    ///
+    /// Use [Self::block_res] to access this safely.
+    pub world_block_res: [MaybeUninit<WorldBlockRes>; 0x20],
+}
+
+impl WorldRes {
+    pub fn area_res(&self) -> &[WorldAreaRes] {
+        unsafe {
+            slice::from_raw_parts(
+                self.world_area_res_list_ptr.as_ptr(),
+                self.world_area_res_len as usize,
+            )
+        }
+    }
+
+    pub fn area_res_mut(&mut self) -> &mut [WorldAreaRes] {
+        unsafe {
+            slice::from_raw_parts_mut(
+                self.world_area_res_list_ptr.as_mut(),
+                self.world_area_res_len as usize,
+            )
+        }
+    }
+
+    pub fn block_res(&self) -> &[WorldBlockRes] {
+        unsafe {
+            slice::from_raw_parts(
+                self.world_block_res_list_ptr.as_ptr(),
+                self.world_block_res_len as usize,
+            )
+        }
+    }
+
+    pub fn block_res_mut(&mut self) -> &mut [WorldBlockRes] {
+        unsafe {
+            slice::from_raw_parts_mut(
+                self.world_block_res_list_ptr.as_mut(),
+                self.world_block_res_len as usize,
+            )
+        }
+    }
+}
+
+// Source of name: RTTI
+pub type WorldAreaRes = UnknownStruct<0x108>;
+
+// Source of name: RTTI
+pub type WorldBlockRes = UnknownStruct<0x458>;
+
+#[repr(C)]
 /// Source of name: RTTI
 pub struct WorldAreaInfo {
     _vftable: usize,
-    _unk08: [u8; 3],
+    _unk08: u16,
+    _unk0a: u8,
 
     /// The area's numeric identifier.
     ///
@@ -184,122 +283,44 @@ pub struct WorldBlockInfo {
     pub world_area_info: NonNull<WorldAreaInfo>,
 
     /// The index of this in [WorldInfo.world_block_info].
-    ///
-    /// This is also used as the index of this block's events in
-    /// [EventWorld.blocks].
     pub world_block_index: u32,
 
-    _unk24: u32,
-    _msb_res_cap: usize,
-    _btab_file_cap: usize,
-    _btl_file_cap: usize,
-    _btpb_file_cap: usize,
-    _breakobj_file_cap: usize,
-    _pre_map_decal_file_cap: usize,
-    _unk58: usize,
-    _unk60: u8,
-    _pad61: [u8; 3],
-    _unk64: u8,
-    _unk68: u32,
+    _unk24: u8,
+    _unk25: u8,
+    _unk26: u8,
+    _unk27: u8,
+
+    /// The index of the corresponding area in [WorldInfo::world_area_info].
+    pub area_block_index: u32,
+
+    _unk30: u64,
+    _unk38: u64,
+    _unk40: u64,
+    _unk48: [u64; 0x6],
+    _unk78: u64,
+    _unk80: u64,
+    _unk88: u64,
+
+    /// This name comes from debug data, but the behavior isn't yet well-understood.
+    pub is_lock: bool,
+
+    _unk91: [u8; 3],
+
+    /// This name comes from debug data, but the behavior isn't yet well-understood.
+    pub ceremony_id: u8,
+
+    /// This name comes from debug data, but the behavior isn't yet well-understood.
+    pub current_time_zone: i32,
+
+    /// Seems to be unused.
+    _ceremony_id: i32,
+
+    /// Seems to be unused.
+    pub debug_time_to_id_change: i32,
+
+    _unka4: i32,
+    _unka8: f32,
 }
-
-#[repr(C)]
-#[derive(Subclass)]
-/// Source of name: RTTI
-pub struct WorldRes {
-    pub world_info: WorldInfo,
-    _unk8: u64,
-
-    /// The number of defined entries in [world_area_res](Self::world_area_res).
-    ///
-    /// Use [Self::area_res] to access this safely.
-    pub world_area_res_len: u32,
-
-    /// A pointer to the beginning of [world_area_res](Self::world_area_res).
-    ///
-    /// Use [Self::area_res] to access this safely.
-    pub world_area_res_list_ptr: NonNull<WorldAreaRes>,
-
-    _unk12b0: u32,
-    _unk12b4: u32,
-
-    /// The number of defined entries in
-    /// [world_block_res](Self::world_block_res).
-    ///
-    /// Use [Self::block_res] to access this safely.
-    pub world_block_res_len: u32,
-
-    /// A pointer to the beginning of [world_block_res](Self::world_block_res).
-    ///
-    /// Use [Self::block_res] to access this safely.
-    pub world_block_res_list_ptr: NonNull<WorldBlockRes>,
-
-    _unk12c8: u64,
-    _unk12d0: u64,
-    _unk12d8: u64,
-
-    /// The pool of [WorldAreaRes]es. Only the first
-    /// [world_area_res_len](Self::world_area_res_len) are initialized.
-    ///
-    /// Use [Self::area_res] to access this safely.
-    pub world_area_res: [MaybeUninit<WorldAreaRes>; 0x14],
-
-    /// The pool of [WorldBlockRes]es. Only the first
-    /// [world_block_res_len](Self::world_block_res_len) are initialized.
-    ///
-    /// Use [Self::block_res] to access this safely.
-    pub world_block_res: [MaybeUninit<WorldBlockRes>; 0x20],
-
-    _unkae80: u64,
-    _unkae88: u64,
-}
-
-impl WorldRes {
-    pub fn area_res(&self) -> &[WorldAreaRes] {
-        unsafe {
-            slice::from_raw_parts(
-                self.world_area_res_list_ptr.as_ptr(),
-                self.world_area_res_len as usize,
-            )
-        }
-    }
-
-    pub fn area_res_mut(&mut self) -> &mut [WorldAreaRes] {
-        unsafe {
-            slice::from_raw_parts_mut(
-                self.world_area_res_list_ptr.as_mut(),
-                self.world_area_res_len as usize,
-            )
-        }
-    }
-
-    pub fn block_res(&self) -> &[WorldBlockRes] {
-        unsafe {
-            slice::from_raw_parts(
-                self.world_block_res_list_ptr.as_ptr(),
-                self.world_block_res_len as usize,
-            )
-        }
-    }
-
-    pub fn block_res_mut(&mut self) -> &mut [WorldBlockRes] {
-        unsafe {
-            slice::from_raw_parts_mut(
-                self.world_block_res_list_ptr.as_mut(),
-                self.world_block_res_len as usize,
-            )
-        }
-    }
-}
-
-// WorldInfoOwner doesn't add any additional fields.
-pub type WorldInfoOwner = WorldRes;
-
-// Source of name: RTTI
-pub type WorldAreaRes = UnknownStruct<0x108>;
-
-// Source of name: RTTI
-pub type WorldBlockRes = UnknownStruct<0x438>;
 
 #[cfg(test)]
 mod test {
@@ -308,8 +329,8 @@ mod test {
     #[test]
     fn proper_sizes() {
         assert_eq!(0x38, size_of::<WorldAreaInfo>());
-        assert_eq!(0x70, size_of::<WorldBlockInfo>());
-        assert_eq!(0x1298, size_of::<WorldInfo>());
-        assert_eq!(0xae90, size_of::<WorldRes>());
+        assert_eq!(0xb0, size_of::<WorldBlockInfo>());
+        assert_eq!(0x1a90, size_of::<WorldInfo>());
+        assert_eq!(0xba80, size_of::<WorldRes>());
     }
 }

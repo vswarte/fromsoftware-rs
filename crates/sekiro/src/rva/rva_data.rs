@@ -15,6 +15,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     dlpseudo_async_input_stream_vmt: 0x2de30d8,
     fd4param_res_cap_vmt: 0x3280eb0,
     fd4res_cap_vmt: 0x3284610,
+    field_area_ptr: 0x3d5c0a0,
     game_data_man_ptr: 0x3d5aac0,
     global_hinstance: 0x3e9edb8,
     lua_event_man_remove_item: 0x67b230,
@@ -26,4 +27,6 @@ pub const RVAS: RvaBundle = RvaBundle {
     scene_obj_proxy_vmt: 0x2aa7088,
     solo_param_repository_vmt: 0x2b9ab48,
     sprj_menu_man_ptr: 0x3d67408,
+    world_info_vmt: 0x29dcaa0,
+    world_res_vmt: 0x29dd190,
 };
