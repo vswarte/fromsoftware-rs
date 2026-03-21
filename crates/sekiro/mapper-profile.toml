@@ -1,4 +1,16 @@
 [[vmts]]
+class = "AppMenu::ComponentProxy"
+vftable = "component_proxy_vmt"
+
+[[vmts]]
+class = "AppMenu::MenuWindow"
+vftable = "menu_window_vmt"
+
+[[vmts]]
+class = "AppMenu::SceneObjProxy"
+vftable = "scene_obj_proxy_vmt"
+
+[[vmts]]
 class = "DLIO::DLBufferedInputStream"
 vftable = "dlbuffered_input_stream_vmt"
 
@@ -57,3 +69,11 @@ captures = ["", "map_item_man_grant_item"]
 [[patterns]]
 pattern = "4c 8b cf 45 33 c0 41 8d 50 5d e8 $ { ' }"
 captures = ["", "register_task"]
+
+[[patterns]]
+pattern = "48 8b 9e 90 37 13 00 48 85 db 74 % { 48 89 2d $ { ' } }"
+captures = ["", "app_menu_new_menu_system_ptr"]
+
+[[patterns]]
+pattern = "48 8b 05 $ { ' } c7 80 c4 02 00 00 00 00 00 00 c3"
+captures = ["", "sprj_menu_man_ptr"]

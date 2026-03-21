@@ -1,4 +1,7 @@
-use std::borrow::Cow;
+use std::{
+    borrow::Cow,
+    ops::{Index, IndexMut},
+};
 
 use crate::cs::{ChrType, FullScreenMessage};
 use bitfield::bitfield;
@@ -266,6 +269,20 @@ pub struct MultiplayPropertyEntry {
 /// Additionally contains various other properties related to each multiplayer type.
 pub struct MultiplayProperties {
     pub entries: [MultiplayPropertyEntry; 31],
+}
+
+impl Index<MultiplayType> for [MultiplayPropertyEntry; 31] {
+    type Output = MultiplayPropertyEntry;
+
+    fn index(&self, index: MultiplayType) -> &Self::Output {
+        &self[index as usize]
+    }
+}
+
+impl IndexMut<MultiplayType> for [MultiplayPropertyEntry; 31] {
+    fn index_mut(&mut self, index: MultiplayType) -> &mut Self::Output {
+        &mut self[index as usize]
+    }
 }
 
 impl FromStatic for MultiplayProperties {

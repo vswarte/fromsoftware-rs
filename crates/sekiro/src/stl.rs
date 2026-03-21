@@ -1,4 +1,4 @@
-use std::ptr::NonNull;
+use std::{fmt, ptr::NonNull};
 
 use crate::dlkr::DLAllocatorBase;
 
@@ -79,5 +79,11 @@ impl<T> Vector<T> {
 
     pub fn is_empty(&self) -> bool {
         self.base.is_empty()
+    }
+}
+
+impl<T: fmt::Debug + Sized> fmt::Debug for Vector<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        fmt::Debug::fmt(self.items(), f)
     }
 }

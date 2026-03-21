@@ -6,7 +6,7 @@ use hudhook::hooks::dx11::ImguiDx11Hooks;
 use hudhook::imgui::{sys as imgui_sys, *};
 use hudhook::windows::Win32::Foundation::HINSTANCE;
 use hudhook::{ImguiRenderLoop, eject};
-use sekiro::{sprj::*, util::system::wait_for_system_init};
+use sekiro::{app_menu::*, sprj::*, util::system::wait_for_system_init};
 
 mod display;
 
@@ -37,6 +37,10 @@ struct SekiroDebugGui {
 
     // Game Data
     game_data: StaticDebugger<GameDataMan>,
+
+    // Menu
+    menu_man: StaticDebugger<MenuMan>,
+    new_menu_system: StaticDebugger<NewMenuSystem>,
 
     // Resources
     solo_param_repository: StaticDebugger<SoloParamRepository>,
@@ -95,6 +99,12 @@ unsafe fn render_live_reload(gui: &mut SekiroDebugGui, ui: &mut Ui) {
 
             if let Some(item) = ui.tab_item("Game Data") {
                 gui.game_data.render_debug(ui);
+                item.end();
+            }
+
+            if let Some(item) = ui.tab_item("Menu") {
+                gui.menu_man.render_debug(ui);
+                gui.new_menu_system.render_debug(ui);
                 item.end();
             }
 

@@ -10,6 +10,8 @@
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
+    pub app_menu_new_menu_system_ptr: u32,
+    pub component_proxy_vmt: u32,
     pub dlbuffered_input_stream_vmt: u32,
     pub dlpseudo_async_input_stream_vmt: u32,
     pub fd4param_res_cap_vmt: u32,
@@ -20,9 +22,12 @@ pub struct RvaBundle {
     pub lua_event_man_remove_item: u32,
     pub map_item_man_grant_item: u32,
     pub map_item_man_ptr: u32,
+    pub menu_window_vmt: u32,
     pub param_res_cap_vmt: u32,
     pub register_task: u32,
+    pub scene_obj_proxy_vmt: u32,
     pub solo_param_repository_vmt: u32,
+    pub sprj_menu_man_ptr: u32,
     pub world_info_vmt: u32,
     pub world_res_vmt: u32,
 }
