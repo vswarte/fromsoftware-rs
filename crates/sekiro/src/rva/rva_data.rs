@@ -25,4 +25,5 @@ pub const RVAS: RvaBundle = RvaBundle {
     register_task: 0x11df640,
     scene_obj_proxy_vmt: 0x2aa7088,
     solo_param_repository_vmt: 0x2b9ab48,
+    sprj_menu_man_ptr: 0x3d67408,
 };
