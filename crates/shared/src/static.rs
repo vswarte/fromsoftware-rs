@@ -12,14 +12,14 @@ pub enum InstanceError {
     /// The object's location wasn't found in the executable. This usually means
     /// something is wrong with the logic of how the object is being loaded in
     /// the first place.
-    #[error("Static object not found")]
-    NotFound,
+    #[error("Static object not found: {0}")]
+    NotFound(Cow<'static, str>),
 
     /// The static object is defined, but it's currently set to null. For many
     /// objects, this is a normal occurrence, and just means that the caller
     /// should wait until it's defined to start using it.
-    #[error("Static object not initialized")]
-    Null,
+    #[error("Static object not initialized: {0}")]
+    Null(Cow<'static, str>),
 }
 
 /// A [Result] whose error type is [InstanceError].
@@ -72,7 +72,7 @@ impl<T: FromSingleton> FromStatic for T {
     unsafe fn instance() -> InstanceResult<&'static mut T> {
         address_of::<T>()
             .map(|mut ptr| unsafe { ptr.as_mut() })
-            .ok_or(InstanceError::NotFound)
+            .ok_or(InstanceError::NotFound(Self::name()))
     }
 }
 
@@ -88,9 +88,9 @@ impl<T: FromSingleton> FromStatic for T {
 pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
     let target = Program::current()
         .rva_to_va(rva)
-        .map_err(|_| InstanceError::NotFound)? as *mut T;
+        .map_err(|_| InstanceError::NotFound(T::name()))? as *mut T;
 
-    unsafe { target.as_mut().ok_or(InstanceError::Null) }
+    unsafe { target.as_mut().ok_or(InstanceError::Null(T::name())) }
 }
 
 /// Loads a static reference to `T` from an [Rva] that points to a pointer to
@@ -104,13 +104,14 @@ pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'st
 pub unsafe fn load_static_indirect<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
     let target = Program::current()
         .rva_to_va(rva)
-        .map_err(|_| InstanceError::NotFound)? as *mut Option<NonNull<T>>;
+        .map_err(|_| InstanceError::NotFound(T::name()))?
+        as *mut Option<NonNull<T>>;
 
     unsafe {
         target
             .as_mut()
             .and_then(|opt| opt.as_mut())
             .map(|nn| nn.as_mut())
-            .ok_or(InstanceError::Null)
+            .ok_or(InstanceError::Null(T::name()))
     }
 }

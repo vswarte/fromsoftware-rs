@@ -1,8 +1,6 @@
-use bitfield::bitfield;
-use std::fmt::Display;
-use std::mem::transmute;
-use std::ptr::NonNull;
+use std::{borrow::Cow, fmt::Display, mem::transmute, ptr::NonNull};
 
+use bitfield::bitfield;
 use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 
@@ -923,13 +921,13 @@ impl PlayerIns {
     pub unsafe fn local_player() -> InstanceResult<&'static mut Self> {
         unsafe {
             let Ok(world_chr_man) = WorldChrMan::instance() else {
-                return Err(InstanceError::NotFound);
+                return Err(InstanceError::NotFound(Cow::Borrowed("PlayerIns")));
             };
 
             world_chr_man
                 .main_player
                 .as_deref_mut()
-                .ok_or(InstanceError::NotFound)
+                .ok_or(InstanceError::NotFound(Cow::Borrowed("PlayerIns")))
         }
     }
 }

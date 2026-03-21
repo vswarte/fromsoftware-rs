@@ -1,10 +1,10 @@
 use std::{borrow::Cow, ptr::NonNull};
 
-use shared::{FromStatic, OwnedPtr, Program};
+use shared::{FromStatic, OwnedPtr};
 
 use vtable_rs::VPtr;
 
-use crate::{Vector, dlkr::DLAllocatorBase};
+use crate::{Vector, dlkr::DLAllocatorBase, rva};
 
 #[vtable_rs::vtable]
 pub trait DLCipherKeyVmt {
@@ -346,20 +346,6 @@ impl FromStatic for CryptoSPIRegistry {
     }
 
     unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
-        use crate::rva;
-        use pelite::pe64::Pe;
-
-        let target = Program::current()
-            .rva_to_va(rva::get().crypto_spi_registry)
-            .map_err(|_| fromsoftware_shared::InstanceError::NotFound)?
-            as *mut Option<NonNull<CryptoSPIRegistry>>;
-
-        unsafe {
-            target
-                .as_mut()
-                .and_then(|opt| opt.as_mut())
-                .map(|nn| nn.as_mut())
-                .ok_or(fromsoftware_shared::InstanceError::Null)
-        }
+        unsafe { shared::load_static_indirect(rva::get().crypto_spi_registry) }
     }
 }

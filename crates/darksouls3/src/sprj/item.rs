@@ -3,7 +3,7 @@ use std::{borrow::Cow, fmt, ops, ptr, sync::LazyLock};
 
 use pelite::pe64::Pe;
 
-use shared::{FromStatic, InstanceError, InstanceResult, Program, util::IncompleteArrayField};
+use shared::{FromStatic, InstanceResult, Program, util::IncompleteArrayField};
 
 use super::ItemId;
 use crate::rva;
@@ -20,11 +20,7 @@ impl FromStatic for MapItemMan {
 
     /// Returns the singleton instance of `MapItemMan`.
     unsafe fn instance() -> InstanceResult<&'static mut Self> {
-        let target = Program::current()
-            .rva_to_va(rva::get().map_item_man_ptr)
-            .map_err(|_| InstanceError::NotFound)? as *const *mut Self;
-
-        unsafe { (*target).as_mut() }.ok_or(InstanceError::Null)
+        unsafe { shared::load_static_indirect(rva::get().map_item_man_ptr) }
     }
 }
 

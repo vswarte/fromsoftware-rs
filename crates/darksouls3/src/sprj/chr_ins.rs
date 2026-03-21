@@ -1,4 +1,4 @@
-use std::ptr::NonNull;
+use std::{borrow::Cow, ptr::NonNull};
 
 use shared::{
     FromStatic, InstanceError, InstanceResult, OwnedPtr, Subclass, Superclass, UnknownStruct,
@@ -258,11 +258,11 @@ impl PlayerIns {
     pub unsafe fn local_player() -> InstanceResult<&'static mut Self> {
         unsafe {
             let Ok(world_chr_man) = WorldChrMan::instance() else {
-                return Err(InstanceError::NotFound);
+                return Err(InstanceError::NotFound(Cow::Borrowed("PlayerIns")));
             };
 
             let Some(mut player) = world_chr_man.main_player else {
-                return Err(InstanceError::NotFound);
+                return Err(InstanceError::NotFound(Cow::Borrowed("PlayerIns")));
             };
 
             Ok(player.as_mut())
