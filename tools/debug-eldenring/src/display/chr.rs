@@ -8,7 +8,7 @@ use eldenring::cs::{
     CSChrRideModule, CSChrTimeActModule, CSPairAnimNode, CSRideNode, ChrAsm, ChrAsmEquipEntries,
     ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsExt, ChrInsModuleContainer, ChrInsSubclassMut,
     ChrPhysicsMaterialInfo, EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData,
-    ItemReplenishStateTracker, PlayerGameData, PlayerIns,
+    ItemReplenishStateTracker, PlayerDataAttackRating, PlayerGameData, PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 
@@ -165,20 +165,226 @@ impl DebugDisplay for ChrAsmEquipEntries {
 impl DebugDisplay for PlayerGameData {
     fn render_debug(&self, ui: &Ui) {
         ui.display("Player ID", self.player_id);
-        ui.debug(
-            "Furlcalling Finger Active",
-            self.furlcalling_finger_remedy_active,
-        );
-        ui.debug("Rune Arc Active", self.rune_arc_active);
-        ui.debug("White Ring Active", self.white_ring_active);
-        ui.debug("Blue Ring Active", self.blue_ring_active);
-
-        ui.debug("Character Event ID", self.character_event_id);
+        ui.display("Character ID", self.character_id);
+        ui.display("Character Event ID", self.character_event_id);
+        ui.display("Game Data Man Index", self.game_data_man_index);
         ui.debug("Character Type", self.chr_type);
         ui.debug("Multiplay Role", self.multiplay_role);
+        ui.debug("Sell Region", self.sell_region);
+        ui.display("Is My World", self.is_my_world);
+        ui.display("Is Main Player", self.is_main_player);
+        ui.display("Is Voice Chat Enabled", self.is_voice_chat_enabled);
+
+        ui.header("Character", || {
+            ui.display("Level", self.level);
+            ui.display("Gender", self.gender);
+            ui.display("Archetype", self.archetype);
+            ui.display("Voice Type", self.voice_type);
+            ui.display("Starting Gift", self.starting_gift);
+            ui.display("Vow Type", self.vow_type);
+            ui.display("Unlocked Magic Slots", self.unlocked_magic_slots);
+            ui.display("Unlocked Talisman Slots", self.unlocked_talisman_slots);
+            ui.display("Scadutree Blessing", self.scadutree_blessing);
+            ui.display("Reversed Spirit Ash", self.reversed_spirit_ash);
+        });
+
+        ui.header("Resources", || {
+            ui.display(
+                "HP",
+                format!(
+                    "{} / {} (base {})",
+                    self.current_hp, self.current_max_hp, self.base_max_hp
+                ),
+            );
+            ui.display(
+                "FP",
+                format!(
+                    "{} / {} (base {})",
+                    self.current_fp, self.current_max_fp, self.base_max_fp
+                ),
+            );
+            ui.display(
+                "Stamina",
+                format!(
+                    "{} / {} (base {})",
+                    self.current_stamina, self.current_max_stamina, self.base_max_stamina
+                ),
+            );
+            ui.display("HP Flask Max", self.max_hp_flask);
+            ui.display("HP Estus Rate", self.hp_estus_rate);
+            ui.display("HP Estus Additional", self.hp_estus_additional);
+            ui.display("FP Flask Max", self.max_fp_flask);
+            ui.display("FP Estus Rate", self.fp_estus_rate);
+            ui.display("FP Estus Additional", self.fp_estus_additional);
+        });
+
+        ui.header("Attributes", || {
+            ui.display(
+                "Vigor",
+                format!("{} (effective {})", self.vigor, self.effective_vigor),
+            );
+            ui.display(
+                "Mind",
+                format!("{} (effective {})", self.mind, self.effective_mind),
+            );
+            ui.display(
+                "Endurance",
+                format!(
+                    "{} (effective {})",
+                    self.endurance, self.effective_endurance
+                ),
+            );
+            ui.display(
+                "Strength",
+                format!("{} (effective {})", self.strength, self.effective_strength),
+            );
+            ui.display(
+                "Dexterity",
+                format!(
+                    "{} (effective {})",
+                    self.dexterity, self.effective_dexterity
+                ),
+            );
+            ui.display(
+                "Intelligence",
+                format!(
+                    "{} (effective {})",
+                    self.intelligence, self.effective_intelligence
+                ),
+            );
+            ui.display(
+                "Faith",
+                format!("{} (effective {})", self.faith, self.effective_faith),
+            );
+            ui.display(
+                "Arcane",
+                format!("{} (effective {})", self.arcane, self.effective_arcane),
+            );
+            ui.display("Effective Vitality", self.effective_vitality);
+        });
+
+        ui.header("Combat", || {
+            ui.display("Poise", self.poise);
+            ui.display("Discovery", self.discovery);
+            ui.display("Max Equip Load", self.max_equip_load);
+            ui.display("Base Durability", self.base_durability);
+            ui.display("Damage Negation Physical", self.damage_negation_physical);
+            ui.display("Damage Negation Strike", self.damage_negation_strike);
+            ui.display("Damage Negation Slash", self.damage_negation_slash);
+            ui.display("Damage Negation Pierce", self.damage_negation_pierce);
+            ui.display("Damage Negation Magic", self.damage_negation_magic);
+            ui.display("Damage Negation Fire", self.damage_negation_fire);
+            ui.display("Damage Negation Lightning", self.damage_negation_lightning);
+            ui.display("Damage Negation Holy", self.damage_negation_holy);
+            ui.nested("Attack Rating", &self.attack_rating);
+        });
+
+        ui.header("Status Resistances", || {
+            const NAMES: [&str; 7] = [
+                "Poison", "Rot", "Bleed", "Death", "Frost", "Sleep", "Madness",
+            ];
+            let base = [
+                self.poison_resist,
+                self.rot_resist,
+                self.bleed_resist,
+                self.death_resist,
+                self.frost_resist,
+                self.sleep_resist,
+                self.madness_resist,
+            ];
+            for (i, name) in NAMES.iter().enumerate() {
+                ui.display(
+                    *name,
+                    format!(
+                        "{} / {} (resist {})",
+                        self.resistance_gauges[i], self.resistance_gauge_max[i], base[i]
+                    ),
+                );
+            }
+            ui.display("Resist Curse Item Count", self.resist_curse_item_count);
+            ui.display("Pending Block Clear Bonus", self.pending_block_clear_bonus);
+        });
+
+        ui.header("Status Proc Timers", || {
+            const NAMES: [&str; 7] = [
+                "Poison", "Rot", "Bleed", "Death", "Frost", "Sleep", "Madness",
+            ];
+            for (i, name) in NAMES.iter().enumerate() {
+                ui.display(
+                    *name,
+                    format!(
+                        "{:.2} / {:.2}",
+                        self.proc_status_timers[i], self.proc_status_timer_max[i]
+                    ),
+                );
+            }
+        });
+
+        ui.header("Progression", || {
+            ui.display("Rune Count", self.rune_count);
+            ui.display("Rune Memory", self.rune_memory);
+            ui.display("Reached Max Rune Memory", self.reached_max_rune_memory);
+            ui.display("Base Hero Point", self.base_hero_point);
+            ui.display("Base Hero Point 2", self.base_hero_point_2);
+            ui.display("Matching Weapon Level", self.matching_weapon_level);
+            ui.display(
+                "Matchmaking Spirit Ashes Level",
+                self.matchmaking_spirit_ashes_level,
+            );
+        });
+
+        ui.header("Multiplayer", || {
+            ui.debug(
+                "Furlcalling Finger Active",
+                self.furlcalling_finger_remedy_active,
+            );
+            ui.debug("Rune Arc Active", self.rune_arc_active);
+            ui.debug("White Ring Active", self.white_ring_active);
+            ui.debug("Blue Ring Active", self.blue_ring_active);
+            ui.display("Total Summon Count", self.total_summon_count);
+            ui.display("Coop Success Count", self.coop_success_count);
+            ui.display("Invasions Success Count", self.invasions_success_count);
+            ui.display("Solo Breakin Point", self.solo_breakin_point);
+            ui.display("Invaders Killed", self.invaders_killed);
+            ui.display(
+                "Is Using Festering Bloody Finger",
+                self.is_using_festering_bloody_finger,
+            );
+            ui.debug("Used Invasion Item Type", self.used_invasion_item_type);
+            ui.display("Mount Handle", self.mount_handle);
+            ui.display("Sign Cooldown Enabled", self.sign_cooldown_enabled);
+        });
+
+        ui.header("Quickmatch", || {
+            ui.display("Kill Count", self.quickmatch_kill_count);
+            ui.display("Team", self.quick_match_team);
+            ui.display("Desired Team", self.quick_match_desired_team);
+            ui.display("Is Host", self.is_quick_match_host);
+            ui.display("Map Load Ready", self.quick_match_map_load_ready);
+            ui.display("Duel Points", self.quick_match_duel_points);
+            ui.display(
+                "United Combat Points",
+                self.quick_match_united_combat_points,
+            );
+            ui.display("Spirit Ashes Points", self.quick_match_spirit_ashes_points);
+            ui.display("Duel Rank", self.quickmatch_duel_rank);
+            ui.display("United Combat Rank", self.quickmatch_united_combat_rank);
+            ui.display("Spirit Ashes Rank", self.quickmatch_spirit_ashes_rank);
+        });
 
         ui.nested("EquipGameData", &self.equipment);
         ui.nested_opt("Storage Box EquipInventoryData", self.storage.as_ref());
+    }
+}
+
+impl DebugDisplay for PlayerDataAttackRating {
+    fn render_debug(&self, ui: &Ui) {
+        ui.display("Left Primary", self.left_armament_primary);
+        ui.display("Right Primary", self.right_armament_primary);
+        ui.display("Left Secondary", self.left_armament_secondary);
+        ui.display("Right Secondary", self.right_armament_secondary);
+        ui.display("Left Tertiary", self.left_armament_tertiary);
+        ui.display("Right Tertiary", self.right_armament_tertiary);
     }
 }
 
