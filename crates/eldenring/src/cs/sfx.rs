@@ -1,5 +1,5 @@
 use crate::gxffx::GXFfxSceneCtrl;
-use crate::{UnkDLTree, DLVector};
+use crate::{DLVector, UnkDLTree};
 use shared::OwnedPtr;
 
 #[repr(C)]
