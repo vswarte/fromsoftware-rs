@@ -19,30 +19,33 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        run: |
+          rustup target remove x86_64-pc-windows-gnu
+          rustup target remove i686-pc-windows-msvc
+          rustup toolchain install stable `
+            --target x86_64-pc-windows-msvc `
+            --component clippy,rustfmt `
+            --profile minimal `
+            --no-self-update
+          rustup default stable
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
         with:
-          components: clippy, rustfmt
+          cache-workspace-crates: "true"
 
       - name: Formatting
         run: cargo fmt -- --check
 
+      - name: Build
+        run: cargo build --tests --profile ci  --verbose
+
       - name: Tests
-        run: cargo test --verbose
+        run: cargo test --profile ci --lib --tests --bins --verbose
 
       - name: Clippy
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --profile ci --all-targets --no-deps
 
       - name: Documentation
         run: cargo doc --no-deps

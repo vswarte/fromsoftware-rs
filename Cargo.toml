@@ -20,6 +20,15 @@ members = [
     "examples/present-action-button",
     "tests",
 ]
+default-members = [
+    "crates/shared",
+    "crates/shared/stl",
+    "crates/darksouls3",
+    "crates/eldenring",
+    "crates/nightreign",
+    "crates/sekiro",
+    "tests",
+]
 
 [workspace.package]
 version = "0.13.0"
@@ -62,12 +71,11 @@ features = ["derive"]
 version = "0.54"
 features = [
     "Win32_Foundation",
-	"Win32_System_Kernel",
-	"Win32_System_Threading",
-	"Win32_UI_WindowsAndMessaging",
-	"Win32_UI_Input_KeyboardAndMouse",
-	"Win32_System_Diagnostics_Debug",
-	"Win32_System_LibraryLoader",
+    "Win32_System_Kernel",
+    "Win32_System_Threading",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_System_Diagnostics_Debug",
+    "Win32_System_LibraryLoader",
     "Win32_System_Memory",
 ]
 
@@ -81,3 +89,10 @@ lto = true
 codegen-units = 1
 panic = "abort"
 opt-level = "z"
+
+[profile.ci]
+inherits = "dev"
+debug = false
+
+[profile.ci.package."*"]
+debug = false
