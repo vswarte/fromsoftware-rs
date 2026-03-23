@@ -673,7 +673,7 @@ mod test {
     #[test]
     fn proper_sizes() {
         assert_eq!(0x20, size_of::<CSBuddyStoneEliminateTargetCalc>());
-        assert_eq!(0x20, size_of::<SummonBuddyGroup>());
+        assert_eq!(0x30, size_of::<SummonBuddyGroup>());
         assert_eq!(0x70, size_of::<SummonBuddyWarpEntry>());
         assert_eq!(0x38, size_of::<SummonBuddyWarpManager>());
         assert_eq!(0x110, size_of::<SummonBuddyManager>());

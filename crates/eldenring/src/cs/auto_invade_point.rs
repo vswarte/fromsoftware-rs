@@ -60,7 +60,7 @@ mod test {
     #[test]
     fn proper_sizes() {
         assert_eq!(std::mem::size_of::<CSAutoInvadePoint>(), 0x70);
-        assert_eq!(std::mem::size_of::<AutoInvadePointBlockEntry>(), 0x18);
+        assert_eq!(std::mem::size_of::<AutoInvadePointBlockEntry>(), 0x10);
         assert_eq!(std::mem::size_of::<AutoInvadePoint>(), 0x10);
     }
 }
