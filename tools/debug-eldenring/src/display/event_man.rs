@@ -103,11 +103,9 @@ impl DebugDisplay for SosSignMan {
             |ui, _i, entry| ui.display("Summon Request ID", entry),
         );
 
-        ui.list(
-            "Join Data",
-            self.join_data.iter().map(|e| unsafe { e.as_ref() }),
-            |ui, _i, entry| ui.nested(format!("Join Data (Sign ID: {})", entry.sign_id), entry),
-        );
+        ui.list("Join Data", self.join_data.iter(), |ui, _i, entry| {
+            ui.nested(format!("Join Data (Sign ID: {})", entry.sign_id), entry)
+        });
 
         ui.display("Is in Rescue", self.is_in_resque);
 
