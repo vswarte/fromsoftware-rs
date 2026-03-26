@@ -5,7 +5,7 @@ use bitfield::bitfield;
 use thiserror::Error;
 
 use crate::{
-    BasicVector, DLVector,
+    ArrayWithHeader, BasicVector, DLList, DLVector,
     cs::{ChrType, MultiplayRole},
 };
 use shared::{IsEmpty, MaybeEmpty, NonEmptyIteratorExt, NonEmptyIteratorMutExt, OwnedPtr};
@@ -468,8 +468,6 @@ pub struct InventoryItemsData {
     /// length despite not being actual items.
     pub multiplay_key_items_len: u32,
 
-    _pad3c: u32,
-
     /// Pointers to the active normal item list and its length. All inventory
     /// reads and writes in the game go through this.
     ///
@@ -484,12 +482,13 @@ pub struct InventoryItemsData {
     pub key_items_accessor: InventoryItemListAccessor,
 
     /// Contains the indices into the item ID mapping list.
-    item_id_mapping_indices: OwnedPtr<[u16; 2017]>,
-    unk68: u64,
+    pub item_id_mapping_indices: OwnedPtr<[i16; 2017]>,
+    pub item_id_mapping_pool_len: u32,
     /// Contains table of item IDs and their corresponding location in the equip inventory data
     /// lists.
-    item_id_mapping: *mut ItemIdMapping,
-    unk78: u64,
+    pub item_id_mapping: OwnedPtr<ArrayWithHeader<ItemIdMapping>>,
+    /// Index of the latest `item_id_mapping` free head, or -1 if none
+    pub item_id_mapping_free_head: i16,
 }
 
 impl InventoryItemsData {
@@ -650,6 +649,189 @@ impl InventoryItemsData {
             )
         }
     }
+
+    pub fn entry_at_slot(&self, slot: usize) -> Option<&MaybeEmpty<EquipInventoryDataListEntry>> {
+        let key_cap = self.key_items_capacity as usize;
+        if slot < key_cap {
+            Some(self.current_key_entries().get(slot)?)
+        } else {
+            Some(self.normal_entries().get(slot - key_cap)?)
+        }
+    }
+
+    pub fn entry_at_slot_mut(
+        &mut self,
+        slot: usize,
+    ) -> Option<&mut MaybeEmpty<EquipInventoryDataListEntry>> {
+        let key_cap = self.key_items_capacity as usize;
+        if slot < key_cap {
+            Some(self.current_key_entries_mut().get_mut(slot)?)
+        } else {
+            Some(self.normal_entries_mut().get_mut(slot - key_cap)?)
+        }
+    }
+
+    pub fn get_entry(&self, item_id: ItemId) -> Option<&EquipInventoryDataListEntry> {
+        let slot = self.find_item_idx(item_id)?;
+        self.entry_at_slot(slot)?.as_option()
+    }
+
+    pub fn get_entry_mut(&mut self, item_id: ItemId) -> Option<&mut EquipInventoryDataListEntry> {
+        let slot = self.find_item_idx(item_id)?;
+        self.entry_at_slot_mut(slot)?.as_option_mut()
+    }
+
+    fn bucket_for(item_id: ItemId) -> usize {
+        item_id.into_inner() as usize % 2017
+    }
+
+    fn mapping_entry_mut(&mut self, index: i16) -> Option<&mut ItemIdMapping> {
+        unsafe { self.item_id_mapping.as_mut_slice().get_mut(index as usize) }
+    }
+    fn mapping_entry(&self, index: i16) -> Option<&ItemIdMapping> {
+        unsafe { self.item_id_mapping.as_slice().get(index as usize) }
+    }
+
+    /// Pop one entry from the free list. Returns `None` if pool is full
+    fn pop_free_entry(&mut self) -> Option<i16> {
+        let head = self.item_id_mapping_free_head;
+        if head == -1 {
+            return None;
+        }
+        let next = unsafe { self.item_id_mapping.as_slice() }[head as usize].next_chain_idx()?;
+        self.item_id_mapping_free_head = next;
+        Some(head)
+    }
+
+    /// Walk the collision chain for `item_id`'s bucket, returning
+    /// `(prev_idx, cur_idx)` where `cur_idx` is the matching entry.
+    /// Returns `None` if the item is not in the table
+    fn find_chain_entry(&self, item_id: ItemId) -> Option<(Option<i16>, i16)> {
+        let bucket = Self::bucket_for(item_id);
+        let first_raw = self.item_id_mapping_indices[bucket];
+        if first_raw < 0 {
+            return None;
+        }
+
+        let mut prev_idx: Option<i16> = None;
+        let mut cur_idx = first_raw;
+
+        loop {
+            let (is_match, next) = match self.mapping_entry(cur_idx) {
+                None => return None,
+                Some(e) => (e.item_id.as_valid() == Some(item_id), e.next_chain_idx()),
+            };
+
+            if is_match {
+                return Some((prev_idx, cur_idx));
+            }
+
+            prev_idx = Some(cur_idx);
+            match next {
+                Some(n) => cur_idx = n,
+                None => return None,
+            }
+        }
+    }
+
+    /// Upserts `(item_id -> inventory slot index)` into the hash table, keeping the
+    /// **minimum** slot index for each item_id
+    ///
+    /// Call this after inserting or updating any inventory entry
+    pub fn update_item_id_mapping(&mut self, item_id: ItemId, inventory_slot: i16) {
+        let slot_bits = inventory_slot as u16;
+
+        match self.find_chain_entry(item_id) {
+            Some((_, cur_idx)) => {
+                // Entry exists, so keep minimum slot
+                if let Some(e) = self.mapping_entry_mut(cur_idx)
+                    && slot_bits < e.mapping.item_slot()
+                {
+                    e.mapping.set_item_slot(slot_bits);
+                }
+            }
+            None => {
+                // Not present, so allocate and either point the bucket or
+                // append to the tail of the existing chain
+                let new_idx = match self.pop_free_entry() {
+                    Some(i) => i,
+                    None => return,
+                };
+
+                let bucket = Self::bucket_for(item_id);
+                let first_raw = self.item_id_mapping_indices[bucket];
+
+                if first_raw < 0 {
+                    // Empty bucket
+                    self.item_id_mapping_indices[bucket] = new_idx;
+                } else {
+                    // Walk to tail and append
+                    let mut cur_idx = first_raw;
+                    loop {
+                        let next = self.mapping_entry(cur_idx).and_then(|e| e.next_chain_idx());
+                        match next {
+                            Some(n) => cur_idx = n,
+                            None => {
+                                if let Some(e) = self.mapping_entry_mut(cur_idx) {
+                                    e.set_next_chain_idx(Some(new_idx as u16));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if let Some(e) = self.mapping_entry_mut(new_idx) {
+                    e.item_id = OptionalItemId::from(item_id.into_inner());
+                    e.mapping.set_item_slot(slot_bits);
+                    e.set_next_chain_idx(None);
+                    e.mark_in_use();
+                }
+            }
+        }
+    }
+
+    pub fn remove_item_id_mapping(&mut self, item_id: ItemId) {
+        let (prev_idx, cur_idx) = match self.find_chain_entry(item_id) {
+            Some(pair) => pair,
+            None => return,
+        };
+
+        let next = self.mapping_entry(cur_idx).and_then(|e| e.next_chain_idx());
+        let free_head = self.item_id_mapping_free_head;
+
+        // Unlink
+        match prev_idx {
+            None => {
+                let bucket = Self::bucket_for(item_id);
+                self.item_id_mapping_indices[bucket] = next.unwrap_or(-1);
+            }
+            Some(prev) => {
+                if let Some(e) = self.mapping_entry_mut(prev) {
+                    e.set_next_chain_idx(next.map(|n| n as u16));
+                }
+            }
+        }
+
+        // Return to free list
+        if let Some(e) = self.mapping_entry_mut(cur_idx) {
+            e.item_id = OptionalItemId::NONE;
+            e.set_next_chain_idx(if free_head >= 0 {
+                Some(free_head as u16)
+            } else {
+                None
+            });
+            e.mark_free();
+        }
+        self.item_id_mapping_free_head = cur_idx;
+    }
+
+    /// O(1) lookup of an item's first inventory slot via the hash table.
+    /// Returns `None` if the item is not present
+    pub fn find_item_idx(&self, item_id: ItemId) -> Option<usize> {
+        let (_, cur_idx) = self.find_chain_entry(item_id)?;
+        Some(self.mapping_entry(cur_idx)?.mapping.item_slot() as usize)
+    }
 }
 
 #[repr(C)]
@@ -664,7 +846,9 @@ pub struct EquipInventoryData {
     pub pot_items_count: [u32; 16],
     /// Capacity of all pot items by their pot group
     pub pot_items_capacity: [u32; 16],
-    unk108: [u8; 0x18],
+    /// List of item indices to show in the "Recent Items" inventory tab.
+    /// Capped at 64 and shown in the UI back to front.
+    pub recent_item_indices: DLList<u32>,
     /// True will allow consumables stack up to 600 like in storage box.
     pub unlimited_consumables: bool,
     /// Should pots be limited to amount of pot capacity by their group?
@@ -679,28 +863,59 @@ bitfield! {
     struct ItemIdMappingBits(u32);
     impl Debug;
 
-    u32;
-    mapping_index, _: 23, 12;
-    item_slot, _: 11, 0;
+    bool;
+    pub is_free, set_is_free: 24;
+
+    u16;
+    mapping_index, set_mapping_index: 23, 12;
+    item_slot, set_item_slot: 11, 0;
 }
 
 #[repr(C)]
 pub struct ItemIdMapping {
     pub item_id: OptionalItemId,
-    bits4: ItemIdMappingBits,
+    mapping: ItemIdMappingBits,
 }
 
 impl ItemIdMapping {
     /// Returns the offset of the next item ID mapping with the same modulo result.
-    pub fn next_mapping_item(&self) -> u32 {
-        self.bits4.mapping_index() - 1
+    pub fn next_mapping_item(&self) -> i16 {
+        self.mapping.mapping_index() as i16 - 1
     }
 
     /// Returns the index of the item slot. This index is first checked against the key items
     /// capacity to see if it's contained in that. If not you will need to subtract the key items
     /// capacity to get the index for the normal items list.
-    pub fn item_slot(&self) -> u32 {
-        self.bits4.item_slot()
+    pub fn item_slot(&self) -> i16 {
+        self.mapping.item_slot() as i16
+    }
+
+    pub fn is_free(&self) -> bool {
+        self.mapping.is_free()
+    }
+
+    /// Next entry in the collision chain, 0-based. `None` = end of chain.
+    /// The stored value is 1-based (0 means no next entry)
+    pub fn next_chain_idx(&self) -> Option<i16> {
+        let one_based = self.mapping.mapping_index() as i16;
+        if one_based == 0 {
+            None
+        } else {
+            Some(one_based - 1)
+        }
+    }
+
+    fn set_next_chain_idx(&mut self, idx: Option<u16>) {
+        let one_based = idx.map_or(0, |i| i + 1);
+        self.mapping.set_mapping_index(one_based);
+    }
+
+    fn mark_in_use(&mut self) {
+        self.mapping.set_is_free(false);
+    }
+
+    fn mark_free(&mut self) {
+        self.mapping.set_is_free(true);
     }
 }
 
@@ -906,13 +1121,13 @@ mod tests {
     fn test_item_id_mapping() {
         let mapping = ItemIdMapping {
             item_id: OptionalItemId::from(0x40002760),
-            bits4: ItemIdMappingBits(0x003B8000),
+            mapping: ItemIdMappingBits(0x003B8000),
         };
         assert_eq!(mapping.item_id, OptionalItemId::from(0x40002760));
         assert_eq!(
             mapping.next_mapping_item(),
-            ((mapping.bits4.0 >> 12) & 0xFFF) - 1
+            ((mapping.mapping.0 >> 12) & 0xFFF) as i16 - 1
         );
-        assert_eq!(mapping.item_slot(), mapping.bits4.0 & 0xFFF);
+        assert_eq!(mapping.item_slot(), (mapping.mapping.0 & 0xFFF) as i16);
     }
 }
