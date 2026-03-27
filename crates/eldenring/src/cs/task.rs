@@ -7,7 +7,7 @@ use windows::core::PCWSTR;
 use crate::dlkr::DLPlainConditionSignal;
 use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
 use crate::{
-    Vector,
+    DLVector,
     dlkr::DLPlainLightMutex,
     fd4::{FD4BasicHashString, FD4Time},
     rva,
@@ -154,7 +154,7 @@ impl SharedTaskImp<CSTaskGroupIndex, FD4TaskData> for CSTaskImp {
 pub struct CSTaskBase {
     vftable: usize,
     allocator: usize,
-    pub task_groups: Vector<TaskGroupEntry>,
+    pub task_groups: DLVector<TaskGroupEntry>,
     pub task_group_index_max: u32,
     _pad34: u32,
 }

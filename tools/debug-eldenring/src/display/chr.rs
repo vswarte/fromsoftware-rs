@@ -624,7 +624,7 @@ impl DebugDisplay for CSChrModelParamModifierModule {
         ui.table(
             "chr-ins-model-param-modifier",
             [TableColumnSetup::new("Name")],
-            self.modifiers.items().iter(),
+            self.modifiers.iter(),
             |ui, _i, modifier| {
                 ui.table_next_column();
                 ui.text(unsafe { modifier.name.to_string() }.unwrap());

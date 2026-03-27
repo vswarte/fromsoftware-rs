@@ -19,7 +19,7 @@ impl DebugDisplay for CSSessionManager {
             self.session_player_limit_override,
         );
 
-        ui.list("Members", self.players.items(), |ui, _i, player| {
+        ui.list("Members", self.players.iter(), |ui, _i, player| {
             player.render_debug(ui)
         });
 
@@ -63,7 +63,7 @@ impl DebugDisplay for CSStayInMultiplayAreaWarpData {
                     TableColumnSetup::new("Steam ID"),
                     TableColumnSetup::new("Fade time"),
                 ],
-                self.player_fade_tracker.items().iter(),
+                self.player_fade_tracker.iter(),
                 |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());

@@ -1,14 +1,4 @@
-use std::{
-    alloc::{GlobalAlloc, Layout},
-    mem::transmute,
-    ptr::NonNull,
-};
-
-use pelite::pe64::Pe;
-use shared::Program;
 use vtable_rs::VPtr;
-
-use crate::rva;
 
 #[vtable_rs::vtable]
 pub trait DLAllocatorVmt {
@@ -77,44 +67,6 @@ pub trait DLAllocatorVmt {
 
 pub struct DLAllocatorBase {
     pub vftable: VPtr<dyn DLAllocatorVmt, Self>,
-}
-
-#[repr(transparent)]
-#[derive(Clone)]
-pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
-
-impl DLAllocatorRef {
-    /// Returns the global instance of DLAllocator that uses the standard MSVC malloc()/free()
-    /// implementation for heap management
-    pub fn runtime_heap_allocator() -> Self {
-        unsafe {
-            transmute::<u64, Self>(
-                Program::current()
-                    .rva_to_va(rva::get().runtime_heap_allocator)
-                    .unwrap(),
-            )
-        }
-    }
-}
-
-unsafe impl GlobalAlloc for DLAllocatorRef {
-    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let allocator = self.0.as_ptr();
-        unsafe { ((*allocator).vftable.allocate)(&mut *allocator, layout.size()) as *mut u8 }
-    }
-
-    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        let allocator = self.0.as_ptr();
-        unsafe {
-            ((*allocator).vftable.deallocate)(&mut *allocator, ptr);
-        }
-    }
-}
-
-impl From<NonNull<DLAllocatorBase>> for DLAllocatorRef {
-    fn from(ptr: NonNull<DLAllocatorBase>) -> Self {
-        Self(ptr)
-    }
 }
 
 impl DLAllocatorVmt for DLAllocatorBase {

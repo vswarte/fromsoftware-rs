@@ -6,9 +6,9 @@ use shared::{F32Vector3, OwnedPtr, Subclass, Superclass, singleton};
 use vtable_rs::VPtr;
 
 use crate::{
-    DoublyLinkedList,
+    DLList,
     cs::{BlockId, CSEzTask, CSEzVoidTask, DeathState, FullScreenMessage, SummonParamType},
-    dlkr::DLAllocatorRef,
+    dlkr::DLAllocatorBase,
     dlrf::DLRuntimeClassImpl,
     dltx::{DLShiftJisStringKind, DLString, DLUTF16StringKind},
     fd4::FD4Time,
@@ -92,14 +92,14 @@ pub struct EventMsgExecListEntry {
 #[repr(C)]
 pub struct CSLuaEventMsgMap {
     vftable: usize,
-    pub event_msg_exec_list: DoublyLinkedList<OwnedPtr<EventMsgExecListEntry>>,
+    pub event_msg_exec_list: DLList<OwnedPtr<EventMsgExecListEntry>>,
     /// Entries that were executed but retained to prevent immediate re-execution
     /// - The list is checked before scheduling to reject duplicates.
     /// - After execution, entries with [`EventMsgExecListEntry::repetition`] [`LuaScriptExecuteRepetition::Once`] are either deleted or moved
     ///   here depending on event id and [`EventMsgExecListEntry.is_repeat_message`].
     ///
     /// [`EventMsgExecListEntry.is_repeat_message`]: EventMsgExecListEntry::is_repeat_message
-    pub deferred_event_exec_list: DoublyLinkedList<OwnedPtr<EventMsgExecListEntry>>,
+    pub deferred_event_exec_list: DLList<OwnedPtr<EventMsgExecListEntry>>,
     pub lua_script_imitation_class: NonNull<DLRuntimeClassImpl>,
 }
 
@@ -165,7 +165,7 @@ pub struct CSDeathRestartEvent {
 pub struct CSLuaEventProxy {
     vftable: usize,
     pub lua_event_script_imitation_class: NonNull<DLRuntimeClassImpl>,
-    unk10: DLAllocatorRef,
+    unk10: NonNull<DLAllocatorBase>,
     unk18: [u8; 0x18],
     pub lua_event_msg_map: CSLuaEventMsgMap,
     /// Dummy field for the packet broadcast
@@ -276,8 +276,8 @@ bitfield! {
 #[repr(C)]
 pub struct CSLuaEventObserver {
     vftable: usize,
-    pub lua_event_observees: DoublyLinkedList<OwnedPtr<CSLuaEventCondition>>,
-    pub bonfire_event_observees: DoublyLinkedList<OwnedPtr<CSLuaEventCondition>>,
+    pub lua_event_observees: DLList<OwnedPtr<CSLuaEventCondition>>,
+    pub bonfire_event_observees: DLList<OwnedPtr<CSLuaEventCondition>>,
     pub bonfire_near_enemy_update_task: CSEzVoidTask<CSEzTask, Self>,
     unk60: i32,
 }

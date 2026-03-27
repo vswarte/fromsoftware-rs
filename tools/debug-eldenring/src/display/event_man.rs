@@ -89,10 +89,13 @@ impl DebugDisplay for CSEventWorldAreaTimeCtrl {
 impl DebugDisplay for SosSignMan {
     fn render_debug(&self, ui: &Ui) {
         ui.list("Signs", self.signs.iter(), |ui, _i, entry| {
-            ui.nested(format!("Sign {}", entry.sign_id), &entry.sign_data);
+            let (sign_id, sign_data) = entry.into();
+
+            ui.nested(format!("Sign {}", sign_id), sign_data);
         });
         ui.list("Sign SFX", self.sign_sfx.iter(), |ui, _i, entry| {
-            ui.display("Sign ID", entry.sign_id);
+            let (sign_id, _) = entry.into();
+            ui.display("Sign ID", sign_id);
         });
         ui.list(
             "Summon Requests",
@@ -100,11 +103,9 @@ impl DebugDisplay for SosSignMan {
             |ui, _i, entry| ui.display("Summon Request ID", entry),
         );
 
-        ui.list(
-            "Join Data",
-            self.join_data.iter().map(|e| unsafe { e.as_ref() }),
-            |ui, _i, entry| ui.nested(format!("Join Data (Sign ID: {})", entry.sign_id), entry),
-        );
+        ui.list("Join Data", self.join_data.iter(), |ui, _i, entry| {
+            ui.nested(format!("Join Data (Sign ID: {})", entry.sign_id), entry)
+        });
 
         ui.display("Is in Rescue", self.is_in_resque);
 
@@ -113,13 +114,9 @@ impl DebugDisplay for SosSignMan {
             self.white_sign_cool_time_param_id,
         );
 
-        ui.list(
-            "Sign Cooldowns",
-            self.signs_cooldown.items().iter(),
-            |ui, i, t| {
-                ui.text(format!("Cooldown {}: {:.2}s", i, t));
-            },
-        );
+        ui.list("Sign Cooldowns", self.signs_cooldown.iter(), |ui, i, t| {
+            ui.text(format!("Cooldown {}: {:.2}s", i, t));
+        });
 
         ui.display(
             "Override Guardian of Rosalia Count Enabled",
