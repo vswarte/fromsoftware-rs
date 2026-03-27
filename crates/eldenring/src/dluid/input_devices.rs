@@ -11,12 +11,12 @@ pub struct InputDevices {
     pub mouse_device: NonNull<MouseDevice>,
     pub keyboard_device: NonNull<KeyboardDevice>,
     unk50: [u8; 0x28],
-    pub unk78: MultiDevices0x78,
+    pub unk78: InputDevices0x78,
     unk3b0: [u8; 16],
 }
 
 #[repr(C)]
-pub struct MultiDevices0x78 {
+pub struct InputDevices0x78 {
     vftable: *const (),
     allocator: *const (),
     pub bitset_fallback: [bool; 162],
@@ -27,7 +27,7 @@ pub struct MultiDevices0x78 {
 }
 
 // #[repr(C)]
-// pub struct MultiDevices0x78ArrayEntry {
+// pub struct InputDevices0x78ArrayEntry {
 //     pub unk00: u32,
 //     pub unk04: u32,
 //     pub unk08: bool,
