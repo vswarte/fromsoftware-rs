@@ -11,12 +11,17 @@ use crate::fd4::{FD4BasePad, InputType, InputTypeGroup};
 ///
 /// Example usage:
 /// ```
-/// if let Ok(in_game_pad) = unsafe { FD4PadManager::instance() }
+/// use fromsoftware_shared::FromStatic;
+/// use eldenring::fd4::FD4PadManager;
+/// use eldenring::cs::UserInputKey;
+/// 
+/// if let Some(in_game_pad) = unsafe { FD4PadManager::instance() }
 ///    .ok()
-///    .and_then(|pad_man| pad_man.get_in_game_pad()
+///    .and_then(|pad_man: &mut FD4PadManager| pad_man.get_in_game_pad())
 /// {
-///    let is_jump_pressed = in_game_pad.poll_input(UserInputKey::Jump);
+///    let is_jump_pressed: bool = in_game_pad.poll_digital_input(UserInputKey::Jump);
 /// }
+/// 
 /// ```
 #[repr(C)]
 #[derive(Superclass)]
@@ -26,18 +31,21 @@ pub struct CSPad {
 }
 
 impl CSPad {
-    pub fn poll_digital_input(&self, input: i32) -> bool {
+    pub fn poll_digital_input<I: Into<i32>>(&self, input: I) -> bool {
+
+        let input_code = input.into();
+
         if !self.allow_polling {
             return false;
         }
 
-        if let Some(pair) = self.unused_input_map.iter().find(|pair| pair.key == input)
+        if let Some(pair) = self.unused_input_map.iter().find(|pair| pair.key == input_code)
             && pair.value
         {
             return true;
         }
 
-        let Some(input_type_group) = self.get_input_type_group(input) else {
+        let Some(input_type_group) = self.get_input_type_group(input_code) else {
             return false;
         };
 
@@ -59,12 +67,15 @@ impl CSPad {
         })
     }
 
-    pub fn poll_analog_input(&self, input: i32) -> f32 {
+    pub fn poll_analog_input<I: Into<i32>>(&self, input: I) -> f32 {
+
+        let input_code = input.into();
+
         if !self.allow_polling {
             return 0.0;
         }
 
-        let Some(input_type_group) = self.get_input_type_group(input) else {
+        let Some(input_type_group) = self.get_input_type_group(input_code) else {
             return 0.0;
         };
 
