@@ -226,6 +226,54 @@ vftable = "near_enemy_finder_vmt"
 class = "CS::SoloParamRepositoryImp"
 vftable = "solo_param_repository_vmt"
 
+[[vmts]]
+class = "CS::CSKeyAssign"
+vftable = "cskey_assign_vmt"
+
+[[vmts]]
+class = "CS::CSInGameKeyAssign"
+vftable = "csin_game_key_assign_vmt"
+
+[[vmts]]
+class = "CS::CSMenuViewerKeyAssign"
+vftable = "csmenu_viewer_key_assign_vmt"
+
+[[vmts]]
+class = "CS::CSPad"
+vftable = "cspad_vmt"
+
+[[vmts]]
+class = "CS::CSInGamePad_UserInput1"
+vftable = "csin_game_pad_vmt"
+
+[[vmts]]
+class = "CS::CSMenuViewerPad"
+vftable = "csmenu_viewer_pad_vmt"
+
+[[vmts]]
+class = "DLUID::DLUserInputDeviceImpl<DLKR::DLMultiThreadingPolicy>"
+vftable = "dluser_input_device_impl_vmt"
+
+[[vmts]]
+class = "DLUID::VirtualMultiDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "virtual_multi_device_vmt"
+
+[[vmts]]
+class = "DLUID::PadDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "pad_device_vmt"
+
+[[vmts]]
+class = "DLUID::KeyboardDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "keyboard_device_vmt"
+
+[[vmts]]
+class = "DLUID::MouseDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "mouse_device_vmt"
+
+[[vmts]]
+class = "DLUID::DummyDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "dummy_device_vmt"
+
 [[patterns]]
 pattern = "48 8d 05 $ { ' } 48 89 4f 68 88 4f 70 48 89 4f 78 48 89 07 48 8b 43 18"
 captures = ["", "fd4file_cap_vmt"]
