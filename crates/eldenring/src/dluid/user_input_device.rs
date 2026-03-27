@@ -2,7 +2,7 @@ use bitfield::bitfield;
 use core::slice;
 use std::ptr::NonNull;
 
-use crate::{Vector, dlkr::DLPlainLightMutex, dluid::UserInputExtension};
+use crate::{Vector, dlkr::DLPlainLightMutex};
 use shared::{Subclass, Superclass};
 
 /// Source of name: RTTI
@@ -23,7 +23,7 @@ pub struct DLUserInputDeviceImpl {
     ///
     /// The game accesses this from [FD4PadManager] and it's [CSPad] instances to poll inputs.
     pub virtual_input_data: DLVirtualInputData,
-    pub user_input_extensions: Vector<UserInputExtension>,
+    user_input_extensions: Vector<*const ()>,
     unk080: *const (),
     unk088: *const (),
     pub mutex: DLPlainLightMutex,
