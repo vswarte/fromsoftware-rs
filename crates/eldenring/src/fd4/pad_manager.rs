@@ -16,7 +16,8 @@ const CAPACITY: usize = 4;
 
 type InputDeviceList = DLFixedVector<NonNull<InputDevices>, CAPACITY>;
 type PadList = DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, PadEntry>>>, CAPACITY>;
-type KeyAssignList = DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, NonNull<CSKeyAssign>>>>, CAPACITY>;
+type KeyAssignList =
+    DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, NonNull<CSKeyAssign>>>>, CAPACITY>;
 
 /// Structure that manages inputs from devices, a.e Controller, Keyboard and Mouse.
 #[repr(C)]
