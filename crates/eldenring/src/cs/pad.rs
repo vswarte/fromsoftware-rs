@@ -26,7 +26,6 @@ pub struct CSPad {
 }
 
 impl CSPad {
-
     pub fn poll_digital_input(&self, input: i32) -> bool {
         if !self.allow_polling {
             return false;
@@ -111,12 +110,7 @@ impl CSPad {
     pub fn index_digital_input(&self, virtual_input_index: i32) -> bool {
         let multi_device = unsafe { self.input_devices.as_ref() };
 
-        let user_input_device = unsafe {
-            &multi_device
-                .virtual_multi_device
-                .as_ref()
-                .device
-        };
+        let user_input_device = unsafe { &multi_device.virtual_multi_device.as_ref().device };
 
         if user_input_device.get_virtual_digital_state(virtual_input_index as usize) {
             return true;

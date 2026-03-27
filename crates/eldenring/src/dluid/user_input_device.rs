@@ -134,9 +134,9 @@ pub struct DynamicBitset {
     /// Bitfield that this [DynamicBitset] corresponds to.
     ///
     /// It's allocated as an array of integers with the size of `integer_count`.
-    /// 
+    ///
     /// # SAFETY
-    /// 
+    ///
     /// We assume the `integer_count` field is always accurate to access this.
     bitset: NonNull<u32>,
     allocator: *const (),
