@@ -14,14 +14,14 @@ use crate::fd4::{FD4BasePad, InputType, InputTypeGroup};
 /// use fromsoftware_shared::FromStatic;
 /// use eldenring::fd4::FD4PadManager;
 /// use eldenring::cs::UserInputKey;
-/// 
+///
 /// if let Some(in_game_pad) = unsafe { FD4PadManager::instance() }
 ///    .ok()
 ///    .and_then(|pad_man: &mut FD4PadManager| pad_man.get_in_game_pad())
 /// {
 ///    let is_jump_pressed: bool = in_game_pad.poll_digital_input(UserInputKey::Jump);
 /// }
-/// 
+///
 /// ```
 #[repr(C)]
 #[derive(Superclass)]
@@ -32,14 +32,16 @@ pub struct CSPad {
 
 impl CSPad {
     pub fn poll_digital_input<I: Into<i32>>(&self, input: I) -> bool {
-
         let input_code = input.into();
 
         if !self.allow_polling {
             return false;
         }
 
-        if let Some(pair) = self.unused_input_map.iter().find(|pair| pair.key == input_code)
+        if let Some(pair) = self
+            .unused_input_map
+            .iter()
+            .find(|pair| pair.key == input_code)
             && pair.value
         {
             return true;
@@ -68,7 +70,6 @@ impl CSPad {
     }
 
     pub fn poll_analog_input<I: Into<i32>>(&self, input: I) -> f32 {
-
         let input_code = input.into();
 
         if !self.allow_polling {
