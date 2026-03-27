@@ -20,7 +20,7 @@ pub struct DLUserInputDeviceImpl {
     unk008: *const (),
     /// Contains a reference to the same [DLVirtualInputData] from `initial_virtual_input_data`.
     ///
-    /// The game accesses this from [FD4PadManager] and it's [CSPad] instances to poll inputs.
+    /// The game accesses this from `FD4PadManager` and it's `CSPad` instances to poll inputs.
     pub virtual_input_data: DLVirtualInputData,
     user_input_extensions: Vector<*const ()>,
     unk080: *const (),
@@ -231,7 +231,7 @@ pub struct PadDevice {
 }
 
 bitfield! {
-    /// Source: https://learn.microsoft.com/en-us/windows/win32/api/xinput/ns-xinput-xinput_gamepad
+    /// Source: <https://learn.microsoft.com/en-us/windows/win32/api/xinput/ns-xinput-xinput_gamepad>
     #[repr(C)]
     pub struct WButtons(u16);
     impl Debug;
@@ -281,7 +281,7 @@ pub struct MouseDevice {
     pub normalized_lz: f32,
 }
 
-/// Source of name: https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee416631(v=vs.85)
+/// Source of name: <https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee416631(v=vs.85)>
 #[repr(C)]
 pub struct DIMouseState2 {
     /// Horizontal mouse movement.
@@ -342,7 +342,7 @@ impl KeyboardDevice {
     }
 }
 
-/// Source: https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb321074(v=vs.85)
+/// Source: <https://learn.microsoft.com/en-us/previous-versions/windows/desktop/bb321074(v=vs.85)>
 #[repr(u8)]
 #[allow(nonstandard_style)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -15,7 +15,7 @@ pub struct FD4BasePad {
     pub input_devices: NonNull<InputDevices>,
     /// `パッド名未設定` | `Pad name not set`
     ///
-    /// The game will sometimes change this to the name of the [CSPad] type.
+    /// The game will sometimes change this to the name of the `CSPad` type.
     ///
     /// For example: `CSMenuViewerPad` or `CSDebugPausePad`.
     pub pad_name: *const u16,
@@ -24,25 +24,25 @@ pub struct FD4BasePad {
     unk24: i32,
     /// [CSKeyAssign] instance referenced in `FD4PadManager.key_assigns`.
     ///
-    /// This will be the same [Subclass<>] as the [CSPad] that holds this instance.
+    /// This will be the same `Subclass` as the `CSPad` that holds this instance.
     pub key_assign: NonNull<CSKeyAssign>,
     /// Usually just 1.
     unk30: usize,
-    /// Represents a [Map<>] that groups the given input code to an [InputTypeGroup].
+    /// Represents a `Map<>` that groups the given input code to an [InputTypeGroup].
     ///
     /// The [InputTypeGroup] contains the [InputType] for that input and the code to poll it with.
     pub input_type_group: NonNull<Tree<Pair<i32, InputTypeGroup>>>,
-    /// Represents a [Map<>] that maps the given input code to two booleans.
+    /// Represents a `Map<>` that maps the given input code to two booleans.
     ///
     /// If the first boolean is true and the second boolean is false, the input can be polled.
     pub input_code_check: NonNull<Tree<Pair<i32, InputCodeState>>>,
-    /// Emtpy [DLString<DLUTF16StringKind>].
+    /// Emtpy [`DLString<DLUTF16StringKind>`].
     ///
     /// Maybe leftover from debug shenanigans?
     pub empty_str: DLString<DLUTF16StringKind>,
     /// Represents the Cursor relative to the game window.
     pub window_cursor_context: NonNull<WindowCursorContext>,
-    /// Represents a [Map<>] that maps the given input code to a boolean representing whether the input is pressed or not.
+    /// Represents a `Map<>` that maps the given input code to a boolean representing whether the input is pressed or not.
     ///
     /// Couldn't find a single reference that inserts in to this Tree in Ghidra for `CSInGamePad`'s.
     pub unused_input_map: Tree<Pair<i32, bool>>,

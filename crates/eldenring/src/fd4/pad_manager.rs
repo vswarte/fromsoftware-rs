@@ -25,22 +25,22 @@ type KeyAssignList =
 pub struct FD4PadManager {
     /// Copied over from the `Global_MainHeapAllocator`` when constructed.
     allocator: *const (),
-    /// Copied over from [CSWindowImp] when constructed.
+    /// Copied over from `CSWindowImp` when constructed.
     pub window_handle: isize,
     unk10: *const (),
     /// List of `InputDevices` instances. Each `InputDevices` maps the button states from the connected devices.
     ///
-    /// The game looks up a [CSPad] and then checks the [CSKeyAssign] before indexing the [VirtualMultiDevice] for the state of the buttons.
+    /// The game looks up a `CSPad` and then checks the `CSKeyAssign` before indexing the `VirtualMultiDevice` for the state of the buttons.
     pub input_devices_list: InputDeviceList,
     /// List of pairs holding various [CSPad] instances.
     ///
-    /// The game looks up the [CSPad] with the [CSInGamePad_UserInput1Vmt] by it's [RuntimeTypeHandle].
+    /// The game looks up the `CSPad` by it's `RuntimeTypeHandle`.
     pub pad_list: PadList,
     /// Holds the key assignments used for mapping keys to specific codes used by the virtual devices.
     ///
-    /// These are also referenced in [CSPad] instances. The [RuntimeTypeHandle] here matches that of the [CSPad] it's attached to.
+    /// These are also referenced in `CSPad`` instances. The `RuntimeTypeHandle` here matches that of the `CSPad` it's attached to.
     pub key_assign_list: KeyAssignList,
-    /// Contains pointers to the same struct as field 0x58 in the [CSKeyAssign] instances.
+    /// Contains pointers to the same struct as field 0x58 in the `CSKeyAssign`` instances.
     unka8: DLFixedVector<*const (), CAPACITY>,
     unkd8: *const (),
     /// List of the initialized [PadEntry] instances.

@@ -7,7 +7,7 @@ use crate::fd4::{FD4BasePad, InputType, InputTypeGroup};
 /// Represents the base CSPad class.
 /// The game has various CSPad instances, all with a different RTTI name.
 ///
-/// Make use of [FD4PadManager] to obtain the desired [CSPad] instance, a.e `CSInGamePad_UserInput1` to poll inputs during gameplay.
+/// Make use of `FD4PadManager` to obtain the desired [CSPad] instance, a.e [CSInGamePad] to poll inputs during gameplay.
 ///
 /// Example usage:
 /// ```
@@ -193,7 +193,7 @@ pub struct CSMenuViewerPad {
     base: CSPad,
 }
 
-/// Enum to poll key's with [CSInGameUserInput].
+/// Enum to poll key's with [CSInGamePad].
 ///
 /// Source of name: Debug string in `CSInGamePad_UserInput1::vftable`.
 #[repr(i32)]
