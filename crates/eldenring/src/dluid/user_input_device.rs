@@ -15,7 +15,6 @@ use shared::{Subclass, Superclass};
     MouseDevice,
     DummyDevice
 ))]
-
 pub struct DLUserInputDeviceImpl {
     _vftable: *const (),
     unk008: *const (),
@@ -146,19 +145,15 @@ impl DynamicBitset {
     pub fn as_slice(&self) -> &[u32] {
         unsafe {
             let data = self.bitset.as_ptr();
-            slice::from_raw_parts(data, self.len())
+            slice::from_raw_parts(data, self.integer_count)
         }
     }
 
     pub fn as_slice_mut(&mut self) -> &mut [u32] {
         unsafe {
             let data = self.bitset.as_ptr();
-            slice::from_raw_parts_mut(data, self.len())
+            slice::from_raw_parts_mut(data, self.integer_count)
         }
-    }
-
-    pub fn len(&self) -> usize {
-        self.integer_count
     }
 
     pub fn get(&self, bit_index: usize) -> bool {

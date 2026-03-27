@@ -14,6 +14,10 @@ type RuntimeTypeHandle = usize;
 
 const CAPACITY: usize = 4;
 
+type InputDeviceList = DLFixedVector<NonNull<InputDevices>, CAPACITY>;
+type PadList = DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, PadEntry>>>, CAPACITY>;
+type KeyAssignList = DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, NonNull<CSKeyAssign>>>>, CAPACITY>;
+
 /// Structure that manages inputs from devices, a.e Controller, Keyboard and Mouse.
 #[repr(C)]
 #[shared::singleton("FD4PadManager")]
@@ -26,18 +30,17 @@ pub struct FD4PadManager {
     /// List of `InputDevices` instances. Each `InputDevices` maps the button states from the connected devices.
     ///
     /// The game looks up a [CSPad] and then checks the [CSKeyAssign] before indexing the [VirtualMultiDevice] for the state of the buttons.
-    pub input_devices_list: DLFixedVector<NonNull<InputDevices>, CAPACITY>,
+    pub input_devices_list: InputDeviceList,
     /// List of pairs holding various [CSPad] instances.
     ///
     /// The game looks up the [CSPad] with the [CSInGamePad_UserInput1Vmt] by it's [RuntimeTypeHandle].
-    pub pad_list: DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, PadEntry>>>, CAPACITY>,
+    pub pad_list: PadList,
     /// Holds the key assignments used for mapping keys to specific codes used by the virtual devices.
     ///
     /// These are also referenced in [CSPad] instances. The [RuntimeTypeHandle] here matches that of the [CSPad] it's attached to.
-    pub key_assign_list:
-        DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, NonNull<CSKeyAssign>>>>, CAPACITY>,
+    pub key_assign_list: KeyAssignList,
     /// Contains pointers to the same struct as field 0x58 in the [CSKeyAssign] instances.
-    unka8: DLFixedVector<NonNull<usize>, CAPACITY>,
+    unka8: DLFixedVector<*const (), CAPACITY>,
     unkd8: *const (),
     /// List of the initialized [PadEntry] instances.
     ///
@@ -45,7 +48,7 @@ pub struct FD4PadManager {
     ///
     /// This list isn't ordered and isn't used for lookups.
     pub loaded_pad_entries: [MaybeUninit<NonNull<PadEntry>>; 9],
-    unk128: DLFixedVector<usize, CAPACITY>,
+    unk128: DLFixedVector<*const (), CAPACITY>,
     unk158: [u8; 0xC0],
     unk218: u64,
     heap_allocator: *const (),
@@ -70,15 +73,15 @@ impl FD4PadManager {
     /// Obtains the specific [CSPad] responsible for regular in-game inputs.
     /// This is polled during the `InGameStep`.
     /// The rtti for this instance is `CSInGamePad_UserInput1`.
-    pub fn get_in_game_pad(&self) -> Option<&mut CSInGamePad> {
+    pub fn get_in_game_pad(&mut self) -> Option<&mut CSInGamePad> {
         self.get_pad_instance::<CSInGamePad>()
     }
 
-    pub fn get_menu_viewer_pad(&self) -> Option<&mut CSMenuViewerPad> {
+    pub fn get_menu_viewer_pad(&mut self) -> Option<&mut CSMenuViewerPad> {
         self.get_pad_instance::<CSMenuViewerPad>()
     }
 
-    fn get_pad_instance<T: Subclass<CSPad>>(&self) -> Option<&mut T> {
+    fn get_pad_instance<T: Subclass<CSPad>>(&mut self) -> Option<&mut T> {
         self.pad_list
             .iter()
             .find_map(|tree: &NonNull<Tree<Pair<usize, PadEntry>>>| {

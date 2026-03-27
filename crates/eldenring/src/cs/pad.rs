@@ -137,7 +137,7 @@ impl CSPad {
             .map(|pair| pair.value)
         {
             fallback_index -= 1000;
-            if 0 <= fallback_index && fallback_index <= 80 {
+            if (0..=80).contains(&fallback_index) {
                 return multi_device.unk78.bitset_fallback[fallback_index as usize];
             }
         }
