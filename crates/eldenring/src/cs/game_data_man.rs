@@ -39,7 +39,7 @@ pub enum DeathState {
 
 #[repr(C)]
 pub struct GameDataMan {
-    trophy_equip_data: usize,
+    pub trophy_equip_data: OwnedPtr<TrophyEquipData>,
     pub main_player_game_data: OwnedPtr<PlayerGameData>,
     pub player_game_data_list: OwnedPtr<[PlayerGameData; 5]>,
     /// Pointer to the game data of the player used for the baseline
@@ -120,6 +120,105 @@ impl FromStatic for GameDataMan {
     unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
         unsafe { load_static_indirect(crate::rva::get().game_data_man) }
     }
+}
+
+#[repr(C)]
+pub struct TrophyEquipData {
+    vftable: usize,
+    unk8: u32,
+    /// Stats towards [`Legendary Armaments`] achievement
+    ///
+    /// [`Legendary Armaments`]: crate::cs::trophy::AchievementId::LegendaryArmaments
+    pub weapon_stats: TrophyWeaponStats,
+    /// Stats towards [`Legendary Sorceries and Incantations`] and [`Legendary Ashen Remains`] achievements
+    ///
+    /// [`Legendary Sorceries and Incantations`]: crate::cs::trophy::AchievementId::LegendarySorceriesAndIncantations
+    /// [`Legendary Ashen Remains`]: crate::cs::trophy::AchievementId::LegendaryAshenRemains
+    pub goods_stats: TrophyGoodsStats,
+    /// Stats towards [`Legendary Talismans`] achievement
+    ///
+    /// [`Legendary Talismans`]: crate::cs::trophy::AchievementId::LegendaryTalismans
+    pub accessory_stats: TrophyAccessoryStats,
+}
+
+#[repr(C)]
+pub struct TrophyWeaponStats {
+    // Legendary Armaments
+    /// Id: 2140000 Sword of Night and Flame
+    pub sword_of_night_and_flame: bool,
+    /// Id: 3090000 Dark Moon Greatsword
+    pub dark_moon_greatsword: bool,
+    /// Id: 3150000 Marais Executioner's Sword
+    pub marais_executioners_sword: bool,
+    /// Id: 3170000 Golden Order Greatsword
+    pub golden_order_greatsword: bool,
+    /// Id: 4080000 Ruins Greatsword
+    pub ruins_greatsword: bool,
+    /// Id: 4100000 Grafted Blade Greatsword
+    pub grafted_blade_greatsword: bool,
+    /// Id: 7100000 Eclipse Shotel
+    pub eclipse_shotel: bool,
+    /// Id: 12200000 Devourer's Scepter
+    pub devourers_scepter: bool,
+    /// Id: 16090000 Bolt of Gransax
+    pub bolt_of_gransax: bool,
+    pub unused: [u8; 0x77],
+}
+
+#[repr(C)]
+pub struct TrophyGoodsStats {
+    // Legendary Sorceries and Incantations
+    /// Id: 4200 [Sorcery] Comet Azur|
+    pub comet_azur: bool,
+    /// Id: 4210 [Sorcery] Founding Rain of Stars
+    pub founding_rain_of_stars: bool,
+    /// Id: 4220 [Sorcery] Stars of Ruin
+    pub stars_of_ruin: bool,
+    /// Id: 4361 [Sorcery] Ranni's Dark Moon
+    pub rannis_dark_moon: bool,
+    /// Id: 6110 [Incantation] Flame of the Fell God
+    pub flame_of_the_fell_god: bool,
+    /// Id: 6720 [Incantation] Elden Stars
+    pub elden_stars: bool,
+    /// Id: 7090 [Incantation] Greyoll's Roar
+    pub greyolls_roar: bool,
+
+    // Legendary Ashen Remains
+    /// Id: 200000 Black Knife Tiche
+    pub black_knife_tiche: bool,
+    /// Id: 207000 Mimic Tear Ashes
+    pub mimic_tear_ashes: bool,
+    /// Id: 223000 Cleanrot Knight Finlay
+    pub cleanrot_knight_finlay: bool,
+    /// Id: 256000 Ancient Dragon Knight Kristoff
+    pub ancient_dragon_knight_kristoff: bool,
+    /// Id: 257000 Redmane Knight Ogha
+    pub redmane_knight_ogha: bool,
+    /// Id: 258000 Lhutel the Headless
+    pub lhutel_the_headless: bool,
+    pub unused: [u8; 0x73],
+}
+
+#[repr(C)]
+pub struct TrophyAccessoryStats {
+    // Legendary Talismans
+    /// Id: 1042 Erdtree's Favor +2
+    pub erdtree_favor_p2: bool,
+    /// Id: 1051 Radagon's Soreseal
+    pub radagons_soreseal: bool,
+    /// Id: 1140 Moon of Nokstella
+    pub moon_of_nokstella: bool,
+    /// Id: 1221 Marika's Soreseal
+    pub marikas_soreseal: bool,
+    /// Id: 3060 Old Lord's Talisman
+    pub old_lords_talisman: bool,
+    /// Id: 3070 Radagon Icon
+    pub radagon_icon: bool,
+    /// Id: 3090 Godfrey Icon
+    pub godfrey_icon: bool,
+    /// Id: 4003 Dragoncrest Greatshield Talisman
+    pub dragoncrest_greatshield: bool,
+    pub unused: [u8; 0x78],
 }
 
 #[repr(C)]
