@@ -86,6 +86,31 @@ impl<T, A: Allocator> Vector<T, A> {
         }
     }
 
+    pub fn push_front(&mut self, value: T) {
+        if self.last == self.end {
+            self.grow();
+        }
+
+        unsafe {
+            std::ptr::copy(self.first, self.first.add(1), self.len());
+            self.first.write(value);
+            self.last = self.last.add(1);
+        }
+    }
+
+    pub fn pop_front(&mut self) -> Option<T> {
+        if self.is_empty() {
+            return None;
+        }
+
+        unsafe {
+            let value = self.first.read();
+            std::ptr::copy(self.first.add(1), self.first, self.len() - 1);
+            self.last = self.last.sub(1);
+            Some(value)
+        }
+    }
+
     /// MSVC growth policy: 1.5x capacity
     fn grow(&mut self) {
         let old_len = self.len();
