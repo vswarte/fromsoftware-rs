@@ -545,6 +545,7 @@ dependencies = [
 name = "fromsoftware-shared"
 version = "0.13.0"
 dependencies = [
+ "bitflags 2.11.0",
  "from-singleton",
  "fromsoftware-shared-macros 0.13.0",
  "glam",
