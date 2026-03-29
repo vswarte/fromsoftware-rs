@@ -650,24 +650,26 @@ impl InventoryItemsData {
         }
     }
 
-    pub fn entry_at_slot(&self, slot: usize) -> Option<&MaybeEmpty<EquipInventoryDataListEntry>> {
-        let key_cap = self.key_items_capacity as usize;
+    pub fn entry_at_slot(&self, slot: u32) -> Option<&MaybeEmpty<EquipInventoryDataListEntry>> {
+        let key_cap = self.key_items_capacity;
         if slot < key_cap {
-            Some(self.current_key_entries().get(slot)?)
+            Some(self.current_key_entries().get(slot as usize)?)
         } else {
-            Some(self.normal_entries().get(slot - key_cap)?)
+            let offset = (slot - key_cap) as usize;
+            Some(self.normal_entries().get(offset)?)
         }
     }
 
     pub fn entry_at_slot_mut(
         &mut self,
-        slot: usize,
+        slot: u32,
     ) -> Option<&mut MaybeEmpty<EquipInventoryDataListEntry>> {
-        let key_cap = self.key_items_capacity as usize;
+        let key_cap = self.key_items_capacity;
         if slot < key_cap {
-            Some(self.current_key_entries_mut().get_mut(slot)?)
+            Some(self.current_key_entries_mut().get_mut(slot as usize)?)
         } else {
-            Some(self.normal_entries_mut().get_mut(slot - key_cap)?)
+            let offset = (slot - key_cap) as usize;
+            Some(self.normal_entries_mut().get_mut(offset)?)
         }
     }
 
@@ -828,9 +830,9 @@ impl InventoryItemsData {
 
     /// O(1) lookup of an item's first inventory slot via the hash table.
     /// Returns `None` if the item is not present
-    pub fn find_item_idx(&self, item_id: ItemId) -> Option<usize> {
+    pub fn find_item_idx(&self, item_id: ItemId) -> Option<u32> {
         let (_, cur_idx) = self.find_chain_entry(item_id)?;
-        Some(self.mapping_entry(cur_idx)?.mapping.item_slot() as usize)
+        Some(self.mapping_entry(cur_idx)?.mapping.item_slot() as u32)
     }
 }
 
@@ -1005,11 +1007,17 @@ pub enum ChrAsmSlot {
     AccessoryCovenant = 21,
 }
 
-impl<T> Index<ChrAsmSlot> for [T] {
+impl<T> Index<ChrAsmSlot> for [T; 22] {
     type Output = T;
 
     fn index(&self, index: ChrAsmSlot) -> &Self::Output {
         &self[index as usize]
+    }
+}
+
+impl<T> IndexMut<ChrAsmSlot> for [T; 22] {
+    fn index_mut(&mut self, index: ChrAsmSlot) -> &mut Self::Output {
+        &mut self[index as usize]
     }
 }
 
