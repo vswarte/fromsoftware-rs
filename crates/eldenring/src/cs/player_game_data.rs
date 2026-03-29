@@ -177,11 +177,16 @@ pub struct PlayerGameData {
     pub proc_status_timer_max: [f32; 7],
     unka54: u32,
     pub frontend_flags: PlayerGameDataFrontendFlags,
-    unka59: [u8; 0xE],
+    pub sa_toughness_total: u32,
+    unka60: u32,
+    pub berserker_kills: u8,
+    pub berserker_kills_target: u8,
+    pub berserker_target_reached: bool,
     pub quickmatch_kill_count: u8,
     unka68: [u8; 0x4],
     pub poise: f32,
     pub discovery: u32,
+    pub effective_unlocked_magic_slots: u32,
     menu_ref_special_effect_1: usize,
     menu_ref_special_effect_2: usize,
     menu_ref_special_effect_3: usize,
@@ -340,12 +345,13 @@ pub struct ChrAsmEquipEntries {
     pub covenant: OptionalItemId,
     pub quick_tems: [OptionalItemId; 10],
     pub pouch: [OptionalItemId; 6],
+    unk98: u32,
 }
 
 #[repr(C)]
 pub struct EquipGameData {
     vftable: usize,
-    unk8: [u32; 22],
+    pub equipment_item_idx_list: [u32; 22],
     unk60: usize,
     unk68: u32,
     pub chr_asm: ChrAsm,
@@ -357,8 +363,8 @@ pub struct EquipGameData {
     pub item_replenish_state_tracker: Option<OwnedPtr<ItemReplenishStateTracker>>,
     pub qm_item_backup_vector: OwnedPtr<DLVector<QMItemBackupVectorItem>>,
     pub equipment_entries: ChrAsmEquipEntries,
-    unk3e0: usize,
-    unk3e8: usize,
+    pub physick_tears: [OptionalItemId; 2],
+    pub extra_physick_tear: OptionalItemId,
     pub player_game_data: NonNull<PlayerGameData>,
     /// Whether this equipment data belongs to the main (local) player.
     pub is_main_player: bool,
