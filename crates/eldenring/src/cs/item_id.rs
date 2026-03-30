@@ -178,6 +178,14 @@ impl ItemId {
     pub fn into_inner(self) -> u32 {
         self.0.into_inner()
     }
+
+    pub fn as_optional(&self) -> &OptionalItemId {
+        &self.0
+    }
+
+    pub fn as_optional_mut(&mut self) -> &mut OptionalItemId {
+        &mut self.0
+    }
 }
 
 impl TryFrom<u32> for ItemId {

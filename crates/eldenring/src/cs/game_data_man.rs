@@ -102,7 +102,7 @@ pub struct GameDataMan {
     ///
     /// [`pending_dlc_list`]: Self::pending_dlc_list
     pub dlc_list_up_to_date: bool,
-    /// Vector of indecies into `CSDlc` that are not applied to this game data yet
+    /// Vector of indices into `CSDlc` that are not applied to this game data yet
     pub pending_dlc_list: DLVector<u32>,
     pub is_net_penalized: bool,
     pub net_penalty_requested: bool,
