@@ -168,19 +168,19 @@ pub struct TrophyWeaponStats {
 #[repr(C)]
 pub struct TrophyGoodsStats {
     // Legendary Sorceries and Incantations
-    /// Id: 4200 [Sorcery] Comet Azur|
+    /// Id: 4200 Sorcery Comet Azur
     pub comet_azur: bool,
-    /// Id: 4210 [Sorcery] Founding Rain of Stars
+    /// Id: 4210 Sorcery Founding Rain of Stars
     pub founding_rain_of_stars: bool,
-    /// Id: 4220 [Sorcery] Stars of Ruin
+    /// Id: 4220 Sorcery Stars of Ruin
     pub stars_of_ruin: bool,
-    /// Id: 4361 [Sorcery] Ranni's Dark Moon
+    /// Id: 4361 Sorcery Ranni's Dark Moon
     pub rannis_dark_moon: bool,
-    /// Id: 6110 [Incantation] Flame of the Fell God
+    /// Id: 6110 Incantation Flame of the Fell God
     pub flame_of_the_fell_god: bool,
-    /// Id: 6720 [Incantation] Elden Stars
+    /// Id: 6720 Incantation Elden Stars
     pub elden_stars: bool,
-    /// Id: 7090 [Incantation] Greyoll's Roar
+    /// Id: 7090 Incantation Greyoll's Roar
     pub greyolls_roar: bool,
 
     // Legendary Ashen Remains
