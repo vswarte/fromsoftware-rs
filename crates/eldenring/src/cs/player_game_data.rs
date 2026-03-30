@@ -348,6 +348,65 @@ pub struct ChrAsmEquipEntries {
     unk98: u32,
 }
 
+impl Index<ChrAsmSlot> for ChrAsmEquipEntries {
+    type Output = OptionalItemId;
+    fn index(&self, index: ChrAsmSlot) -> &OptionalItemId {
+        match index {
+            ChrAsmSlot::WeaponLeft1 => self.weapon_primary_left.as_optional(),
+            ChrAsmSlot::WeaponRight1 => self.weapon_primary_right.as_optional(),
+            ChrAsmSlot::WeaponLeft2 => self.weapon_secondary_left.as_optional(),
+            ChrAsmSlot::WeaponRight2 => self.weapon_secondary_right.as_optional(),
+            ChrAsmSlot::WeaponLeft3 => self.weapon_tertiary_left.as_optional(),
+            ChrAsmSlot::WeaponRight3 => self.weapon_tertiary_right.as_optional(),
+            ChrAsmSlot::Arrow1 => &self.arrow_primary,
+            ChrAsmSlot::Bolt1 => &self.bolt_primary,
+            ChrAsmSlot::Arrow2 => &self.arrow_secondary,
+            ChrAsmSlot::Bolt2 => &self.bolt_secondary,
+            ChrAsmSlot::Arrow3 => &self.arrow_tertiary,
+            ChrAsmSlot::Bolt3 => &self.bolt_tertiary,
+            ChrAsmSlot::ProtectorHead => self.protector_head.as_optional(),
+            ChrAsmSlot::ProtectorChest => self.protector_chest.as_optional(),
+            ChrAsmSlot::ProtectorHands => self.protector_hands.as_optional(),
+            ChrAsmSlot::ProtectorLegs => self.protector_legs.as_optional(),
+            ChrAsmSlot::Unused16 => &self.unused40,
+            ChrAsmSlot::Accessory1 => &self.accessories[0],
+            ChrAsmSlot::Accessory2 => &self.accessories[1],
+            ChrAsmSlot::Accessory3 => &self.accessories[2],
+            ChrAsmSlot::Accessory4 => &self.accessories[3],
+            ChrAsmSlot::AccessoryCovenant => &self.covenant,
+        }
+    }
+}
+
+impl IndexMut<ChrAsmSlot> for ChrAsmEquipEntries {
+    fn index_mut(&mut self, index: ChrAsmSlot) -> &mut OptionalItemId {
+        match index {
+            ChrAsmSlot::WeaponLeft1 => self.weapon_primary_left.as_optional_mut(),
+            ChrAsmSlot::WeaponRight1 => self.weapon_primary_right.as_optional_mut(),
+            ChrAsmSlot::WeaponLeft2 => self.weapon_secondary_left.as_optional_mut(),
+            ChrAsmSlot::WeaponRight2 => self.weapon_secondary_right.as_optional_mut(),
+            ChrAsmSlot::WeaponLeft3 => self.weapon_tertiary_left.as_optional_mut(),
+            ChrAsmSlot::WeaponRight3 => self.weapon_tertiary_right.as_optional_mut(),
+            ChrAsmSlot::Arrow1 => &mut self.arrow_primary,
+            ChrAsmSlot::Bolt1 => &mut self.bolt_primary,
+            ChrAsmSlot::Arrow2 => &mut self.arrow_secondary,
+            ChrAsmSlot::Bolt2 => &mut self.bolt_secondary,
+            ChrAsmSlot::Arrow3 => &mut self.arrow_tertiary,
+            ChrAsmSlot::Bolt3 => &mut self.bolt_tertiary,
+            ChrAsmSlot::ProtectorHead => self.protector_head.as_optional_mut(),
+            ChrAsmSlot::ProtectorChest => self.protector_chest.as_optional_mut(),
+            ChrAsmSlot::ProtectorHands => self.protector_hands.as_optional_mut(),
+            ChrAsmSlot::ProtectorLegs => self.protector_legs.as_optional_mut(),
+            ChrAsmSlot::Unused16 => &mut self.unused40,
+            ChrAsmSlot::Accessory1 => &mut self.accessories[0],
+            ChrAsmSlot::Accessory2 => &mut self.accessories[1],
+            ChrAsmSlot::Accessory3 => &mut self.accessories[2],
+            ChrAsmSlot::Accessory4 => &mut self.accessories[3],
+            ChrAsmSlot::AccessoryCovenant => &mut self.covenant,
+        }
+    }
+}
+
 #[repr(C)]
 pub struct EquipGameData {
     vftable: usize,
@@ -1094,11 +1153,54 @@ pub enum ChrAsmArmStyle {
     RightBothHands = 3,
 }
 
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum ChrAsmHand {
+    Left = 0,
+    Right = 1,
+}
+
 #[repr(C)]
 pub struct ChrAsmEquipment {
     /// Determines how you're holding your weapon.
     pub arm_style: ChrAsmArmStyle,
     pub selected_slots: ChrAsmEquipmentSlots,
+}
+
+impl ChrAsmEquipment {
+    pub fn active_weapon_slot(&self, hand: ChrAsmHand) -> ChrAsmSlot {
+        match (self.arm_style, hand) {
+            (ChrAsmArmStyle::LeftBothHands, _) => self.active_left_weapon_slot(),
+            (ChrAsmArmStyle::RightBothHands, _) => self.active_right_weapon_slot(),
+            (_, ChrAsmHand::Left) => self.active_left_weapon_slot(),
+            (_, ChrAsmHand::Right) => self.active_right_weapon_slot(),
+        }
+    }
+
+    pub fn is_two_handing(&self) -> bool {
+        matches!(
+            self.arm_style,
+            ChrAsmArmStyle::LeftBothHands | ChrAsmArmStyle::RightBothHands
+        )
+    }
+
+    pub fn active_left_weapon_slot(&self) -> ChrAsmSlot {
+        match self.selected_slots.left_weapon_slot {
+            0 => ChrAsmSlot::WeaponLeft1,
+            1 => ChrAsmSlot::WeaponLeft2,
+            2 => ChrAsmSlot::WeaponLeft3,
+            _ => ChrAsmSlot::WeaponLeft1,
+        }
+    }
+
+    pub fn active_right_weapon_slot(&self) -> ChrAsmSlot {
+        match self.selected_slots.right_weapon_slot {
+            0 => ChrAsmSlot::WeaponRight1,
+            1 => ChrAsmSlot::WeaponRight2,
+            2 => ChrAsmSlot::WeaponRight3,
+            _ => ChrAsmSlot::WeaponRight1,
+        }
+    }
 }
 
 #[repr(C)]
@@ -1116,7 +1218,14 @@ pub struct ChrAsm {
     pub equipment_param_ids: [i32; 22],
     unkd4: u32,
     unkd8: u32,
-    _paddc: [u8; 12],
+    /// List of all 12 "weapon" slots (from [`WeaponLeft1`] to [`Bolt3`])
+    /// and whether or not they are in "loaded" state.
+    /// E.g. using crossbow once in [`WeaponLeft1`] slot will set this slot state to `true`,
+    /// making next use play shoot animation instead of reload.
+    ///
+    /// [`WeaponLeft1`]: ChrAsmSlot::WeaponLeft1
+    /// [`Bolt3`]: ChrAsmSlot::Bolt3
+    pub bolt_loaded_states: [bool; 12],
 }
 
 #[repr(u8)]

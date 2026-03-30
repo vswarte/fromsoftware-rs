@@ -14,11 +14,10 @@ use shared::{OwnedPtr, Subclass, Superclass};
 pub struct CSGaitemImp {
     vftable: usize,
     pub gaitems: [Option<OwnedPtr<CSGaitemIns>>; 5120],
-    // TODO: fact-check this
-    gaitem_descriptors: [CSGaitemImpEntry; 5120],
-    indexes: [u32; 5120],
-    write_index: u32,
-    read_index: u32,
+    pub gaitem_descriptors: [CSGaitemImpEntry; 5120],
+    pub indexes: [u32; 5120],
+    pub write_index: u32,
+    pub read_index: u32,
     pub rand_xorshift: CSRandXorshift,
     unk23028: [u8; 8],
     /// Becomes true if the CSGaitemImp is being serialized for saving to the save file.
@@ -67,8 +66,8 @@ pub struct CSGaitemIns {
 
 #[repr(C)]
 pub struct CSGaitemImpEntry {
-    unindexed_gaitem_handle: u32,
-    ref_count: u32,
+    pub unindexed_gaitem_handle: u32,
+    pub ref_count: u32,
 }
 
 bitfield! {

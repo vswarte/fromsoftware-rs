@@ -11,7 +11,7 @@ use crate::cs::session_manager::SessionManagerPlayerEntryBase;
 use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldChrMan};
-use crate::cs::{BlockId, CSPlayerMenuCtrl, EquipmentDurabilityStatus, OptionalItemId};
+use crate::cs::{BlockId, CSPlayerMenuCtrl, ChrAsmHand, EquipmentDurabilityStatus, OptionalItemId};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
@@ -875,9 +875,9 @@ pub struct PlayerIns {
     pub durability_statuses: [EquipmentDurabilityStatus; 16],
     unk68c: u8,
     /// Hand used for attack calculations, set by HKS.
-    pub attack_reference_hand: HandIndex,
+    pub attack_reference_hand: ChrAsmHand,
     /// Hand used for guard calculations, set by HKS.
-    pub guard_reference_hand: HandIndex,
+    pub guard_reference_hand: ChrAsmHand,
     unk698: u32,
     unk69c: u32,
     pub player_menu_ctrl: NonNull<CSPlayerMenuCtrl>,
@@ -930,13 +930,6 @@ impl PlayerIns {
                 .ok_or(InstanceError::NotFound(Cow::Borrowed("PlayerIns")))
         }
     }
-}
-
-#[repr(u32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum HandIndex {
-    Left = 0,
-    Right = 1,
 }
 
 #[repr(C)]
