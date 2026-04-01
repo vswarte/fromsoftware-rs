@@ -1,6 +1,5 @@
 use crate::dlkr::{
-    DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, PlainAdaptiveMutexImpl,
-    ThreadingPolicy,
+    DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, DLSingleThreadedPolicy, PlainAdaptiveMutexImpl, ThreadingPolicy
 };
 use std::{
     alloc::{GlobalAlloc, Layout},
@@ -1005,6 +1004,53 @@ pub struct CSGraphicsPrivateAllocator {
     pub private_a: NonNull<GFXGraphicsPrivateAHeapAllocator>,
     pub private_b: NonNull<GFXGraphicsPrivateBHeapAllocator>,
     pub sync: PlainAdaptiveMutexImpl,
+}
+
+#[repr(C)]
+/// A small-object pool allocator, used by `luaM_realloc` and other lua API functions.
+///
+/// Routes allocation requests up to `max_block_size` bytes into one of
+/// `bin_count` fixed-size bins, each backed by a `DLFixedAllocator`.
+/// Requests larger than `max_block_size` fall through to `parent_allocator`.
+///
+/// # Bin selection
+/// ```text
+/// aligned_size = align_up(request, 8)
+/// if aligned_size <= min_block_size:
+///     bin_index = 0
+/// else:
+///     bin_index = (aligned_size - min_block_size + granularity - 1) >> granularity_shift
+/// ```
+///
+/// The last bin always handles `max_block_size`
+pub struct DLSmallObjectAllocator<P: ThreadingPolicy = DLSingleThreadedPolicy> {
+    vftable: usize,
+    /// Array of `bin_count` `DLFixedAllocator` instances.
+    /// `bins[i]` serves objects of size
+    /// `min_block_size + i * granularity` (except the last bin which
+    /// serves `max_block_size`)
+    pub bins: *mut DLFixedAllocator<u8>,
+    pub sync: P::LockObject,
+    /// Total byte budget per slab within each bin's `DLFixedAllocator`
+    pub chunk_size: usize,
+    /// Maximum object size this allocator handles.
+    /// `align_up(max_object_size_param, 8)`. Requests larger than this
+    /// are forwarded to `parent_allocator`
+    pub max_block_size: usize,
+    /// Smallest block size served.
+    /// `align_up(min_alignment_param, granularity)`
+    pub min_block_size: usize,
+    /// Step size between consecutive bins' block sizes.
+    /// **2, at least 8
+    pub granularity: usize,
+    /// Number of bins in the `bins` array.
+    /// `((max_block_size - min_block_size + granularity - 1) >> granularity_shift) + 1`
+    pub bin_count: usize,
+    /// `floor(log2(granularity))`
+    pub granularity_shift: usize,
+    /// Pointer to the parent allocator.
+    /// Used as fallback for oversized requests
+    pub parent_allocator: NonNull<DLAllocatorBase>,
 }
 
 #[repr(C)]
