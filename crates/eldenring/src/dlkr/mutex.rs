@@ -405,9 +405,9 @@ pub trait ThreadingPolicy {
     const IS_THREAD_SAFE: bool;
 }
 
-pub struct DLSingleThreadedPolicy;
+pub struct DLSingleThreadingPolicy;
 
-impl ThreadingPolicy for DLSingleThreadedPolicy {
+impl ThreadingPolicy for DLSingleThreadingPolicy {
     type LockObject = DLDummySyncObject;
     const IS_THREAD_SAFE: bool = false;
 }

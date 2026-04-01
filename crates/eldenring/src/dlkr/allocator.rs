@@ -1,5 +1,5 @@
 use crate::dlkr::{
-    DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, DLSingleThreadedPolicy, PlainAdaptiveMutexImpl, ThreadingPolicy
+    DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, DLSingleThreadingPolicy, PlainAdaptiveMutexImpl, ThreadingPolicy
 };
 use std::{
     alloc::{GlobalAlloc, Layout},
@@ -1023,7 +1023,7 @@ pub struct CSGraphicsPrivateAllocator {
 /// ```
 ///
 /// The last bin always handles `max_block_size`
-pub struct DLSmallObjectAllocator<P: ThreadingPolicy = DLSingleThreadedPolicy> {
+pub struct DLSmallObjectAllocator<P: ThreadingPolicy = DLSingleThreadingPolicy> {
     vftable: usize,
     /// Array of `bin_count` `DLFixedAllocator` instances.
     /// `bins[i]` serves objects of size
