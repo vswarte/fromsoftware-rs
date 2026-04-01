@@ -1,4 +1,5 @@
 use vtable_rs::VPtr;
+use windows::Win32::Foundation::HANDLE;
 use windows::Win32::System::Threading::{
     CRITICAL_SECTION, DeleteCriticalSection, EnterCriticalSection, InitializeCriticalSection,
     LeaveCriticalSection,
@@ -49,4 +50,20 @@ impl DLPlainLightMutexVmt for DLPlainLightMutex {
     extern "C" fn destructor(&mut self, _param_2: bool) {
         unimplemented!();
     }
+}
+
+#[repr(C)]
+pub struct PlainAdaptiveMutexImpl {
+    vftable: usize,
+    pub critical_section: CRITICAL_SECTION,
+    pub spin_count: u32,
+}
+
+#[repr(C)]
+pub struct DLPlainReadWriteLock {
+    vftable: usize,
+    pub h_event: HANDLE,
+    pub h_writer_mutex: HANDLE,
+    pub h_reader_mutex: HANDLE,
+    pub reader_count: i32,
 }
