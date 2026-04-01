@@ -1,4 +1,7 @@
-use crate::dlkr::{DLPlainLightMutex, DLPlainReadWriteLock, PlainAdaptiveMutexImpl};
+use crate::dlkr::{
+    DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, PlainAdaptiveMutexImpl,
+    ThreadingPolicy,
+};
 use std::{
     alloc::{GlobalAlloc, Layout},
     ffi::c_void,
@@ -302,17 +305,17 @@ pub struct DLDynamicHeap<T> {
 /// Wraps heap T with a mutex (DLMultiThreadingPolicy).
 /// Used for single-direction (front-only) allocation strategies
 #[repr(C)]
-pub struct DLDefaultHeapStrategy<T> {
-    pub heap: T,
-    pub sync: DLPlainLightMutex,
+pub struct DLDefaultHeapStrategy<H, P: ThreadingPolicy = DLMultiThreadingPolicy> {
+    pub heap: H,
+    pub sync: P::LockObject,
 }
 
 /// Same as DLDefaultHeapStrategy, but adds bidirectional (front + back)
 /// allocation strategy
 #[repr(C)]
-pub struct DLBiHeapStrategy<T> {
-    pub heap: T,
-    pub sync: DLPlainLightMutex,
+pub struct DLBiHeapStrategy<H, P: ThreadingPolicy = DLMultiThreadingPolicy> {
+    pub heap: H,
+    pub sync: P::LockObject,
 }
 
 /// Intrusive free-list link.  Lives at `+0x10` inside a free HeapBlock
@@ -796,7 +799,7 @@ impl SegChunkDesc {
 /// original descriptor is re-inserted into the free list for its full
 /// (un-split) size class and `NULL` is returned to the caller
 #[repr(C)]
-pub struct DLSegregatedRegularHeap {
+pub struct DLSegregatedRegularHeap<P: ThreadingPolicy = DLMultiThreadingPolicy> {
     /// Total free bytes currently available (decremented on alloc, incremented on free)
     pub total_free_capacity: usize,
     /// Total aligned span of the managed range; set once at init, never modified
@@ -824,6 +827,7 @@ pub struct DLSegregatedRegularHeap {
     /// Fixed-size allocator providing `SegChunkDesc` descriptors.
     /// Initialized with `(block_size=0x28, chunk_size=0x1000, align=8)`.
     pub chunk_recycler: DLFixedAllocator<SegChunkDesc>,
+    pub sync: P::LockObject,
 }
 
 /// Descriptor for one contiguous free address range managed by
@@ -886,7 +890,7 @@ pub struct SegBiBlock {
 /// `block_recycler` (`DLFixedAllocator`) provides `SegBiBlock` descriptors.
 /// Before allocating a new descriptor, the allocator pops from `spent_block_stack`.
 #[repr(C)]
-pub struct DLSegregatedBiHeapStrategy {
+pub struct DLSegregatedBiHeapStrategy<P: ThreadingPolicy = DLMultiThreadingPolicy> {
     /// Slab allocator providing `SegBiBlock` descriptor objects.
     pub block_recycler: DLFixedAllocator<SegBiBlock>,
     _pad60: [u8; 7],
@@ -909,61 +913,91 @@ pub struct DLSegregatedBiHeapStrategy {
     pub live_allocation_count: usize,
     /// Cumulative free bytes returned to the heap over its lifetime
     pub total_freed_bytes: usize,
-    /// Mutex injected by `DLMultiThreadingPolicy`
-    pub sync: DLPlainLightMutex,
+    pub sync: P::LockObject,
 }
 
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLBiHeapStrategy<DLKR::DLSmallObjectHeapWrapper<DLKR::DLRobustHeap,0,262144,512,16>,DLKR::DLMultiThreadingPolicy>>>
 pub type MainHeapAllocator = HeapAllocator<
-    DLDynamicHeap<DLBiHeapStrategy<DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>>>,
+    DLDynamicHeap<
+        DLBiHeapStrategy<
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>,
+            DLMultiThreadingPolicy,
+        >,
+    >,
 >;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLBiHeapStrategy<DLKR::DLSmallObjectHeapWrapper<DLKR::DLRobustHeap,1,16384,512,16>,DLKR::DLMultiThreadingPolicy>>>
 pub type GFXHeapAllocator = HeapAllocator<
-    DLDynamicHeap<DLBiHeapStrategy<DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>>>,
+    DLDynamicHeap<
+        DLBiHeapStrategy<
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>,
+            DLMultiThreadingPolicy,
+        >,
+    >,
 >;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRegularHeap,DLKR::DLMultiThreadingPolicy>>>
-pub type GFXTempHeapAllocator = HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap>>>;
+pub type GFXTempHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRegularHeap,DLKR::DLMultiThreadingPolicy>>>
-pub type InGameHeapAllocator = HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap>>>;
+pub type InGameHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRegularHeap,DLKR::DLMultiThreadingPolicy>>>
-pub type TempHeapAllocator = HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap>>>;
+pub type TempHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRegularHeap,DLKR::DLMultiThreadingPolicy>>>
-pub type CoreResHeapAllocator = HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap>>>;
+pub type CoreResHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLBiHeapStrategy<DLKR::DLRobustHeap,DLKR::DLMultiThreadingPolicy>>>
-pub type MoWwiseHeapAllocator = HeapAllocator<DLDynamicHeap<DLBiHeapStrategy<DLRobustHeap>>>;
+pub type MoWwiseHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLBiHeapStrategy<DLRobustHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLBiHeapStrategy<DLKR::DLRobustHeap,DLKR::DLMultiThreadingPolicy>>>
-pub type MoWwiseMoOnlyHeapAllocator = HeapAllocator<DLDynamicHeap<DLBiHeapStrategy<DLRobustHeap>>>;
+pub type MoWwiseMoOnlyHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLBiHeapStrategy<DLRobustHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRobustHeap,DLKR::DLMultiThreadingPolicy>_>_>
 // typo in FS code
 pub type MoWwiseIsorationHeapAllocator =
-    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRobustHeap>>>;
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRobustHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRegularHeap,DLKR::DLMultiThreadingPolicy>_>_>
-pub type LuaHeapAllocator = HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap>>>;
+pub type LuaHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRobustHeap,DLKR::DLMultiThreadingPolicy>_>_>
-pub type HavokHeapAllocator = HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRobustHeap>>>;
+pub type HavokHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRobustHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLBiHeapStrategy<DLKR::DLSmallObjectHeapWrapper<DLKR::DLRobustHeap,1,16384,512,16>,DLKR::DLMultiThreadingPolicy>_>_>
 pub type MenuHeapAllocator = HeapAllocator<
-    DLDynamicHeap<DLBiHeapStrategy<DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>>>,
+    DLDynamicHeap<
+        DLBiHeapStrategy<
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>,
+            DLMultiThreadingPolicy,
+        >,
+    >,
 >;
 
 #[repr(C)]
 pub struct CSNetworkAllocator {
     pub base: DLAllocatorBase,
-    pub undelying: NonNull<HeapAllocator<DLDynamicHeap<DLBiHeapStrategy<DLRobustHeap>>>>,
+    pub undelying: NonNull<
+        HeapAllocator<DLDynamicHeap<DLBiHeapStrategy<DLRobustHeap, DLMultiThreadingPolicy>>>,
+    >,
 }
 
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLSmallObjectHeapWrapper<DLKR::DLRobustHeap,0,16384,256,16>,DLKR::DLMultiThreadingPolicy>>>
 pub type DebugHeapAllocator = HeapAllocator<
-    DLDynamicHeap<DLDefaultHeapStrategy<DLSmallObjectHeapWrapper<DLRobustHeap, { 256 / 16 }>>>,
+    DLDynamicHeap<
+        DLDefaultHeapStrategy<
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 256 / 16 }>,
+            DLMultiThreadingPolicy,
+        >,
+    >,
 >;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLDefaultHeapStrategy<DLKR::DLRegularHeap,DLKR::DLMultiThreadingPolicy>_>_>
 pub type GFXSystemSharedHeapAllocator =
-    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap>>>;
+    HeapAllocator<DLDynamicHeap<DLDefaultHeapStrategy<DLRegularHeap, DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLSegregatedBiHeapStrategy<DLKR::DLMultiThreadingPolicy>_>_>
 pub type GFXGraphicsPrivateAHeapAllocator =
-    HeapAllocator<DLDynamicHeap<DLSegregatedBiHeapStrategy>>;
+    HeapAllocator<DLDynamicHeap<DLSegregatedBiHeapStrategy<DLMultiThreadingPolicy>>>;
 // HeapAllocator<DLKR::DLDynamicHeap<DLKR::DLSegregatedRegularHeap<DLKR::DLMultiThreadingPolicy>_>_>
-pub type GFXGraphicsPrivateBHeapAllocator = HeapAllocator<DLDynamicHeap<DLSegregatedRegularHeap>>;
+pub type GFXGraphicsPrivateBHeapAllocator =
+    HeapAllocator<DLDynamicHeap<DLSegregatedRegularHeap<DLMultiThreadingPolicy>>>;
 
 #[repr(C)]
 pub struct CSGraphicsPrivateAllocator {
