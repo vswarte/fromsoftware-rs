@@ -251,7 +251,7 @@ pub enum NodeColor {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct TaggedPtr<T, const TAG_SIZE: usize> {
-    pub bits: usize,
+    pub bits: *mut T,
     _marker: PhantomData<*mut T>,
 }
 
@@ -259,12 +259,12 @@ impl<T, const TAG_SIZE: usize> TaggedPtr<T, TAG_SIZE> {
     const TAG_MASK: usize = (1 << TAG_SIZE) - 1;
     const PTR_MASK: usize = !Self::TAG_MASK;
 
-    pub fn ptr(&self) -> Option<NonNull<T>> {
-        NonNull::new((self.bits & Self::PTR_MASK) as *mut T)
+    pub fn ptr(&self) -> *mut T {
+        self.bits.map_addr(|a| a & Self::PTR_MASK)
     }
 
     pub fn tag(&self) -> usize {
-        self.bits & Self::TAG_MASK
+        self.bits.addr() & Self::TAG_MASK
     }
 }
 
@@ -399,7 +399,10 @@ impl DLRegularHeap {
         if next_and_flags.tag() & 1 == 0 {
             return None;
         } // not allocated
-        let next_ptr = next_and_flags.ptr()?.as_ptr();
+        let next_ptr = next_and_flags.ptr();
+        if next_ptr.is_null() {
+            return None;
+        }
         Some(next_ptr as usize - ptr.as_ptr() as usize)
     }
 
