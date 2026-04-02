@@ -573,13 +573,13 @@ pub struct AllocatorBin {
 /// `bitmap[(offset >> 24)]` is set when that 256 KiB chunk has been
 /// committed. Used to answer ownership queries
 #[repr(C)]
-pub struct DLSmallObjectHeapWrapper<T, const BINS: usize> {
+pub struct DLSmallObjectHeapWrapper<T, const BINS: usize, const CHUNK_SIZE: usize> {
     /// Underlying heap for slab provisioning and large (> BINS*16 byte) requests.
     pub base_heap: T,
-    /// Bitmap array tracking committed 256 KiB chunks. Non-owning; points into
+    /// Bitmap array tracking committed chunks. Non-owning; points into
     /// a region carved from `base_heap`
     pub alloc_region_bitmap: *mut c_void,
-    unk: usize,
+    pub bitmap_word_count: usize,
     /// Aligned base used for bitmap offset calculations
     pub alloc_region_start_aligned: *mut c_void,
     /// Size-class bins. `bins[(request - 1) >> 4]` selects the bin for a request
@@ -926,7 +926,7 @@ pub struct DLSegregatedBiHeapStrategy<P: ThreadingPolicy = DLMultiThreadingPolic
 pub type MainHeapAllocator = HeapAllocator<
     DLDynamicHeap<
         DLBiHeapStrategy<
-            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>,
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }, 262144>,
             DLMultiThreadingPolicy,
         >,
     >,
@@ -935,7 +935,7 @@ pub type MainHeapAllocator = HeapAllocator<
 pub type GFXHeapAllocator = HeapAllocator<
     DLDynamicHeap<
         DLBiHeapStrategy<
-            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>,
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }, 16384>,
             DLMultiThreadingPolicy,
         >,
     >,
@@ -972,7 +972,7 @@ pub type HavokHeapAllocator =
 pub type MenuHeapAllocator = HeapAllocator<
     DLDynamicHeap<
         DLBiHeapStrategy<
-            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }>,
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 512 / 16 }, 16384>,
             DLMultiThreadingPolicy,
         >,
     >,
@@ -990,7 +990,7 @@ pub struct CSNetworkAllocator {
 pub type DebugHeapAllocator = HeapAllocator<
     DLDynamicHeap<
         DLDefaultHeapStrategy<
-            DLSmallObjectHeapWrapper<DLRobustHeap, { 256 / 16 }>,
+            DLSmallObjectHeapWrapper<DLRobustHeap, { 256 / 16 }, 16384>,
             DLMultiThreadingPolicy,
         >,
     >,
