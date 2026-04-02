@@ -1,5 +1,9 @@
-use crate::dlkr::{
-    DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, DLSingleThreadingPolicy, PlainAdaptiveMutexImpl, ThreadingPolicy
+use crate::{
+    BasicVector,
+    dlkr::{
+        DLMultiThreadingPolicy, DLPlainLightMutex, DLPlainReadWriteLock, DLSingleThreadingPolicy,
+        PlainAdaptiveMutexImpl, ThreadingPolicy,
+    },
 };
 use std::{
     alloc::{GlobalAlloc, Layout},
@@ -1068,9 +1072,7 @@ pub struct DLSystemHeapImpl {
 // TODO: replace with Vector<HeapAllocatorEntry, DLSystemHeapImpl> when #263 is merged
 pub struct HeapRegistry {
     pub allocator: NonNull<DLSystemHeapImpl>,
-    pub start: Option<NonNull<HeapAllocatorEntry>>,
-    pub end: Option<NonNull<HeapAllocatorEntry>>,
-    pub cap: Option<NonNull<HeapAllocatorEntry>>,
+    pub vec: BasicVector<HeapAllocatorEntry>,
 }
 
 #[repr(C)]
@@ -1078,4 +1080,27 @@ pub struct HeapAllocatorEntry {
     pub allocator: NonNull<DLAllocatorBase>,
     pub heap_start: *mut c_void,
     pub heap_end: *mut c_void,
+}
+
+impl DLSystemHeapImpl {
+    /// Finds the allocator responsible for the given pointer
+    pub fn get_allocator_of(&mut self, ptr: *const c_void) -> Option<NonNull<DLAllocatorBase>> {
+        self.registry_lock.read_lock(-1).ok()?;
+
+        let result = self
+            .heap_registry
+            .vec
+            .items()
+            .iter()
+            .rev()
+            .find(|e| {
+                let p = ptr as usize;
+                p >= e.heap_start as usize && p < e.heap_end as usize
+            })
+            .map(|e| e.allocator);
+
+        self.registry_lock.read_unlock().ok()?;
+
+        result
+    }
 }
