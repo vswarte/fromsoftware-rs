@@ -1,12 +1,16 @@
 use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::UiExt;
-use eldenring::cs::{CSGaitemGameData, GameDataMan, GameSettings, GameVersionData};
+use eldenring::cs::{
+    CSGaitemGameData, GameDataMan, GameSettings, GameVersionData, TrophyAccessoryStats,
+    TrophyEquipData, TrophyGoodsStats, TrophyWeaponStats,
+};
 
 use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for GameDataMan {
     fn render_debug(&self, ui: &Ui) {
+        ui.nested("Trophy Data", &self.trophy_equip_data);
         ui.display("Death Count", self.death_count);
         ui.header("Play Time", || {
             let hours = self.play_time / 3_600_000;
@@ -220,5 +224,69 @@ impl DebugDisplay for GameVersionData {
             self.saved_game_data_version_is_the_latest,
         );
         ui.display("Unused", self.unused);
+    }
+}
+
+impl DebugDisplay for TrophyEquipData {
+    fn render_debug(&self, ui: &Ui) {
+        ui.nested("Legendary Armaments", self.weapon_stats);
+        ui.nested("Legendary Spells & Ashes", self.goods_stats);
+        ui.nested("Legendary Talismans", self.accessory_stats);
+    }
+}
+
+impl DebugDisplay for TrophyWeaponStats<[u8; 0x10]> {
+    fn render_debug(&self, ui: &Ui) {
+        ui.display("Sword of Night and Flame", self.sword_of_night_and_flame());
+        ui.display("Dark Moon Greatsword", self.dark_moon_greatsword());
+        ui.display(
+            "Marais Executioner's Sword",
+            self.marais_executioners_sword(),
+        );
+        ui.display("Golden Order Greatsword", self.golden_order_greatsword());
+        ui.display("Ruins Greatsword", self.ruins_greatsword());
+        ui.display("Grafted Blade Greatsword", self.grafted_blade_greatsword());
+        ui.display("Eclipse Shotel", self.eclipse_shotel());
+        ui.display("Devourer's Scepter", self.devourers_scepter());
+        ui.display("Bolt of Gransax", self.bolt_of_gransax());
+    }
+}
+
+impl DebugDisplay for TrophyGoodsStats<[u8; 0x10]> {
+    fn render_debug(&self, ui: &Ui) {
+        ui.header("Sorceries & Incantations", || {
+            ui.display("Comet Azur", self.comet_azur());
+            ui.display("Founding Rain of Stars", self.founding_rain_of_stars());
+            ui.display("Stars of Ruin", self.stars_of_ruin());
+            ui.display("Ranni's Dark Moon", self.rannis_dark_moon());
+            ui.display("Flame of the Fell God", self.flame_of_the_fell_god());
+            ui.display("Elden Stars", self.elden_stars());
+            ui.display("Greyoll's Roar", self.greyolls_roar());
+        });
+
+        ui.header("Legendary Ashes", || {
+            ui.display("Black Knife Tiche", self.black_knife_tiche());
+            ui.display("Mimic Tear Ashes", self.mimic_tear_ashes());
+            ui.display("Cleanrot Knight Finlay", self.cleanrot_knight_finlay());
+            ui.display(
+                "Ancient Dragon Knight Kristoff",
+                self.ancient_dragon_knight_kristoff(),
+            );
+            ui.display("Redmane Knight Ogha", self.redmane_knight_ogha());
+            ui.display("Lhutel the Headless", self.lhutel_the_headless());
+        });
+    }
+}
+
+impl DebugDisplay for TrophyAccessoryStats<[u8; 0x10]> {
+    fn render_debug(&self, ui: &Ui) {
+        ui.display("Erdtree's Favor +2", self.erdtree_favor_p2());
+        ui.display("Radagon's Soreseal", self.radagons_soreseal());
+        ui.display("Moon of Nokstella", self.moon_of_nokstella());
+        ui.display("Marika's Soreseal", self.marikas_soreseal());
+        ui.display("Old Lord's Talisman", self.old_lords_talisman());
+        ui.display("Radagon Icon", self.radagon_icon());
+        ui.display("Godfrey Icon", self.godfrey_icon());
+        ui.display("Dragoncrest Greatshield", self.dragoncrest_greatshield());
     }
 }

@@ -14,6 +14,7 @@ pelite.workspace = true
 fromsoftware-shared-macros.workspace = true
 thiserror.workspace = true
 vtable-rs.workspace = true
+bitflags.workspace = true
 undname = "2"
 from-singleton = "3"
 

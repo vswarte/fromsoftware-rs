@@ -1,26 +1,41 @@
 use vtable_rs::VPtr;
 
-use crate::OwnedPtr;
+#[vtable_rs::vtable]
+pub trait CCallbackBaseVmt<P> {
+    /// Called when the callback is triggered
+    fn run(&mut self, pv_param: *mut P);
 
-#[allow(non_camel_case_types)]
-#[repr(C)]
-pub struct CCallback {
-    vftable: VPtr<dyn CCallbackVmt, Self>,
-    unk8: u8,
-    unkc: u32,
-    /// Pointer to the structure passed down to the callback.
-    subject: OwnedPtr<()>,
-    /// Pointer to the function that should be called.
-    function: isize,
+    /// Called when the callback is triggered as a result of a specific API call
+    fn run_call(&mut self, pv_param: *mut P, io_failure: bool, api_call: u64);
+
+    /// Returns the size of the parameter struct (P)
+    fn get_callback_size_bytes(&mut self) -> i32;
+
+    fn destructor(&mut self, should_free: bool);
 }
 
-#[vtable_rs::vtable]
-trait CCallbackVmt {
-    fn run(&mut self, data: isize);
+#[repr(C)]
+pub struct CCallbackBase<P: 'static> {
+    pub vftable: VPtr<dyn CCallbackBaseVmt<P>, Self>,
+    /// Internal Steam flags
+    pub callback_flags: CallbackFlags,
+    /// The unique ID for the callback type
+    /// (e.g., 1101 for UserStatsReceived_t)
+    pub callback_id: i32,
+}
 
-    fn run_other(&mut self, data: isize, p3: u64, p4: bool);
+#[repr(C)]
+pub struct CCallback<T, P: 'static> {
+    pub base: CCallbackBase<P>,
+    pub obj: *mut T,
+    pub func: extern "C" fn(&mut T, *mut P),
+}
 
-    fn get_callback_size_bytes(&mut self) -> u32;
-
-    fn destructor(&mut self);
+bitflags::bitflags! {
+    #[repr(C)]
+    #[derive(Debug, Clone, Copy)]
+    pub struct CallbackFlags: u8 {
+        const REGISTERED = 0x01;
+        const GAME_SERVER = 0x02;
+    }
 }
