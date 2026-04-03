@@ -208,7 +208,7 @@ pub struct ChrIns {
     /// Same as [Self::npc_id]
     pub character_id: u32,
     unk18c: u32,
-    pub module_container: OwnedPtr<ChrInsModuleContainer>,
+    pub modules: OwnedPtr<ChrInsModuleContainer>,
     unk198: usize,
     /// Squared distance at which the character will be deactivated.
     pub squared_deactivation_distance: f32,
