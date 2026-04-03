@@ -104,11 +104,11 @@ impl DebugDisplay for FD4PadDevice0x78 {
             let device = unsafe { self.virtual_multi_device.as_ref() };
             device.render_debug(ui);
         });
-        ui.header("bitset_fallback", || {
+        ui.header("mouse_button_states", || {
             let items = self.mouse_button_states;
             let len = items.len();
             ui.table(
-                "bitset_fallback_TABLE",
+                "mouse_button_states_TABLE",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("+ 0"),
