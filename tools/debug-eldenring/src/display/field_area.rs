@@ -38,10 +38,7 @@ impl DebugDisplay for WorldInfoOwner {
                     || {
                         ui.list("Blocks", entry.blocks.iter(), |ui, _i, block_entry| {
                             ui.header(format!("World Block Info {}", block_entry.block_id), || {
-                                ui.debug(
-                                    "Center physics coords",
-                                    block_entry.block.physics_center,
-                                );
+                                ui.debug("Center physics coords", block_entry.block.physics_center);
                             });
                         });
                     },
