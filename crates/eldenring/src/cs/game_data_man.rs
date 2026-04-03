@@ -3,6 +3,7 @@ use crate::{
     cs::{CSGaitemGameData, ChrType, PlayerGameData},
     fd4::FD4Time,
 };
+use bitfield::bitfield;
 use shared::{FromStatic, OwnedPtr, load_static_indirect};
 use std::{borrow::Cow, ptr::NonNull};
 
@@ -129,96 +130,108 @@ pub struct TrophyEquipData {
     /// Stats towards [`Legendary Armaments`] achievement
     ///
     /// [`Legendary Armaments`]: crate::cs::trophy::AchievementId::LegendaryArmaments
-    pub weapon_stats: TrophyWeaponStats,
+    pub weapon_stats: TrophyWeaponStats<[u8; 0x10]>,
     /// Stats towards [`Legendary Sorceries and Incantations`] and [`Legendary Ashen Remains`] achievements
     ///
     /// [`Legendary Sorceries and Incantations`]: crate::cs::trophy::AchievementId::LegendarySorceriesAndIncantations
     /// [`Legendary Ashen Remains`]: crate::cs::trophy::AchievementId::LegendaryAshenRemains
-    pub goods_stats: TrophyGoodsStats,
+    pub goods_stats: TrophyGoodsStats<[u8; 0x10]>,
     /// Stats towards [`Legendary Talismans`] achievement
     ///
     /// [`Legendary Talismans`]: crate::cs::trophy::AchievementId::LegendaryTalismans
-    pub accessory_stats: TrophyAccessoryStats,
+    pub accessory_stats: TrophyAccessoryStats<[u8; 0x10]>,
 }
 
-#[repr(C)]
-pub struct TrophyWeaponStats {
+bitfield! {
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct TrophyWeaponStats([u8]);
+    bool;
     // Legendary Armaments
     /// Id: 2140000 Sword of Night and Flame
-    pub sword_of_night_and_flame: bool,
+    pub sword_of_night_and_flame, set_sword_of_night_and_flame: 0;
     /// Id: 3090000 Dark Moon Greatsword
-    pub dark_moon_greatsword: bool,
+    pub dark_moon_greatsword, set_dark_moon_greatsword: 1;
     /// Id: 3150000 Marais Executioner's Sword
-    pub marais_executioners_sword: bool,
+    pub marais_executioners_sword, set_marais_executioners_sword: 2;
     /// Id: 3170000 Golden Order Greatsword
-    pub golden_order_greatsword: bool,
+    pub golden_order_greatsword, set_golden_order_greatsword: 3;
     /// Id: 4080000 Ruins Greatsword
-    pub ruins_greatsword: bool,
+    pub ruins_greatsword, set_ruins_greatsword: 4;
     /// Id: 4100000 Grafted Blade Greatsword
-    pub grafted_blade_greatsword: bool,
+    pub grafted_blade_greatsword, set_grafted_blade_greatsword: 5;
     /// Id: 7100000 Eclipse Shotel
-    pub eclipse_shotel: bool,
+    pub eclipse_shotel, set_eclipse_shotel: 6;
     /// Id: 12200000 Devourer's Scepter
-    pub devourers_scepter: bool,
+    pub devourers_scepter, set_devourers_scepter: 7;
     /// Id: 16090000 Bolt of Gransax
-    pub bolt_of_gransax: bool,
-    pub unused: [u8; 0x77],
+    pub bolt_of_gransax, set_bolt_of_gransax: 8;
+    u128;
+    pub unused, set_unused: 127, 9;
 }
 
-#[repr(C)]
-pub struct TrophyGoodsStats {
+bitfield! {
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct TrophyGoodsStats([u8]);
+    bool;
     // Legendary Sorceries and Incantations
     /// Id: 4200 Sorcery Comet Azur
-    pub comet_azur: bool,
+    pub comet_azur, set_comet_azur: 0;
     /// Id: 4210 Sorcery Founding Rain of Stars
-    pub founding_rain_of_stars: bool,
+    pub founding_rain_of_stars, set_founding_rain_of_stars: 1;
     /// Id: 4220 Sorcery Stars of Ruin
-    pub stars_of_ruin: bool,
+    pub stars_of_ruin, set_stars_of_ruin: 2;
     /// Id: 4361 Sorcery Ranni's Dark Moon
-    pub rannis_dark_moon: bool,
+    pub rannis_dark_moon, set_rannis_dark_moon: 3;
     /// Id: 6110 Incantation Flame of the Fell God
-    pub flame_of_the_fell_god: bool,
+    pub flame_of_the_fell_god, set_flame_of_the_fell_god: 4;
     /// Id: 6720 Incantation Elden Stars
-    pub elden_stars: bool,
+    pub elden_stars, set_elden_stars: 5;
     /// Id: 7090 Incantation Greyoll's Roar
-    pub greyolls_roar: bool,
+    pub greyolls_roar, set_greyolls_roar: 6;
 
     // Legendary Ashen Remains
     /// Id: 200000 Black Knife Tiche
-    pub black_knife_tiche: bool,
+    pub black_knife_tiche, set_black_knife_tiche: 7;
     /// Id: 207000 Mimic Tear Ashes
-    pub mimic_tear_ashes: bool,
+    pub mimic_tear_ashes, set_mimic_tear_ashes: 8;
     /// Id: 223000 Cleanrot Knight Finlay
-    pub cleanrot_knight_finlay: bool,
+    pub cleanrot_knight_finlay, set_cleanrot_knight_finlay: 9;
     /// Id: 256000 Ancient Dragon Knight Kristoff
-    pub ancient_dragon_knight_kristoff: bool,
+    pub ancient_dragon_knight_kristoff, set_ancient_dragon_knight_kristoff: 10;
     /// Id: 257000 Redmane Knight Ogha
-    pub redmane_knight_ogha: bool,
+    pub redmane_knight_ogha, set_redmane_knight_ogha: 11;
     /// Id: 258000 Lhutel the Headless
-    pub lhutel_the_headless: bool,
-    pub unused: [u8; 0x73],
+    pub lhutel_the_headless, set_lhutel_the_headless: 12;
+    u128;
+    pub unused, set_unused: 127, 13;
 }
 
-#[repr(C)]
-pub struct TrophyAccessoryStats {
+bitfield! {
+    #[repr(C)]
+    #[derive(Clone, Copy)]
+    pub struct TrophyAccessoryStats([u8]);
+    bool;
     // Legendary Talismans
     /// Id: 1042 Erdtree's Favor +2
-    pub erdtree_favor_p2: bool,
+    pub erdtree_favor_p2, set_erdtree_favor_p2: 0;
     /// Id: 1051 Radagon's Soreseal
-    pub radagons_soreseal: bool,
+    pub radagons_soreseal, set_radagons_soreseal: 1;
     /// Id: 1140 Moon of Nokstella
-    pub moon_of_nokstella: bool,
+    pub moon_of_nokstella, set_moon_of_nokstella: 2;
     /// Id: 1221 Marika's Soreseal
-    pub marikas_soreseal: bool,
+    pub marikas_soreseal, set_marikas_soreseal: 3;
     /// Id: 3060 Old Lord's Talisman
-    pub old_lords_talisman: bool,
+    pub old_lords_talisman, set_old_lords_talisman: 4;
     /// Id: 3070 Radagon Icon
-    pub radagon_icon: bool,
+    pub radagon_icon, set_radagon_icon: 5;
     /// Id: 3090 Godfrey Icon
-    pub godfrey_icon: bool,
+    pub godfrey_icon, set_godfrey_icon: 6;
     /// Id: 4003 Dragoncrest Greatshield Talisman
-    pub dragoncrest_greatshield: bool,
-    pub unused: [u8; 0x78],
+    pub dragoncrest_greatshield, set_dragoncrest_greatshield: 7;
+    u128;
+    pub unused, set_unused: 127, 8;
 }
 
 #[repr(C)]
