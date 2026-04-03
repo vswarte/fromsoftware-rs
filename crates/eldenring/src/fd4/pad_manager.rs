@@ -133,7 +133,8 @@ pub struct FD4PadDevice {
 pub struct FD4PadDevice0x78 {
     vftable: *const (),
     pub virtual_multi_device: NonNull<VirtualMultiDevice>,
-    pub bitset_fallback: [bool; 162],
+    /// Array of booleans representing state of mouse buttons.
+    pub mouse_button_states: [bool; 162],
     padding: [u8; 6],
     /// Some weird array, see comments below this struct.
     unkb8: [u8; 0x280],

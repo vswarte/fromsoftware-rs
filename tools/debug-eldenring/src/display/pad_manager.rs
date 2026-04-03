@@ -105,7 +105,7 @@ impl DebugDisplay for FD4PadDevice0x78 {
             device.render_debug(ui);
         });
         ui.header("bitset_fallback", || {
-            let items = self.bitset_fallback;
+            let items = self.mouse_button_states;
             let len = items.len();
             ui.table(
                 "bitset_fallback_TABLE",

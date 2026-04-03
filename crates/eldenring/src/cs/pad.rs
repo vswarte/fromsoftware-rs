@@ -129,16 +129,16 @@ impl CSPad {
         }
 
         let key_assign = unsafe { self.key_assign.as_ref() };
-        if let Some(mut fallback_index) = key_assign
-            .unk78_index_map
+        if let Some(mut mouse_button_states_index) = key_assign
+            .mouse_button_states_map
             .iter()
             .find(|pair| pair.key == virtual_input_index)
             .filter(|pair| pair.value != -1)
             .map(|pair| pair.value)
         {
-            fallback_index -= 1000;
-            if (0..=80).contains(&fallback_index) {
-                return multi_device.unk78.bitset_fallback[fallback_index as usize];
+            mouse_button_states_index -= 1000;
+            if (0..=80).contains(&mouse_button_states_index) {
+                return multi_device.unk78.mouse_button_states[mouse_button_states_index as usize];
             }
         }
 
