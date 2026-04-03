@@ -25,7 +25,7 @@ use crate::fd4::{FD4BasePad, InputType, InputTypeGroup};
 /// ```
 #[repr(C)]
 #[derive(Superclass)]
-#[superclass(children(CSInGamePad, CSMenuViewerPad))]
+#[superclass(children(CSInGamePad, CSMenuViewerPad, CSDebugCamPad))]
 pub struct CSPad {
     base: FD4BasePad,
 }
@@ -120,9 +120,9 @@ impl CSPad {
     }
 
     pub fn index_digital_input(&self, virtual_input_index: i32) -> bool {
-        let multi_device = unsafe { self.input_devices.as_ref() };
+        let multi_device = unsafe { self.pad_device.as_ref() };
 
-        let user_input_device = unsafe { &multi_device.virtual_multi_device.as_ref().device };
+        let user_input_device = unsafe { multi_device.virtual_multi_device.as_ref() };
 
         if user_input_device.get_virtual_digital_state(virtual_input_index as usize) {
             return true;
@@ -146,14 +146,7 @@ impl CSPad {
     }
 
     pub fn index_analog_input(&self, virtual_input_index: i32) -> f32 {
-        let user_input_device = unsafe {
-            &self
-                .input_devices
-                .as_ref()
-                .virtual_multi_device
-                .as_ref()
-                .device
-        };
+        let user_input_device = unsafe { self.pad_device.as_ref().virtual_multi_device.as_ref() };
 
         user_input_device.get_virtual_analog_state(virtual_input_index as usize)
     }
@@ -190,6 +183,17 @@ pub struct CSInGamePad {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct CSMenuViewerPad {
+    base: CSPad,
+}
+
+/// Derived class on top of the [CSPad].
+///
+/// The vftable will be changed and it's gonna use different associated functions for input polling.
+///
+/// Used for polling input sfrom the Debug Camera.
+#[repr(C)]
+#[derive(Subclass)]
+pub struct CSDebugCamPad {
     base: CSPad,
 }
 

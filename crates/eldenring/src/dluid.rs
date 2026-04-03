@@ -1,5 +1,4 @@
-mod input_devices;
 mod user_input_device;
-
-pub use input_devices::*;
+mod virtual_input_data;
 pub use user_input_device::*;
+pub use virtual_input_data::*;

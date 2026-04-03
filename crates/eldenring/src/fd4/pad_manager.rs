@@ -1,8 +1,8 @@
 use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
-use crate::cs::{CSInGamePad, CSKeyAssign, CSMenuViewerPad, CSPad};
-use crate::dluid::InputDevices;
+use crate::cs::{CSDebugCamPad, CSInGamePad, CSKeyAssign, CSMenuViewerPad, CSPad};
+use crate::dluid::{KeyboardDevice, MouseDevice, PadDevice, VirtualMultiDevice};
 use crate::dlut::DLFixedVector;
 use crate::{Pair, Tree};
 
@@ -14,9 +14,14 @@ type RuntimeTypeHandle = usize;
 
 const CAPACITY: usize = 4;
 
-type InputDeviceList = DLFixedVector<NonNull<InputDevices>, CAPACITY>;
-type PadList = DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, PadEntry>>>, CAPACITY>;
-type KeyAssignList =
+/// DLFixedVector with 4 pointers to [FD4PadDevice] instances.
+type FD4PadDeviceList = DLFixedVector<NonNull<FD4PadDevice>, CAPACITY>;
+
+/// DLFixedVector with 4 pointers to `Map<>` instances that hold a [PadEntry].
+type CSPadEntryMapList = DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, PadEntry>>>, CAPACITY>;
+
+/// DLFixedVector with 4 pointers to `Map<>` instances that hold a [CSKeyAssign].
+type CSKeyAssignMapList =
     DLFixedVector<NonNull<Tree<Pair<RuntimeTypeHandle, NonNull<CSKeyAssign>>>>, CAPACITY>;
 
 /// Structure that manages inputs from devices, a.e Controller, Keyboard and Mouse.
@@ -27,19 +32,19 @@ pub struct FD4PadManager {
     allocator: *const (),
     /// Copied over from `CSWindowImp` when constructed.
     pub window_handle: isize,
-    unk10: *const (),
-    /// List of `InputDevices` instances. Each `InputDevices` maps the button states from the connected devices.
+    unk10: u8,
+    /// List of [FD4PadDevice] instances. Each [FD4PadDevice] maps the button states from the connected devices.
     ///
-    /// The game looks up a `CSPad` and then checks the `CSKeyAssign` before indexing the `VirtualMultiDevice` for the state of the buttons.
-    pub input_devices_list: InputDeviceList,
-    /// List of pairs holding various [CSPad] instances.
+    /// The game looks up a `CSPad` and then checks the `CSKeyAssign` before indexing the `VirtualMultiDevice` inside the [FD4PadDevice] for the state of the user keybinds.
+    pub pad_device_list: FD4PadDeviceList,
+    /// `Map<>` holding various [PadEntry] instances.
     ///
-    /// The game looks up the `CSPad` by it's `RuntimeTypeHandle`.
-    pub pad_list: PadList,
+    /// The game looks up the `CSPad` by it's `RuntimeTypeHandle` from this entry.
+    pub pad_entry_map_list: CSPadEntryMapList,
     /// Holds the key assignments used for mapping keys to specific codes used by the virtual devices.
     ///
     /// These are also referenced in `CSPad`` instances. The `RuntimeTypeHandle` here matches that of the `CSPad` it's attached to.
-    pub key_assign_list: KeyAssignList,
+    pub key_assign_map_list: CSKeyAssignMapList,
     /// Contains pointers to the same struct as field 0x58 in the `CSKeyAssign`` instances.
     unka8: DLFixedVector<*const (), CAPACITY>,
     unkd8: *const (),
@@ -72,7 +77,9 @@ pub struct FD4PadManager {
 
 impl FD4PadManager {
     /// Obtains the specific [CSPad] responsible for regular in-game inputs.
+    ///
     /// This is polled during the `InGameStep`.
+    ///
     /// The rtti for this instance is `CSInGamePad_UserInput1`.
     pub fn get_in_game_pad(&mut self) -> Option<&mut CSInGamePad> {
         self.get_pad_instance::<CSInGamePad>()
@@ -82,8 +89,12 @@ impl FD4PadManager {
         self.get_pad_instance::<CSMenuViewerPad>()
     }
 
+    pub fn get_debug_camera(&mut self) -> Option<&mut CSDebugCamPad> {
+        self.get_pad_instance::<CSDebugCamPad>()
+    }
+
     fn get_pad_instance<T: Subclass<CSPad>>(&mut self) -> Option<&mut T> {
-        self.pad_list
+        self.pad_entry_map_list
             .iter()
             .find_map(|tree: &NonNull<Tree<Pair<usize, PadEntry>>>| {
                 let tree: &Tree<Pair<usize, PadEntry>> = unsafe { tree.as_ref() };
@@ -102,3 +113,37 @@ pub struct PadEntry {
     /// Setting this to `true` enables you to read inputs using this [CSPad] instance.
     pub enable_use: bool,
 }
+
+type PadDeviceList = DLFixedVector<NonNull<PadDevice>, CAPACITY>;
+
+/// Source of name: DLPanic in a function that accesses this field from [FD4PadManager].
+#[repr(C)]
+pub struct FD4PadDevice {
+    vftable: *const (),
+    pub virtual_multi_device: NonNull<VirtualMultiDevice>,
+    pub pad_devices: PadDeviceList,
+    pub mouse_device: NonNull<MouseDevice>,
+    pub keyboard_device: NonNull<KeyboardDevice>,
+    unk50: [u8; 0x28],
+    pub unk78: FD4PadDevice0x78,
+    unk3b0: [u8; 8],
+}
+
+#[repr(C)]
+pub struct FD4PadDevice0x78 {
+    vftable: *const (),
+    pub virtual_multi_device: NonNull<VirtualMultiDevice>,
+    pub bitset_fallback: [bool; 162],
+    padding: [u8; 6],
+    /// Some weird array, see comments below this struct.
+    unkb8: [u8; 0x280],
+    unk334: u8,
+}
+
+// #[repr(C)]
+// pub struct FD4PadDevice0x78ArrayEntry {
+//     pub unk00: u32,
+//     pub unk04: u32,
+//     pub unk08: bool,
+//     padding: [u8; 7],
+// }

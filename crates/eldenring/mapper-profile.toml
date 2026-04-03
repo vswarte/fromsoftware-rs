@@ -251,6 +251,10 @@ class = "CS::CSMenuViewerPad"
 vftable = "csmenu_viewer_pad_vmt"
 
 [[vmts]]
+class = "CS::CSDebugCamPad"
+vftable = "csdebug_cam_pad_vmt"
+
+[[vmts]]
 class = "DLUID::DLUserInputDeviceImpl<DLKR::DLMultiThreadingPolicy>"
 vftable = "dluser_input_device_impl_vmt"
 

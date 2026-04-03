@@ -35,6 +35,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     csbullet_wait_state_vmt: 0x2a274a0,
     cscam_vmt: 0x2a9d998,
     cschr_model_ins_vmt: 0x2b32be8,
+    csdebug_cam_pad_vmt: 0x2bdfd80,
     csez_rabbit_no_update_task_vmt: 0x2c017d8,
     csez_rabbit_task_base_vmt: 0x2c01768,
     csez_rabbit_task_vmt: 0x2c017a0,

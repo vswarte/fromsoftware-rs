@@ -1,9 +1,26 @@
 use bitfield::bitfield;
-use core::slice;
-use std::ptr::NonNull;
+use std::{
+    ops::{Deref, DerefMut},
+    ptr::NonNull,
+};
 
-use crate::{Vector, dlkr::DLPlainLightMutex};
-use shared::{Subclass, Superclass};
+use crate::{
+    Vector,
+    dlkr::DLPlainLightMutex,
+    dluid::{DLVirtualAnalogKeyInfo, DLVirtualInputData},
+};
+use shared::{Subclass, Superclass, UnknownStruct};
+
+#[repr(C)]
+pub struct DLUserInputDevice {
+    vftable: *const (),
+    allocator: *const (),
+    /// The data in [DLUserInputDeviceImpl].virtual_input_data gets copied over to this field.
+    ///
+    /// The game accesses this from `FD4PadManager` and it's `CSPad` instances to poll inputs.
+    pub virtual_input_data: DLVirtualInputData,
+    user_input_extensions: Vector<UnknownStruct<0x8>>,
+}
 
 /// Source of name: RTTI
 #[repr(C)]
@@ -16,13 +33,7 @@ use shared::{Subclass, Superclass};
     DummyDevice
 ))]
 pub struct DLUserInputDeviceImpl {
-    _vftable: *const (),
-    unk008: *const (),
-    /// Contains a reference to the same [DLVirtualInputData] from `initial_virtual_input_data`.
-    ///
-    /// The game accesses this from `FD4PadManager` and it's `CSPad` instances to poll inputs.
-    pub virtual_input_data: DLVirtualInputData,
-    user_input_extensions: Vector<*const ()>,
+    device: DLUserInputDevice,
     unk080: *const (),
     unk088: *const (),
     pub mutex: DLPlainLightMutex,
@@ -41,6 +52,20 @@ pub struct DLUserInputDeviceImpl {
     user_input_mapper_slots: Vector<*const ()>,
     /// The [DLVirtualInputData] is inserted here and gets memcpy'd over to `virtual_input_data`
     pub initial_virtual_input_data: DLVirtualInputData,
+}
+
+impl Deref for DLUserInputDeviceImpl {
+    type Target = DLUserInputDevice;
+
+    fn deref(&self) -> &Self::Target {
+        &self.device
+    }
+}
+
+impl DerefMut for DLUserInputDeviceImpl {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.device
+    }
 }
 
 #[repr(C)]
@@ -79,115 +104,61 @@ impl DLUserInputDeviceImpl {
 }
 
 /// Source of name: RTTI
-#[repr(C)]
-pub struct DLVirtualAnalogKeyInfo<T> {
-    vftable: *const (),
-    pub vector: Vector<T>,
-}
-
-/// Source of name: RTTI
-#[repr(C)]
-pub struct DLVirtualInputData {
-    vftable: *const (),
-    /// Corresponds to movement inputs such as Mouse, Stick and character movement keys.
-    pub analog_key_info: DLVirtualAnalogKeyInfo<f32>,
-    /// Corresponds to action inputs such as jump, crouch and attacks.
-    pub dynamic_bitset: DynamicBitset,
-}
-
-impl DLVirtualInputData {
-    pub fn get_analog(&self, index: usize) -> f32 {
-        let vector = &self.analog_key_info.vector;
-        if index < vector.len() {
-            let items = self.analog_key_info.vector.items();
-            return items[index];
-        }
-
-        0.0
-    }
-    pub fn set_analog(&mut self, index: usize, state: f32) {
-        let vector = &mut self.analog_key_info.vector;
-        if index < vector.len() {
-            let items = vector.items_mut();
-            items[index] = state;
-        }
-    }
-    pub fn get_digital(&self, index: usize) -> bool {
-        self.dynamic_bitset.get(index)
-    }
-    pub fn set_digital(&mut self, index: usize, state: bool) {
-        self.dynamic_bitset.set(index, state);
-    }
-}
-
-/// Source of name: RTTI
-#[repr(C)]
-pub struct DynamicBitset {
-    vftable: *const (),
-    /// Corresponds to the amount of integers (32 bit-size) required to store the bitfield.
-    ///
-    /// Calculated during creation as:
-    ///
-    /// integer_count = bit_count // 32 * 4.
-    integer_count: usize,
-    /// Bitfield that this [DynamicBitset] corresponds to.
-    ///
-    /// It's allocated as an array of integers with the size of `integer_count`.
-    ///
-    /// # SAFETY
-    ///
-    /// We assume the `integer_count` field is always accurate to access this.
-    bitset: NonNull<u32>,
-    allocator: *const (),
-}
-
-impl DynamicBitset {
-    pub fn as_slice(&self) -> &[u32] {
-        unsafe {
-            let data = self.bitset.as_ptr();
-            slice::from_raw_parts(data, self.integer_count)
-        }
-    }
-
-    pub fn as_slice_mut(&mut self) -> &mut [u32] {
-        unsafe {
-            let data = self.bitset.as_ptr();
-            slice::from_raw_parts_mut(data, self.integer_count)
-        }
-    }
-
-    pub fn get(&self, bit_index: usize) -> bool {
-        let slice: &[u32] = self.as_slice();
-
-        let index: usize = bit_index / 32;
-        let row: u32 = slice[index];
-        let shift: usize = bit_index & 31;
-
-        ((row >> shift) & 1) == 1
-    }
-
-    pub fn set(&mut self, bit_index: usize, state: bool) {
-        let slice = self.as_slice_mut();
-
-        let index = bit_index / 32;
-        let row = &mut slice[index];
-        let shift = bit_index & 31;
-
-        let mask = 1u32 << shift;
-
-        *row = (*row & !mask) | ((state as u32) << shift);
-    }
-}
-
-/// Source of name: RTTI
 ///
 /// Subclass of [DLUserInputDeviceImpl]
 #[repr(C)]
 #[derive(Subclass)]
 pub struct VirtualMultiDevice {
-    pub device: DLUserInputDeviceImpl,
+    device: DLUserInputDeviceImpl,
     /// Contains a list of pointers to PadDevice, MouseDevice and KeyboardDevice instances.
-    pub device_list: Vector<NonNull<DLUserInputDeviceImpl>>,
+    pub device_list: Vector<DLUserInputDeviceImpl>,
+}
+impl VirtualMultiDevice {
+    pub fn get_keyoard_device(&self) -> Option<&KeyboardDevice> {
+        self.get_input_device::<KeyboardDevice>()
+    }
+
+    pub fn get_mouse_device(&self) -> Option<&MouseDevice> {
+        self.get_input_device::<MouseDevice>()
+    }
+
+    pub fn get_keyoard_device_mut(&mut self) -> Option<&mut KeyboardDevice> {
+        self.get_input_device_mut::<KeyboardDevice>()
+    }
+
+    pub fn get_mouse_device_mut(&mut self) -> Option<&mut MouseDevice> {
+        self.get_input_device_mut::<MouseDevice>()
+    }
+
+    fn get_input_device<T: Subclass<DLUserInputDeviceImpl>>(&self) -> Option<&T> {
+        self.device_list
+            .items()
+            .iter()
+            .find_map(|device: &DLUserInputDeviceImpl| device.as_subclass::<T>())
+    }
+
+    fn get_input_device_mut<T: Subclass<DLUserInputDeviceImpl>>(&mut self) -> Option<&mut T> {
+        self.device_list
+            .items_mut()
+            .iter_mut()
+            .find_map(|device: &mut DLUserInputDeviceImpl| device.as_subclass_mut::<T>())
+    }
+
+    pub fn get_pad_devices(&self) -> Vec<&PadDevice> {
+        self.device_list
+            .items()
+            .iter()
+            .filter_map(|device| device.as_subclass::<PadDevice>())
+            .collect()
+    }
+
+    pub fn get_pad_devices_mut(&mut self) -> Vec<&mut PadDevice> {
+        self.device_list
+            .items_mut()
+            .iter_mut()
+            .filter_map(|device| device.as_subclass_mut::<PadDevice>())
+            .collect()
+    }
 }
 
 /// Source of name: RTTI
@@ -196,7 +167,7 @@ pub struct VirtualMultiDevice {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct DummyDevice {
-    pub device: DLUserInputDeviceImpl,
+    device: DLUserInputDeviceImpl,
 }
 
 /// Source of name: RTTI
@@ -205,7 +176,7 @@ pub struct DummyDevice {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct PadDevice {
-    pub device: DLUserInputDeviceImpl,
+    device: DLUserInputDeviceImpl,
     //unk7d8: [u8; 0x290],
     unk7d8: i32,
     unk7dc: [u8; 4],
@@ -250,10 +221,10 @@ bitfield! {
     pub left_shoulder,  set_left_shoulder:  8;
     pub right_shoulder, set_right_shoulder: 9;
 
-    pub button_a,       set_a:              12;
-    pub button_b,       set_b:              13;
-    pub button_x,       set_x:              14;
-    pub button_y,       set_y:              15;
+    pub button_a,       set_button_a:       12;
+    pub button_b,       set_button_b:       13;
+    pub button_x,       set_button_x:       14;
+    pub button_y,       set_button_y:       15;
 }
 
 /// Source of name: RTTI
@@ -262,7 +233,7 @@ bitfield! {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct MouseDevice {
-    pub device: DLUserInputDeviceImpl,
+    device: DLUserInputDeviceImpl,
     unk7d8: i32,
     unk7dc: [u8; 4],
     // DirectInput8 interface?
@@ -281,6 +252,13 @@ pub struct MouseDevice {
     pub normalized_lz: f32,
 }
 
+impl MouseDevice {
+    /// See [DIMouseButton] for reference.
+    pub fn is_key_pressed<K: Into<usize>>(&self, button: K) -> bool {
+        self.di_mouse_state.buttons[button.into()] & 0x80 != 0
+    }
+}
+
 /// Source of name: <https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee416631(v=vs.85)>
 #[repr(C)]
 pub struct DIMouseState2 {
@@ -292,13 +270,6 @@ pub struct DIMouseState2 {
     pub lz: i32,
     /// Mouse buttons 1-8
     pub buttons: [u8; 8],
-}
-
-impl DIMouseState2 {
-    /// See [DIMouseButton] for reference.
-    pub fn pressed<K: Into<usize>>(&self, button: K) -> bool {
-        self.buttons[button.into()] & 0x80 != 0
-    }
 }
 
 #[repr(u8)]
@@ -326,7 +297,7 @@ impl From<DIMouseButton> for usize {
 #[repr(C)]
 #[derive(Subclass)]
 pub struct KeyboardDevice {
-    pub device: DLUserInputDeviceImpl,
+    device: DLUserInputDeviceImpl,
     unk7d8: i32,
     unk7dc: [u8; 4],
     unk7e0: *const (),
@@ -337,7 +308,7 @@ pub struct KeyboardDevice {
 
 impl KeyboardDevice {
     /// See [DIMouseButton] for reference.
-    pub fn pressed<K: Into<usize>>(&self, key: K) -> bool {
+    pub fn is_key_pressed<K: Into<usize>>(&self, key: K) -> bool {
         self.di_keyboard_state[key.into()] & 0x80 != 0
     }
 }

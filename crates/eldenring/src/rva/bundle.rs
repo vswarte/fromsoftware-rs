@@ -36,6 +36,7 @@ pub struct RvaBundle {
     pub csbullet_wait_state_vmt: u32,
     pub cscam_vmt: u32,
     pub cschr_model_ins_vmt: u32,
+    pub csdebug_cam_pad_vmt: u32,
     pub csez_rabbit_no_update_task_vmt: u32,
     pub csez_rabbit_task_base_vmt: u32,
     pub csez_rabbit_task_vmt: u32,

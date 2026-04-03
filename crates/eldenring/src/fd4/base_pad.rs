@@ -4,15 +4,15 @@ use crate::{
     Pair, Tree,
     cs::CSKeyAssign,
     dltx::{DLString, DLUTF16StringKind},
-    dluid::InputDevices,
+    fd4::FD4PadDevice,
 };
 
 #[repr(C)]
 pub struct FD4BasePad {
-    pub vftable: *const (),
+    vftable: *const (),
     allocator: *const (),
-    /// [InputDevices] instance referenced in `FD4PadManager.devices`
-    pub input_devices: NonNull<InputDevices>,
+    /// [FD4PadDevice] instance referenced in `FD4PadManager.devices`
+    pub pad_device: NonNull<FD4PadDevice>,
     /// `パッド名未設定` | `Pad name not set`
     ///
     /// The game will sometimes change this to the name of the `CSPad` type.
