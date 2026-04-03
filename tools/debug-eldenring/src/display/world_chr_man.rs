@@ -313,7 +313,7 @@ impl DebugDisplay for SummonBuddyManager {
         );
         ui.display("Active summon buddy goods ID", self.active_summon_goods_id);
 
-        ui.debug("Spawn Origin", &self.spawn_origin);
+        ui.debug("Spawn Origin", self.spawn_origin);
 
         ui.list("Groups", self.groups.iter(), |ui, _i, group| {
             ui.header(format!("Group {}", group.owner_event_id), || {
