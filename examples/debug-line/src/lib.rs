@@ -68,7 +68,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                 ez_draw.draw_line(
                     &physics.position,
                     &(physics.position
-                        + PositionDelta(
+                        + PositionDelta::from_xyz(
                             directional_vector.x,
                             directional_vector.y,
                             directional_vector.z,

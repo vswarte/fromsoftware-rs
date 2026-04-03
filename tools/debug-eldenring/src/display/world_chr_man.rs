@@ -245,7 +245,7 @@ impl DebugDisplay for SummonBuddyWarpEntry {
     fn render_debug(&self, ui: &Ui) {
         ui.display("Handle", self.handle);
         ui.debug("Warp stage", self.warp_stage);
-        ui.display("Target position", self.target_position);
+        ui.debug("Target position", self.target_position);
         ui.debug("Target rotation", self.q_target_rotation);
         ui.text(format!("Flags: {:032b}", self.flags));
         ui.display("Time ray blocked", self.time_ray_blocked);
@@ -313,12 +313,7 @@ impl DebugDisplay for SummonBuddyManager {
         );
         ui.display("Active summon buddy goods ID", self.active_summon_goods_id);
 
-        ui.header("Spawn Origin", || {
-            ui.display("X", self.spawn_origin.0);
-            ui.display("Y", self.spawn_origin.1);
-            ui.display("Z", self.spawn_origin.2);
-            ui.display("W", self.spawn_origin.3);
-        });
+        ui.debug("Spawn Origin", &self.spawn_origin);
 
         ui.list("Groups", self.groups.iter(), |ui, _i, group| {
             ui.header(format!("Group {}", group.owner_event_id), || {

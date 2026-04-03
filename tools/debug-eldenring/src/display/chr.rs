@@ -36,7 +36,7 @@ impl StatefulDebugDisplay for PlayerIns {
             self.invincibility_timer_for_net_player,
         );
         ui.display("Locked on enemy", self.locked_on_enemy);
-        ui.display("Block position", self.block_position);
+        ui.debug("Block position", self.block_position);
     }
 }
 
@@ -755,8 +755,8 @@ impl DebugDisplay for CSChrLadderModule {
 
 impl DebugDisplay for CSChrPhysicsModule {
     fn render_debug(&self, ui: &Ui) {
-        ui.display("Position", self.position);
-        ui.display("Orientation", self.orientation);
+        ui.debug("Position", self.position);
+        ui.debug("Orientation", self.orientation);
         ui.nested("Physics material", unsafe {
             self.slide_info.material_info.as_ref()
         });
@@ -881,9 +881,9 @@ impl DebugDisplay for CSChrRideModule {
         ui.debug("Last mounted", self.last_mounted);
         ui.display("Has ride param", self.has_ride_param);
         ui.display("Is ridden character", self.is_ride_character);
-        ui.display("Mount rotation", self.mount_data.rotation);
-        ui.display("Mount position", self.mount_data.mount_position);
-        ui.display("Mount velocity", self.mount_data.velocity);
+        ui.debug("Mount rotation", self.mount_data.rotation);
+        ui.debug("Mount position", self.mount_data.mount_position);
+        ui.debug("Mount velocity", self.mount_data.velocity);
         ui.display("Attack direction", self.mount_data.attack_direction);
         ui.display(
             "Attack received damage type",
@@ -905,8 +905,8 @@ impl DebugDisplay for CSChrRideModule {
 impl DebugDisplay for CSPairAnimNode {
     fn render_debug(&self, ui: &Ui) {
         ui.display("Counter party", self.counter_party);
-        ui.display("Start position", self.start_position);
-        ui.display("Start rotation", self.start_rotation);
+        ui.debug("Start position", self.start_position);
+        ui.debug("Start rotation", self.start_rotation);
     }
 }
 
