@@ -148,7 +148,7 @@ impl CSEzDraw {
             )
         };
 
-        let direction = HavokPosition(direction.0, direction.1, direction.2, 0.0);
+        let direction = HavokPosition::from_xyz(direction.x, direction.y, direction.z);
 
         target(
             self,
