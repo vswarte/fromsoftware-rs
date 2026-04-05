@@ -2,6 +2,7 @@ use std::ffi::c_void;
 use std::sync::Once;
 use std::time::Duration;
 
+use eldenring::fd4::FD4PadManager;
 use hudhook::imgui::{Condition, Context, Io, Ui, sys as imgui_sys};
 use hudhook::windows::Win32::Foundation::HINSTANCE;
 use hudhook::{ImguiRenderLoop, MessageFilter, eject, hooks::dx12::ImguiDx12Hooks};
@@ -67,6 +68,10 @@ struct EldenRingDebugGui {
     fade: StaticDebugger<CSFade>,
     sfx: StaticDebugger<CSSfxImp>,
     world_scene_draw_param: StaticDebugger<CSWorldSceneDrawParamManager>,
+
+    // Input
+    mouse: StaticDebugger<CSMouseMan>,
+    pad_manager: StaticDebugger<FD4PadManager>,
 
     // Front ENd
     fe: StaticDebugger<CSFeManImp>,
@@ -188,6 +193,13 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
                 gui.fe.render_debug(ui);
                 item.end();
             }
+
+            if let Some(item) = ui.tab_item("Input") {
+                gui.pad_manager.render_debug(ui);
+                gui.mouse.render_debug(ui);
+                item.end();
+            }
+
             if let Some(item) = ui.tab_item("Eject") {
                 if ui.button("Eject") {
                     eject();
