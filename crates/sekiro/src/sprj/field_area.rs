@@ -48,7 +48,7 @@ impl FromStatic for FieldArea {
         "FieldArea".into()
     }
 
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().field_area_ptr) }
     }
 }

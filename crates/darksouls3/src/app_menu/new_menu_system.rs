@@ -71,7 +71,7 @@ impl FromStatic for NewMenuSystem {
         "NewMenuSystem".into()
     }
 
-    unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> fromsoftware_shared::InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().app_menu_new_menu_system_ptr) }
     }
 }

@@ -57,7 +57,7 @@ impl FromStatic for MapItemMan {
     }
 
     /// Returns the singleton instance of `MapItemMan`.
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().map_item_man_ptr) }
     }
 }
