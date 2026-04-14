@@ -213,8 +213,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
     }
 
     std::thread::spawn(move || {
-        wait_for_system_init(&Program::current(), Duration::MAX)
-            .expect("Timeout waiting for system init");
+        let cs_task = CSTaskImp::wait_for_instance().unwrap();
 
         let mut demo = Box::new(TalkScriptDemo {
             talk_script: TalkScript::new(
@@ -228,7 +227,6 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
             state: TalkScriptDemoState::Idle,
         });
 
-        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
                 if let Ok(world_chr_man) = unsafe { WorldChrMan::instance() }

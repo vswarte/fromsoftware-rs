@@ -21,10 +21,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
 
     // Kick off new thread.
     std::thread::spawn(|| {
-        wait_for_system_init(&Program::current(), Duration::MAX)
-            .expect("Could not await system init.");
-
-        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
+        let cs_task = CSTaskImp::wait_for_instance().unwrap();
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 if !input::is_key_pressed(0x48) {

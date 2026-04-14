@@ -23,11 +23,8 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
 
     // Kick off new thread.
     std::thread::spawn(|| {
-        wait_for_system_init(&Program::current(), Duration::MAX)
-            .expect("Could not await system init.");
-
+        let cs_task = CSTaskImp::wait_for_instance().unwrap();
         let mut last_pressed = Instant::now();
-        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
                 if Instant::now() - last_pressed < DEBOUNCE_DELAY {
