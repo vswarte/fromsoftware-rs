@@ -126,6 +126,16 @@ impl<A: Allocator> VectorBool<A> {
         }
     }
 
+    pub fn clear(&mut self) {
+        if self.capacity() == 0 {
+            return;
+        }
+        // Drop every live element in [first, last) before releasing the buffer
+        let (words, _) = self.word_parts_mut();
+        words.iter_mut().for_each(|w| *w = 0);
+        self.last = 0;
+    }
+
     /// # Safety
     ///
     /// `index` must be < `self.end`
@@ -146,15 +156,25 @@ impl<A: Allocator> VectorBool<A> {
     }
 
     fn word_parts(&self) -> (&[VBase], VBase) {
+        if self.first.is_null() {
+            return (&[], 0);
+        }
         let full = self.last / VBITS;
         let tail = self.last % VBITS;
         let words = unsafe { std::slice::from_raw_parts(self.first, full) };
-        let mask = ((1 as VBase) << tail).wrapping_sub(1);
-        let tail_word = unsafe { *self.first.add(full) } & mask;
+        let tail_word = if tail > 0 {
+            let mask = ((1 as VBase) << tail).wrapping_sub(1);
+            (unsafe { *self.first.add(full) } & mask)
+        } else {
+            0
+        };
         (words, tail_word)
     }
 
     fn word_parts_mut(&mut self) -> (&mut [VBase], VBase) {
+        if self.first.is_null() {
+            return (&mut [], 0);
+        }
         let full = self.last / VBITS;
         let tail = self.last % VBITS;
         let words = unsafe { std::slice::from_raw_parts_mut(self.first, full) };
@@ -170,8 +190,8 @@ impl<A: Allocator> VectorBool<A> {
 
         let new_ptr = self.allocator.allocate_n::<VBase>(new_words).as_ptr() as _;
         unsafe {
-            std::ptr::copy_nonoverlapping(self.first, new_ptr, old_words);
             if old_words > 0 {
+                std::ptr::copy_nonoverlapping(self.first, new_ptr, old_words);
                 self.allocator.deallocate_raw(self.first as _);
             }
         }

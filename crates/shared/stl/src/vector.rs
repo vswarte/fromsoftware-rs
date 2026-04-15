@@ -26,6 +26,9 @@ pub struct Vector<T, A: Allocator> {
 impl<T, A: Allocator> Vector<T, A> {
     #[inline]
     pub fn capacity(&self) -> usize {
+        if self.first.is_null() {
+            return 0;
+        }
         unsafe { self.end.offset_from(self.first) as usize }
     }
 
@@ -86,6 +89,17 @@ impl<T, A: Allocator> Vector<T, A> {
         }
     }
 
+    pub fn clear(&mut self) {
+        if self.capacity() == 0 {
+            return;
+        }
+        // Drop every live element in [first, last) before releasing the buffer
+        unsafe {
+            std::ptr::drop_in_place(std::ptr::slice_from_raw_parts_mut(self.first, self.len()));
+        }
+        self.last = self.first;
+    }
+
     /// MSVC growth policy: 1.5x capacity
     fn grow(&mut self) {
         let old_len = self.len();
@@ -136,11 +150,7 @@ impl<T, A: Allocator> DerefMut for Vector<T, A> {
 
 impl<T, A: Allocator> Drop for Vector<T, A> {
     fn drop(&mut self) {
-        // Drop every live element in [first, last) before releasing the buffer
-        unsafe {
-            std::ptr::drop_in_place(std::ptr::slice_from_raw_parts_mut(self.first, self.len()));
-        }
-
+        self.clear();
         // guard against empty vectors
         if self.capacity() > 0 {
             unsafe { self.allocator.deallocate_raw(self.first as _) };
