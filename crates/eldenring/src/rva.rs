@@ -9,7 +9,7 @@ mod rva_ww;
 
 pub use bundle::RvaBundle;
 
-const NAME: &'static str = "ELDEN RING™";
+const NAME: &str = "ELDEN RING™";
 
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;

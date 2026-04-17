@@ -8,7 +8,7 @@ mod rva_data;
 
 pub use bundle::*;
 
-const NAME: &'static str = "DARK SOULS™ III";
+const NAME: &str = "DARK SOULS™ III";
 
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;

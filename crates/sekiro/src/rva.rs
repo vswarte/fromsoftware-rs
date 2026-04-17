@@ -8,7 +8,7 @@ mod rva_data;
 
 pub use bundle::*;
 
-const NAME: &'static str = "Sekiro™: Shadows Die Twice";
+const NAME: &str = "Sekiro™: Shadows Die Twice";
 
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
