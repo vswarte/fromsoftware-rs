@@ -8,6 +8,8 @@ mod rva_data;
 
 pub use bundle::*;
 
+const NAME: &'static str = "Sekiro™: Shadows Die Twice";
+
 const LANG_ID_EN: u16 = 0x0009;
 const LANG_ID_JP: u16 = 0x0011;
 
@@ -20,8 +22,8 @@ enum GameVersion {
 impl GameVersion {
     fn from_metadata(product: &str, lang_id: u16, version: &str) -> Option<Self> {
         match (product, lang_id, version) {
-            ("Sekiro™: Shadows Die Twice", LANG_ID_EN, "1.6.0.0") => Some(Self::Ww1600),
-            ("Sekiro™: Shadows Die Twice", LANG_ID_JP, "1.6.0.0") => Some(Self::Jp1600),
+            (NAME, LANG_ID_EN, "1.6.0.0") => Some(Self::Ww1600),
+            (NAME, LANG_ID_JP, "1.6.0.0") => Some(Self::Jp1600),
             _ => None,
         }
     }
@@ -36,27 +38,32 @@ pub fn get() -> &'static RvaBundle {
             PeView::module(GetModuleHandleA(PCSTR(std::ptr::null())).unwrap().0 as *const u8)
         };
         detect_version_and_get_rvas(&module)
-            .expect("This game version or distribution is not supported")
     });
 
     &RVAS
 }
 
-/// Determines the region and version of the current executable and, if it's
-/// known, returns the [RvaBundle] for it.
-fn detect_version_and_get_rvas(module: &PeView) -> Option<RvaBundle> {
-    let resources = module.resources().ok()?;
-    let info = resources.version_info().ok()?;
+/// Determines the region and version of the current executable and returns the
+/// [RvaBundle] for it. Panics if the version isn't known.
+fn detect_version_and_get_rvas(module: &PeView) -> RvaBundle {
+    let resources = module.resources().unwrap();
+    let info = resources.version_info().unwrap();
 
     // Extract version info
-    let product_version = info.fixed()?.dwProductVersion;
+    let product_version = info
+        .fixed()
+        .expect("Executable doesn't contain version metdata")
+        .dwProductVersion;
     let version = format!(
         "{}.{}.{}.{}",
         product_version.Major, product_version.Minor, product_version.Patch, product_version.Build,
     );
 
     // Extract product name
-    let language = *info.translation().first()?;
+    let language = *info
+        .translation()
+        .first()
+        .expect("Executable doesn't contain language metdata");
     let mut product_name: Option<String> = None;
     info.strings(language, |k, v| {
         if k == "ProductName" {
@@ -64,12 +71,26 @@ fn detect_version_and_get_rvas(module: &PeView) -> Option<RvaBundle> {
         }
     });
 
-    let product = product_name?;
+    let product = product_name.expect("Executable doesn't contain product name metadata");
+    if product != NAME {
+        panic!(
+            "Expected executable name to be \"{}\", was \"{}\"",
+            NAME, &product
+        );
+    }
+
     let lang_id_base = language.lang_id & 0x03FF;
+    if lang_id_base != LANG_ID_EN && lang_id_base != LANG_ID_JP {
+        panic!(
+            "Expected executable language ID to be {:#04x} or {:#04x}, was {:#04x}",
+            LANG_ID_EN, LANG_ID_JP, lang_id_base
+        );
+    }
 
     // Detect version and return appropriate RVAs
-    let version = GameVersion::from_metadata(&product, lang_id_base, &version)?;
-    Some(RvaBundle::for_version(version))
+    let version = GameVersion::from_metadata(&product, lang_id_base, &version)
+        .unwrap_or_else(|| panic!("Unsupported game version {}", &version));
+    RvaBundle::for_version(version)
 }
 
 impl RvaBundle {
