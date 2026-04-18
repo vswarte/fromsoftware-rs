@@ -170,6 +170,23 @@ impl<T, A: Allocator> List<T, A> {
         Some(unsafe { self.detach_node(node) })
     }
 
+    pub fn clear(&mut self) {
+        let mut current = unsafe { self.head.as_ref() }.next;
+        while current != self.head {
+            let next = unsafe { current.as_ref() }.next;
+            unsafe {
+                std::ptr::drop_in_place((*current.as_ptr()).value.as_mut_ptr());
+                self.allocator.deallocate_raw(current.as_ptr() as _);
+            }
+            current = next;
+        }
+        unsafe {
+            (*self.head.as_ptr()).next = self.head;
+            (*self.head.as_ptr()).previous = self.head;
+        }
+        self.length = 0;
+    }
+
     /// # Safety
     ///
     /// `node` must be a node and belong this list and not be the sentinel node.
@@ -199,15 +216,7 @@ impl<T, A: Allocator> List<T, A> {
 
 impl<T, A: Allocator> Drop for List<T, A> {
     fn drop(&mut self) {
-        let mut current = unsafe { self.head.as_ref() }.next;
-        while current != self.head {
-            let next = unsafe { current.as_ref() }.next;
-            unsafe {
-                std::ptr::drop_in_place((*current.as_ptr()).value.as_mut_ptr());
-                self.allocator.deallocate_raw(current.as_ptr() as _);
-            }
-            current = next;
-        }
+        self.clear();
         unsafe { self.allocator.deallocate_raw(self.head.as_ptr() as _) };
     }
 }

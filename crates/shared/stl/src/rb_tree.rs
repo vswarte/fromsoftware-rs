@@ -358,10 +358,7 @@ impl<V, A: Allocator, C: TreeComparator<V> + Default, const UNIQUE: bool> RbTree
 
 impl<V, A: Allocator, C: Sized, const UNIQUE: bool> Drop for RbTree<V, A, C, UNIQUE> {
     fn drop(&mut self) {
-        let root = self.head.parent();
-        if !root.is_nil() {
-            unsafe { self.drop_subtree(root) };
-        }
+        self.clear();
         // Free the sentinel itself (its value field is never initialized)
         unsafe { self.allocator.deallocate_raw(self.head.as_ptr() as _) };
     }
@@ -691,6 +688,19 @@ impl<V, A: Allocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.size == 0
+    }
+
+    pub fn clear(&mut self) {
+        let root = self.head.parent();
+        if !root.is_nil() {
+            unsafe { self.drop_subtree(root) };
+        }
+        unsafe {
+            self.head.get_mut().parent = self.head;
+            self.head.get_mut().left = self.head;
+            self.head.get_mut().right = self.head;
+        }
+        self.size = 0;
     }
 }
 
