@@ -212,11 +212,11 @@ bitfield! {
     /// Queue bit 36: Movement cancel previous frame (cancel entries only).
     ///
     /// Not used in the main `action_requests` bitfield.
-    pub queue_movement_prev, set_queue_movement_prev:     36;
+    pub movement_prev, set_movement_prev:     36;
     /// Queue bit 37: Slot switch cancel (cancel entries only).
     ///
     /// Not used in the main `action_requests` bitfield.
-    pub queue_slot_switch, set_queue_slot_switch:         37;
+    pub slot_switch, set_slot_switch:         37;
 }
 
 #[repr(C)]
