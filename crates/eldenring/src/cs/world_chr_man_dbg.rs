@@ -208,7 +208,7 @@ impl FromStatic for WorldChrManDbgFlags {
         Cow::Borrowed("WorldChrManDbgFlags")
     }
 
-    unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
-        unsafe { load_static_direct(rva::get().world_chr_man_dbg_flags) }
+    fn instance_ptr() -> shared::InstanceResult<*mut Self> {
+        load_static_direct(rva::get().world_chr_man_dbg_flags)
     }
 }

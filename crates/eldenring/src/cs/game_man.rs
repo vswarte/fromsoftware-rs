@@ -201,7 +201,7 @@ impl FromStatic for GameMan {
         Cow::Borrowed("GameMan")
     }
 
-    unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> fromsoftware_shared::InstanceResult<*mut Self> {
         unsafe { load_static_indirect(crate::rva::get().game_man) }
     }
 }

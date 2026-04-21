@@ -345,7 +345,7 @@ impl FromStatic for CryptoSPIRegistry {
         Cow::Borrowed("CryptoSPIRegistry")
     }
 
-    unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> fromsoftware_shared::InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().crypto_spi_registry) }
     }
 }

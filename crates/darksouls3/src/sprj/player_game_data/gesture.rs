@@ -80,8 +80,8 @@ impl FromStatic for GestureDataStore {
         "GestureDataStore".into()
     }
 
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
-        unsafe { shared::load_static_direct(rva::get().gesture_data_store) }
+    fn instance_ptr() -> InstanceResult<*mut Self> {
+        shared::load_static_direct(rva::get().gesture_data_store)
     }
 }
 

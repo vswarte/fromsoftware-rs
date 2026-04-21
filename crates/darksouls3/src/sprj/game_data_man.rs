@@ -67,7 +67,7 @@ impl FromStatic for GameDataMan {
     }
 
     /// Returns the singleton instance of `GameDataMan`.
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().game_data_man_ptr) }
     }
 }

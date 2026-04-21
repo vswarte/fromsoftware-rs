@@ -290,7 +290,7 @@ impl FromStatic for MultiplayProperties {
         Cow::Borrowed("MultiplayProperties")
     }
 
-    unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
-        unsafe { load_static_direct(crate::rva::get().multiplay_properties) }
+    fn instance_ptr() -> shared::InstanceResult<*mut Self> {
+        load_static_direct(crate::rva::get().multiplay_properties)
     }
 }
