@@ -68,10 +68,10 @@ impl DebugDisplay for F32Vector2 {
 
 impl DebugDisplay for HavokPosition {
     fn render_debug(&self, ui: &Ui) {
-        ui.text(format!("x: {}", self.0));
-        ui.text(format!("y: {}", self.1));
-        ui.text(format!("z: {}", self.2));
-        ui.text(format!("w: {}", self.3));
+        ui.text(format!("x: {}", self.x));
+        ui.text(format!("y: {}", self.y));
+        ui.text(format!("z: {}", self.z));
+        ui.text(format!("w: {}", self.w));
     }
 }
 
