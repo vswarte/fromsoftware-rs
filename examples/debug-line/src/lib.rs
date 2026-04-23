@@ -52,7 +52,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                 };
 
                 // Grab physics module from player.
-                let physics = &player.chr_ins.module_container.physics;
+                let physics = &player.chr_ins.modules.physics;
 
                 // Make a directional vector that points forward following the players
                 // rotation.

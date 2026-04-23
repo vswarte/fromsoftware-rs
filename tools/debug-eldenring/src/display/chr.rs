@@ -730,7 +730,7 @@ fn chr_ins_common_debug(chr_ins: &mut ChrIns, ui: &Ui, state: &mut ChrInsState) 
         }
     });
 
-    ui.nested("Modules", &chr_ins.module_container);
+    ui.nested("Modules", &chr_ins.modules);
 }
 
 impl DebugDisplay for ChrInsModuleContainer {

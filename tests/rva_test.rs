@@ -100,7 +100,7 @@ fn all_rvas_generated() -> Result<()> {
                 profile
                     .vmts
                     .into_iter()
-                    .flat_map(|v| v.captures.into_keys().chain(v.vftable.into_iter())),
+                    .flat_map(|v| v.captures.into_keys().chain(v.vftable)),
             )
             .collect::<HashSet<_>>();
 
