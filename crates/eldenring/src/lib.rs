@@ -12,6 +12,7 @@ pub mod dlkr;
 pub mod dlkrd;
 pub mod dlrf;
 pub mod dltx;
+pub mod dluid;
 pub mod dlut;
 pub mod ez_state;
 pub mod fd4;
