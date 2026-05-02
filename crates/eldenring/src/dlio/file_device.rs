@@ -406,7 +406,9 @@ where
     R: Read + Seek + 'static,
 {
     extern "C" fn destructor(&mut self) {
-        unimplemented!()
+        unsafe {
+            std::ptr::drop_in_place(self);
+        }
     }
 
     extern "C" fn copy_from(&mut self, _source: &DLFileOperatorBase) -> bool {
