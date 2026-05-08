@@ -65,6 +65,41 @@ impl<T, A: Allocator> Vector<T, A> {
         }
     }
 
+    /// Inserts `value` at `index`, shifting all elements after it to the right.
+    ///
+    /// # Panics
+    /// Panics if `index > len()`.
+    pub fn insert(&mut self, index: usize, value: T) {
+        assert!(index <= self.len(), "index out of bounds");
+        if self.last == self.end {
+            self.grow();
+        }
+        unsafe {
+            let p = self.first.add(index);
+            // Shift [index, len) one slot right to make room
+            std::ptr::copy(p, p.add(1), self.len() - index);
+            p.write(value);
+            self.last = self.last.add(1);
+        }
+    }
+
+    /// Removes and returns the element at `index`, shifting all elements
+    /// after it to the left.
+    ///
+    /// # Panics
+    /// Panics if `index >= len()`.
+    pub fn remove(&mut self, index: usize) -> T {
+        assert!(index < self.len(), "index out of bounds");
+        unsafe {
+            let p = self.first.add(index);
+            let value = p.read();
+            // Shift [index+1, len) one slot left to fill the gap
+            std::ptr::copy(p.add(1), p, self.len() - index - 1);
+            self.last = self.last.sub(1);
+            value
+        }
+    }
+
     pub fn push_back(&mut self, value: T) {
         if self.last == self.end {
             self.grow();
@@ -84,6 +119,14 @@ impl<T, A: Allocator> Vector<T, A> {
             self.last = self.last.sub(1);
             Some(self.last.read())
         }
+    }
+
+    pub fn push_front(&mut self, value: T) {
+        self.insert(0, value);
+    }
+
+    pub fn pop_front(&mut self) -> Option<T> {
+        (!self.is_empty()).then(|| self.remove(0))
     }
 
     /// MSVC growth policy: 1.5x capacity
