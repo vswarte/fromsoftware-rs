@@ -130,9 +130,9 @@ impl<A: Allocator> VectorBool<A> {
         if self.capacity() == 0 {
             return;
         }
-        // Drop every live element in [first, last) before releasing the buffer
-        let (words, _) = self.word_parts_mut();
-        words.iter_mut().for_each(|w| *w = 0);
+        unsafe {
+            self.first.write_bytes(0, self.last.div_ceil(VBITS));
+        }
         self.last = 0;
     }
 
