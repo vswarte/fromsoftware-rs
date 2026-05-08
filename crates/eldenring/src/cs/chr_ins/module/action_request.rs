@@ -77,10 +77,10 @@ pub struct CSChrActionRequestModule {
     pub readback_possible_cancels: ChrActions,
     /// Saved `npc_action_id` from the previous frame.
     pub readback_npc_action_id: i32,
-    /// Override for [`ActionRequestQueue::current_index`].
+    /// Override for [`ActionRequestQueue::current_tae_id`].
     ///
-    /// When >= 0, used instead of the queue's own current_index.
-    pub queue_index_override: i32,
+    /// When >= 0, used instead of the queue's own TAE id.
+    pub queue_tae_id_override: i32,
     /// Enables the queue-based action request system.
     ///
     /// When true, per-state action requests and cancels are tracked in
@@ -112,19 +112,24 @@ pub struct ActionRequestQueue {
     pub input_entries: Vector<ActionQueueEntry>,
     /// Per-state cancel tracking. Cleared at end of `UpdateFromManipulator`.
     pub cancel_entries: Vector<ActionQueueEntry>,
-    /// Current state index used to look up entries in both vectors.
-    pub current_index: i32,
+    /// Current animation TAE ID inputs and cancels are being tracked for.
+    pub current_tae_id: i32,
 }
 
 #[repr(C)]
 pub struct ActionQueueEntry {
-    /// State index this entry belongs to.
-    pub state_index: i32,
-    /// Action bitfield. Bits 0-34 match [`ChrActions`].
+    /// TAE event ID this entry corresponds to.
+    /// Matched against [`ActionRequestQueue::current_tae_id`] when processing the queue.
+    pub tae_id: i32,
+    /// Action bitfield.
+    ///
+    /// Bits 0-34 match [`ChrActions`] and specify which actions are
+    /// allowed (input entries) or can cancel (cancel entries) at this state.
+    ///
     /// Extra queue-specific bits:
-    /// - 35: Movement request (input) / movement cancel current (cancel)
-    /// - 36: Movement cancel previous frame (cancel only)
-    /// - 37: Slot switch cancel (cancel only, parallel to [`TaeCancelFlags::slot_switch`])
+    /// - 35: Movement request (input entries) / movement cancel current (cancel entries)
+    /// - 36: Movement cancel previous frame (cancel entries only)
+    /// - 37: Slot switch cancel (cancel entries only, parallel to [`TaeCancelFlags::slot_switch`])
     ///
     /// HKS `env(IsMoveCancelPossible)` in queue mode requires bits 35 AND 36 both set.
     /// HKS `env(MovementRequest)` in queue mode checks bit 35 of the input entry.
