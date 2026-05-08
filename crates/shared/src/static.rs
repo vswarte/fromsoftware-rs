@@ -38,17 +38,45 @@ pub trait FromStatic {
 
     /// Looks up the single global instance of this object as a reference.
     ///
+    /// This function is safe because it's always already unsafe to dereference
+    /// a pointer. Most callers should use [FromStatic::instance] or
+    /// [FromStatic::instance_mut] instead, which have more explicit safety
+    /// requirements but provide access to Rust references in exchange.
+    fn instance_ptr() -> InstanceResult<*mut Self>;
+
+    /// Looks up the single global instance of this object as a mutable
+    /// reference.
+    ///
     /// ## Safety
     ///
     /// The caller must ensure that access to the static object is exclusive,
-    /// both with Rust and the game's code. For single-threaded objects, this
-    /// means ensuring that this is only called from the task system or from
-    /// hooked functions running in the game's main thread. For multi-threaded
-    /// objects, it's sufficient to ensure you have mutex ownership before
-    /// accessing any locked fields.
+    /// both with Rust and the game's code. This means that this should only
+    /// ever be called from the game's main thread (typically either from the
+    /// task system or from hooked functions that run in the main thread).
     ///
     /// Individual implementations may add additional safety requirements.
-    unsafe fn instance() -> InstanceResult<&'static mut Self>;
+    unsafe fn instance_mut() -> InstanceResult<&'static mut Self> {
+        Self::instance_ptr()
+            .and_then(|p| unsafe { p.as_mut() }.ok_or(InstanceError::Null(Self::name())))
+    }
+
+    /// Looks up the single global instance of this object as a reference.
+    ///
+    /// ## Safety
+    ///
+    /// The caller must ensure that no mutable references exist to the static
+    /// object and that no fields outside of [UnsafeCell]s are mutated by the
+    /// game while this reference exists. This is generally safe to use on the
+    /// main thread. It's safe to use on other threads as long as the object is
+    /// thread-safe, which should be noted in its documentation.
+    ///
+    /// [UnsafeCell]: std::cell::UnsafeCell
+    ///
+    /// Individual implementations may add additional safety requirements.
+    unsafe fn instance() -> InstanceResult<&'static Self> {
+        Self::instance_ptr()
+            .and_then(|p| unsafe { p.as_ref() }.ok_or(InstanceError::Null(Self::name())))
+    }
 }
 
 /// Looks up instances of singleton instances by their name. Some singletons
@@ -69,9 +97,9 @@ impl<T: FromSingleton> FromStatic for T {
     /// with DLRF reflection data, and that the DLRF reflection metadata has been
     /// populated (usually by calling the current game's `wait_for_system_init`
     /// function).
-    unsafe fn instance() -> InstanceResult<&'static mut T> {
+    fn instance_ptr() -> InstanceResult<*mut T> {
         address_of::<T>()
-            .map(|mut ptr| unsafe { ptr.as_mut() })
+            .map(|nn| nn.as_ptr())
             .ok_or(InstanceError::NotFound(Self::name()))
     }
 }
@@ -79,18 +107,11 @@ impl<T: FromSingleton> FromStatic for T {
 /// Loads a static reference to `T` from an [Rva] that points directly to its
 /// memory. Because this always assumes that the underlying object is
 /// initialized, it can only return [InstanceError::Null] if `rva` itself is 0.
-///
-/// ## Safety
-///
-/// This has all the same safety requirements as [FromStatic::instance]. In
-/// addition, the caller must ensure that `rva` points to a valid, initialized
-/// instance of `T`.
-pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
-    let target = Program::current()
+pub fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<*mut T> {
+    Program::current()
         .rva_to_va(rva)
-        .map_err(|_| InstanceError::NotFound(T::name()))? as *mut T;
-
-    unsafe { target.as_mut().ok_or(InstanceError::Null(T::name())) }
+        .map_err(|_| InstanceError::NotFound(T::name()))
+        .map(|a| a as *mut T)
 }
 
 /// Loads a static reference to `T` from an [Rva] that points to a pointer to
@@ -98,10 +119,8 @@ pub unsafe fn load_static_direct<T: FromStatic>(rva: Rva) -> InstanceResult<&'st
 ///
 /// ## Safety
 ///
-/// This has all the same safety requirements as [FromStatic::instance]. In
-/// addition, the caller must ensure that `rva` points to a pointer that is
-/// either null or points to a valid, initialized instance of `T`.
-pub unsafe fn load_static_indirect<T: FromStatic>(rva: Rva) -> InstanceResult<&'static mut T> {
+/// The caller must ensure that `rva` points to a pointer.
+pub unsafe fn load_static_indirect<T: FromStatic>(rva: Rva) -> InstanceResult<*mut T> {
     let target = Program::current()
         .rva_to_va(rva)
         .map_err(|_| InstanceError::NotFound(T::name()))?
@@ -111,7 +130,7 @@ pub unsafe fn load_static_indirect<T: FromStatic>(rva: Rva) -> InstanceResult<&'
         target
             .as_mut()
             .and_then(|opt| opt.as_mut())
-            .map(|nn| nn.as_mut())
+            .map(|nn| nn.as_ptr())
             .ok_or(InstanceError::Null(T::name()))
     }
 }

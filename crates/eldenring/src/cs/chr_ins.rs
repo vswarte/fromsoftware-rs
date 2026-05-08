@@ -938,16 +938,34 @@ pub struct PlayerIns {
 }
 
 impl PlayerIns {
-    /// Gets the local player if held by [`WorldChrMan`]
+    /// Gets the local player if held by [`WorldChrMan`].
     ///
     /// ## Safety
     ///
-    /// The caller must ensure that no references to [`WorldChrMan`] are
-    /// held at the time of calling as this method mutably borrows [`WorldChrMan`]
-    /// to reach `main_player`.
-    pub unsafe fn local_player() -> InstanceResult<&'static mut Self> {
+    /// The caller must ensure that no mutable references to [`WorldChrMan`]
+    /// exist. This means that this should only be called on the main thread.
+    pub unsafe fn local_player() -> InstanceResult<&'static Self> {
         unsafe {
             let Ok(world_chr_man) = WorldChrMan::instance() else {
+                return Err(InstanceError::NotFound(Cow::Borrowed("PlayerIns")));
+            };
+
+            world_chr_man
+                .main_player
+                .as_deref()
+                .ok_or(InstanceError::NotFound(Cow::Borrowed("PlayerIns")))
+        }
+    }
+
+    /// Gets the mutable local player if held by [`WorldChrMan`].
+    ///
+    /// ## Safety
+    ///
+    /// The caller must ensure that no references to [`WorldChrMan`] exist. This
+    /// means that this should only be called on the main thread.
+    pub unsafe fn local_player_mut() -> InstanceResult<&'static mut Self> {
+        unsafe {
+            let Ok(world_chr_man) = WorldChrMan::instance_mut() else {
                 return Err(InstanceError::NotFound(Cow::Borrowed("PlayerIns")));
             };
 

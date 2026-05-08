@@ -516,7 +516,7 @@ impl FromStatic for MenuMan {
         "MenuMan".into()
     }
 
-    unsafe fn instance() -> fromsoftware_shared::InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> fromsoftware_shared::InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().sprj_menu_man_ptr) }
     }
 }

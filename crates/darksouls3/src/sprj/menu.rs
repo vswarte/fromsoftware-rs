@@ -44,7 +44,7 @@ impl FromStatic for ItemGetMenuMan {
         "ItemGetMan".into()
     }
 
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> InstanceResult<*mut Self> {
         unsafe { shared::load_static_indirect(rva::get().item_get_menu_man_ptr) }
     }
 }

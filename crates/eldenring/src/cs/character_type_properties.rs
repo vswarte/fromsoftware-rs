@@ -52,7 +52,7 @@ impl FromStatic for CharacterTypePropertiesTable {
         Cow::Borrowed("CharacterTypePropertiesTable")
     }
 
-    unsafe fn instance() -> shared::InstanceResult<&'static mut Self> {
-        unsafe { load_static_direct(crate::rva::get().character_type_properties) }
+    fn instance_ptr() -> shared::InstanceResult<*mut Self> {
+        load_static_direct(crate::rva::get().character_type_properties)
     }
 }

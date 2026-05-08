@@ -21,13 +21,9 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
 
     // Kick off new thread.
     std::thread::spawn(|| {
-        // Wait for game (current program we're injected into) to boot up.
-        // This will block until the game initializes its systems (singletons, statics, etc).
-        wait_for_system_init(&Program::current(), Duration::MAX)
-            .expect("Could not await system init.");
-
-        // Retrieve games task runner.
-        let cs_task = unsafe { CSTaskImp::instance().unwrap() };
+        // Wait for the game (current program we're injected into) to boot up
+        // and initialize its task runner.
+        let cs_task = CSTaskImp::wait_for_instance().unwrap();
 
         // Register a new task with the game to happen every frame during the gameloops
         // ChrIns_PostPhysics phase because all the physics calculations have ran at this

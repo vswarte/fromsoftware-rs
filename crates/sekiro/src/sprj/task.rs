@@ -1,15 +1,52 @@
-use pelite::pe64::Pe;
+use std::thread;
+use std::time::{Duration, Instant};
 
-use shared::{OwnedPtr, RecurringTask, SharedTaskImp, program::Program};
+use pelite::pe64::Pe;
+use shared::{FromStatic, InstanceError, OwnedPtr, RecurringTask, SharedTaskImp, program::Program};
 
 use crate::fd4::FD4BasicHashString;
-use crate::rva;
+use crate::{rva, util::system::*};
 
+/// The task manager that schedules tasks to run at various points during the
+/// rendering of the frame.
+///
+/// This is thread-safe, so it's safe to call [FromStatic::instance] outside the
+/// main thread.
 #[repr(C)]
 #[shared::singleton("SprjTask")]
 pub struct SprjTaskImp {
     vftable: usize,
     pub inner: OwnedPtr<SprjTask>,
+}
+
+impl SprjTaskImp {
+    /// Blocks this thread until the singleton instance is available.
+    ///
+    /// **Note:** This should never be called on the main thread, since the main
+    /// thread is responsible for initializing this singleton in the first
+    /// place.
+    ///
+    /// This returns [`SystemInitError::InvalidRva`] if either the global
+    /// HINSTANCE RVA or the `SprjTaskImp` RVA aren't within the executable.
+    ///
+    /// [`SystemInitError::InvalidRva`]: SystemInitError::InvalidRva
+    pub fn wait_for_instance(timeout: Duration) -> Result<&'static Self, SystemInitError> {
+        let start = Instant::now();
+        wait_for_system_init(&Program::current(), timeout)?;
+
+        loop {
+            match unsafe { Self::instance() } {
+                Err(InstanceError::NotFound(_)) => return Err(SystemInitError::InvalidRva),
+                Err(InstanceError::Null(_)) => {
+                    if start.elapsed() > timeout {
+                        return Err(SystemInitError::Timeout);
+                    }
+                    thread::yield_now();
+                }
+                Ok(instance) => return Ok(instance),
+            }
+        }
+    }
 }
 
 // TODO: Track down exactly what Sekiro's FD4TaskData struct looks like.

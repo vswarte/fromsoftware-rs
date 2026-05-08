@@ -41,7 +41,7 @@ impl PlayerGameData {
     /// Grants the player a gesture, similarly to the `AwardGesture` EMEVD command.
     pub fn grant_gesture(&mut self, gesture_index: u32, item_id: ItemId) {
         self.gesture_data.set_gesture_acquired(gesture_index, true);
-        if let Ok(menu_man) = unsafe { ItemGetMenuMan::instance() } {
+        if let Ok(menu_man) = unsafe { ItemGetMenuMan::instance_mut() } {
             menu_man.show_item(item_id, 1, false);
         }
     }
@@ -58,9 +58,9 @@ impl FromStatic for PlayerGameData {
     /// This always returns
     /// [InstanceError::NotFound](shared::InstanceError::NotFound) on the main
     /// menu.
-    unsafe fn instance() -> InstanceResult<&'static mut Self> {
+    fn instance_ptr() -> InstanceResult<*mut Self> {
         // Go through PlayerIns because it doesn't exist on the main menu.
-        unsafe { PlayerIns::local_player().map(|ins| ins.player_game_data.as_mut()) }
+        unsafe { PlayerIns::local_player() }.map(|ins| ins.player_game_data.as_ptr())
     }
 }
 
