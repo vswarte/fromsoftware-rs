@@ -91,6 +91,14 @@ class = "CS::CSRandXorshift"
 vftable = "csrand_xorshift_vmt"
 
 [[vmts]]
+class = "CS::CSTaeAnimEvent"
+vftable = "cstae_anim_event_vmt"
+
+[[vmts]]
+class = "CS::CSChrTaeAnimEvent"
+vftable = "cschr_tae_anim_event_vmt"
+
+[[vmts]]
 class = "CS::CSTaskGroupIns"
 vftable = "cstask_group_ins_vmt"
 

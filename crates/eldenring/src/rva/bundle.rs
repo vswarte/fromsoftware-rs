@@ -4,7 +4,7 @@
 
 /// A struct containing offsets (relative to the beginning of the executable) of
 /// various addresses of structures and functions. They can be converted to a
-/// usable address using the [Pe::rva_to_va](pelite::pe64::Pe::rva_to_va) trait function
+/// usable address using the [Pe::rva_to_va](pelite::Pe::rva_to_va) trait function
 /// of [Program](fromsoftware_shared::Program).
 ///
 /// These are populated from `mapper-profile.toml` in the root of this package
@@ -36,6 +36,7 @@ pub struct RvaBundle {
     pub csbullet_wait_state_vmt: u32,
     pub cscam_vmt: u32,
     pub cschr_model_ins_vmt: u32,
+    pub cschr_tae_anim_event_vmt: u32,
     pub csez_rabbit_no_update_task_vmt: u32,
     pub csez_rabbit_task_base_vmt: u32,
     pub csez_rabbit_task_vmt: u32,
@@ -56,6 +57,7 @@ pub struct RvaBundle {
     pub csrand_vmt: u32,
     pub csrand_xorshift_vmt: u32,
     pub csride_node_vmt: u32,
+    pub cstae_anim_event_vmt: u32,
     pub cstask_base_vmt: u32,
     pub cstask_group_ins_vmt: u32,
     pub cstask_vmt: u32,
