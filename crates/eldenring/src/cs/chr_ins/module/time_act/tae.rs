@@ -146,7 +146,7 @@ pub enum TaeAnimEventId {
     UnkHkAi904 = 904,
     UnkHkAiPos905 = 905,
     RideStartUpChrAttachment = 906,
-    PhysicsClassUnk907 = 907,
+    LimitMaxHorizontalFallSpeed = 907,
     BehaviorDataUnk908 = 908,
     Unk910 = 910,
     Unk911 = 911,
