@@ -157,8 +157,17 @@ impl ItemId {
         if param_id > 0xFFFFFFF {
             Err(ItemIdError::InvalidParamId(param_id))
         } else {
-            Ok(Self(OptionalItemId(((category as u32) << 28) | param_id)))
+            Ok(unsafe { Self::new_unchecked(category, param_id) })
         }
+    }
+
+    /// Creates a new [ItemId] from the given category and param ID without checking input parameters.
+    ///
+    /// # Safety
+    ///
+    /// If [`param_id`](Self::param_id) greater than 0xFFFFFFF you will get an invalid [`ItemId`]
+    pub const unsafe fn new_unchecked(category: ItemCategory, param_id: u32) -> Self {
+        Self(OptionalItemId(((category as u32) << 28) | param_id))
     }
 
     /// Returns this ID's category.
