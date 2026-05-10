@@ -262,7 +262,7 @@ impl ParamFile {
     pub unsafe fn rows<'a, P: ParamDef + 'a>(&'a self) -> impl Iterator<Item = (u32, &'a P)> + 'a {
         self.lookup_table()
             .iter()
-            .map(|l| unsafe { (l.index, self.get_row_by_index(l.index as usize).unwrap()) })
+            .map(|l| unsafe { (l.param_id, self.get_row_by_index(l.index as usize).unwrap()) })
     }
 
     /// Returns an iterator over each mutable row in this file, in parameter ID order.
@@ -291,10 +291,13 @@ impl ParamFile {
             // be `end` at this point. We know `file` is valid because of that
             // same reference.
             unsafe {
-                let index = ptr.as_ref().unwrap().index;
-                let result = file.as_mut().get_row_by_index_mut(index as usize).unwrap();
+                let lookup = ptr.as_ref().unwrap();
+                let result = file
+                    .as_mut()
+                    .get_row_by_index_mut(lookup.index as usize)
+                    .unwrap();
                 ptr = ptr.add(1);
-                Some((index, result))
+                Some((lookup.param_id, result))
             }
         })
     }
