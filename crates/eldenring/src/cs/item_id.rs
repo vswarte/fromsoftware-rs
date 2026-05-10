@@ -165,7 +165,7 @@ impl ItemId {
     ///
     /// # Safety
     ///
-    /// If [`param_id`](Self::param_id) greater than 0xFFFFFFF you will get an invalid [`ItemId`]
+    /// [`param_id`](Self::param_id) must be less than or equal to 0xFFFFFFF.
     pub const unsafe fn new_unchecked(category: ItemCategory, param_id: u32) -> Self {
         Self(OptionalItemId(((category as u32) << 28) | param_id))
     }
