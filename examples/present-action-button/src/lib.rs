@@ -6,9 +6,8 @@ use eldenring::{
         GeometrySpawnParameters, WorldChrMan,
     },
     fd4::FD4TaskData,
-    util::system::wait_for_system_init,
 };
-use fromsoftware_shared::{FromStatic, program::Program, task::*};
+use fromsoftware_shared::{FromStatic, SharedTaskImpExt};
 
 const DEBOUNCE_DELAY: std::time::Duration = Duration::from_secs(2);
 
@@ -23,7 +22,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
 
     // Kick off new thread.
     std::thread::spawn(|| {
-        let cs_task = CSTaskImp::wait_for_instance().unwrap();
+        let cs_task = CSTaskImp::wait_for_instance(Duration::MAX).unwrap();
         let mut last_pressed = Instant::now();
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
@@ -31,7 +30,8 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                     return;
                 }
 
-                let Ok(action_button_man) = (unsafe { CSActionButtonManImp::instance() }) else {
+                let Ok(action_button_man) = (unsafe { CSActionButtonManImp::instance_mut() })
+                else {
                     return;
                 };
 
@@ -42,7 +42,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: usize, reason: u32) -> bool {
                     return;
                 };
 
-                let Some(block_geom_data) = unsafe { CSWorldGeomMan::instance() }
+                let Some(block_geom_data) = unsafe { CSWorldGeomMan::instance_mut() }
                     .ok()
                     .and_then(|wgm| wgm.geom_block_data_by_id_mut(&player.chr_ins.block_id()))
                 else {
