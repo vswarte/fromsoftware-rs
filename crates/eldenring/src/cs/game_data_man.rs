@@ -1,6 +1,6 @@
 use crate::{
     Vector,
-    cs::{CSGaitemGameData, ChrType, PlayerGameData},
+    cs::{CSGaitemGameData, ChrType, InventoryEditError, ItemId, PlayerGameData},
     fd4::FD4Time,
 };
 use bitfield::bitfield;
@@ -120,6 +120,34 @@ impl FromStatic for GameDataMan {
 
     fn instance_ptr() -> shared::InstanceResult<*mut Self> {
         unsafe { load_static_indirect(crate::rva::get().game_data_man) }
+    }
+}
+
+impl GameDataMan {
+    /// Gives the main player an item by directly editing ER's inventory data.
+    ///
+    /// This is an interim helper for cases where ER's ItemGive path is not
+    /// available. It only supports goods and accessories; weapons, protectors,
+    /// and gems need gaitem instance creation and should be granted through
+    /// [MapItemMan::grant_item](crate::cs::MapItemMan::grant_item).
+    pub fn try_give_inventory_item_directly(
+        &mut self,
+        item: ItemId,
+        quantity: u32,
+    ) -> Result<(), InventoryEditError> {
+        self.main_player_game_data
+            .equipment
+            .equip_inventory_data
+            .try_give_item_directly(item, quantity)
+    }
+
+    /// Removes up to `quantity` instances of `item` from the main player's
+    /// inventory.
+    pub fn remove_inventory_item(&mut self, item: ItemId, quantity: u32) {
+        self.main_player_game_data
+            .equipment
+            .equip_inventory_data
+            .remove_item(item, quantity);
     }
 }
 

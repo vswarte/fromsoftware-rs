@@ -10,7 +10,9 @@ use crate::{
 };
 use shared::{IsEmpty, MaybeEmpty, NonEmptyIteratorExt, NonEmptyIteratorMutExt, OwnedPtr};
 
-use crate::cs::{FieldInsHandle, GaitemHandle, ItemId, OptionalItemId};
+use crate::cs::{
+    FieldInsHandle, GaitemCategory, GaitemHandle, ItemCategory, ItemId, OptionalItemId,
+};
 
 #[repr(C)]
 /// Source of name: RTTI
@@ -552,6 +554,19 @@ impl InventoryItemsData {
         }
     }
 
+    /// A mutable slice over all the normal item [EquipInventoryDataListEntry]
+    /// slots allocated for this [InventoryItemsData].
+    pub fn normal_entries_capacity_mut(
+        &mut self,
+    ) -> &mut [MaybeEmpty<EquipInventoryDataListEntry>] {
+        unsafe {
+            std::slice::from_raw_parts_mut(
+                self.normal_items_head.as_ptr(),
+                self.normal_items_capacity as usize,
+            )
+        }
+    }
+
     /// Whether there's no more room left in the normal items inventory and
     /// picking up a new item will fail.
     pub fn is_normal_items_full(&self) -> bool {
@@ -672,6 +687,210 @@ pub struct EquipInventoryData {
     unk122: u8,
     unk123: u8,
     unk124: u32,
+}
+
+/// An error returned when directly editing ER's inventory data.
+#[derive(Debug, Error, Clone, PartialEq, Eq)]
+pub enum InventoryEditError {
+    /// This category needs gaitem instance creation, so callers should use
+    /// [MapItemMan::grant_item](crate::cs::MapItemMan::grant_item) instead.
+    #[error(
+        "direct ER inventory grants do not support {0:?}; this category needs a game item-creation path"
+    )]
+    UnsupportedItemCategory(ItemCategory),
+
+    /// No empty normal inventory slot was available for the new item.
+    #[error("ER inventory is full; could not grant {item:?}")]
+    InventoryFull { item: ItemId },
+}
+
+impl EquipInventoryData {
+    /// Returns whether `item` can be given by directly editing
+    /// [EquipInventoryData].
+    ///
+    /// Only goods and accessories are supported. Weapons, protectors, and gems
+    /// need gaitem instances that this helper cannot synthesize.
+    pub fn can_give_item_directly(item: ItemId) -> bool {
+        matches!(
+            item.category(),
+            ItemCategory::Accessory | ItemCategory::Goods
+        )
+    }
+
+    /// Gives an item by directly editing the main inventory data.
+    ///
+    /// This is an interim helper for cases where ER's ItemGive path is not
+    /// available. It intentionally rejects item categories that need synthesized
+    /// gaitem instances; use [MapItemMan::grant_item](crate::cs::MapItemMan::grant_item)
+    /// for those categories.
+    pub fn try_give_item_directly(
+        &mut self,
+        item: ItemId,
+        quantity: u32,
+    ) -> Result<(), InventoryEditError> {
+        if quantity == 0 {
+            return Ok(());
+        }
+
+        if !Self::can_give_item_directly(item) {
+            return Err(InventoryEditError::UnsupportedItemCategory(item.category()));
+        }
+
+        if try_stack_inventory_item(self.items_data.items_mut(), item, quantity) {
+            return Ok(());
+        }
+
+        let normal_entries = unsafe {
+            std::slice::from_raw_parts_mut(
+                self.items_data.normal_items_head.as_ptr(),
+                self.items_data.normal_items_capacity as usize,
+            )
+        };
+
+        append_normal_inventory_item(
+            normal_entries,
+            &mut self.items_data.normal_items_len,
+            &mut self.total_item_entry_count,
+            &mut self.next_sort_id,
+            item,
+            quantity,
+        )
+    }
+
+    /// Removes up to `quantity` instances of `item` from inventory.
+    ///
+    /// Empty slots are cleared using ER's sentinel representation for
+    /// [MaybeEmpty<EquipInventoryDataListEntry>].
+    pub fn remove_item(&mut self, item: ItemId, quantity: u32) {
+        let mut remaining = quantity;
+        let mut cleared = 0;
+
+        cleared += remove_inventory_item_from_slots(
+            self.items_data.current_key_entries_mut(),
+            item,
+            &mut remaining,
+        );
+        if remaining > 0 {
+            cleared += remove_inventory_item_from_slots(
+                self.items_data.normal_entries_mut(),
+                item,
+                &mut remaining,
+            );
+        }
+
+        self.total_item_entry_count = self.total_item_entry_count.saturating_sub(cleared);
+    }
+}
+
+fn try_stack_inventory_item<'a>(
+    entries: impl Iterator<Item = &'a mut EquipInventoryDataListEntry>,
+    item: ItemId,
+    quantity: u32,
+) -> bool {
+    for entry in entries {
+        if entry.item_id == item && entry.quantity > 0 {
+            entry.quantity = entry.quantity.saturating_add(quantity);
+            entry.is_new = true;
+            return true;
+        }
+    }
+
+    false
+}
+
+fn append_normal_inventory_item(
+    entries: &mut [MaybeEmpty<EquipInventoryDataListEntry>],
+    normal_items_len: &mut u32,
+    total_item_entry_count: &mut u32,
+    next_sort_id: &mut u32,
+    item: ItemId,
+    quantity: u32,
+) -> Result<(), InventoryEditError> {
+    let Some((index, slot)) = entries
+        .iter_mut()
+        .enumerate()
+        .find(|(_, entry)| entry.is_empty())
+    else {
+        return Err(InventoryEditError::InventoryFull { item });
+    };
+
+    let sort_id = *next_sort_id;
+    *next_sort_id = (*next_sort_id).saturating_add(1);
+
+    *slot = MaybeEmpty::new(EquipInventoryDataListEntry {
+        gaitem_handle: gaitem_handle_for(item),
+        item_id: item,
+        quantity,
+        sort_id,
+        is_new: true,
+        pot_group: -1,
+    });
+
+    if index >= *normal_items_len as usize {
+        *normal_items_len = index as u32 + 1;
+    }
+    *total_item_entry_count = total_item_entry_count.saturating_add(1);
+
+    Ok(())
+}
+
+fn remove_inventory_item_from_slots(
+    slots: &mut [MaybeEmpty<EquipInventoryDataListEntry>],
+    item: ItemId,
+    remaining: &mut u32,
+) -> u32 {
+    let mut cleared = 0;
+
+    for slot in slots {
+        if *remaining == 0 {
+            break;
+        }
+
+        let should_clear = {
+            let Some(entry) = slot.as_option_mut() else {
+                continue;
+            };
+            if entry.item_id != item || entry.quantity == 0 {
+                continue;
+            }
+
+            if entry.quantity > *remaining {
+                entry.quantity -= *remaining;
+                *remaining = 0;
+                false
+            } else {
+                *remaining -= entry.quantity;
+                true
+            }
+        };
+
+        if should_clear {
+            clear_inventory_slot(slot);
+            cleared += 1;
+        }
+    }
+
+    cleared
+}
+
+fn clear_inventory_slot(slot: &mut MaybeEmpty<EquipInventoryDataListEntry>) {
+    unsafe {
+        std::ptr::write_bytes(slot.as_non_null().as_ptr(), 0xff, 1);
+    }
+    debug_assert!(slot.is_empty());
+}
+
+fn gaitem_handle_for(item: ItemId) -> GaitemHandle {
+    GaitemHandle::from_parts(
+        item.param_id(),
+        match item.category() {
+            ItemCategory::Weapon => GaitemCategory::Weapon,
+            ItemCategory::Protector => GaitemCategory::Protector,
+            ItemCategory::Accessory => GaitemCategory::Accessory,
+            ItemCategory::Goods => GaitemCategory::Goods,
+            ItemCategory::Gem => GaitemCategory::Gem,
+        },
+    )
 }
 
 bitfield! {
@@ -901,6 +1120,7 @@ pub enum EquipmentDurabilityStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::mem::MaybeUninit;
 
     #[test]
     fn test_item_id_mapping() {
@@ -914,5 +1134,167 @@ mod tests {
             ((mapping.bits4.0 >> 12) & 0xFFF) - 1
         );
         assert_eq!(mapping.item_slot(), mapping.bits4.0 & 0xFFF);
+    }
+
+    #[test]
+    fn direct_inventory_grant_rejects_categories_needing_gaitem_instances() {
+        assert!(!EquipInventoryData::can_give_item_directly(
+            ItemId::new(ItemCategory::Weapon, 1000).unwrap()
+        ));
+        assert!(!EquipInventoryData::can_give_item_directly(
+            ItemId::new(ItemCategory::Protector, 40000).unwrap()
+        ));
+        assert!(!EquipInventoryData::can_give_item_directly(
+            ItemId::new(ItemCategory::Gem, 1000).unwrap()
+        ));
+        assert!(EquipInventoryData::can_give_item_directly(
+            ItemId::new(ItemCategory::Goods, 100).unwrap()
+        ));
+        assert!(EquipInventoryData::can_give_item_directly(
+            ItemId::new(ItemCategory::Accessory, 1000).unwrap()
+        ));
+    }
+
+    #[test]
+    fn direct_inventory_grant_allocates_normal_slot() {
+        let existing = ItemId::new(ItemCategory::Goods, 100).unwrap();
+        let granted = ItemId::new(ItemCategory::Goods, 200).unwrap();
+        let mut entries = [
+            filled_inventory_slot(existing, 1),
+            empty_inventory_slot(),
+            empty_inventory_slot(),
+        ];
+        let mut normal_items_len = 1;
+        let mut total_item_entry_count = 1;
+        let mut next_sort_id = 7;
+
+        append_normal_inventory_item(
+            &mut entries,
+            &mut normal_items_len,
+            &mut total_item_entry_count,
+            &mut next_sort_id,
+            granted,
+            4,
+        )
+        .unwrap();
+
+        let entry = entries[1].as_option().unwrap();
+        assert_eq!(entry.item_id, granted);
+        assert_eq!(entry.quantity, 4);
+        assert_eq!(entry.sort_id, 7);
+        assert!(entry.is_new);
+        assert_eq!(entry.pot_group, -1);
+        assert_eq!(entry.gaitem_handle.selector(), granted.param_id());
+        assert_eq!(
+            entry.gaitem_handle.category().unwrap(),
+            GaitemCategory::Goods
+        );
+        assert_eq!(normal_items_len, 2);
+        assert_eq!(total_item_entry_count, 2);
+        assert_eq!(next_sort_id, 8);
+    }
+
+    #[test]
+    fn direct_inventory_grant_reports_full_inventory_without_advancing_sort_id() {
+        let existing = ItemId::new(ItemCategory::Goods, 100).unwrap();
+        let granted = ItemId::new(ItemCategory::Goods, 200).unwrap();
+        let mut entries = [
+            filled_inventory_slot(existing, 1),
+            filled_inventory_slot(existing, 2),
+        ];
+        let mut normal_items_len = 2;
+        let mut total_item_entry_count = 2;
+        let mut next_sort_id = 7;
+
+        let result = append_normal_inventory_item(
+            &mut entries,
+            &mut normal_items_len,
+            &mut total_item_entry_count,
+            &mut next_sort_id,
+            granted,
+            4,
+        );
+
+        assert_eq!(
+            result,
+            Err(InventoryEditError::InventoryFull { item: granted })
+        );
+        assert_eq!(normal_items_len, 2);
+        assert_eq!(total_item_entry_count, 2);
+        assert_eq!(next_sort_id, 7);
+    }
+
+    #[test]
+    fn direct_inventory_grant_updates_existing_stack() {
+        let id = ItemId::new(ItemCategory::Goods, 100).unwrap();
+        let mut entry = EquipInventoryDataListEntry {
+            gaitem_handle: gaitem_handle_for(id),
+            item_id: id,
+            quantity: 2,
+            sort_id: 3,
+            is_new: false,
+            pot_group: -1,
+        };
+
+        assert!(try_stack_inventory_item(std::iter::once(&mut entry), id, 5));
+        assert_eq!(entry.quantity, 7);
+        assert!(entry.is_new);
+        assert_eq!(entry.sort_id, 3);
+    }
+
+    #[test]
+    fn inventory_remove_decrements_stack_without_clearing_slot() {
+        let id = ItemId::new(ItemCategory::Goods, 100).unwrap();
+        let mut entries = [filled_inventory_slot(id, 5)];
+        let mut remaining = 2;
+
+        let cleared = remove_inventory_item_from_slots(&mut entries, id, &mut remaining);
+
+        let entry = entries[0].as_option().unwrap();
+        assert_eq!(cleared, 0);
+        assert_eq!(remaining, 0);
+        assert_eq!(entry.quantity, 3);
+    }
+
+    #[test]
+    fn inventory_remove_clears_consumed_slots_with_empty_sentinel() {
+        let id = ItemId::new(ItemCategory::Goods, 100).unwrap();
+        let other = ItemId::new(ItemCategory::Goods, 200).unwrap();
+        let mut entries = [
+            filled_inventory_slot(id, 2),
+            filled_inventory_slot(id, 1),
+            filled_inventory_slot(other, 1),
+        ];
+        let mut remaining = 2;
+
+        let cleared = remove_inventory_item_from_slots(&mut entries, id, &mut remaining);
+
+        assert_eq!(cleared, 1);
+        assert_eq!(remaining, 0);
+        assert!(entries[0].is_empty());
+        assert_eq!(entries[1].as_option().unwrap().quantity, 1);
+        assert_eq!(entries[2].as_option().unwrap().item_id, other);
+    }
+
+    fn empty_inventory_slot() -> MaybeEmpty<EquipInventoryDataListEntry> {
+        let mut slot = MaybeUninit::<MaybeEmpty<EquipInventoryDataListEntry>>::uninit();
+        unsafe {
+            std::ptr::write_bytes(slot.as_mut_ptr(), 0xff, 1);
+            slot.assume_init()
+        }
+    }
+
+    fn filled_inventory_slot(
+        item: ItemId,
+        quantity: u32,
+    ) -> MaybeEmpty<EquipInventoryDataListEntry> {
+        MaybeEmpty::new(EquipInventoryDataListEntry {
+            gaitem_handle: gaitem_handle_for(item),
+            item_id: item,
+            quantity,
+            sort_id: 0,
+            is_new: false,
+            pot_group: -1,
+        })
     }
 }
