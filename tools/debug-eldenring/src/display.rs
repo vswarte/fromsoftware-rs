@@ -15,6 +15,7 @@ pub(crate) mod game_man;
 pub(crate) mod geometry;
 pub(crate) mod gparam;
 pub(crate) mod lua_event_man;
+pub(crate) mod modules;
 pub(crate) mod net_man;
 pub(crate) mod param;
 pub(crate) mod session_manager;
