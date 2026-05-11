@@ -7,9 +7,8 @@ use eldenring::{
     },
     ez_state::EzStateValue,
     fd4::FD4TaskData,
-    util::system::wait_for_system_init,
 };
-use fromsoftware_shared::{FromStatic, program::Program, task::*};
+use fromsoftware_shared::{FromStatic, SharedTaskImpExt};
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetKeyState, VIRTUAL_KEY, VK_T};
 
 fn is_key_down(key: VIRTUAL_KEY) -> bool {
@@ -213,7 +212,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
     }
 
     std::thread::spawn(move || {
-        let cs_task = CSTaskImp::wait_for_instance().unwrap();
+        let cs_task = CSTaskImp::wait_for_instance(Duration::MAX).unwrap();
 
         let mut demo = Box::new(TalkScriptDemo {
             talk_script: TalkScript::new(
@@ -230,7 +229,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
         cs_task.run_recurring(
             move |_: &FD4TaskData| {
                 if let Ok(world_chr_man) = unsafe { WorldChrMan::instance() }
-                    && let Some(ref mut main_player) = world_chr_man.main_player
+                    && let Some(main_player) = &world_chr_man.main_player
                 {
                     demo.talk_script.npc_talk.base.field_ins_handle =
                         main_player.chr_ins.field_ins_handle;

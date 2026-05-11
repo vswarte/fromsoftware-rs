@@ -3,9 +3,9 @@ use std::time::Duration;
 use eldenring::{
     cs::{CSTaskGroupIndex, CSTaskImp, ChrInsExt, WorldChrMan},
     fd4::FD4TaskData,
-    util::{input, system::wait_for_system_init},
+    util::input,
 };
-use fromsoftware_shared::{FromStatic, program::Program, task::*};
+use fromsoftware_shared::{FromStatic, SharedTaskImpExt};
 
 const SP_EFFECT: i32 = 4330;
 
@@ -24,7 +24,7 @@ pub unsafe extern "C" fn DllMain(_hmodule: u64, reason: u32) -> bool {
         cs_task.run_recurring(
             |_: &FD4TaskData| {
                 // Retrieve WorldChrMan
-                let Ok(world_chr_man) = (unsafe { WorldChrMan::instance() }) else {
+                let Ok(world_chr_man) = (unsafe { WorldChrMan::instance_mut() }) else {
                     return;
                 };
 
