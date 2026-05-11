@@ -25,13 +25,7 @@ pub struct MapItemMan {
 /// The C signature of this function is:
 ///
 /// ```c
-/// void ItemGive(
-///     MapItemMan* man,
-///     ItemBuffer* buffer,
-///     uint64_t unknown0,
-///     bool unknown1,
-///     size_t unknown2,
-///     bool unknown3);
+/// void ItemGive(MapItemMan* man, ItemBuffer* buffer, ItemGrantCallData* data, uint32_t flags);
 /// ```
 ///
 /// This is currently found by a private AOB lookup rather than a generated RVA
@@ -129,17 +123,21 @@ impl MapItemMan {
             });
         }
 
+        let mut data = ItemGrantCallData::new(items.as_slice());
         let grant_items: unsafe extern "C" fn(
             *mut c_void,
             *const ItemBuffer,
-            u64,
-            bool,
-            usize,
-            bool,
+            *mut ItemGrantCallData<MAX_ITEMS_PER_GRANT>,
+            u32,
         ) = unsafe { std::mem::transmute(map_item_man_grant_item_va()?) };
 
         unsafe {
-            grant_items(self as *mut Self as *mut c_void, items, 0, false, 0, false);
+            grant_items(
+                self as *mut Self as *mut c_void,
+                data.buffer.as_ref(),
+                &mut data,
+                0,
+            );
         }
         Ok(())
     }
@@ -268,11 +266,11 @@ pub struct ItemBufferEntry {
     /// The number of this item that the player received.
     pub quantity: u32,
 
-    /// Legacy durability field. -1 means full durability.
-    pub legacy_durability: i32,
+    /// Legacy durability field. `u32::MAX` means full durability.
+    pub durability: u32,
 
-    /// Unused by ER's ItemGive path.
-    pub unused: u32,
+    /// Gem or Ash of War field. `u32::MAX` means no gem.
+    pub gem: u32,
 }
 
 impl ItemBufferEntry {
@@ -282,8 +280,17 @@ impl ItemBufferEntry {
         Self {
             id,
             quantity,
-            legacy_durability: -1,
-            unused: 0,
+            durability: u32::MAX,
+            gem: u32::MAX,
+        }
+    }
+
+    fn empty() -> Self {
+        Self {
+            id: ItemId::try_from(0).expect("weapon 0 should be a valid item ID"),
+            quantity: 0,
+            durability: u32::MAX,
+            gem: u32::MAX,
         }
     }
 }
@@ -314,6 +321,33 @@ impl<const N: usize> ItemArray<N> {
         ItemArray {
             length: N.try_into().unwrap(),
             items,
+        }
+    }
+
+    fn with_length(items: [ItemBufferEntry; N], length: usize) -> Self {
+        assert!(length <= N);
+        ItemArray {
+            length: length.try_into().unwrap(),
+            items,
+        }
+    }
+}
+
+#[repr(C)]
+struct ItemGrantCallData<const N: usize> {
+    scratch: [u8; 0x20],
+    buffer: ItemArray<N>,
+}
+
+impl ItemGrantCallData<MAX_ITEMS_PER_GRANT> {
+    fn new(items: &[ItemBufferEntry]) -> Self {
+        assert!(items.len() <= MAX_ITEMS_PER_GRANT);
+
+        let mut buffer_items = [ItemBufferEntry::empty(); MAX_ITEMS_PER_GRANT];
+        buffer_items[..items.len()].copy_from_slice(items);
+        Self {
+            scratch: [0; 0x20],
+            buffer: ItemArray::with_length(buffer_items, items.len()),
         }
     }
 }
@@ -366,8 +400,8 @@ mod tests {
 
         assert_eq!(entry.id, id);
         assert_eq!(entry.quantity, 1);
-        assert_eq!(entry.legacy_durability, -1);
-        assert_eq!(entry.unused, 0);
+        assert_eq!(entry.durability, u32::MAX);
+        assert_eq!(entry.gem, u32::MAX);
     }
 
     #[test]
@@ -376,6 +410,18 @@ mod tests {
         let array = ItemArray::new([ItemBufferEntry::new(id, 3)]);
         let buffer = array.as_ref();
 
+        assert_eq!(buffer.len(), 1);
+        assert_eq!(buffer.as_slice()[0].id, id);
+        assert_eq!(buffer.as_slice()[0].quantity, 3);
+    }
+
+    #[test]
+    fn item_grant_call_data_matches_er_call_frame() {
+        let id = ItemId::new(ItemCategory::Goods, 100).unwrap();
+        let data = ItemGrantCallData::new(&[ItemBufferEntry::new(id, 3)]);
+        let buffer = data.buffer.as_ref();
+
+        assert_eq!(offset_of!(ItemGrantCallData<1>, buffer), 0x20);
         assert_eq!(buffer.len(), 1);
         assert_eq!(buffer.as_slice()[0].id, id);
         assert_eq!(buffer.as_slice()[0].quantity, 3);
