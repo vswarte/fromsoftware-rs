@@ -760,7 +760,7 @@ impl EquipInventoryData {
     /// Removes up to `quantity` instances of `item` from inventory.
     ///
     /// Empty slots are cleared using ER's sentinel representation for
-    /// [MaybeEmpty<EquipInventoryDataListEntry>].
+    /// [`MaybeEmpty<EquipInventoryDataListEntry>`].
     pub fn remove_item(&mut self, item: ItemId, quantity: u32) {
         let mut remaining = quantity;
         let mut cleared = 0;
