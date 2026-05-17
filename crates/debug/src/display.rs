@@ -74,7 +74,7 @@ macro_rules! define_debug_display {
             }
 
             pub fn render_debug(&mut self, ui: &::hudhook::imgui::Ui) {
-                let instance = unsafe { T::instance() };
+                let instance = unsafe { T::instance_mut() };
 
                 match instance {
                     Ok(instance) => ::debug::UiExt::header(ui, &T::name(), || {
