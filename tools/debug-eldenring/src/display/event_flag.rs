@@ -27,11 +27,12 @@ impl DebugDisplay for CSFD4VirtualMemoryFlag {
                 ],
                 self.flag_block_descriptors.iter(),
                 |ui, _i, e| {
+                    let (group, block_descriptor) = e.into();
                     ui.table_next_column();
-                    ui.text(e.group.to_string());
+                    ui.text(group.to_string());
 
                     ui.table_next_column();
-                    ui.text(e.location_mode.to_string());
+                    ui.text(block_descriptor.location_mode.to_string());
                 },
             );
         });

@@ -1,7 +1,7 @@
 use shared::{F32ModelMatrix, OwnedPtr, Subclass};
 
 use crate::{
-    Vector,
+    DLVector,
     cs::{CSPairAnimNode, ChrIns},
     dltx::{DLString, DLUTF8StringKind},
     position::{HavokPosition, PositionDelta},
@@ -35,7 +35,7 @@ pub struct CSChrRideModule {
     /// Some additional details describing the mount. This is only updated on the rider's end.
     /// For example the player will have data in here, but Torrent's `ChrIns` will not.
     pub mount_data: CSChrRideModuleMountData,
-    unk140: Vector<()>,
+    unk140: DLVector<()>,
     unk160: bool,
     unk161: bool,
     /// Is in the mounting animation?

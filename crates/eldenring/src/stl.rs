@@ -1,46 +1,67 @@
-use std::{cmp::Ordering, ptr::NonNull};
+use std::{ffi::c_void, mem::transmute, ptr::NonNull};
 
-use crate::dlkr::DLAllocatorBase;
-use shared::OwnedPtr;
+use pelite::pe64::Pe;
+use shared::{OwnedPtr, Program};
 
-#[repr(C)]
-pub struct DoublyLinkedListNode<T> {
-    pub next: NonNull<DoublyLinkedListNode<T>>,
-    pub previous: NonNull<DoublyLinkedListNode<T>>,
-    pub value: T,
-}
+use crate::{dlkr::DLAllocatorBase, rva};
 
-#[repr(C)]
-pub struct DoublyLinkedList<T> {
-    allocator: usize,
-    pub head: NonNull<DoublyLinkedListNode<T>>,
-    pub count: u64,
-}
+#[derive(Clone)]
+#[repr(transparent)]
+/// Special type to use in std types.
+pub struct DLAllocatorForStl(NonNull<DLAllocatorBase>);
 
-impl<T> DoublyLinkedList<T> {
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
-        let mut count = self.count;
-        let mut current = unsafe { self.head.as_ref() };
-
-        std::iter::from_fn(move || {
-            current = unsafe { current.next.as_ref() };
-            if count == 0 {
-                None
-            } else {
-                count -= 1;
-                Some(&current.value)
-            }
-        })
-    }
-
-    pub fn len(&self) -> usize {
-        self.count as usize
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
+impl From<NonNull<DLAllocatorBase>> for DLAllocatorForStl {
+    fn from(ptr: NonNull<DLAllocatorBase>) -> Self {
+        Self(ptr)
     }
 }
+
+impl fromsoftware_shared_stl::Allocator for DLAllocatorForStl {
+    unsafe fn allocate_raw(&mut self, size: usize, allign: usize) -> *mut c_void {
+        let allocator = self.0.as_ptr();
+        let allocation =
+            unsafe { ((*allocator).vftable.allocate_aligned)(&mut *allocator, size, allign) };
+        if allocation.is_null() {
+            panic!("DLAllocator returned null pointer")
+        }
+        allocation as _
+    }
+
+    unsafe fn deallocate_raw(&mut self, ptr: *mut c_void) {
+        let allocator = self.0.as_ptr();
+        unsafe {
+            ((*allocator).vftable.deallocate)(&mut *allocator, ptr as _);
+        }
+    }
+}
+
+impl DLAllocatorForStl {
+    /// Returns the global instance of DLAllocator that uses the
+    /// standard MSVC malloc()/free() implementation for heap management
+    pub fn runtime_heap_allocator() -> Self {
+        unsafe {
+            transmute::<u64, Self>(
+                Program::current()
+                    .rva_to_va(rva::get().runtime_heap_allocator)
+                    .unwrap(),
+            )
+        }
+    }
+}
+
+pub type DLList<T> = fromsoftware_shared_stl::List<T, DLAllocatorForStl>;
+
+pub type DLVector<T> = fromsoftware_shared_stl::Vector<T, DLAllocatorForStl>;
+
+pub type DLMap<K, V> = fromsoftware_shared_stl::Map<K, V, DLAllocatorForStl>;
+pub type DLMultiMap<K, V> = fromsoftware_shared_stl::MultiMap<K, V, DLAllocatorForStl>;
+
+pub type DLSet<V> = fromsoftware_shared_stl::Set<V, DLAllocatorForStl>;
+pub type DLMultiSet<V> = fromsoftware_shared_stl::MultiSet<V, DLAllocatorForStl>;
+
+/// Special type for yet unspecified Red/Black tree where only allocator is known.
+pub type UnkDLTree<V> =
+    fromsoftware_shared_stl::RbTree<V, DLAllocatorForStl, fromsoftware_shared_stl::Less>;
 
 #[repr(C)]
 pub struct BasicVector<T>
@@ -96,175 +117,12 @@ where
 }
 
 #[repr(C)]
-pub struct Vector<T>
-where
-    T: Sized,
-{
-    allocator: NonNull<DLAllocatorBase>,
-    pub base: BasicVector<T>,
-}
-
-impl<T> Vector<T> {
-    pub fn items(&self) -> &[T] {
-        self.base.items()
-    }
-
-    pub fn items_mut(&mut self) -> &mut [T] {
-        self.base.items_mut()
-    }
-
-    pub fn len(&self) -> usize {
-        self.base.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.base.is_empty()
-    }
-}
-
-#[repr(C)]
-pub struct Tree<T> {
-    allocator: usize,
-    head: NonNull<TreeNode<T>>,
-    size: usize,
-}
-
-impl<T> Tree<T> {
-    pub fn len(&self) -> usize {
-        self.size
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = &mut T> {
-        let mut current = unsafe {
-            let head = self.head;
-            let root = head.as_ref().parent;
-            let min = Self::min_node(root);
-            if min == head { None } else { Some(min) }
-        };
-
-        std::iter::from_fn(move || {
-            let mut node = current?;
-            unsafe {
-                let node_ref = node.as_mut();
-                let value_ref = &mut node_ref.value;
-
-                // Advance current to next in-order node
-                current = Self::next_inorder(node, self.head);
-
-                Some(value_ref)
-            }
-        })
-    }
-
-    /// Iterates over all entries that compare Equal against `cmp`,
-    /// using a lower-bound search to start in O(log n) time.
-    pub fn filtered_iter<'a, F>(&'a self, mut cmp: F) -> impl Iterator<Item = &'a T> + 'a
-    where
-        F: FnMut(&T) -> Ordering + 'a,
-    {
-        let head = self.head;
-
-        let mut current = unsafe {
-            let mut node = head.as_ref().parent;
-            let mut candidate: Option<NonNull<TreeNode<T>>> = None;
-
-            if node == head {
-                None
-            } else {
-                while node != head && node.as_ref().is_nil == 0 {
-                    match cmp(&node.as_ref().value) {
-                        Ordering::Less => {
-                            node = node.as_ref().right;
-                        }
-                        Ordering::Equal | Ordering::Greater => {
-                            candidate = Some(node);
-                            node = node.as_ref().left;
-                        }
-                    }
-                }
-                candidate
-            }
-        };
-
-        std::iter::from_fn(move || {
-            let mut node = current?;
-            unsafe {
-                loop {
-                    match cmp(&node.as_ref().value) {
-                        Ordering::Equal => {
-                            let value_ref = &node.as_ref().value;
-                            current = Self::next_inorder(node, head);
-                            return Some(value_ref);
-                        }
-                        Ordering::Greater => {
-                            current = None;
-                            return None;
-                        }
-                        Ordering::Less => {
-                            current = Self::next_inorder(node, head);
-                            node = current?;
-                        }
-                    }
-                }
-            }
-        })
-    }
-
-    /// Finds the minimum (leftmost) node in a subtree.
-    unsafe fn min_node(mut node: NonNull<TreeNode<T>>) -> NonNull<TreeNode<T>> {
-        unsafe {
-            while node.as_ref().is_nil == 0 && node.as_ref().left.as_ref().is_nil == 0 {
-                node = node.as_ref().left;
-            }
-        }
-        node
-    }
-
-    /// Returns the next in-order node from the given node.
-    /// `head` is the sentinel node.
-    unsafe fn next_inorder(
-        mut node: NonNull<TreeNode<T>>,
-        head: NonNull<TreeNode<T>>,
-    ) -> Option<NonNull<TreeNode<T>>> {
-        unsafe {
-            if node.as_ref().right.as_ref().is_nil == 0 {
-                // Go to the leftmost node in the right subtree
-                Some(Self::min_node(node.as_ref().right))
-            } else {
-                // Walk up the tree until we find a node that is a left child
-                loop {
-                    let parent = node.as_ref().parent;
-                    if parent == head || node != parent.as_ref().right {
-                        return if parent == head { None } else { Some(parent) };
-                    }
-                    node = parent;
-                }
-            }
-        }
-    }
-}
-
-#[repr(C)]
-pub struct TreeNode<T> {
-    left: NonNull<TreeNode<T>>,
-    parent: NonNull<TreeNode<T>>,
-    right: NonNull<TreeNode<T>>,
-    black_red: u8,
-    is_nil: u8,
-    value: T,
-}
-
-#[repr(C)]
-pub struct ChainingTree<K, V> {
-    base: Tree<Pair<K, ChainingMapBucketEntry<V>>>,
+pub struct ChainingMap<K: Ord, V> {
+    base: DLMap<K, NonNull<ChainingMapBucketEntry<V>>>,
     buckets: OwnedPtr<ArrayWithHeader<ChainingMapBucketEntry<V>>>,
 }
 
-impl<K, V> ChainingTree<K, V> {
+impl<K: Ord, V> ChainingMap<K, V> {
     pub fn len(&self) -> usize {
         self.base.len()
     }
@@ -277,28 +135,42 @@ impl<K, V> ChainingTree<K, V> {
     /// Returns an iterator that yields `(&K, &V)` for each entry.
     pub fn iter(&self) -> impl Iterator<Item = (&K, &V)> {
         self.base.iter().flat_map(|pair| {
-            let key = &pair.key;
-            pair.value.iter().map(move |value| (key, value))
+            let key = &pair.first;
+            let bucket = unsafe { pair.second.as_ref() };
+            bucket.iter().map(move |value| (key, value))
         })
-    }
-
-    pub fn buckets(&self) -> &[ChainingMapBucketEntry<V>] {
-        unsafe { self.buckets.as_slice() }
     }
 
     /// Iterates over all key-value pairs mutably, including all values in collision chains.
     /// Returns an iterator that yields `(&K, &mut V)` for each entry.
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (&K, &mut V)> {
-        self.base.iter().flat_map(|pair| {
-            let key = &pair.key;
-            pair.value.iter_mut().map(move |value| (key, value))
+        self.base.iter_mut().flat_map(|pair| {
+            let key = &pair.first;
+            let bucket = unsafe { pair.second.as_mut() };
+            bucket.iter_mut().map(move |value| (key, value))
         })
     }
 
     /// Iterates over keys and their collision chain heads.
     /// Use this if you need to iterate collision chains separately.
     pub fn iter_chains(&self) -> impl Iterator<Item = (&K, &ChainingMapBucketEntry<V>)> {
-        self.base.iter().map(|pair| (&pair.key, &pair.value))
+        self.base
+            .iter()
+            .map(|pair| (&pair.first, unsafe { pair.second.as_ref() }))
+    }
+
+    /// Iterates over keys and their collision chain heads mutably.
+    /// Use this if you need to iterate collision chains separately.
+    pub fn iter_chains_mut(
+        &mut self,
+    ) -> impl Iterator<Item = (&K, &mut ChainingMapBucketEntry<V>)> {
+        self.base
+            .iter_mut()
+            .map(|pair| (&pair.first, unsafe { pair.second.as_mut() }))
+    }
+
+    pub fn buckets(&self) -> &[ChainingMapBucketEntry<V>] {
+        unsafe { self.buckets.as_slice() }
     }
 }
 
@@ -342,12 +214,6 @@ impl<T> ChainingMapBucketEntry<T> {
             }
         })
     }
-}
-
-#[repr(C)]
-pub struct Pair<K, V> {
-    pub key: K,
-    pub value: V,
 }
 
 #[repr(C)]

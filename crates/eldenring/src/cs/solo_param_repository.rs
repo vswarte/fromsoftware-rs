@@ -1,8 +1,15 @@
+use std::ptr::NonNull;
+
 use shared::{OwnedPtr, Subclass};
 
-use super::{BlockId, ItemCategory, ItemId};
-use crate::fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile};
-use crate::{ArrayWithHeader, Vector, dlkr::DLAllocatorRef, param::ParamDef, stl::Tree};
+use crate::{
+    ArrayWithHeader, DLMap, DLMultiMap, DLVector,
+    cs::{BlockId, ItemCategory, ItemId},
+    dlkr::DLAllocatorBase,
+    fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile},
+    param::ParamDef,
+};
+
 use bitfield::bitfield;
 
 #[repr(C)]
@@ -24,7 +31,7 @@ pub struct WeaponUpgradeIndexMapEntry {
 ///
 pub struct CSWepReinforceTree {
     vftable: usize,
-    pub allocator: DLAllocatorRef,
+    pub allocator: NonNull<DLAllocatorBase>,
     /// Array of map entries, one for each weapon param row.
     /// The index corresponds to the weapon param row index.
     pub index_map: ArrayWithHeader<WeaponUpgradeIndexMapEntry>,
@@ -68,12 +75,6 @@ impl CSWepReinforceTree {
 }
 
 #[repr(C)]
-pub struct MatchAreaLimit {
-    pub area_id: u32,
-    pub multi_play_start_limit_event_flag_id: u32,
-}
-
-#[repr(C)]
 pub struct BuddyStoneTalkChrEntityId {
     /// Chr entity ID of specific buddy stone.
     pub talk_chr_entity_id: u32,
@@ -87,15 +88,9 @@ pub struct BonfireEntityId {
     pub bonfire_warp_param_index: u32,
 }
 
-#[repr(C)]
-pub struct AssetReplacementParamMapEntry {
-    pub block_id: BlockId,
-    pub param_row_index: u32,
-}
-
 bitfield! {
     #[repr(C)]
-    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
     pub struct ChrEquipModelKey(u32);
     impl Debug;
 
@@ -235,20 +230,20 @@ pub struct SoloParamRepository {
     /// Ordered list of buddy stone entity IDs and their associated buddy stone param indices.
     ///
     /// Can be used to search [crate::param::BUDDY_STONE_PARAM_ST] rows based on chr entity ID.
-    pub buddy_stone_entity_ids: Vector<BuddyStoneTalkChrEntityId>,
+    pub buddy_stone_entity_ids: DLVector<BuddyStoneTalkChrEntityId>,
     /// Ordered list of bonfire entity IDs and their associated bonfire warp param indices.
     ///
     /// Can be used to search [crate::param::BONFIRE_WARP_PARAM_ST] rows based on bonfire entity ID.
-    pub bonfire_warps: Vector<BonfireEntityId>,
-    /// Tree groupping [WEATHER_ASSET_REPLACE_PARAM_ST] param rows by [BlockId].
-    pub weather_asset_replaces: Tree<AssetReplacementParamMapEntry>,
-    /// Tree groupping [LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM] param rows by [BlockId].
-    pub legacy_distant_view_parts_replaces: Tree<AssetReplacementParamMapEntry>,
+    pub bonfire_warps: DLVector<BonfireEntityId>,
+    /// MultiMap groupping [WEATHER_ASSET_REPLACE_PARAM_ST] param row index by [BlockId].
+    pub weather_asset_replaces: DLMultiMap<BlockId, u32>,
+    /// MultiMap groupping [LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM] param row index by [BlockId].
+    pub legacy_distant_view_parts_replaces: DLMultiMap<BlockId, u32>,
     /// Tree mapping for the [CHR_EQUIP_MODEL_PARAM_ST] param rows.
     /// The usage of this param is unknown.
-    pub chr_equip_models: Tree<ChrEquipModelMapEntry>,
+    pub chr_equip_models: DLMap<ChrEquipModelKey, u32>,
     /// Map of all area IDs to their multiplay event flag limits.
-    pub match_area_limits: Tree<MatchAreaLimit>,
+    pub match_area_limits: DLMap<u32, u32>,
 }
 
 impl SoloParamRepository {
@@ -275,11 +270,8 @@ impl SoloParamRepository {
         model_id: u16,
     ) -> Option<&crate::param::CHR_EQUIP_MODEL_PARAM_ST> {
         let key = ChrEquipModelKey::from_parts(equip_type, gender, model_id);
-        let entry = self
-            .chr_equip_models
-            .filtered_iter(|e| e.key.0.cmp(&key.0))
-            .next()?;
-        self.get_row_by_index::<ChrEquipModelParam>(entry.param_row_index as usize)
+        let entry = self.chr_equip_models.find(&key)?;
+        self.get_row_by_index::<ChrEquipModelParam>(*entry as usize)
     }
 
     pub fn get_by_buddy_stone_param_by_entity_id(
@@ -288,10 +280,9 @@ impl SoloParamRepository {
     ) -> Option<&crate::param::BUDDY_STONE_PARAM_ST> {
         let entry_index = self
             .buddy_stone_entity_ids
-            .items()
             .binary_search_by_key(&talk_chr_entity_id, |e| e.talk_chr_entity_id)
             .ok()?;
-        let entry = &self.buddy_stone_entity_ids.items()[entry_index];
+        let entry = &self.buddy_stone_entity_ids[entry_index];
         self.get_row_by_index::<BuddyStoneParam>(entry.buddy_stone_param_index as usize)
     }
 
@@ -301,21 +292,29 @@ impl SoloParamRepository {
     ) -> Option<&crate::param::BONFIRE_WARP_PARAM_ST> {
         let entry_index = self
             .bonfire_warps
-            .items()
             .binary_search_by_key(&bonfire_entity_id, |e| e.bonfire_entity_id)
             .ok()?;
-        let entry = &self.bonfire_warps.items()[entry_index];
+        let entry = &self.bonfire_warps[entry_index];
         self.get_row_by_index::<BonfireWarpParam>(entry.bonfire_warp_param_index as usize)
     }
 
-    pub fn weather_asset_replace_params_by_block_id(
+    pub fn weather_asset_replaces_params_by_block_id(
         &self,
-        block_id: BlockId,
+        block_id: &BlockId,
     ) -> impl Iterator<Item = &crate::param::WEATHER_ASSET_REPLACE_PARAM_ST> {
         self.weather_asset_replaces
-            .filtered_iter(move |e| e.block_id.0.cmp(&block_id.0))
+            .find(block_id)
+            .filter_map(|e| self.get_row_by_index::<WeatherAssetReplaceParam>(*e as usize))
+    }
+
+    pub fn legacy_distant_view_parts_replaces_by_block_id(
+        &self,
+        block_id: &BlockId,
+    ) -> impl Iterator<Item = &crate::param::LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM> {
+        self.legacy_distant_view_parts_replaces
+            .find(block_id)
             .filter_map(|e| {
-                self.get_row_by_index::<WeatherAssetReplaceParam>(e.param_row_index as usize)
+                self.get_row_by_index::<LegacyDistantViewPartsReplaceParam>(*e as usize)
             })
     }
 

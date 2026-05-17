@@ -20,7 +20,7 @@ pub enum FieldInsType {
 
 bitfield! {
     #[repr(C)]
-    #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
     /// Used to reference a specific FieldIns managed by its respective (external) domain.
     pub struct FieldInsSelector(u32);
     impl Debug;
@@ -68,7 +68,7 @@ impl FieldInsSelector {
 /// Source of name: Destructor reveals this being a field in FieldIns and it's used as a means of
 /// naming some FieldIns derivant everywhere where raw pointers cannot be shared.
 #[repr(C, align(8))]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct FieldInsHandle {
     pub selector: FieldInsSelector,
     pub block_id: BlockId,

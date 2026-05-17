@@ -2,14 +2,14 @@ use std::ptr::NonNull;
 
 use windows::core::PCWSTR;
 
-use crate::{Vector, cs::ChrIns};
+use crate::{DLVector, cs::ChrIns};
 
 #[repr(C)]
 /// Source of name: RTTI
 pub struct CSChrModelParamModifierModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    pub modifiers: Vector<CSChrModelParamModifierModuleEntry>,
+    pub modifiers: DLVector<CSChrModelParamModifierModuleEntry>,
 }
 
 #[repr(C)]

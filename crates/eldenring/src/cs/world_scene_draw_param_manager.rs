@@ -1,6 +1,6 @@
 use std::ptr::NonNull;
 
-use crate::DoublyLinkedList;
+use crate::DLList;
 
 use super::{BlockId, WorldInfoOwner};
 
@@ -14,7 +14,7 @@ pub struct CSWorldSceneDrawParamManager {
     _pad14: u32,
     unk18: u64,
     unk20: u64,
-    pub world_area_blocks: DoublyLinkedList<CSWorldAreaBlockSceneDrawParam>,
+    pub world_area_blocks: DLList<CSWorldAreaBlockSceneDrawParam>,
     pub scene_draw_param: CSFD4SceneDrawParam,
 }
 

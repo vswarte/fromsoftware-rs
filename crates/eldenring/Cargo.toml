@@ -17,8 +17,11 @@ windows.workspace = true
 bitfield.workspace = true
 bitflags.workspace = true
 encoding_rs.workspace = true
-cxx-stl.workspace = true
 num_enum.workspace = true
+
+[dependencies.fromsoftware-shared-stl]
+workspace = true
+features = ["msvc2015"]
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"

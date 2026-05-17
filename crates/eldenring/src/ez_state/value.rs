@@ -1,6 +1,6 @@
 use std::{fmt::Debug, mem::ManuallyDrop};
 
-use crate::{dlkr::DLAllocatorRef, dlut::DLReferencePointer, ez_state::EzStateSharedString};
+use crate::{DLAllocatorForStl, dlut::DLReferencePointer, ez_state::EzStateSharedString};
 
 #[derive(Clone, Debug)]
 /// An argument or return value for an ESD event or query, represented as a safe enum. Use
@@ -72,9 +72,11 @@ impl From<&EzStateRawValue> for EzStateValue {
             // also holds this invariant.
             EzStateRawValueType::Float32 => Self::Float32(unsafe { raw_value.value.float32 }),
             EzStateRawValueType::Int32 => Self::Int32(unsafe { raw_value.value.int32 }),
-            EzStateRawValueType::String => {
-                Self::String(unsafe { &raw_value.value.string }.to_str().unwrap())
-            }
+            EzStateRawValueType::String => Self::String(
+                unsafe { &raw_value.value.string }
+                    .to_string()
+                    .unwrap_or("INVALID STRING".to_owned()),
+            ),
         }
     }
 }
@@ -93,7 +95,7 @@ impl From<EzStateValue> for EzStateRawValue {
             EzStateValue::String(string) => EzStateRawValue {
                 value: EzStateRawValueValue {
                     string: ManuallyDrop::new({
-                        let allocator = DLAllocatorRef::runtime_heap_allocator();
+                        let allocator = DLAllocatorForStl::runtime_heap_allocator();
                         EzStateSharedString::from_str(allocator, &string).unwrap()
                     }),
                 },

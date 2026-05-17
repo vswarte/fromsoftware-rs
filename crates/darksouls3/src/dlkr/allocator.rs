@@ -1,8 +1,3 @@
-use std::{
-    alloc::{GlobalAlloc, Layout},
-    ptr::NonNull,
-};
-
 use vtable_rs::VPtr;
 
 #[vtable_rs::vtable]
@@ -31,26 +26,4 @@ pub trait DLAllocatorVmt {
 #[repr(transparent)]
 pub struct DLAllocatorBase {
     pub vftable: VPtr<dyn DLAllocatorVmt, Self>,
-}
-
-#[repr(transparent)]
-#[derive(Clone)]
-pub struct DLAllocatorRef(NonNull<DLAllocatorBase>);
-
-impl From<NonNull<DLAllocatorBase>> for DLAllocatorRef {
-    fn from(ptr: NonNull<DLAllocatorBase>) -> Self {
-        Self(ptr)
-    }
-}
-
-unsafe impl GlobalAlloc for DLAllocatorRef {
-    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let allocator = unsafe { self.0.as_ref() };
-        (allocator.vftable.allocate_aligned)(allocator, layout.size(), layout.align())
-    }
-
-    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        let allocator = unsafe { self.0.as_ref() };
-        (allocator.vftable.deallocate)(allocator, ptr);
-    }
 }

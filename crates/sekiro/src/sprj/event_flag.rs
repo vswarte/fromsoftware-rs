@@ -3,7 +3,7 @@ use std::{ptr::NonNull, slice};
 use thiserror::Error;
 
 use super::FieldArea;
-use crate::Vector;
+use crate::DLVector;
 use shared::*;
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -232,7 +232,7 @@ pub struct EventWorld {
 #[repr(C)]
 // Source of name: RTTI
 pub struct EventMakerEx {
-    _unk00: Vector<u8>,
+    _unk00: DLVector<u8>,
     _unk20: u64,
 }
 
