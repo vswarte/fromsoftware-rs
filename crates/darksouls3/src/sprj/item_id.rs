@@ -201,13 +201,22 @@ pub struct ItemId(OptionalItemId);
 
 impl ItemId {
     /// Creates a new [ItemId] from the given category and param ID. Returns an
-    /// [ItemIdError] if `param_id` is greater than 0xFFFFFFF.
+    /// [ItemIdError] if [param_id](Self::param_id) is greater than 0xFFFFFFF.
     pub const fn new(category: ItemCategory, param_id: u32) -> Result<Self, ItemIdError> {
         if param_id > 0xFFFFFFF {
             Err(ItemIdError::InvalidParamId(param_id))
         } else {
-            Ok(Self(OptionalItemId(((category as u32) << 28) | param_id)))
+            Ok(unsafe { Self::new_unchecked(category, param_id) })
         }
+    }
+
+    /// Creates a new [ItemId] from the given category and param ID without checking input parameters.
+    ///
+    /// # Safety
+    ///
+    /// [`param_id`](Self::param_id) must be less than or equal to 0xFFFFFFF.
+    pub const unsafe fn new_unchecked(category: ItemCategory, param_id: u32) -> Self {
+        Self(OptionalItemId(((category as u32) << 28) | param_id))
     }
 
     /// Returns this ID's category.
