@@ -213,3 +213,103 @@ fn list_used_as_queue_via_push_back_pop_front() {
     }
     assert_eq!(out, (0..8).collect::<Vec<_>>());
 }
+
+#[test]
+fn list_clear_on_empty_is_noop() {
+    let mut l: List<i32, _> = List::new_in(alloc());
+    l.clear();
+    assert!(l.is_empty());
+    assert_eq!(l.len(), 0);
+}
+
+#[test]
+fn list_clear_makes_list_empty() {
+    let mut l: List<i32, _> = List::new_in(alloc());
+    for i in 0..8 {
+        l.push_back(i);
+    }
+    l.clear();
+    assert!(l.is_empty());
+    assert_eq!(l.len(), 0);
+    assert_eq!(l.iter().count(), 0);
+}
+
+#[test]
+fn list_clear_calls_element_destructors() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut l: List<DropCount, _> = List::new_in(a.clone());
+    for i in 0..16 {
+        l.push_back(DropCount::new(&drop_count, i));
+    }
+    assert_eq!(drop_count.load(Ordering::Relaxed), 0);
+    l.clear();
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        16,
+        "clear must drop all elements"
+    );
+}
+
+#[test]
+fn list_clear_frees_nodes_but_not_sentinel() {
+    static C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&C);
+    let mut l: List<i32, _> = List::new_in(a.clone());
+    for i in 0..8 {
+        l.push_back(i);
+    }
+    assert_eq!(a.live_count(), 9);
+    l.clear();
+    assert_eq!(
+        a.live_count(),
+        1,
+        "clear should free all nodes except the sentinel"
+    );
+    drop(l);
+    assert_eq!(a.live_count(), 0, "drop should free the sentinel");
+}
+
+#[test]
+fn list_clear_then_reuse() {
+    let mut l: List<i32, _> = List::new_in(alloc());
+    for i in 0..4 {
+        l.push_back(i);
+    }
+    l.clear();
+    for i in 10..14 {
+        l.push_back(i);
+    }
+    let collected: Vec<_> = l.iter().copied().collect();
+    assert_eq!(collected, [10, 11, 12, 13]);
+}
+
+#[test]
+fn list_double_clear_is_safe() {
+    let mut l: List<i32, _> = List::new_in(alloc());
+    for i in 0..4 {
+        l.push_back(i);
+    }
+    l.clear();
+    l.clear();
+    assert!(l.is_empty());
+}
+
+#[test]
+fn list_clear_no_leak() {
+    static C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&C);
+    {
+        let mut l: List<i32, _> = List::new_in(a.clone());
+        for i in 0..64 {
+            l.push_back(i);
+        }
+        l.clear();
+    }
+    assert_eq!(
+        a.live_count(),
+        0,
+        "clear + drop must leave no live allocations"
+    );
+}

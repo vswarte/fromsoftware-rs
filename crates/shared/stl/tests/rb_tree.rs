@@ -449,3 +449,169 @@ fn multiset_remove_all_drops_all_matching() {
     assert_eq!(drop_count.load(Ordering::Relaxed), 4 + 1 + 2);
     assert_eq!(a.live_count(), 0);
 }
+
+#[test]
+fn set_clear_on_empty_is_noop() {
+    let mut set: Set<i32, _> = Set::new_in(std_alloc());
+    set.clear();
+    assert!(set.is_empty());
+    assert_eq!(set.len(), 0);
+}
+
+#[test]
+fn set_clear_makes_set_empty() {
+    let mut set: Set<i32, _> = Set::new_in(std_alloc());
+    for v in 0..16 {
+        set.insert(v);
+    }
+    set.clear();
+    assert!(set.is_empty());
+    assert_eq!(set.len(), 0);
+    assert_eq!(set.iter().count(), 0);
+}
+
+#[test]
+fn set_clear_calls_value_destructors() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut set: Set<DropCount, _> = Set::new_in(a.clone());
+    for i in 0..16 {
+        set.insert(DropCount::new(&drop_count, i));
+    }
+    assert_eq!(drop_count.load(Ordering::Relaxed), 0);
+    set.clear();
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        16,
+        "clear must drop all values"
+    );
+}
+
+#[test]
+fn set_clear_frees_nodes_but_not_sentinel() {
+    static C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&C);
+    let mut set: Set<i32, _> = Set::new_in(a.clone());
+    for v in 0..8 {
+        set.insert(v);
+    }
+    assert_eq!(a.live_count(), 9);
+    set.clear();
+    assert_eq!(
+        a.live_count(),
+        1,
+        "only the sentinel should remain after clear"
+    );
+    drop(set);
+    assert_eq!(a.live_count(), 0);
+}
+
+#[test]
+fn set_clear_then_reuse() {
+    let mut set: Set<i32, _> = Set::new_in(std_alloc());
+    for v in 0..8 {
+        set.insert(v);
+    }
+    set.clear();
+    for v in [100, 200, 300] {
+        set.insert(v);
+    }
+    assert_eq!(set.len(), 3);
+    let collected: Vec<_> = set.iter().copied().collect();
+    assert_eq!(collected, [100, 200, 300]);
+}
+
+#[test]
+fn set_double_clear_is_safe() {
+    let mut set: Set<i32, _> = Set::new_in(std_alloc());
+    for v in 0..8 {
+        set.insert(v);
+    }
+    set.clear();
+    set.clear();
+    assert!(set.is_empty());
+}
+
+#[test]
+fn set_clear_no_leak() {
+    static C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&C);
+    {
+        let mut set: Set<i32, _> = Set::new_in(a.clone());
+        for v in 0..64 {
+            set.insert(v);
+        }
+        set.clear();
+    }
+    assert_eq!(
+        a.live_count(),
+        0,
+        "clear + drop must leave no live allocations"
+    );
+}
+
+#[test]
+fn map_clear_makes_map_empty() {
+    let mut map: Map<i32, i32, _> = Map::new_in(std_alloc());
+    for i in 0..8 {
+        map.insert(i, i * 10);
+    }
+    map.clear();
+    assert!(map.is_empty());
+    assert_eq!(map.len(), 0);
+    assert_eq!(map.find(&0), None);
+}
+
+#[test]
+fn map_clear_calls_value_destructors() {
+    let drop_count = AtomicUsize::new(0);
+    static ALLOC_C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&ALLOC_C);
+    let mut map: Map<i32, DropCount, _> = Map::new_in(a.clone());
+    for i in 0..8 {
+        map.insert(i, DropCount::new(&drop_count, i));
+    }
+    assert_eq!(drop_count.load(Ordering::Relaxed), 0);
+    map.clear();
+    assert_eq!(
+        drop_count.load(Ordering::Relaxed),
+        8,
+        "clear must drop all map values"
+    );
+}
+
+#[test]
+fn map_clear_then_reuse() {
+    let mut map: Map<i32, i32, _> = Map::new_in(std_alloc());
+    for i in 0..4 {
+        map.insert(i, i);
+    }
+    map.clear();
+    map.insert(99, 42);
+    assert_eq!(map.len(), 1);
+    assert_eq!(map.find(&99), Some(&42));
+}
+
+#[test]
+fn multiset_clear_removes_all_duplicates() {
+    let mut ms: MultiSet<i32, _> = MultiSet::new_in(std_alloc());
+    for _ in 0..5 {
+        ms.insert(7);
+    }
+    ms.clear();
+    assert!(ms.is_empty());
+    assert_eq!(ms.find(&7).count(), 0);
+}
+
+#[test]
+fn multimap_clear_removes_all_entries() {
+    let mut mm: MultiMap<i32, i32, _> = MultiMap::new_in(std_alloc());
+    for v in [10, 11, 12] {
+        mm.insert(1, v);
+    }
+    mm.insert(2, 20);
+    mm.clear();
+    assert!(mm.is_empty());
+    assert_eq!(mm.find(&1).count(), 0);
+}

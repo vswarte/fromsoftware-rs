@@ -155,3 +155,127 @@ fn vector_bool_no_leak_after_growth() {
     }
     assert_eq!(a.live_count(), 0, "vector<bool> leaked");
 }
+
+#[test]
+fn vector_bool_clear_on_empty_is_noop() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    v.clear();
+    assert!(v.is_empty());
+    assert_eq!(v.len(), 0);
+    assert_eq!(v.capacity(), 0);
+}
+
+#[test]
+fn vector_bool_clear_makes_vector_empty() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    for b in [true, false, true, true, false] {
+        v.push_back(b);
+    }
+    v.clear();
+    assert!(v.is_empty());
+    assert_eq!(v.len(), 0);
+    assert_eq!(v.iter().count(), 0);
+}
+
+#[test]
+fn vector_bool_clear_retains_capacity() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    for _ in 0..64 {
+        v.push_back(true);
+    }
+    let cap_before = v.capacity();
+    v.clear();
+    assert_eq!(
+        v.capacity(),
+        cap_before,
+        "clear must not release the underlying word buffer"
+    );
+}
+
+#[test]
+fn vector_bool_clear_zeroes_all_bits() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    for _ in 0..64 {
+        v.push_back(true);
+    }
+    v.clear();
+    for _ in 0..32 {
+        v.push_back(false);
+    }
+    assert_eq!(v.count_ones(), 0, "stale set bits must not survive clear");
+    assert_eq!(v.count_zeros(), 32);
+}
+
+#[test]
+fn vector_bool_clear_keeps_buffer_allocation() {
+    static C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&C);
+    let mut v: VectorBool<_> = VectorBool::new_in(a.clone());
+    for _ in 0..64 {
+        v.push_back(true);
+    }
+    assert_eq!(a.live_count(), 1);
+    v.clear();
+    assert_eq!(a.live_count(), 1, "buffer must still be live after clear");
+    drop(v);
+    assert_eq!(a.live_count(), 0);
+}
+
+#[test]
+fn vector_bool_clear_then_reuse() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    for _ in 0..16 {
+        v.push_back(true);
+    }
+    v.clear();
+    let bits = [false, true, false, true];
+    for &b in &bits {
+        v.push_back(b);
+    }
+    let collected: Vec<_> = v.iter().collect();
+    assert_eq!(collected, bits);
+}
+
+#[test]
+fn vector_bool_double_clear_is_safe() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    for _ in 0..8 {
+        v.push_back(true);
+    }
+    v.clear();
+    v.clear();
+    assert!(v.is_empty());
+}
+
+#[test]
+fn vector_bool_clear_no_leak() {
+    static C: AtomicUsize = AtomicUsize::new(0);
+    let a = StdAlloc::new(&C);
+    {
+        let mut v: VectorBool<_> = VectorBool::new_in(a.clone());
+        for i in 0..256 {
+            v.push_back(i % 2 == 0);
+        }
+        v.clear();
+    }
+    assert_eq!(
+        a.live_count(),
+        0,
+        "clear + drop must leave no live allocations"
+    );
+}
+
+#[test]
+fn vector_bool_clear_across_word_boundary() {
+    let mut v: VectorBool<_> = VectorBool::new_in(alloc());
+    for i in 0..130 {
+        v.push_back(i % 2 == 0);
+    }
+    assert_eq!(v.len(), 130);
+    v.clear();
+    assert_eq!(v.len(), 0);
+    assert!(v.is_empty());
+    v.push_back(true);
+    assert_eq!(v.get(0), Some(true));
+    assert_eq!(v.count_ones(), 1);
+}
