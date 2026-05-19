@@ -49,8 +49,8 @@ impl CSPhysWorld {
             )
         };
 
-        let mut result = HavokPosition(0.0, 0.0, 0.0, 0.0);
-        let extent = HavokPosition(delta.0, delta.1, delta.2, 0.0);
+        let mut result = HavokPosition::from_xyz(0.0, 0.0, 0.0);
+        let extent = HavokPosition::from_xyz(delta.x, delta.y, delta.z);
         if target(self, filter, origin, &extent, &mut result, owner) {
             Some(result)
         } else {

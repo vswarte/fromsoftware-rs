@@ -46,7 +46,7 @@ pub struct CSCam {
 pub impl CSCamExt for Subclass<CSCam> {
     fn right(&self) -> PositionDelta {
         let superclass = self.superclass();
-        PositionDelta(
+        PositionDelta::from_xyz(
             superclass.matrix.0.0,
             superclass.matrix.0.1,
             superclass.matrix.0.2,
@@ -55,7 +55,7 @@ pub impl CSCamExt for Subclass<CSCam> {
 
     fn up(&self) -> PositionDelta {
         let superclass = self.superclass();
-        PositionDelta(
+        PositionDelta::from_xyz(
             superclass.matrix.1.0,
             superclass.matrix.1.1,
             superclass.matrix.1.2,
@@ -64,7 +64,7 @@ pub impl CSCamExt for Subclass<CSCam> {
 
     fn forward(&self) -> PositionDelta {
         let superclass = self.superclass();
-        PositionDelta(
+        PositionDelta::from_xyz(
             superclass.matrix.2.0,
             superclass.matrix.2.1,
             superclass.matrix.2.2,
@@ -73,11 +73,11 @@ pub impl CSCamExt for Subclass<CSCam> {
 
     fn position(&self) -> HavokPosition {
         let superclass = self.superclass();
-        HavokPosition(
+
+        HavokPosition::from_xyz(
             superclass.matrix.3.0,
             superclass.matrix.3.1,
             superclass.matrix.3.2,
-            superclass.matrix.3.3,
         )
     }
 }

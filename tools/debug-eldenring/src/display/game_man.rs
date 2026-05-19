@@ -109,7 +109,7 @@ impl DebugDisplay for GameMan {
             ui.debug("Summon Param Type", self.summon_param_type);
             ui.display("Has Password", self.has_password);
             ui.display("Character Name Is Empty", self.character_name_is_empty);
-            ui.display(
+            ui.debug(
                 "Multiplay Join Block Position",
                 self.multiplay_join_block_pos,
             );
