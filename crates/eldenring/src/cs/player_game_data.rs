@@ -18,7 +18,7 @@ use crate::cs::{FieldInsHandle, GaitemHandle, ItemId, OptionalItemId};
 pub struct PlayerGameData {
     vftable: usize,
     /// Event id of this game data owner
-    pub character_event_id: u32,
+    pub character_event_id: i32,
     pub player_id: u32,
     pub current_hp: u32,
     pub current_max_hp: u32,
@@ -55,7 +55,7 @@ pub struct PlayerGameData {
     pub madness_resist: u32,
     pub pending_block_clear_bonus: f32,
     pub chr_type: ChrType,
-    character_name: [u16; 17],
+    pub character_name: [u16; 17],
     pub gender: u8,
     pub archetype: u8,
     pub vow_type: u8,
