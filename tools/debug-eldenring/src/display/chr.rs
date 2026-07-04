@@ -356,7 +356,10 @@ impl DebugDisplay for PlayerGameData {
         ui.header("Quickmatch", || {
             ui.display("Kill Count", self.quickmatch_kill_count);
             ui.display("Team", self.quick_match_team);
-            ui.display("Desired Team", self.quick_match_desired_team);
+            ui.debug("Desired Team", self.quick_match_desired_team);
+            ui.display("Spawn Slot Fraction", self.quick_match_spawn_slot_fraction);
+            ui.display("Is Lead", self.is_quick_match_lead);
+            ui.display("Is In Game", self.is_quick_match_in_game);
             ui.display("Is Host", self.is_quick_match_host);
             ui.display("Map Load Ready", self.quick_match_map_load_ready);
             ui.display("Duel Points", self.quick_match_duel_points);
@@ -368,6 +371,8 @@ impl DebugDisplay for PlayerGameData {
             ui.display("Duel Rank", self.quickmatch_duel_rank);
             ui.display("United Combat Rank", self.quickmatch_united_combat_rank);
             ui.display("Spirit Ashes Rank", self.quickmatch_spirit_ashes_rank);
+            ui.display("Host Scadutree Blessing", self.host_scadutree_blessing);
+            ui.display("Host Scaling Applied", self.host_scaling_applied);
         });
 
         ui.nested("EquipGameData", &self.equipment);
@@ -395,6 +400,30 @@ impl DebugDisplay for EquipGameData {
             "Item Replenish State Tracker",
             self.item_replenish_state_tracker.as_ref(),
         );
+
+        if let Some(qm_item_backup_vector) = self.qm_item_backup_vector.as_ref() {
+            ui.header("QM Item Backup Vector", || {
+                ui.table(
+                    "equip-game-data-qm-item-backup-vector",
+                    [
+                        TableColumnSetup::new("Index"),
+                        TableColumnSetup::new("Item ID"),
+                        TableColumnSetup::new("Quantity"),
+                    ],
+                    qm_item_backup_vector.iter(),
+                    |ui, i, item| {
+                        ui.table_next_column();
+                        ui.text(format!("{i}"));
+                        ui.table_next_column();
+                        ui.text(format!("{:?}", item.item_id));
+                        ui.table_next_column();
+                        ui.text(format!("{}", item.quantity));
+                    },
+                );
+            });
+        } else {
+            ui.text("QM Item Backup Vector: None");
+        }
     }
 }
 
