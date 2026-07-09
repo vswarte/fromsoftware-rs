@@ -68,7 +68,7 @@ impl DebugDisplay for GameDataMan {
             "Boss Health Bar NPC Param ID",
             self.boss_health_bar_npc_param_id,
         );
-        ui.display("White Phantom Count", self.white_phantom_count);
+        ui.display("Boss Start Helper Num", self.boss_start_helper_num);
 
         ui.separator();
         ui.debug("Death State", self.death_state);
@@ -258,7 +258,7 @@ impl DebugDisplay for BloodstainData {
 
 impl DebugDisplay for GameVersionData {
     fn render_debug(&self, ui: &Ui) {
-        ui.display("Game Data Version", self.game_data_version);
+        ui.display("First Game Data Version", self.first_game_data_version);
         ui.display(
             "Last Saved Game Data Version",
             self.last_saved_game_data_version,

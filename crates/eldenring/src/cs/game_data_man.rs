@@ -84,9 +84,9 @@ pub struct GameDataMan {
     pub boss_fight_timer: FD4Time,
     /// Whether a boss fight is currently active
     pub boss_fight_active: bool,
-    /// Count of white phantoms currently summoned
+    /// Count of white phantoms summoned at the start of the boss fight
     /// Used to apply enemy level scaling
-    pub white_phantom_count: u32,
+    pub boss_start_helper_num: u32,
     pub boss_health_bar_entity_id: u32,
     pub boss_health_bar_npc_param_id: u32,
     unkd0: [u8; 0x4],
@@ -257,8 +257,8 @@ bitfield! {
 
 #[repr(C)]
 pub struct GameVersionData {
-    /// Current version of the game data structure
-    pub game_data_version: u32,
+    /// First version of the game data structure in the save file
+    pub first_game_data_version: u32,
     /// Version of the game data read from the last save
     pub last_saved_game_data_version: u32,
     /// Whether the saved game data version is the latest
