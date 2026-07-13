@@ -2,6 +2,7 @@
 use std::ptr::NonNull;
 
 use bitfield::bitfield;
+use fromsoftware_shared_stl::Function;
 use shared::{F32Vector3, OwnedPtr, Subclass, Superclass, singleton};
 use vtable_rs::VPtr;
 
@@ -54,8 +55,7 @@ pub trait CSLuaEventMsgExecVmt {
 #[derive(Subclass)]
 pub struct CSLuaEventMsgExec_Func {
     pub base: CSLuaEventMsgExec,
-    /// `std::function(CSLuaEventScriptImitation*)(CSLuaEventProxy*, CSScriptCallParam*)`
-    func: [u8; 0x40],
+    pub func: Function<fn(*mut CSLuaEventProxy, *mut CSScriptCallParam)>,
 }
 
 #[repr(C)]
