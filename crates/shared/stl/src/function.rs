@@ -187,7 +187,8 @@ struct FuncVtable<DoCall> {
     pub target_type: unsafe extern "C" fn(*const UnknownFuncImpl) -> *const MsvcTypeInfo,
     pub delete_this: unsafe extern "C" fn(*mut UnknownFuncImpl, bool),
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
-    pub scalar_deleting_destructor: unsafe extern "C" fn(*mut UnknownFuncImpl, u32) -> *mut UnknownFuncImpl,
+    pub scalar_deleting_destructor:
+        unsafe extern "C" fn(*mut UnknownFuncImpl, u32) -> *mut UnknownFuncImpl,
     pub get: unsafe extern "C" fn(*const UnknownFuncImpl) -> *const c_void,
 }
 
