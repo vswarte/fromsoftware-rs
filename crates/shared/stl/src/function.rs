@@ -193,7 +193,7 @@ struct FuncVtable<DoCall> {
 }
 
 /// Ties a Rust fn-pointer type `fn(Args...) -> Ret` to its vtable shape.
-/// Implemented per arity (0-8) by [`impl_function_arity!`].
+/// Implemented per arity (0-8) by `impl_function_arity!`.
 ///
 /// # Safety
 ///
