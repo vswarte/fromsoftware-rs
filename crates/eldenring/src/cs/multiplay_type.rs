@@ -3,7 +3,7 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-use crate::cs::{ChrType, FullScreenMessage};
+use crate::cs::ChrType;
 use bitfield::bitfield;
 use shared::{FromStatic, load_static_direct};
 
@@ -253,8 +253,10 @@ pub struct MultiplayPropertyEntry {
     pub other_sign_interaction_fmg_id: i32,
     /// FMG ID for the message shown when interacting with own sign of this multiplay type
     pub self_sign_interaction_fmg_id: i32,
-    /// FullScreenMessage shown when a character of this multiplayer type is killed
-    pub kill_full_screen_message: FullScreenMessage,
+    /// Param ID of the [`FeTextEffectParam`] shown when a character of this multiplayer type is killed
+    ///
+    /// [`FeTextEffectParam`]: crate::param::FE_TEXT_EFFECT_PARAM_ST
+    pub kill_full_screen_message: i32,
     /// Different properties related to this multiplayer type
     pub flags: MultiplayPropertyEntryFlags,
     /// Debug name for this multiplayer type

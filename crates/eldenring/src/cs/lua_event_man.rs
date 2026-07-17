@@ -7,7 +7,7 @@ use vtable_rs::VPtr;
 
 use crate::{
     DLList,
-    cs::{BlockId, CSEzTask, CSEzVoidTask, DeathState, FullScreenMessage, SummonParamType},
+    cs::{BlockId, CSEzTask, CSEzVoidTask, DeathState, SummonParamType},
     dlkr::DLAllocator,
     dlrf::DLRuntimeClassImpl,
     dltx::{DLShiftJisStringKind, DLString, DLUTF16StringKind},
@@ -155,7 +155,11 @@ pub struct CSPlayerKillEvent {
 #[repr(C)]
 pub struct CSDeathRestartEvent {
     pub owner: NonNull<CSLuaEventScriptImitation>,
-    pub full_screen_message_id: FullScreenMessage,
+    /// Param ID of the [`FeTextEffectParam`] to be displayed
+    /// Eg. "You Died", "Victory", "Defeat"
+    ///
+    /// [`FeTextEffectParam`]: crate::param::FE_TEXT_EFFECT_PARAM_ST
+    pub full_screen_message_id: i32,
     pub character_event_id: i32,
     unk10: i32,
     pub is_death_penalty_skip: bool,

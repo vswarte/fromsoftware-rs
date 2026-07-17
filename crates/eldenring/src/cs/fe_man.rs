@@ -203,9 +203,11 @@ pub struct FrontEndViewValues {
     /// and read counter will be increased
     pub proc_status_message_timer: f32,
     unk36dc: [u8; 4],
-    /// Id of the full screen message to be displayed
+    /// Param ID of the [`FeTextEffectParam`] to be displayed
     /// Eg. "You Died", "Victory", "Defeat"
-    pub full_screen_message_request_id: FullScreenMessage,
+    ///
+    /// [`FeTextEffectParam`]: crate::param::FE_TEXT_EFFECT_PARAM_ST
+    pub full_screen_message_request_id: i32,
     unk36e4: [u8; 4],
     unk36e8: MenuString,
     unk3720: MenuString,
@@ -217,44 +219,6 @@ pub struct FrontEndViewValues {
     unk4d5c: [u8; 4],
     pub spirit_ash_display: [CSFeSpiritAshDisplay; 5],
     unk4dd8: [u8; 8],
-}
-
-#[repr(i32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum FullScreenMessage {
-    None = -1,
-    DemigodFelled = 1,
-    LegendFelled = 2,
-    GreatEnemyFelled = 3,
-    EnemyFelled = 4,
-    YouDied = 5,
-    HostVanquished = 7,
-    BloodFingerVanquished = 8,
-    DutyFullFilled = 9,
-    LostGraceDiscovered = 11,
-    Commence = 13,
-    Victory = 14,
-    Stalemate = 15,
-    Defeat = 16,
-    MapFound = 17,
-    GreatRuneRestored = 21,
-    GodSlain = 22,
-    DuelistVanquished = 23,
-    RecusantVanquished = 24,
-    InvaderVanquished = 25,
-    FurledFingerRankAdvanced = 26,
-    FurledFingerRankAdvanced2 = 31,
-    DuelistRankAdvanced = 32,
-    DuelistRankAdvanced2 = 33,
-    BloodyFingerRankAdvanced = 34,
-    BloodyFingerRankAdvanced2 = 35,
-    RecusantRankAdvanced = 36,
-    RecusantRankAdvanced2 = 37,
-    HunterRankAdvanced = 38,
-    HunterRankAdvanced2 = 39,
-    HeartStolen = 40,
-    MenuText = 41,
-    YouDiedWithFade = 42,
 }
 
 #[repr(C)]
