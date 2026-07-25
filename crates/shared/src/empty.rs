@@ -125,13 +125,11 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            match self.0.next() {
-                Some(entry) => {
-                    if let Some(entry) = entry.as_option() {
-                        return Some(entry);
-                    }
+            {
+                let entry = self.0.next()?;
+                if let Some(entry) = entry.as_option() {
+                    return Some(entry);
                 }
-                None => return None,
             }
         }
     }
@@ -180,13 +178,11 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            match self.0.next() {
-                Some(entry) => {
-                    if let Some(entry) = entry.as_option_mut() {
-                        return Some(entry);
-                    }
+            {
+                let entry = self.0.next()?;
+                if let Some(entry) = entry.as_option_mut() {
+                    return Some(entry);
                 }
-                None => return None,
             }
         }
     }
