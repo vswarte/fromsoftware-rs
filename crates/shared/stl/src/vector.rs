@@ -149,12 +149,17 @@ impl<T, A: StlAllocator> Vector<T, A> {
         let old_cap = self.capacity();
         let new_cap = (old_cap + old_cap / 2).max(old_cap + 1).max(4);
 
-        let new_ptr = self.allocator.allocate_n::<T>(new_cap).as_ptr() as _;
+        let new_ptr: *mut T = self.allocator.allocate_n::<T>(new_cap).as_ptr() as _;
 
         unsafe {
-            std::ptr::copy_nonoverlapping(self.first, new_ptr, old_len);
-            if old_cap > 0 {
-                self.allocator.deallocate_raw(self.first as _);
+            // Some allocators (e.g. single-slot fixed-buffer allocators) can
+            // hand back the same address on every call; skip the copy/free
+            // then, since the data is already where it needs to be.
+            if !std::ptr::eq(self.first, new_ptr) {
+                std::ptr::copy_nonoverlapping(self.first, new_ptr, old_len);
+                if old_cap > 0 {
+                    self.allocator.deallocate_raw(self.first as _);
+                }
             }
         }
 
