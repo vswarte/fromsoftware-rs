@@ -1,3 +1,6 @@
+mod fixed_std_allocator;
+
+pub use fixed_std_allocator::*;
 use pelite::pe64::Pe;
 use shared::Program;
 use vtable_rs::VPtr;

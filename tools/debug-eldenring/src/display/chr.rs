@@ -661,6 +661,7 @@ impl StatefulDebugDisplay for ChrIns {
 fn chr_ins_common_debug(chr_ins: &mut ChrIns, ui: &Ui, state: &mut ChrInsState) {
     ui.display("Team", chr_ins.team_type);
     ui.debug("Chr Type", chr_ins.chr_type);
+    ui.display("Character ID", chr_ins.character_id);
     ui.display("Field Ins Handle", chr_ins.field_ins_handle);
     ui.display("P2P Entity Handle", &chr_ins.p2p_entity_handle);
 
@@ -672,6 +673,9 @@ fn chr_ins_common_debug(chr_ins: &mut ChrIns, ui: &Ui, state: &mut ChrInsState) 
     ui.nested("Chunk Position", chr_ins.chunk_position);
     ui.nested("Initial Position", chr_ins.initial_position);
     ui.nested("Initial Orientation", chr_ins.initial_orientation_euler);
+
+    ui.display("Light Set ID", chr_ins.gparam_light_set_id);
+    ui.display("Fog ID", chr_ins.gparam_fog_id);
 
     ui.display("Last hit by", chr_ins.last_hit_by);
     ui.debug("TAE use item", chr_ins.tae_queued_use_item);
