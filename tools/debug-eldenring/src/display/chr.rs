@@ -5,8 +5,8 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 use debug::UiExt;
 use eldenring::cs::{
     ChrAsm, ChrAsmEquipEntries, ChrAsmEquipment, ChrAsmSlot, ChrIns, ChrInsExt, ChrInsSubclassMut,
-    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, ItemReplenishStateTracker,
-    PlayerDataAttackRating, PlayerGameData, PlayerIns,
+    EquipGameData, EquipInventoryData, EquipItemData, EquipMagicData, InventoryItemsData,
+    ItemReplenishStateTracker, PlayerDataAttackRating, PlayerGameData, PlayerIns,
 };
 use fromsoftware_shared::NonEmptyIteratorExt;
 
@@ -512,22 +512,33 @@ impl DebugDisplay for EquipItemData {
 
 impl DebugDisplay for EquipInventoryData {
     fn render_debug(&self, ui: &Ui) {
+        ui.nested("InventoryItemsData", &self.items_data);
         ui.display("Total item entry count", self.total_item_entry_count);
+        ui.display("Next sort ID", self.next_sort_id);
+        ui.display("Unlimited Consumables", self.unlimited_consumables);
+        ui.display("Limited Consumables", self.limited_pots);
 
-        let normal_items = self
-            .items_data
-            .normal_entries()
-            .iter()
-            .non_empty()
-            .collect::<Vec<_>>();
+        ui.list(
+            "Recent Items Indecies",
+            self.recent_item_indices.iter(),
+            |ui, i, item| {
+                ui.text(format!("{}: {:?}", i, item));
+            },
+        );
+    }
+}
+
+impl DebugDisplay for InventoryItemsData {
+    fn render_debug(&self, ui: &Ui) {
+        let normal_items = self.normal_entries().iter().non_empty().collect::<Vec<_>>();
         let label = format!(
             "Normal Items ({}/{})",
             normal_items.len(),
-            self.items_data.normal_items_capacity
+            self.normal_items_capacity
         );
         ui.header(&label, || {
             ui.table(
-                "equip-inventory-data-normal-items",
+                "inventory-items-data-normal-items",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Gaitem Handle"),
@@ -559,20 +570,13 @@ impl DebugDisplay for EquipInventoryData {
             );
         });
 
-        let key_items = self
-            .items_data
-            .key_entries()
-            .iter()
-            .non_empty()
-            .collect::<Vec<_>>();
         let label = format!(
             "Key Items ({}/{})",
-            key_items.len(),
-            self.items_data.key_items_capacity
+            self.key_items_len, self.key_items_capacity
         );
         ui.header(&label, || {
             ui.table(
-                "equip-inventory-data-key-items",
+                "inventory-items-data-key-items",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Gaitem Handle"),
@@ -581,7 +585,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Display ID"),
                     TableColumnSetup::new("Is New"),
                 ],
-                key_items.iter(),
+                self.key_entries().iter().non_empty(),
                 |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
@@ -604,20 +608,13 @@ impl DebugDisplay for EquipInventoryData {
             );
         });
 
-        let multiplay_key_items = self
-            .items_data
-            .multiplay_key_entries()
-            .iter()
-            .non_empty()
-            .collect::<Vec<_>>();
         let label = format!(
             "Multiplay Key Items ({}/{})",
-            multiplay_key_items.len(),
-            self.items_data.multiplay_key_items_capacity
+            self.multiplay_key_items_len, self.multiplay_key_items_capacity
         );
         ui.header(&label, || {
             ui.table(
-                "equip-inventory-data-multiplay-key-items",
+                "inventory-items-data-multiplay-key-items",
                 [
                     TableColumnSetup::new("Index"),
                     TableColumnSetup::new("Gaitem Handle"),
@@ -625,7 +622,7 @@ impl DebugDisplay for EquipInventoryData {
                     TableColumnSetup::new("Quantity"),
                     TableColumnSetup::new("Display ID"),
                 ],
-                multiplay_key_items.iter(),
+                self.multiplay_key_entries().iter().non_empty(),
                 |ui, index, item| {
                     ui.table_next_column();
                     ui.text(index.to_string());
@@ -644,6 +641,42 @@ impl DebugDisplay for EquipInventoryData {
                 },
             );
         });
+        ui.header("Item ID Map", || {
+            ui.table(
+                "inventory-items-data-item-map",
+                [
+                    TableColumnSetup::new("Index"),
+                    TableColumnSetup::new("Is Free"),
+                    TableColumnSetup::new("Item Id"),
+                    TableColumnSetup::new("Item Slot"),
+                    TableColumnSetup::new("Next Index"),
+                ],
+                unsafe { self.item_id_mapping.as_slice() },
+                |ui, index, item| {
+                    ui.table_next_column();
+                    ui.text(index.to_string());
+
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", item.is_free()));
+
+                    ui.table_next_column();
+                    ui.text(format!("{:?}", item.item_id));
+
+                    ui.table_next_column();
+                    ui.text(item.item_slot().to_string());
+
+                    ui.table_next_column();
+                    ui.text(item.next_mapping_item().to_string());
+                },
+            );
+        });
+        ui.list(
+            "Item ID Indices",
+            self.item_id_mapping_indices.iter(),
+            |ui, i, item| {
+                ui.text(format!("{}: {:?}", i, item));
+            },
+        );
     }
 }
 
