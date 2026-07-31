@@ -1,4 +1,4 @@
-use fromsoftware_shared_stl::{Function, Ref};
+use fromsoftware_shared_stl::{FnCallable, FnTarget, Function, Ref};
 use std::sync::atomic::{AtomicUsize, Ordering};
 struct Tracked<'a>(&'a AtomicUsize);
 
@@ -167,6 +167,55 @@ fn function_is_empty() {
 fn function_call_on_empty_panics() {
     let mut f = Function::<fn() -> i32>::empty();
     f.call(());
+}
+
+#[test]
+fn function_target_ptr_points_at_captured_state() {
+    let f = Function::<fn() -> i32>::new(|| 99);
+    f.target_ptr().expect("non-empty function has a target");
+}
+
+#[test]
+fn function_target_ptr_none_when_empty() {
+    let f = Function::<fn() -> i32>::empty();
+    assert!(f.target_ptr().is_none());
+}
+
+#[repr(C)]
+#[derive(Clone)]
+struct CountingCallable {
+    n: i32,
+}
+
+impl FnCallable<fn() -> i32> for CountingCallable {
+    fn call_callee(&self, _: ()) -> i32 {
+        self.n
+    }
+}
+
+unsafe impl FnTarget for CountingCallable {}
+
+#[test]
+fn function_typed_target_reads_captured_state() {
+    let mut f: Function<fn() -> i32, CountingCallable> =
+        Function::new_with_target(CountingCallable { n: 7 });
+    assert_eq!(f.target().unwrap().n, 7);
+    assert_eq!(f.call(()), 7);
+}
+
+#[test]
+fn function_typed_target_none_when_empty() {
+    let f: Function<fn() -> i32, CountingCallable> = Function::empty();
+    assert!(f.target().is_none());
+}
+
+#[test]
+fn function_target_ptr_reads_captured_value() {
+    let n = 4242i32;
+    let f = Function::<fn() -> i32>::new(move || n);
+    let ptr = f.target_ptr().unwrap();
+    let read_back = unsafe { *ptr.cast::<i32>().as_ref() };
+    assert_eq!(read_back, 4242);
 }
 
 #[repr(C)]

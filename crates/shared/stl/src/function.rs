@@ -211,6 +211,10 @@ pub unsafe trait FnSig: 'static {
     /// `this` must be non-null and live.
     unsafe fn delete_this(this: *mut UnknownFuncImpl, dealloc: bool);
 
+    /// # Safety
+    /// `this` must be non-null and live.
+    unsafe fn get(this: *const UnknownFuncImpl) -> *const c_void;
+
     fn new_impl<F: FnCallable<Self> + Clone + 'static>(f: F) -> *mut UnknownFuncImpl
     where
         Self: Sized;
@@ -245,16 +249,41 @@ unsafe fn read_vtable<DoCall: Copy>(this: *mut UnknownFuncImpl) -> &'static Func
 /// [Raymond Chen - Inside std::function, part 1]: https://devblogs.microsoft.com/oldnewthing/20200513-00/?p=103745
 /// [Raymond Chen - Inside std::function, part 2]: https://devblogs.microsoft.com/oldnewthing/20200514-00/?p=103749
 #[repr(C)]
-pub struct Function<S: FnSig> {
+pub struct Function<S: FnSig, C = ()> {
     storage: [*mut c_void; SMALL_OBJECT_NUM_PTRS],
     #[cfg(all(feature = "msvc2012", not(feature = "msvc2015")))]
     impl_ptr: *mut c_void,
-    _marker: PhantomData<S>,
+    _marker: PhantomData<(S, C)>,
 }
 
-impl<S: FnSig> Function<S> {
+/// Marker for a `Function`'s captured-callable type, when known.
+///
+/// # Safety
+///
+/// Implementing this asserts that a `Function<S, Self>`'s impl object's
+/// captured callable (`_Get()`'s target) really is `Self` with `[repr(C)]` layout.
+pub unsafe trait FnTarget: Sized {}
+
+impl<S: FnSig> Function<S, ()> {
     /// Creates a function from a Rust closure. Always heap-allocated.
+    ///
+    /// The captured callable's type is erased (`target()` is unavailable);
+    /// use [`Function::new_with_target`] if you need it after.
     pub fn new<F: FnCallable<S> + Clone + 'static>(f: F) -> Self {
+        Self::new_impl(f)
+    }
+}
+
+impl<S: FnSig, C: FnCallable<S> + FnTarget + Clone + 'static> Function<S, C> {
+    /// Creates a function from a Rust callable whose type is kept
+    /// as `C`, so it can be read back later through [`Function::target`].
+    pub fn new_with_target(c: C) -> Self {
+        Self::new_impl(c)
+    }
+}
+
+impl<S: FnSig, C> Function<S, C> {
+    fn new_impl<F: FnCallable<S> + Clone + 'static>(f: F) -> Self {
         #[cfg(any(not(feature = "msvc2012"), feature = "msvc2015"))]
         {
             let mut storage = [std::ptr::null_mut(); SMALL_OBJECT_NUM_PTRS];
@@ -326,9 +355,25 @@ impl<S: FnSig> Function<S> {
         let this = self.impl_ptr_for_access();
         unsafe { S::invoke(this, args) }
     }
+
+    /// Pointer to the wrapped callable itself, equivalent to `_Get()`.
+    pub fn target_ptr(&self) -> Option<NonNull<c_void>> {
+        if self.is_empty() {
+            return None;
+        }
+        let ptr = unsafe { S::get(self.impl_ptr()) };
+        NonNull::new(ptr.cast_mut())
+    }
 }
 
-impl<S: FnSig> Drop for Function<S> {
+impl<S: FnSig, C: FnTarget> Function<S, C> {
+    /// The wrapped callable. `None` if empty.
+    pub fn target(&self) -> Option<&C> {
+        Some(unsafe { self.target_ptr()?.cast().as_ref() })
+    }
+}
+
+impl<S: FnSig, C> Drop for Function<S, C> {
     fn drop(&mut self) {
         if self.is_empty() {
             return;
@@ -339,13 +384,13 @@ impl<S: FnSig> Drop for Function<S> {
     }
 }
 
-impl<S: FnSig> Default for Function<S> {
+impl<S: FnSig, C> Default for Function<S, C> {
     fn default() -> Self {
         Self::empty()
     }
 }
 
-impl<S: FnSig> fmt::Debug for Function<S> {
+impl<S: FnSig, C> fmt::Debug for Function<S, C> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.is_empty() {
             write!(f, "Function(empty)")
@@ -467,6 +512,11 @@ macro_rules! impl_function_arity {
                 unsafe fn delete_this(this: *mut UnknownFuncImpl, dealloc: bool) {
                     let vtable = unsafe { read_vtable::<Self::DoCall>(this) };
                     unsafe { (vtable.delete_this)(this, dealloc) }
+                }
+
+                unsafe fn get(this: *const UnknownFuncImpl) -> *const c_void {
+                    let vtable = unsafe { read_vtable::<Self::DoCall>(this.cast_mut()) };
+                    unsafe { (vtable.get)(this) }
                 }
 
                 fn new_impl<Fun: FnCallable<Self> + Clone + 'static>(
