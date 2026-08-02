@@ -88,11 +88,11 @@ impl<T, A: StlAllocator> List<T, A> {
 
             debug_assert!(current != head, "attempted to use sentinel node value");
 
-            // Safety: only the root node should have an uninitialized value.
-            let value = unsafe { (*current.as_ptr()).value.assume_init_mut() };
+            let node = current.as_ptr();
+            current = unsafe { (*node).next };
             length -= 1;
-            current = unsafe { current.as_ref() }.next;
-            Some(value)
+            // Safety: only the root node should have an uninitialized value.
+            Some(unsafe { (*node).value.assume_init_mut() })
         })
     }
 
