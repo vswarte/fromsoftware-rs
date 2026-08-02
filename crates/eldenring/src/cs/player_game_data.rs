@@ -776,30 +776,19 @@ impl InventoryItemsData {
     /// Returns `None` if the item is not in the table
     fn find_chain_entry(&self, item_id: ItemId) -> Option<(Option<i16>, i16)> {
         let bucket = Self::bucket_for(item_id);
-        let first_raw = self.item_id_mapping_indices[bucket];
-        if first_raw < 0 {
-            return None;
-        }
-
         let mut prev_idx: Option<i16> = None;
-        let mut cur_idx = first_raw;
+        let mut cur_idx = self.item_id_mapping_indices[bucket];
 
-        loop {
-            let (is_match, next) = match self.mapping_entry(cur_idx) {
-                None => return None,
-                Some(e) => (e.item_id.as_valid() == Some(item_id), e.next_chain_idx()),
-            };
-
-            if is_match {
+        while cur_idx >= 0 {
+            let e = self.mapping_entry(cur_idx)?;
+            if e.item_id.as_valid() == Some(item_id) {
                 return Some((prev_idx, cur_idx));
             }
-
             prev_idx = Some(cur_idx);
-            match next {
-                Some(n) => cur_idx = n,
-                None => return None,
-            }
+            cur_idx = e.next_chain_idx()?;
         }
+
+        None
     }
 
     /// Upserts `(item_id -> inventory slot index)` into the hash table, keeping the
