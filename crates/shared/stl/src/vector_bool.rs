@@ -190,7 +190,7 @@ impl<A: StlAllocator> VectorBool<A> {
 
         let new_ptr = self.allocator.allocate_n::<VBase>(new_words).as_ptr() as _;
         unsafe {
-            std::ptr::write_bytes(new_ptr, 0, new_words);
+            std::ptr::write_bytes(new_ptr.add(old_words), 0, new_words - old_words);
 
             if old_words > 0 {
                 std::ptr::copy_nonoverlapping(self.first, new_ptr, old_words);
