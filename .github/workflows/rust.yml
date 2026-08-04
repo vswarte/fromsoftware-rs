@@ -41,13 +41,20 @@ jobs:
           cache-bin: "false"
 
       - name: Formatting
+        id: formatting
+        background: true
         run: cargo fmt -- --check
 
       - name: Clippy
+        id: clippy
+        background: true
         run: cargo clippy --profile ci --all-targets --no-deps
 
       - name: Documentation
         run: cargo doc --no-deps
+
+      - name: Wait for Formatting and Clippy
+        wait-all: true
 
       - name: Build
         run: cargo build --tests --profile ci --verbose
