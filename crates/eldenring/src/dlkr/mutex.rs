@@ -1,4 +1,4 @@
-use std::cell::UnsafeCell;
+use std::cell::{RefCell, UnsafeCell};
 use std::marker::PhantomData;
 
 use vtable_rs::VPtr;
@@ -61,22 +61,30 @@ impl<'a, T: DLSyncObject + ?Sized> DLSyncGuard<'a, T> {
 
 impl<T: DLSyncObject + ?Sized> Drop for DLSyncGuard<'_, T> {
     fn drop(&mut self) {
-        let _ = self.object.unlock();
+        let _ = unsafe { self.object.unlock() };
     }
 }
 
 pub trait DLSyncObject {
     fn is_valid(&self) -> bool;
-    fn raw_lock(&self, timeout: i32) -> Result<(), DLSyncError>;
-    fn raw_try_lock(&self) -> Result<(), DLSyncError>;
-    fn unlock(&self) -> Result<(), DLSyncError>;
-
+    /// # Safety
+    ///
+    /// Can cause deadlocks when missued. Use [`Self::lock`] or [`Self::try_lock`] instead.
+    unsafe fn raw_lock(&self) -> Result<(), DLSyncError>;
+    /// # Safety
+    ///
+    /// Can cause deadlocks when missued. Use [`Self::lock`] or [`Self::try_lock`] instead.
+    unsafe fn raw_try_lock(&self) -> Result<(), DLSyncError>;
+    /// # Safety
+    ///
+    /// Each call should be preceded by a successful call to [`Self::raw_lock`] or [`Self::raw_try_lock`].
+    unsafe fn unlock(&self) -> Result<(), DLSyncError>;
     /// Blocks until the lock is acquired, returning a guard that releases it on drop.
-    fn lock(&self, timeout: i32) -> Result<DLSyncGuard<'_, Self>, DLSyncError>
+    fn lock(&self) -> Result<DLSyncGuard<'_, Self>, DLSyncError>
     where
         Self: Sized,
     {
-        self.raw_lock(timeout)?;
+        (unsafe { self.raw_lock() })?;
         Ok(DLSyncGuard::new(self))
     }
 
@@ -85,7 +93,22 @@ pub trait DLSyncObject {
     where
         Self: Sized,
     {
-        self.raw_try_lock()?;
+        (unsafe { self.raw_try_lock() })?;
+        Ok(DLSyncGuard::new(self))
+    }
+}
+
+pub trait DLTimeoutSyncObject: DLSyncObject {
+    /// # Safety
+    ///
+    /// Can cause deadlocks when missued. Use [`Self::lock_timeout`] instead.
+    unsafe fn raw_lock_timeout(&self, timeout: i32) -> Result<(), DLSyncError>;
+
+    fn lock_timeout(&self, timeout: i32) -> Result<DLSyncGuard<'_, Self>, DLSyncError>
+    where
+        Self: Sized,
+    {
+        (unsafe { self.raw_lock_timeout(timeout) })?;
         Ok(DLSyncGuard::new(self))
     }
 }
@@ -143,12 +166,12 @@ impl DLSyncObject for DLPlainLightMutex {
         true
     }
 
-    fn raw_lock(&self, _timeout: i32) -> Result<(), DLSyncError> {
+    unsafe fn raw_lock(&self) -> Result<(), DLSyncError> {
         unsafe { EnterCriticalSection(self.critical_section.get()) }
         Ok(())
     }
 
-    fn raw_try_lock(&self) -> Result<(), DLSyncError> {
+    unsafe fn raw_try_lock(&self) -> Result<(), DLSyncError> {
         unsafe {
             if TryEnterCriticalSection(self.critical_section.get()).as_bool() {
                 Ok(())
@@ -158,7 +181,7 @@ impl DLSyncObject for DLPlainLightMutex {
         }
     }
 
-    fn unlock(&self) -> Result<(), DLSyncError> {
+    unsafe fn unlock(&self) -> Result<(), DLSyncError> {
         unsafe { LeaveCriticalSection(self.critical_section.get()) }
         Ok(())
     }
@@ -250,12 +273,12 @@ impl DLSyncObject for PlainAdaptiveMutexImpl {
         true
     }
 
-    fn raw_lock(&self, _timeout: i32) -> Result<(), DLSyncError> {
+    unsafe fn raw_lock(&self) -> Result<(), DLSyncError> {
         unsafe { EnterCriticalSection(self.critical_section.get()) }
         Ok(())
     }
 
-    fn raw_try_lock(&self) -> Result<(), DLSyncError> {
+    unsafe fn raw_try_lock(&self) -> Result<(), DLSyncError> {
         unsafe {
             if TryEnterCriticalSection(self.critical_section.get()).as_bool() {
                 Ok(())
@@ -265,7 +288,7 @@ impl DLSyncObject for PlainAdaptiveMutexImpl {
         }
     }
 
-    fn unlock(&self) -> Result<(), DLSyncError> {
+    unsafe fn unlock(&self) -> Result<(), DLSyncError> {
         unsafe { LeaveCriticalSection(self.critical_section.get()) }
         Ok(())
     }
@@ -487,18 +510,24 @@ impl DLSyncObject for DLPlainReadWriteLock {
     }
 
     /// Acquire write lock
-    fn raw_lock(&self, timeout: i32) -> Result<(), DLSyncError> {
-        self.raw_write_lock(timeout)
+    unsafe fn raw_lock(&self) -> Result<(), DLSyncError> {
+        self.raw_write_lock(-1)
     }
 
     /// Try to acquire write lock
-    fn raw_try_lock(&self) -> Result<(), DLSyncError> {
+    unsafe fn raw_try_lock(&self) -> Result<(), DLSyncError> {
         self.raw_try_write_lock()
     }
 
     /// Release write lock
-    fn unlock(&self) -> Result<(), DLSyncError> {
+    unsafe fn unlock(&self) -> Result<(), DLSyncError> {
         self.write_unlock()
+    }
+}
+
+impl DLTimeoutSyncObject for DLPlainReadWriteLock {
+    unsafe fn raw_lock_timeout(&self, timeout: i32) -> Result<(), DLSyncError> {
+        self.raw_write_lock(timeout)
     }
 }
 
@@ -532,21 +561,29 @@ impl DLDummySyncObjectVmt for DLDummySyncObject {
 }
 
 #[repr(C)]
+#[derive(Default)]
 pub struct DLDummySyncObject {
     pub vftable: VPtr<dyn DLDummySyncObjectVmt, Self>,
+    _not_sync: PhantomData<RefCell<()>>,
+}
+
+impl DLDummySyncObject {
+    pub fn new() -> Self {
+        Default::default()
+    }
 }
 
 impl DLSyncObject for DLDummySyncObject {
     fn is_valid(&self) -> bool {
         true
     }
-    fn raw_lock(&self, _timeout: i32) -> Result<(), DLSyncError> {
+    unsafe fn raw_lock(&self) -> Result<(), DLSyncError> {
         Ok(())
     }
-    fn raw_try_lock(&self) -> Result<(), DLSyncError> {
+    unsafe fn raw_try_lock(&self) -> Result<(), DLSyncError> {
         Ok(())
     }
-    fn unlock(&self) -> Result<(), DLSyncError> {
+    unsafe fn unlock(&self) -> Result<(), DLSyncError> {
         Ok(())
     }
 }
