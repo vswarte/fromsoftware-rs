@@ -1,4 +1,4 @@
-use std::cell::{Cell, UnsafeCell};
+use std::cell::UnsafeCell;
 use std::marker::PhantomData;
 
 use vtable_rs::VPtr;
@@ -301,8 +301,9 @@ pub struct DLPlainReadWriteLock {
     pub h_event: HANDLE,
     pub h_writer_mutex: HANDLE,
     pub h_reader_mutex: HANDLE,
-    pub reader_count: Cell<i32>,
+    pub reader_count: UnsafeCell<i32>,
 }
+unsafe impl Sync for DLPlainReadWriteLock {}
 
 /// A held read lock. Releases it when dropped.
 #[must_use = "the lock is released immediately if the guard is not held"]
@@ -331,7 +332,7 @@ impl DLPlainReadWriteLock {
                 h_event,
                 h_writer_mutex,
                 h_reader_mutex,
-                reader_count: Cell::new(-1),
+                reader_count: UnsafeCell::new(-1),
             })
         }
     }
@@ -341,6 +342,20 @@ impl DLPlainReadWriteLock {
             -1 => INFINITE,
             t => (t / 1000) as u32,
         }
+    }
+
+    /// # Safety
+    ///
+    /// Caller must hold `h_reader_mutex`.
+    unsafe fn reader_count(&self) -> i32 {
+        unsafe { *self.reader_count.get() }
+    }
+
+    /// # Safety
+    ///
+    /// Caller must hold `h_reader_mutex`.
+    unsafe fn set_reader_count(&self, value: i32) {
+        unsafe { *self.reader_count.get() = value }
     }
 
     /// Acquire the write lock (exclusive), returning a guard that releases it on drop.
@@ -405,13 +420,13 @@ impl DLPlainReadWriteLock {
         let ms = Self::win_timeout(timeout);
         unsafe { WaitForSingleObject(self.h_reader_mutex, ms) }.into_sync_result()?;
 
-        let reader_count = self.reader_count.get().saturating_add(1);
-        self.reader_count.set(reader_count);
+        let reader_count = unsafe { self.reader_count().saturating_add(1) };
+        unsafe { self.set_reader_count(reader_count) };
 
         if reader_count == 0
             && let Err(e) = unsafe { WaitForSingleObject(self.h_event, ms) }.into_sync_result()
         {
-            self.reader_count.set(-1);
+            unsafe { self.set_reader_count(-1) };
             let _ = unsafe { ReleaseMutex(self.h_reader_mutex) };
             return Err(e);
         }
@@ -431,8 +446,8 @@ impl DLPlainReadWriteLock {
             return Err(DLSyncError::Busy);
         }
 
-        let reader_count = self.reader_count.get().saturating_add(1);
-        self.reader_count.set(reader_count);
+        let reader_count = unsafe { self.reader_count().saturating_add(1) };
+        unsafe { self.set_reader_count(reader_count) };
 
         let mut result = Ok(());
         if reader_count == 0
@@ -440,7 +455,7 @@ impl DLPlainReadWriteLock {
                 .into_sync_result()
                 .is_err()
         {
-            self.reader_count.set(-1);
+            unsafe { self.set_reader_count(-1) };
             result = Err(DLSyncError::Busy);
         }
 
@@ -454,8 +469,8 @@ impl DLPlainReadWriteLock {
         assert!(self.is_valid(), "Sync object isn't created");
 
         let _ = unsafe { WaitForSingleObject(self.h_reader_mutex, INFINITE) };
-        let reader_count = self.reader_count.get().saturating_sub(1);
-        self.reader_count.set(reader_count);
+        let reader_count = unsafe { self.reader_count().saturating_sub(1) };
+        unsafe { self.set_reader_count(reader_count) };
         if reader_count < 0 {
             let _ = unsafe { SetEvent(self.h_event) };
         }
