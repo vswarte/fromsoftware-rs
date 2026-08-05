@@ -153,7 +153,7 @@ pub struct BackScreenData {
 pub struct LoadingScreenData {
     vftable: usize,
     unk8: [u8; 0xC],
-    ///index of the current step that MoveMapStep is currently executing
+    ///index of the step that MoveMapStep is currently executing
     pub move_map_step_index: i32,
     ///fraction where bar starts advancing
     pub start_percentage: f32,
