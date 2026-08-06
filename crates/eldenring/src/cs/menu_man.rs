@@ -156,7 +156,7 @@ pub struct LoadingScreenData {
     pub start_fake_loading_screen: bool,
     pub end_loading_screen: bool,
     unk12: [u8; 2],
-    ///index of the current step that MoveMapStep is currently executing
+    ///index of the step that MoveMapStep is currently executing
     pub move_map_step_index: i32,
     ///fraction where bar starts advancing
     pub start_percentage: f32,
