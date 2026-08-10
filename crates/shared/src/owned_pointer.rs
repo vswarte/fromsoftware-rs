@@ -2,7 +2,7 @@ use std::alloc::{Layout, handle_alloc_error};
 use std::ops::{Deref, DerefMut};
 use std::{fmt, marker::PhantomData, ptr::NonNull};
 
-use crate::{GameAllocator, NoOpAllocator};
+use crate::{GameAllocator, NoOpAllocator, Subclass, Superclass};
 
 /// Pointer to a structure that the containing structure owns. You will generally use this to model
 /// structures in foreign memory when extending the game libraries. Do not use this in your own
@@ -92,6 +92,41 @@ impl<T, A: GameAllocator> OwnedPtr<T, A> {
     }
 }
 
+impl<T: Superclass, A: GameAllocator> OwnedPtr<T, A> {
+    /// Allocates memory with `A` sized and aligned for `S`, a concrete
+    /// [`Subclass`] of `T`, places `value` into it, and returns it as an
+    /// `OwnedPtr<T, A>`.
+    ///
+    /// **Important:** as with [`OwnedPtr::new`], `S` should have an
+    /// appropriate [Drop::drop] implementation if needed. Note that dropping
+    /// the returned `OwnedPtr<T, A>` only runs `T`'s destructor glue, not
+    /// `S`'s. [See above](#ownedptr-and-drop) for details.
+    pub fn new_subclass<S: Subclass<T>>(value: S) -> Self {
+        let layout = Layout::new::<S>();
+        if layout.size() == 0 {
+            return OwnedPtr {
+                ptr: NonNull::dangling(),
+                _marker: Default::default(),
+            };
+        }
+
+        match A::allocate(layout) {
+            Ok(ptr) => {
+                let ptr = ptr.cast::<S>();
+                unsafe { ptr.write(value) };
+                OwnedPtr {
+                    // Safety: `S: Subclass<T>` guarantees that an initial
+                    // subsequence of `S`'s layout is a valid `T`, so this
+                    // cast is sound.
+                    ptr: ptr.cast::<T>(),
+                    _marker: Default::default(),
+                }
+            }
+            Err(_) => handle_alloc_error(layout),
+        }
+    }
+}
+
 impl<T: Default, A: GameAllocator> Default for OwnedPtr<T, A> {
     fn default() -> Self {
         OwnedPtr::new(Default::default())
@@ -141,7 +176,7 @@ impl<T, A: GameAllocator> Drop for OwnedPtr<T, A> {
         unsafe {
             self.ptr.drop_in_place();
             if Layout::new::<T>().size() > 0 {
-                A::deallocate(self.ptr.cast::<u8>(), Layout::new::<T>());
+                A::deallocate(self.ptr.cast::<u8>());
             }
         }
     }
