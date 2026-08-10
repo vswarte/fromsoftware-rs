@@ -355,6 +355,90 @@ pattern = "80 3d $ { ? ' } 00 0f 85 [4] 32 c0 "
 captures = ["", "runtime_heap_allocator"]
 pattern = "e8 [4] 48 8b 05 ${ ' } 48 85 c0 75 0c e8 [4] 48 89 05 [4] 48 89 05 [4]"
 
+[[patterns]]
+captures = ["", "system_heap"]
+pattern = "48 8b 1d $ { ' } [40-50] e9 $ { 48 8d 81 70 04 00 00 }"
+
+[[patterns]]
+captures = ["", "main_heap_allocator"]
+pattern = "4c 8d 0d $ { \"M\" 00 \"A\" 00 \"I\" 00 \"N\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [17] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "dl_back_allocator"]
+pattern = "48 8b 0d ? ? ? ? 48 8d 15 ? ? ? ? 48 89 10 48 8d 15 ? ? ? ? 48 89 10 48 89 48 08 eb 03 49 8b c6 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "gfx_heap_allocator"]
+pattern = "4c 8d 0d $ { \"G\" 00 \"F\" 00 \"X\" 00 00 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [16] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "gfx_temp_heap_allocator"]
+pattern = "4c 8d 0d $ { \"G\" 00 \"F\" 00 \"X\" 00 \"T\" 00 \"E\" 00 \"M\" 00 \"P\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "ingame_heap_allocator"]
+pattern = "4c 8d 0d $ { \"I\" 00 \"N\" 00 \"G\" 00 \"A\" 00 \"M\" 00 \"E\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [19] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "temp_heap_allocator"]
+pattern = "4c 8d 0d $ { \"T\" 00 \"E\" 00 \"M\" 00 \"P\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [16] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "core_res_heap_allocator"]
+pattern = "4c 8d 0d $ { \"C\" 00 \"O\" 00 \"R\" 00 \"E\" 00 \"R\" 00 \"E\" 00 \"S\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "mo_wwise_heap_allocator"]
+pattern = "4c 8d 0d $ { \"M\" 00 \"O\" 00 \"_\" 00 \"W\" 00 \"W\" 00 \"I\" 00 \"S\" 00 \"E\" 00 00 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [16] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "cs_mo_wwise_allocator"]
+pattern = "48 89 05 [4] 48 8b d0 48 8d 3d [4] 48 8b cf e8 [4] 48 89 3d ${ ' }"
+
+[[patterns]]
+captures = ["", "mo_wwise_mo_only_heap_allocator"]
+pattern = "4c 8d 0d $ { \"M\" 00 \"O\" 00 \"_\" 00 \"W\" 00 \"W\" 00 \"I\" 00 \"S\" 00 \"E\" 00 \"_\" 00 \"M\" 00 \"O\" 00 \"_\" 00 \"O\" 00 \"N\" 00 \"L\" 00 \"Y\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "mo_wwise_isoration_heap_allocator"]
+pattern = "4c 8d 0d $ { \"M\" 00 \"O\" 00 \"_\" 00 \"W\" 00 \"W\" 00 \"I\" 00 \"S\" 00 \"E\" 00 \"_\" 00 \"I\" 00 \"S\" 00 \"O\" 00 \"R\" 00 \"A\" 00 \"T\" 00 \"I\" 00 \"O\" 00 \"N\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "lua_heap_allocator"]
+pattern = "4c 8d 0d $ { \"L\" 00 \"U\" 00 \"A\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "havok_heap_allocator"]
+pattern = "4c 8d 0d $ { \"H\" 00 \"A\" 00 \"V\" 00 \"O\" 00 \"K\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [19] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "menu_heap_allocator"]
+pattern = "4c 8d 0d $ { \"M\" 00 \"E\" 00 \"N\" 00 \"U\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] [16] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "network_heap_allocator"]
+pattern = "48 8b d0 48 8d 3d [4] 48 8b cf e8 [4] 48 89 3d ${ ' }"
+
+[[patterns]]
+captures = ["", "debug_heap_allocator"]
+pattern = "48 8d 15 $ { \"D\" 00 \"E\" 00 \"B\" 00 \"U\" 00 \"G\" 00 } 48 8b cb e8 [4] [19] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "gfx_system_shared_heap_allocator"]
+pattern = "4c 8d 0d $ { \"G\" 00 \"F\" 00 \"X\" 00 \"_\" 00 \"S\" 00 \"y\" 00 \"s\" 00 \"t\" 00 \"e\" 00 \"m\" 00 \"S\" 00 \"h\" 00 \"a\" 00 \"r\" 00 \"e\" 00 \"d\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "gfx_graphics_private_a_heap_allocator"]
+pattern = "4c 8d 0d $ { \"G\" 00 \"F\" 00 \"X\" 00 \"_\" 00 \"G\" 00 \"r\" 00 \"a\" 00 \"p\" 00 \"h\" 00 \"i\" 00 \"c\" 00 \"s\" 00 \"P\" 00 \"r\" 00 \"i\" 00 \"v\" 00 \"a\" 00 \"t\" 00 \"e\" 00 \"_\" 00 \"A\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "gfx_graphics_private_b_heap_allocator"]
+pattern = "4c 8d 0d $ { \"G\" 00 \"F\" 00 \"X\" 00 \"_\" 00 \"G\" 00 \"r\" 00 \"a\" 00 \"p\" 00 \"h\" 00 \"i\" 00 \"c\" 00 \"s\" 00 \"P\" 00 \"r\" 00 \"i\" 00 \"v\" 00 \"a\" 00 \"t\" 00 \"e\" 00 \"_\" 00 \"B\" 00 } 4d 8b c7 48 8d 15 ? ? ? ? 48 8b cb e8 [4] 48 89 05 ${ ' }"
+
+[[patterns]]
+captures = ["", "gfx_graphics_private_mix_heap_allocator"]
+pattern = "4c 8b c0 48 8b 15 [4] 48 8d 3d [4] 48 8b cf e8 [4] 48 89 3d ${ ' }"
+
 [[vmts]]
 class = "CS::CSEzStateTalkEvent"
 vftable = "cs_ez_state_talk_event_vmt"
