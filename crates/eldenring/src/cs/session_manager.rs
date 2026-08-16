@@ -6,7 +6,7 @@ use crate::{
     DLList, DLVector,
     cs::{CSRandXorshift, MultiplayRole},
     dlcr::{AESDecrypter, AESEncrypter, DLSerialCipherKey},
-    dlkr::{DLAllocator, DLPlainLightMutex},
+    dlkr::{CSNetworkAllocator, DLAllocator, DLPlainLightMutex},
     dltx::{DLInplaceStr, DLUTF16StringKind},
     fd4::FD4Time,
 };
@@ -112,7 +112,8 @@ pub struct CSSessionManager {
     unk17c: u32,
     player_data_man: usize,
     /// Used to warp players back to the latest valid multiplay area in case they step out of it.
-    pub stay_in_multiplay_area_warp_data: OwnedPtr<CSStayInMultiplayAreaWarpData>,
+    pub stay_in_multiplay_area_warp_data:
+        OwnedPtr<CSStayInMultiplayAreaWarpData, CSNetworkAllocator>,
     unk190: usize,
     protocol_state_1_timeout: FD4Time,
     protocol_state_2_timeout: FD4Time,
@@ -137,9 +138,9 @@ pub struct CSSessionManager {
     unk232: u8,
     unk233: u8,
     unk234: u32,
-    pub serial_cipher_key: OwnedPtr<DLSerialCipherKey>,
-    pub aes_encrypter: OwnedPtr<AESEncrypter>,
-    pub aes_decrypter: OwnedPtr<AESDecrypter>,
+    pub serial_cipher_key: OwnedPtr<DLSerialCipherKey, CSNetworkAllocator>,
+    pub aes_encrypter: OwnedPtr<AESEncrypter, CSNetworkAllocator>,
+    pub aes_decrypter: OwnedPtr<AESDecrypter, CSNetworkAllocator>,
     unk250: u32,
     unk254: u32,
     unk258: u32,
@@ -152,7 +153,8 @@ pub struct CSSessionManager {
     unk2d0: f32,
     unk2d4: f32,
     /// Contain statistics about the inbound packet queue, seems unused.
-    p2p_inbound_queue_stats: Option<OwnedPtr<CSSessionManagerP2PInboundQueueStats>>,
+    p2p_inbound_queue_stats:
+        Option<OwnedPtr<CSSessionManagerP2PInboundQueueStats, CSNetworkAllocator>>,
     unk2e0: u32,
     /// Seems to be a total for the amount of packet bytes in some fashion?
     unk2e4: u32,
@@ -176,7 +178,7 @@ pub struct CSSessionManager {
     unk32c: u32,
     /// Next fields seem to be some collection?
     unk330: &'static DLAllocator,
-    unk338: Option<OwnedPtr<()>>,
+    unk338: usize,
     unk340: u32,
     unk344: u32,
     unk348: u16,

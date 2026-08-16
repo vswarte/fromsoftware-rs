@@ -1,6 +1,8 @@
+use std::ptr::NonNull;
+
 use vtable_rs::VPtr;
 
-use shared::{OwnedPtr, Subclass, Superclass};
+use shared::{Subclass, Superclass};
 
 #[vtable_rs::vtable]
 pub trait CSRandVmt {
@@ -180,8 +182,8 @@ pub struct CSRandSFMT {
 pub struct DLRandomGeneratorSFMT {
     pub state: [u32; 624],
     pub index: u32,
-    pub mt_state_ptr: OwnedPtr<u32>,
-    pub mt_state_end_ptr: OwnedPtr<u32>,
+    pub mt_state_ptr: NonNull<u32>,
+    pub mt_state_end_ptr: NonNull<u32>,
 }
 
 impl CSRandVmt for CSRandSFMT {

@@ -1,9 +1,11 @@
 use std::{fmt::Formatter, mem::transmute, ptr::NonNull};
 
 use pelite::pe64::Pe;
+use shared::IncompleteArrayField;
 use windows::core::PCWSTR;
 
-use super::{BlockId, FieldInsHandle, WorldInfoOwner};
+use super::{BlockId, FieldInsHandle, WorldBlockInfo, WorldInfoOwner};
+use crate::dlkr::{InGameHeapAllocator, MainHeapAllocator};
 use crate::position::BlockPosition;
 use crate::{DLMap, DLVector, param::ASSET_GEOMETORY_PARAM_ST, rva};
 use shared::{OwnedPtr, Subclass, Superclass, program::Program};
@@ -16,9 +18,9 @@ pub struct CSWorldGeomMan {
     unk8: usize,
     pub world_info_owner: NonNull<WorldInfoOwner>,
     /// A tree of loaded maps hosting their geometry instances.
-    pub blocks: DLMap<BlockId, OwnedPtr<CSWorldGeomManBlockData>>,
+    pub blocks: DLMap<BlockId, OwnedPtr<CSWorldGeomManBlockData, InGameHeapAllocator>>,
     /// Seemingly points to the current overlay world tile's map data
-    pub curent_99_block_data: OwnedPtr<CSWorldGeomManBlockData>,
+    pub curent_99_block_data: OwnedPtr<CSWorldGeomManBlockData, InGameHeapAllocator>,
 }
 
 impl CSWorldGeomMan {
@@ -35,13 +37,12 @@ impl CSWorldGeomMan {
 }
 
 #[repr(C)]
-/// Seems to host any spawned geometry for a given map. It
 pub struct CSWorldGeomManBlockData {
     /// The map ID this container hosts the assets for.
     pub block_id: BlockId,
     /// Might be padding?
     unk4: u32,
-    pub world_block_info: usize,
+    pub world_block_info: NonNull<WorldBlockInfo>,
     unk10: [u8; 0xF0],
     unk100: DLVector<()>,
     unk120: DLVector<()>,
@@ -49,11 +50,12 @@ pub struct CSWorldGeomManBlockData {
     pub activation_fade_modules: DLVector<()>,
     unk180: [u8; 0x108],
     /// Holds refs to some geometry instances for this map.
-    pub geom_ins_vector: DLVector<OwnedPtr<CSWorldGeomIns>>,
+    pub geom_ins_vector: DLVector<NonNull<CSWorldGeomIns>>,
     unk2a8: [u8; 0x20],
-    pub geometry_array_count: u32,
+    pub multiplay_only_geometry_count: u32,
     unk2cc: u32,
-    pub geometry_array: OwnedPtr<CSWorldGeomIns>,
+    pub multiplay_only_geometry_ptr:
+        Option<OwnedPtr<IncompleteArrayField<CSWorldGeomDynamicIns>, MainHeapAllocator>>,
     unk2d8: [u8; 0x58],
     /// Seems to be the next field ins index that will be assiged.
     pub next_geom_ins_field_ins_index: u32,
@@ -61,8 +63,8 @@ pub struct CSWorldGeomManBlockData {
     unk334: bool,
     _pad335: [u8; 3],
     unk338: [u8; 0x50],
-    pub sos_sign_geometry: DLVector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
-    pub disable_on_singleplay_geometry: DLVector<OwnedPtr<OwnedPtr<CSWorldGeomIns>>>,
+    pub sos_sign_geometry: DLVector<NonNull<CSWorldGeomIns>>,
+    pub disable_on_singleplay_geometry: DLVector<NonNull<CSWorldGeomIns>>,
     unk3c8: [u8; 0x2E0],
 }
 
@@ -150,6 +152,19 @@ impl CSWorldGeomManBlockData {
 }
 
 #[repr(C)]
+pub struct CSWorldGeomStaticIns {
+    pub geom_ins: CSWorldGeomIns,
+    geom_hit_ins: usize,
+    unk438: usize,
+}
+
+#[repr(C)]
+pub struct CSWorldGeomDynamicIns {
+    pub geom_ins: CSWorldGeomIns,
+    unk430: [u8; 0x180],
+}
+
+#[repr(C)]
 /// Abstract base class for geometry instances.
 ///
 /// Source of name: RTTI
@@ -169,7 +184,7 @@ pub struct CSWorldGeomIns {
 /// Source of name: "..\\..\\Source\\Game\\Geometry\\CSWorldGeomInfo.cpp" in exception.
 pub struct CSWorldGeomInfo {
     /// Points to the map data hosting the GeomIns for this info struct.
-    pub block_data: OwnedPtr<CSWorldGeomManBlockData>,
+    pub block_data: NonNull<CSWorldGeomManBlockData>,
     /// Points to the param row this geometry instance uses.
     pub asset_geometry_param: NonNull<ASSET_GEOMETORY_PARAM_ST>,
     unk10: u32,
@@ -216,7 +231,7 @@ pub struct CSWorldGeomInfo {
     unk180: u16,
     unk182: u16,
     /// Hides the object whenever the player is alone, used for fogwalls and such.
-    pub disable_on_singleplay: u8,
+    pub disable_on_singleplay: bool,
     unk185: u8,
     unk186: u16,
     unk188: usize,
@@ -253,7 +268,7 @@ pub struct CSMsbParts {
     pub draw_flags: u32,
     _padc: u32,
     unk10: usize,
-    pub msb_part: OwnedPtr<MsbPart>,
+    pub msb_part: NonNull<MsbPart>,
     unk20: [u8; 0x30],
 }
 

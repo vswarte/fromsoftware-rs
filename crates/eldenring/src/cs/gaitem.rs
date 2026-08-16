@@ -5,6 +5,7 @@ use thiserror::Error;
 
 use crate::{
     cs::{CSRandXorshift, OptionalItemId},
+    dlkr::MainHeapAllocator,
     dlut::DLFixedVector,
 };
 use shared::{OwnedPtr, Subclass, Superclass};
@@ -13,7 +14,7 @@ use shared::{OwnedPtr, Subclass, Superclass};
 #[shared::singleton("CSGaitem")]
 pub struct CSGaitemImp {
     vftable: usize,
-    pub gaitems: [Option<OwnedPtr<CSGaitemIns>>; 5120],
+    pub gaitems: [Option<OwnedPtr<CSGaitemIns, MainHeapAllocator>>; 5120],
     pub gaitem_descriptors: [CSGaitemImpEntry; 5120],
     pub indexes: [u32; 5120],
     pub write_index: u32,

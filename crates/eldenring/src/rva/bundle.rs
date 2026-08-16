@@ -125,6 +125,7 @@ pub struct RvaBundle {
     pub param_res_cap_vmt: u32,
     pub player_ins_vmt: u32,
     pub register_task: u32,
+    pub rs_resource_manager_heap_allocator: u32,
     pub runtime_heap_allocator: u32,
     pub solo_param_repository_vmt: u32,
     pub spawn_geometry: u32,

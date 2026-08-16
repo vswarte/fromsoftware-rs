@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 use bitfield::bitfield;
 use shared::{F32Vector3, OwnedPtr};
 
-use crate::cs::FieldInsHandle;
+use crate::{cs::FieldInsHandle, dlkr::MainHeapAllocator};
 
 use super::{ChrIns, ChrSet};
 
@@ -12,7 +12,7 @@ pub struct NetChrSync {
     world_info_owner: usize,
     pub chr_slot_count: u32,
     _padc: u32,
-    pub net_chr_set_sync: [Option<OwnedPtr<NetChrSetSync>>; 196],
+    pub net_chr_set_sync: [Option<OwnedPtr<NetChrSetSync, MainHeapAllocator>>; 196],
 }
 
 /// Acts as an update buffer for all the ChrIns sync for a given ChrSet.

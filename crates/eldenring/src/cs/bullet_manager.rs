@@ -2,9 +2,10 @@ use pelite::pe64::Pe;
 use std::ptr::NonNull;
 
 use shared::program::Program;
-use shared::{F32Vector4, OwnedPtr};
+use shared::{F32Vector4, GameAllocator, OwnedPtr};
 
 use super::{CSBulletIns, ChrCam, FieldInsHandle};
+use crate::dlkr::MainHeapAllocator;
 use crate::rva;
 
 #[repr(C)]
@@ -13,9 +14,9 @@ use crate::rva;
 ///
 /// Source of name: DLRF RuntimeClass metadata
 pub struct CSBulletManager {
-    pub bullets: BufferAndAllocLinkedList<CSBulletIns, 128, 128>,
-    unk_bullet_sfx_related: BufferAndAllocLinkedList<[u8; 0x9d0], 64, 192>,
-    unk40: BufferAndAllocLinkedList<[u8; 0x4220], 4, 28>,
+    pub bullets: BufferAndAllocLinkedList<CSBulletIns, MainHeapAllocator, 128, 128>,
+    unk_bullet_sfx_related: BufferAndAllocLinkedList<[u8; 0x9d0], MainHeapAllocator, 64, 192>,
+    unk40: BufferAndAllocLinkedList<[u8; 0x4220], MainHeapAllocator, 4, 28>,
     pub chr_cam: Option<NonNull<ChrCam>>,
     unk68: u8,
     _pad69: [u8; 7],
@@ -156,8 +157,13 @@ impl CSBulletManager {
 /// Contains a pre allocated buffer that takes priority when creating a new T, when full
 /// starts allocating manually on the heap.
 /// Living elements create a linked list.
-pub struct BufferAndAllocLinkedList<T, const BUFFER_SIZE: usize, const MAX_ALLOCS: usize> {
-    pub prealloc_buffer: OwnedPtr<[T; BUFFER_SIZE]>,
+pub struct BufferAndAllocLinkedList<
+    T,
+    A: GameAllocator,
+    const BUFFER_SIZE: usize,
+    const MAX_ALLOCS: usize,
+> {
+    pub prealloc_buffer: OwnedPtr<[T; BUFFER_SIZE], A>,
     pub head: Option<NonNull<T>>,
     /// If buffer is full, None
     empty_spot: Option<NonNull<T>>,

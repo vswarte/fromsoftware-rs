@@ -3,7 +3,7 @@ use std::{alloc::Layout, borrow::Cow, ffi::c_void, ptr::NonNull};
 use fromsoftware_shared_stl::{StlAllocator, Vector};
 use shared::{AllocError, FromStatic, GameAllocator, OwnedPtr, load_static_indirect};
 
-use crate::dlkr::{DLAllocator, DLPlainLightMutex, DLPlainReadWriteLock};
+use crate::dlkr::{DLAllocator, DLPlainLightMutex, DLPlainReadWriteLock, MainHeapAllocator};
 
 #[repr(C)]
 /// Heap representing all other heaps.
@@ -73,5 +73,26 @@ impl GameAllocator for DLSystemHeapImpl {
             return;
         };
         unsafe { heap.deallocate_raw(ptr.as_ptr().cast::<c_void>()) }
+    }
+}
+
+/// Dynamic allocator type for use in [`OwnedPtr`] when concrete
+/// allocator type is not known or can be different every time and game uses allocator regestry to keep track
+/// of each allocation. Uses [`MainHeapAllocator`] when new allocation is requested.
+pub struct DynamicMainHeapAllocator;
+
+impl GameAllocator for DynamicMainHeapAllocator {
+    fn allocate(layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
+        MainHeapAllocator::allocate(layout)
+    }
+
+    unsafe fn deallocate(ptr: NonNull<u8>) {
+        let Ok(heap) = (unsafe { DLSystemHeapImpl::instance() }) else {
+            return;
+        };
+        let ptr = ptr.as_ptr().cast::<c_void>();
+        if let Some(allocator) = heap.get_allocator_of(ptr) {
+            unsafe { allocator.deallocate_raw(ptr) }
+        }
     }
 }

@@ -82,6 +82,16 @@ impl std::ops::Deref for DLBackAllocator {
     }
 }
 
+impl GameAllocator for DLBackAllocator {
+    fn allocate(layout: std::alloc::Layout) -> Result<NonNull<[u8]>, AllocError> {
+        heap_allocate::<Self>(layout)
+    }
+
+    unsafe fn deallocate(ptr: NonNull<u8>) {
+        unsafe { heap_deallocate::<Self>(ptr) }
+    }
+}
+
 impl FromStatic for DLBackAllocator {
     fn name() -> Cow<'static, str> {
         Cow::Borrowed("DLBackAllocator")
@@ -121,9 +131,9 @@ impl FromStatic for GfxTempHeapAllocator {
     }
 }
 
-pub struct IngameHeap;
+pub struct InGameHeap;
 /// The in-game heap allocator (`INGAME` heap).
-pub type InGameHeapAllocator = HeapAllocator<IngameHeap>;
+pub type InGameHeapAllocator = HeapAllocator<InGameHeap>;
 
 impl FromStatic for InGameHeapAllocator {
     fn name() -> Cow<'static, str> {
@@ -293,6 +303,24 @@ impl FromStatic for CSNetworkAllocator {
     }
 }
 
+impl std::ops::Deref for CSNetworkAllocator {
+    type Target = DLAllocator;
+
+    fn deref(&self) -> &Self::Target {
+        &self.base
+    }
+}
+
+impl GameAllocator for CSNetworkAllocator {
+    fn allocate(layout: std::alloc::Layout) -> Result<NonNull<[u8]>, AllocError> {
+        heap_allocate::<Self>(layout)
+    }
+
+    unsafe fn deallocate(ptr: NonNull<u8>) {
+        unsafe { heap_deallocate::<Self>(ptr) }
+    }
+}
+
 pub struct DebugHeap;
 /// The debug heap allocator (`DEBUG` heap).
 pub type DebugHeapAllocator = HeapAllocator<DebugHeap>;
@@ -377,5 +405,19 @@ impl FromStatic for GfxGraphicsPrivateMixHeapAllocator {
 
     fn instance_ptr() -> InstanceResult<*mut Self> {
         unsafe { load_static_indirect(crate::rva::get().gfx_graphics_private_mix_heap_allocator) }
+    }
+}
+
+pub struct RSResourceManagerHeap;
+
+pub type RSResourceManagerHeapAllocator = HeapAllocator<RSResourceManagerHeap>;
+
+impl FromStatic for RSResourceManagerHeapAllocator {
+    fn name() -> Cow<'static, str> {
+        Cow::Borrowed("RSResourceManagerHeapAllocator")
+    }
+
+    fn instance_ptr() -> InstanceResult<*mut Self> {
+        unsafe { load_static_indirect(crate::rva::get().rs_resource_manager_heap_allocator) }
     }
 }
