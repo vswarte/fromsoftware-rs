@@ -439,6 +439,10 @@ pattern = "4c 8d 0d $ { \"G\" 00 \"F\" 00 \"X\" 00 \"_\" 00 \"G\" 00 \"r\" 00 \"
 captures = ["", "gfx_graphics_private_mix_heap_allocator"]
 pattern = "4c 8b c0 48 8b 15 [4] 48 8d 3d [4] 48 8b cf e8 [4] 48 89 3d ${ ' }"
 
+[[patterns]]
+captures = ["", "rs_resource_manager_heap_allocator"]
+pattern = "48 89 40 08 48 89 00 4c 89 25 ${ ' }"
+
 [[vmts]]
 class = "CS::CSEzStateTalkEvent"
 vftable = "cs_ez_state_talk_event_vmt"

@@ -1,5 +1,7 @@
-use crate::fd4::FD4Time;
-use shared::OwnedPtr;
+use std::ops::{Index, IndexMut};
+
+use crate::{dlkr::MainHeapAllocator, dltx::DLString, fd4::FD4Time};
+use shared::{F32Vector4, OwnedPtr};
 
 #[repr(C)]
 /// Controls fades in the game. Used for cutscene transitions and such.
@@ -10,7 +12,7 @@ pub struct CSFade {
     vftable: usize,
     pub fade_system: OwnedPtr<CSFD4FadeSystem>,
     /// Holds the individual fade plates, these control the actual drawing of the dimming.
-    pub fade_plates: [OwnedPtr<CSFD4FadePlate>; 9],
+    pub fade_plates: [OwnedPtr<CSFD4FadePlate, MainHeapAllocator>; 9],
     unk58: u32,
     unk5c: f32,
 }
@@ -41,15 +43,10 @@ pub struct CSFD4FadePlate {
     pub fade_duration: FD4Time,
     unk60: u8,
     _pad64: [u8; 7],
-    allocator: usize,
-    pub title: [u16; 8],
-    unk80: u64,
-    unk88: u64,
-    unk90: u64,
-    unk98: u64,
-    unka0: u64,
+    pub title: DLString,
+    unk98: F32Vector4,
     unka8: FD4Time,
-    unkb8: u64,
+    unkb8: u8,
 }
 
 impl CSFD4FadePlate {
@@ -90,5 +87,33 @@ impl From<[f32; 4]> for CSFD4FadePlateColor {
             b: val[2],
             a: val[3],
         }
+    }
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum FadePlateId {
+    Title = 0,
+    MapIn = 1,
+    InGame = 2,
+    Cutscene = 3,
+    InCutscene = 4,
+    Ending = 5,
+    Event = 6,
+    InGameChroma = 7,
+    InGameBokeh = 8,
+}
+
+impl Index<FadePlateId> for [OwnedPtr<CSFD4FadePlate, MainHeapAllocator>; 9] {
+    type Output = OwnedPtr<CSFD4FadePlate, MainHeapAllocator>;
+
+    fn index(&self, index: FadePlateId) -> &Self::Output {
+        &self[index as usize]
+    }
+}
+
+impl IndexMut<FadePlateId> for [OwnedPtr<CSFD4FadePlate, MainHeapAllocator>; 9] {
+    fn index_mut(&mut self, index: FadePlateId) -> &mut Self::Output {
+        &mut self[index as usize]
     }
 }

@@ -124,6 +124,7 @@ pub const RVAS: RvaBundle = RvaBundle {
     param_res_cap_vmt: 0x2bb29f8,
     player_ins_vmt: 0x2a7fbb0,
     register_task: 0xeb3de0,
+    rs_resource_manager_heap_allocator: 0x4860d60,
     runtime_heap_allocator: 0x4846dc0,
     solo_param_repository_vmt: 0x2bb84c8,
     spawn_geometry: 0x6a5ed0,
