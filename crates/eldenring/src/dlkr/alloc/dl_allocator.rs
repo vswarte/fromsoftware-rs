@@ -16,14 +16,14 @@ bitflags::bitflags! {
     }
 }
 
-/// Identifier assigned by [`DLSystemHeapImpl`] to each registered heap
+/// Identifier assigned by [`crate::dlkr::DLSystemHeapImpl`] to each registered heap
 #[repr(transparent)]
 pub struct DLHeapIdentifier(pub i32);
 
 #[vtable_rs::vtable]
 pub trait DLAllocatorVmt {
     fn destructor(&mut self, flags: u8);
-    /// Get [`DLHeapIdentifier`] assigned by [`DLSystemHeapImpl`] of the heap this allocator manages.
+    /// Get [`DLHeapIdentifier`] assigned by [`crate::dlkr::DLSystemHeapImpl`] of the heap this allocator manages.
     fn get_heap_id(&self) -> DLHeapIdentifier;
     /// Deprecated method to get the allocator's ID. Returns -1 for all of them.
     fn get_allocator_id(&self) -> i32;
