@@ -196,7 +196,7 @@ pub struct AnnounceNotification {
 }
 
 #[repr(C)]
-/// Scaleform-backed HUD widget showing system announcements/
+/// Scaleform-backed HUD widget showing system announcements.
 ///
 /// Queued announcements are read from [`system_announce_view_model`] one at
 /// a time and played back through the [`announce_play_state`] state machine.

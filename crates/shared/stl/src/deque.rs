@@ -16,6 +16,8 @@ const fn block_size<T>() -> usize {
     }
 }
 
+const INITIAL_CAPACITY: usize = 8;
+
 /// Implementation of MSVC C++ `std::deque`.
 ///
 /// # References
@@ -191,15 +193,19 @@ impl<T, A: StlAllocator> Deque<T, A> {
 
     /// Clears the deque, removing all values and freeing their underlying blocks.
     pub fn clear(&mut self) {
-        for i in 0..self.size {
-            unsafe { std::ptr::drop_in_place(self.elem_ptr(self.map_offset + i)) };
+        let old_offset = self.map_offset;
+        let old_size = self.size;
+        self.size = 0;
+        let block_sz = block_size::<T>();
+        let center_block = self.map_capacity / 2;
+        self.map_offset = center_block * block_sz;
+
+        for i in 0..old_size {
+            unsafe { std::ptr::drop_in_place(self.elem_ptr(old_offset + i)) };
         }
 
         if !self.map.is_null() {
-            let first_block = Self::split_abs(self.map_offset).0;
-            let blocks = self.used_blocks();
-            for i in 0..blocks {
-                let slot = self.map_slot(first_block + i);
+            for slot in 0..self.map_capacity {
                 unsafe {
                     let block = *self.map.add(slot);
                     if !block.is_null() {
@@ -209,11 +215,6 @@ impl<T, A: StlAllocator> Deque<T, A> {
                 }
             }
         }
-
-        self.size = 0;
-        let block_sz = block_size::<T>();
-        let center_block = self.map_capacity / 2;
-        self.map_offset = center_block * block_sz;
     }
 
     /// Returns an iterator over references to elements in front-to-back order.
@@ -321,7 +322,7 @@ impl<T, A: StlAllocator> Deque<T, A> {
     fn grow_map(&mut self) {
         let block_sz = block_size::<T>();
         let old_cap = self.map_capacity;
-        let new_cap = (old_cap * 2).max(8);
+        let new_cap = (old_cap * 2).max(INITIAL_CAPACITY);
         let new_map = Self::alloc_map(&mut self.allocator, new_cap);
 
         let first_block = Self::split_abs(self.map_offset).0;
@@ -360,20 +361,8 @@ impl<T, A: StlAllocator> Deque<T, A> {
 
 impl<T, A: StlAllocator> Drop for Deque<T, A> {
     fn drop(&mut self) {
-        for i in 0..self.size {
-            unsafe { std::ptr::drop_in_place(self.elem_ptr(self.map_offset + i)) };
-        }
-
+        self.clear();
         if !self.map.is_null() {
-            let first_block = Self::split_abs(self.map_offset).0;
-            let blocks = self.used_blocks();
-            for i in 0..blocks {
-                let slot = self.map_slot(first_block + i);
-                let block = unsafe { *self.map.add(slot) };
-                if !block.is_null() {
-                    unsafe { self.allocator.deallocate_raw(block as _) };
-                }
-            }
             unsafe { self.allocator.deallocate_raw(self.map as _) };
         }
     }
