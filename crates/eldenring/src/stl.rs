@@ -32,6 +32,8 @@ pub type DLMultiSet<V> = fromsoftware_shared_stl::MultiSet<V, &'static DLAllocat
 pub type UnkDLTree<V> =
     fromsoftware_shared_stl::RbTree<V, &'static DLAllocator, fromsoftware_shared_stl::Less>;
 
+pub type DLDeque<T> = fromsoftware_shared_stl::Deque<T, &'static DLAllocator>;
+
 #[repr(C)]
 pub struct ChainingMap<K: Ord, V> {
     base: DLMap<K, NonNull<ChainingMapBucketEntry<V>>>,

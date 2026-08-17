@@ -172,6 +172,12 @@ impl<T, A: StlAllocator> List<T, A> {
 
     pub fn clear(&mut self) {
         let mut current = unsafe { self.head.as_ref() }.next;
+        unsafe {
+            (*self.head.as_ptr()).next = self.head;
+            (*self.head.as_ptr()).previous = self.head;
+        }
+        self.length = 0;
+
         while current != self.head {
             let next = unsafe { current.as_ref() }.next;
             unsafe {
@@ -180,11 +186,6 @@ impl<T, A: StlAllocator> List<T, A> {
             }
             current = next;
         }
-        unsafe {
-            (*self.head.as_ptr()).next = self.head;
-            (*self.head.as_ptr()).previous = self.head;
-        }
-        self.length = 0;
     }
 
     /// # Safety

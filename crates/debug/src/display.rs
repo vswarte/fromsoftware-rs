@@ -112,6 +112,22 @@ macro_rules! define_debug_display {
             /// This automatically creates a unique ID for the header so that
             /// its collapsed state doesn't collide with other headers.
             fn nested_opt(&self, label: impl AsRef<str>, display: Option<impl DebugDisplay>);
+
+            /// Renders a collapsing header with the given `label` and the
+            /// mutable, stateful contents of `display` nested beneath it.
+            ///
+            /// `state` must be persisted by the caller across frames, the
+            /// same as when calling [StatefulDebugDisplay::render_debug_mut]
+            /// directly.
+            ///
+            /// This automatically creates a unique ID for the header so that
+            /// its collapsed state doesn't collide with other headers.
+            fn nested_mut<T: StatefulDebugDisplay>(
+                &self,
+                label: impl AsRef<str>,
+                display: &mut T,
+                state: &mut T::State,
+            );
         }
 
         impl DisplayUiExt for ::hudhook::imgui::Ui {
@@ -125,6 +141,15 @@ macro_rules! define_debug_display {
                 } else {
                     self.text(format!("{}: None", label.as_ref()));
                 }
+            }
+
+            fn nested_mut<T: StatefulDebugDisplay>(
+                &self,
+                label: impl AsRef<str>,
+                display: &mut T,
+                state: &mut T::State,
+            ) {
+                ::debug::UiExt::header(self, label, || display.render_debug_mut(self, state));
             }
         }
     };

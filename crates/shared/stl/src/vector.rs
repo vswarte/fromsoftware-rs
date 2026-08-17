@@ -136,11 +136,14 @@ impl<T, A: StlAllocator> Vector<T, A> {
         if self.capacity() == 0 {
             return;
         }
-        // Drop every live element in [first, last) before releasing the buffer
-        unsafe {
-            std::ptr::drop_in_place(std::ptr::slice_from_raw_parts_mut(self.first, self.len()));
-        }
+        let old_last = self.last;
         self.last = self.first;
+        unsafe {
+            std::ptr::drop_in_place(std::ptr::slice_from_raw_parts_mut(
+                self.first,
+                old_last.offset_from(self.first) as usize,
+            ));
+        }
     }
 
     /// MSVC growth policy: 1.5x capacity

@@ -2,10 +2,10 @@ use std::ptr::NonNull;
 
 use bitfield::bitfield;
 use pelite::pe64::Pe;
-use shared::program::Program;
+use shared::{OwnedPtr, program::Program};
 
 use super::{CSEzTask, CSEzUpdateTask, OptionalItemId};
-use crate::rva;
+use crate::{DLDeque, cs::MenuString, rva};
 
 pub const STATUS_MESSAGE_DEMIGOD_FELLED: i32 = 1;
 pub const STATUS_MESSAGE_LEGEND_FELLED: i32 = 2;
@@ -50,7 +50,11 @@ pub struct CSMenuManImp {
     unk1b: [u8; 0x65],
     pub popup_menu: Option<NonNull<CSPopupMenu>>,
     window_job: usize,
-    unk90: [u8; 0xAC],
+    /// States of UI elements, indexed by specific for each element ID.
+    pub ui_states: [UIState; 0x46],
+    unkd6: [u8; 0x5a],
+    unk130: i32,
+    unk134: [u8; 0x8],
     /// disables all save menu callbacks
     /// additionally, can disable auto save
     pub disable_save_menu: u32,
@@ -61,7 +65,7 @@ pub struct CSMenuManImp {
     pub back_screen_data: BackScreenData,
     pub loading_screen_data: LoadingScreenData,
     unk748: [u8; 0x118],
-    system_announce_view_model: usize,
+    pub system_announce_view_model: OwnedPtr<FeSystemAnnounceViewModel>,
     pub update_task: CSEzUpdateTask<CSEzTask, Self>,
     unk890: [u8; 0x10],
 }
@@ -78,6 +82,17 @@ impl CSMenuManImp {
         };
         target(self, message)
     }
+}
+
+bitfield! {
+    #[derive(Clone, Copy, PartialEq, Eq, Hash)]
+    pub struct UIState(u8);
+    impl Debug;
+    bool;
+    /// Whether the class responsible for this UI element has been created and live.
+    pub created, set_created: 0;
+    /// Whether this UI element is currently visible on screen
+    pub visible, set_visible: 1;
 }
 
 #[repr(C)]
@@ -110,7 +125,19 @@ pub struct CSPopupMenu {
     current_top_menu_job: usize,
     unkb8: [u8; 0xb0],
     input_data: u64,
-    unk170: [u8; 0x120],
+    unk170: [u8; 0x10],
+    pub current_talk_id: i32,
+    unk184: [u8; 0x2c],
+    /// Queue of messages to be shown in the popup menu.
+    ///
+    /// Limited to 4 by the game.
+    pub popup_messages: DLDeque<MenuString>,
+    unk1e0: [u8; 0x70],
+    world_map_view_model: usize,
+    unk258: [u8; 0x8],
+    multi_play_view_model: usize,
+    unk268: [u8; 0x20],
+    matching_view_model: usize,
     pub show_failed_to_save: bool,
     unkb91: [u8; 0x8f],
 }
@@ -158,25 +185,129 @@ pub struct LoadingScreenData {
 #[repr(C)]
 pub struct FeSystemAnnounceViewModel {
     menu_view_model: usize,
-    view: usize,
-    message_queue: FeSystemAnnounceViewModelMessageQueue,
+    pub view: NonNull<FeSystemAnnounceView>,
+    pub notifications: DLDeque<AnnounceNotification>,
 }
 
 #[repr(C)]
-pub struct FeSystemAnnounceViewModelMessageQueue {
-    unk0: usize,
-    unk8: usize,
-    elements: usize,
-    capacity: usize,
-    unk20: usize,
-    count: usize,
+pub struct AnnounceNotification {
+    pub is_active: bool,
+    pub message: MenuString,
+}
+
+#[repr(C)]
+/// Scaleform-backed HUD widget showing system announcements.
+///
+/// Queued announcements are read from [`system_announce_view_model`] one at
+/// a time and played back through the [`announce_play_state`] state machine.
+///
+/// [`system_announce_view_model`]: Self::system_announce_view_model
+/// [`announce_play_state`]: Self::announce_play_state
+pub struct FeSystemAnnounceView {
+    unk0: [u8; 0xa38],
+    /// Scaleform proxy used to drive the "FadeIn"/"FadeOut" animation labels.
+    unka38: [u8; 0x18],
+    /// Scaleform proxy for the announcement's text field.
+    unka50: [u8; 0x50],
+    unkaa0: [u8; 0x60],
+    pub system_announce_view_model: NonNull<FeSystemAnnounceViewModel>,
+    /// Whether this view is currently allowed to update.
+    ///
+    /// Set to `false` while a blocking menu is open on `CSMenuMan`, which
+    /// pauses the playback state machine until it closes.
+    pub is_active: bool,
+    /// Whether the announcement banner is currently shown on screen.
+    pub is_visible: bool,
+    unkb0a: [u8; 0x6],
+    /// Announcement currently being played back.
+    pub active_announcement: AnnounceNotification,
+    /// Current step of the playback state machine.
+    pub announce_play_state: SystemAnnounceViewModelState,
+    unkb31: [u8; 0x3],
+    /// Time remaining before the scroll animation (re)starts.
+    ///
+    /// Used to pause on the start of the message for a moment before
+    /// scrolling begins, rather than scrolling immediately.
+    pub system_announce_scroll_buffer_timer: f32,
+    /// Number of times left to loop the scroll animation.
+    pub system_announce_scroll_count: u32,
+    /// Whether the announcement text is wider than the screen and needs to
+    /// scroll to be read in full.
+    pub needs_scroll: bool,
+    unkb2d: [u8; 0x3],
+    /// Current horizontal scroll offset of the text field, in pixels.
+    ///
+    /// Compared against [`scroll_distance`] to determine when the text has
+    /// fully scrolled past.
+    ///
+    /// [`scroll_distance`]: Self::scroll_distance
+    pub scroll_offset: i32,
+    /// Scroll offset at which the text has fully scrolled past, in pixels.
+    ///
+    /// Computed as the rendered text width minus the visible text field
+    /// width, both converted from Scaleform twips to pixels (`* 0.05`).
+    pub scroll_distance: i32,
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+/// Step of the [FeSystemAnnounceView] playback state machine.
+///
+/// Cycles `Load` through `Dequeue` in order, advancing on every update
+/// unless a step returns early to wait for a timer or animation.
+pub enum SystemAnnounceViewModelState {
+    /// Not currently playing back an announcement.
+    Idle = 0,
+    /// Loads the queued announcement's text and determines whether it needs
+    /// to scroll.
+    Load = 1,
+    /// Waits for the "FadeIn" scaleform animation to finish.
+    FadeIn = 2,
+    /// Resets the scroll position to the start of the message and sets
+    /// [`system_announce_scroll_buffer_timer`], pausing there for a moment
+    /// before scrolling begins.
+    ///
+    /// [`system_announce_scroll_buffer_timer`]: FeSystemAnnounceView::system_announce_scroll_buffer_timer
+    ScrollReset = 3,
+    /// Waits out [`system_announce_scroll_buffer_timer`], pausing on the
+    /// start of the message before scrolling begins.
+    ///
+    /// [`system_announce_scroll_buffer_timer`]: FeSystemAnnounceView::system_announce_scroll_buffer_timer
+    BufferWait = 4,
+    /// Waits out a fixed delay for announcements that don't need to scroll.
+    NoScrollWait = 5,
+    /// Advances the scroll offset until the text has fully scrolled past.
+    Scrolling = 6,
+    /// Sets [`system_announce_scroll_buffer_timer`], pausing on the end of
+    /// the message once it has fully scrolled past.
+    ///
+    /// [`system_announce_scroll_buffer_timer`]: FeSystemAnnounceView::system_announce_scroll_buffer_timer
+    PostScrollBuffer = 7,
+    /// Waits out [`system_announce_scroll_buffer_timer`], pausing on the end
+    /// of the message once it has fully scrolled past.
+    ///
+    /// [`system_announce_scroll_buffer_timer`]: FeSystemAnnounceView::system_announce_scroll_buffer_timer
+    PostScrollBufferWait = 8,
+    /// Decrements [`system_announce_scroll_count`] and loops back to
+    /// [`ScrollReset`] while repeats remain.
+    ///
+    /// [`system_announce_scroll_count`]: FeSystemAnnounceView::system_announce_scroll_count
+    /// [`ScrollReset`]: Self::ScrollReset
+    RepeatCheck = 9,
+    /// Hides the announcement banner.
+    HidePlaying = 10,
+    /// Waits for the "FadeOut" scaleform animation to finish.
+    FadeOut = 11,
+    /// Marks the active announcement as no longer active and removes it from
+    /// the queue.
+    Dequeue = 12,
 }
 
 #[cfg(test)]
 mod test {
     use crate::cs::{
-        BackScreenData, CSMenuData, CSMenuGaitemUseState, CSMenuManImp, CSPlayerMenuCtrl,
-        CSPopupMenu, FeSystemAnnounceViewModel, FeSystemAnnounceViewModelMessageQueue,
+        AnnounceNotification, BackScreenData, CSMenuData, CSMenuGaitemUseState, CSMenuManImp,
+        CSPlayerMenuCtrl, CSPopupMenu, FeSystemAnnounceView, FeSystemAnnounceViewModel,
         LoadingScreenData,
     };
 
@@ -190,6 +321,7 @@ mod test {
         assert_eq!(0x10, size_of::<BackScreenData>());
         assert_eq!(0x28, size_of::<LoadingScreenData>());
         assert_eq!(0x40, size_of::<FeSystemAnnounceViewModel>());
-        assert_eq!(0x30, size_of::<FeSystemAnnounceViewModelMessageQueue>());
+        assert_eq!(0x40, size_of::<AnnounceNotification>());
+        assert_eq!(0xb68, size_of::<FeSystemAnnounceView>());
     }
 }

@@ -694,15 +694,16 @@ impl<V, A: StlAllocator, C: Sized, const UNIQUE: bool> RbTree<V, A, C, UNIQUE> {
 
     pub fn clear(&mut self) {
         let root = self.head.parent();
-        if !root.is_nil() {
-            unsafe { self.drop_subtree(root) };
-        }
         unsafe {
             self.head.get_mut().parent = self.head;
             self.head.get_mut().left = self.head;
             self.head.get_mut().right = self.head;
         }
         self.size = 0;
+
+        if !root.is_nil() {
+            unsafe { self.drop_subtree(root) };
+        }
     }
 }
 

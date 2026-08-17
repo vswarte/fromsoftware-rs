@@ -67,6 +67,7 @@ struct EldenRingDebugGui {
 
     // Front ENd
     fe: StaticDebugger<CSFeManImp>,
+    menu_man: StaticDebugger<CSMenuManImp>,
 }
 
 impl EldenRingDebugGui {
@@ -180,6 +181,7 @@ unsafe fn render_live_reload(gui: &mut EldenRingDebugGui, ui: &mut Ui) {
 
             if let Some(item) = ui.tab_item("Front End") {
                 gui.fe.render_debug(ui);
+                gui.menu_man.render_debug(ui);
                 item.end();
             }
             if let Some(item) = ui.tab_item("Eject") {
