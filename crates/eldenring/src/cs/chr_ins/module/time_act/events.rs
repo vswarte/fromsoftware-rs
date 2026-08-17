@@ -1,6 +1,6 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
-/// Tae Event Args for [`EnableTwistModifier`]
+/// TAE event args for [`EnableTwistModifier`].
 ///
 /// [`EnableTwistModifier`]: crate::cs::chr_ins::module::time_act::tae::TaeAnimEventId::EnableTwistModifier
 pub struct EnableTwistModifierArgs {
