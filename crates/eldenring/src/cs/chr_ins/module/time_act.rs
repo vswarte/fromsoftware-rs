@@ -2,8 +2,9 @@ mod events;
 mod tae;
 pub use events::*;
 pub use tae::*;
+use windows::core::PCWSTR;
 
-use std::ptr::NonNull;
+use std::{fmt::Debug, ptr::NonNull};
 
 use shared::{OwnedPtr, Subclass, Superclass};
 
@@ -32,9 +33,9 @@ pub struct CSChrTimeActModule {
 #[repr(C)]
 pub struct CSChrTimeActModuleAnim {
     pub anim_id: i32,
-    /// Time in seconds since the animation started up to the last update.
+    /// Time in seconds between the animation starting and the last update.
     pub prev_local_time: f32,
-    /// Time in seconds since the animation started up to the current frame.
+    /// Time in seconds between the animation starting and the current frame.
     pub local_time: f32,
     /// Total length of the animation in seconds.
     pub anim_length: f32,
@@ -63,12 +64,42 @@ pub struct HvkAnim {
     pub anim_containers: [HvkAnimContainer; 2],
     /// Total animation count loaded for this character
     pub animation_count: u32,
-    /// Pointer to `HvkAnimTaeBinding` of `animation_count` amount
+    /// Pointer to `animation_count` instances of `HvkAnimTaeBinding`
     animations: NonNull<()>,
     pub tae_dat: OwnedPtr<TaeDat>,
-    /// Name of the animbnd data belongs to, eg `c0000` for the player
-    pub name: NonNull<u16>,
+    /// Name of the animbnd that the data belongs to, eg `c0000` for the player
+    pub name: PCWSTR,
     unkb8: bool,
+}
+
+impl HvkAnim {
+    pub fn animbnd_name(&self) -> String {
+        unsafe {
+            self.name
+                .to_string()
+                .unwrap_or_else(|_| "Invalid UTF-16".to_string())
+        }
+    }
+}
+
+impl Debug for HvkAnim {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("HvkAnim")
+            .field("anim_containers", &self.anim_containers)
+            .field("animation_count", &self.animation_count)
+            .field("tae_dat", &self.tae_dat)
+            .field("name", &self.animbnd_name())
+            .finish()
+    }
+}
+
+impl Debug for HvkAnimContainer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("HvkAnimContainer")
+            .field("hka_skeleton", &self.hka_skeleton)
+            .field("hk_root_level_container", &self.hk_root_level_container)
+            .finish()
+    }
 }
 
 #[repr(C)]
@@ -81,7 +112,7 @@ pub struct HvkAnimContainer {
 #[repr(C)]
 pub struct TaeDat {
     vftable: usize,
-    pub tae_files: [Option<NonNull<TAE_Header_Main>>; 999],
+    pub tae_files: [Option<NonNull<TaeHeader>>; 999],
     pub tae_resolvers: [Option<OwnedPtr<TaeFileResolver>>; 999],
     /// Not sure what's this about; True when BND4 file entry unk1 is not 0
     pub file_states: [bool; 999],
@@ -91,7 +122,6 @@ pub struct TaeDat {
 /// Class that resolves relative file offsets to pointers in raw data,
 pub struct TaeFileResolver {
     vftable: usize,
-    /// Resolved tae file with most offsets replaced with actuall pointers,
-    /// safe to read and traverse if non-null
-    pub tae_file: Option<NonNull<TAE_Header_Main>>,
+    /// Resolved tae file with most offsets replaced with actual pointers.
+    pub tae_file: Option<NonNull<TaeHeader>>,
 }

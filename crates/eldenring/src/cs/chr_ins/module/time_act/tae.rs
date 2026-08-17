@@ -156,162 +156,169 @@ pub enum TaeAnimEventId {
     DebugDecal2 = 10138,
 }
 
-/// Root TAE file header. `magic` is the base address used for pointer fixups.
+/// The TAE file header.
+///
+/// All offsets are relative to the start of this structure.
 #[repr(C)]
-pub struct TAE_Header_Main {
+pub struct TaeHeader {
     /// "TAE "
     pub magic: [u8; 4],
     pub big_endian: u8,
-    pub unk05: u8,
-    pub unk06: u8,
+    unk5: u8,
+    unk6: u8,
     pub is_64bit: u8,
     pub version: u32,
     pub file_size: u32,
-    pub section10: *mut TAE_Header_Block10,
+    pub section10: *mut TaeBlock10,
     pub anim_file_count: u32,
-    pub anim_files: *mut TAE_Header_FileInfo,
-    pub anim_file_groups_info: *mut TAE_Header_AnimFileGroupsInfo,
-    pub tae_content_version: u8,
+    pub anim_files: *mut TaeFileInfo,
+    pub anim_file_groups_info: *mut TaeAnimFileGroupsInfo,
+    pub content_version: u8,
     pub unused: u64,
 }
 
 #[repr(C)]
-pub struct TAE_Header_Block10 {
-    pub unk_a00: [u8; 10],
-    pub unk_a0a: u8,
-    pub unk_a0b: u8,
-    pub unk_a0c: u32,
+pub struct TaeBlock10 {
+    unk0: [u8; 10],
+    unka: u8,
+    unkb: u8,
+    unkc: u32,
 }
 
-/// Groups a range of file IDs to their [`TAE_Header_FileInfo`] entries.
+/// A mapping between file IDs and their [`TaeFileInfo`] entries.
 #[repr(C)]
-pub struct TAE_Header_AnimFileGroupsInfo {
+pub struct TaeAnimFileGroupsInfo {
     pub anim_file_group_count: u64,
-    pub anim_file_groups: *mut TAE_Header_AnimFileGroup,
+    pub anim_file_groups: *mut TaeAnimFileGroup,
 }
 
 #[repr(C)]
-pub struct TAE_Header_AnimFileGroup {
+pub struct TaeAnimFileGroup {
     pub start_file_id: u32,
     pub end_file_id: u32,
-    pub file_infos: *mut TAE_Header_FileInfo,
+    pub file_infos: *mut TaeFileInfo,
 }
 
 #[repr(C)]
-pub struct TAE_Header_FileInfo {
+pub struct TaeFileInfo {
     pub file_id: i32,
     pub anim_count: i32,
-    pub animations: *mut TAE_Animation,
-    pub anim_groups: *mut TAE_AnimGroups,
-    pub strings_info: *mut TAE_Header_StringsInfo,
+    pub animations: *mut TaeAnimation,
+    pub anim_groups: *mut TaeAnimGroups,
+    pub strings_info: *mut TaeStringsInfo,
     pub anim_count2: i32,
-    /// Offset to the first [`TAE_AnimData`]
+    /// Offset to the first [`TaeAnimData`] relative to the start of [`TaeHeader`].
     pub tae_data_start_offset: u64,
 }
 
-/// Skeleton / SIB name string table
+/// A mapping between skeleton names and SIB names.
 #[repr(C)]
-pub struct TAE_Header_StringsInfo {
-    pub unk_e00: u64,
-    pub tae_header_strings: *mut TAE_Header_Strings,
+pub struct TaeStringsInfo {
+    unke00: u64,
+    pub tae_header_strings: *mut TaeStrings,
 }
 
 #[repr(C)]
-pub struct TAE_Header_Strings {
+pub struct TaeStrings {
+    /// Offset to the skeleton hkt name unicode string, relative to the start of [`TaeHeader`].
     pub skeleton_name_offset: u64,
+    /// Offset to the sib name unicode string, relative to the start of [`TaeHeader`].
     pub sib_name_offset: u64,
-    pub unk_c0: u64,
-    pub unk_c8: u64,
+    unkc0: u64,
+    unkc8: u64,
 }
 
 #[repr(C)]
-pub struct TAE_AnimGroups {
+pub struct TaeAnimGroups {
     pub group_count: u64,
-    pub groups: *mut TAE_AnimGroup,
+    pub groups: *mut TaeAnimGroup,
 }
 
 /// Maps a contiguous range of animation IDs to their entries in the animations array.
 #[repr(C)]
-pub struct TAE_AnimGroup {
+pub struct TaeAnimGroup {
     pub start_id: i32,
     pub end_id: i32,
-    pub animations: *mut TAE_Animation,
+    pub animations: *mut TaeAnimation,
 }
 
 #[repr(C)]
-pub struct TAE_Animation {
+pub struct TaeAnimation {
     pub id: u64,
-    pub anim_data: *mut TAE_AnimData,
+    pub anim_data: *mut TaeAnimData,
 }
 
-/// Core per-animation payload: events, event groups, time pool, and HKT reference.
+/// The core per-animation payload.
 #[repr(C)]
-pub struct TAE_AnimData {
-    pub events: *mut TAE_Event,
-    pub event_groups: *mut TAE_EventGroup,
+pub struct TaeAnimData {
+    pub events: *mut TaeEvent,
+    pub event_groups: *mut TaeEventGroup,
     pub times: *mut f32,
-    pub anim_file: *mut TAE_AnimFile,
+    pub anim_file: *mut TaeAnimFile,
     pub event_count: u16,
     pub content_version: u8,
     pub event_group_count: u32,
     pub time_count: u32,
 }
 
-/// HKT animation file reference.
+/// An HKT animation file.
 #[repr(C)]
-pub struct TAE_AnimFile {
+pub struct TaeAnimFile {
     pub reference: u64,
-    pub unk8_offset: *mut u64,
+    /// Pointer to [`Self::hkt_name_offset`].
+    pub hkt_name_offset_ptr: *mut u64,
+    /// Offset to hkt file name unicode string, relative to the start of [`TaeHeader`].
     pub hkt_name_offset: u64,
-    pub field3_0x18: u32,
-    pub field4_0x1c: i32,
-    pub field5_0x20: u64,
-    pub field6_0x28: u64,
+    unk18: u32,
+    unk1c: i32,
+    unk20: u64,
+    unk28: u64,
 }
 
 #[repr(C)]
-pub struct TAE_Event {
+pub struct TaeEvent {
     pub start_time: f32,
-    pub _pad4: [u8; 4],
+    _pad4: [u8; 4],
     pub end_time: f32,
-    pub _padc: [u8; 4],
-    pub event_data: *mut TAE_EventData,
+    _padc: [u8; 4],
+    pub event_data: *mut TaeEventData,
 }
 
 #[repr(C)]
-pub struct TAE_EventData {
+pub struct TaeEventData {
     pub event_id: TaeAnimEventId,
     /// Event-specific type
     pub args: *mut (),
 }
 
-/// Groups all events of a single type within one animation.
+/// A group of all events of a single type within one animation.
 #[repr(C)]
-pub struct TAE_EventGroup {
+pub struct TaeEventGroup {
     pub event_count: u16,
     pub content_version: u8,
     pub event_data_offsets: *mut u32,
-    pub event_group_data: *mut TAE_EventGroupData,
-    pub main_header: *mut TAE_Header_Main,
+    pub event_group_data: *mut TaeEventGroupData,
+    pub main_header: *mut TaeHeader,
 }
 
 #[repr(C)]
-pub struct TAE_EventGroupData {
+pub struct TaeEventGroupData {
     pub event_id: TaeAnimEventId,
+    /// Offset to some unknown, never used in real files structure. Always 0.
     pub unk8_offset: u64,
 }
 
-impl TAE_Header_Main {
+impl TaeHeader {
     /// All FileInfo blocks (one per embedded TAE file).
-    pub fn anim_files(&self) -> &[TAE_Header_FileInfo] {
+    pub fn anim_files(&self) -> &[TaeFileInfo] {
         if self.anim_files.is_null() {
             return &[];
         }
         unsafe { std::slice::from_raw_parts(self.anim_files, self.anim_file_count as usize) }
     }
 
-    /// Mutable version.
-    pub fn anim_files_mut(&mut self) -> &mut [TAE_Header_FileInfo] {
+    /// All FileInfo blocks (one per embedded TAE file).
+    pub fn anim_files_mut(&mut self) -> &mut [TaeFileInfo] {
         if self.anim_files.is_null() {
             return &mut [];
         }
@@ -319,8 +326,8 @@ impl TAE_Header_Main {
     }
 }
 
-impl TAE_Header_AnimFileGroupsInfo {
-    pub fn anim_file_groups(&self) -> &[TAE_Header_AnimFileGroup] {
+impl TaeAnimFileGroupsInfo {
+    pub fn anim_file_groups(&self) -> &[TaeAnimFileGroup] {
         if self.anim_file_groups.is_null() {
             return &[];
         }
@@ -329,7 +336,7 @@ impl TAE_Header_AnimFileGroupsInfo {
         }
     }
 
-    pub fn anim_file_groups_mut(&mut self) -> &mut [TAE_Header_AnimFileGroup] {
+    pub fn anim_file_groups_mut(&mut self) -> &mut [TaeAnimFileGroup] {
         if self.anim_file_groups.is_null() {
             return &mut [];
         }
@@ -342,16 +349,16 @@ impl TAE_Header_AnimFileGroupsInfo {
     }
 }
 
-impl TAE_Header_FileInfo {
+impl TaeFileInfo {
     /// All animations in this file.
-    pub fn animations(&self) -> &[TAE_Animation] {
+    pub fn animations(&self) -> &[TaeAnimation] {
         if self.animations.is_null() {
             return &[];
         }
         unsafe { std::slice::from_raw_parts(self.animations, self.anim_count as usize) }
     }
 
-    pub fn animations_mut(&mut self) -> &mut [TAE_Animation] {
+    pub fn animations_mut(&mut self) -> &mut [TaeAnimation] {
         if self.animations.is_null() {
             return &mut [];
         }
@@ -359,15 +366,15 @@ impl TAE_Header_FileInfo {
     }
 }
 
-impl TAE_AnimGroups {
-    pub fn groups(&self) -> &[TAE_AnimGroup] {
+impl TaeAnimGroups {
+    pub fn groups(&self) -> &[TaeAnimGroup] {
         if self.groups.is_null() {
             return &[];
         }
         unsafe { std::slice::from_raw_parts(self.groups, self.group_count as usize) }
     }
 
-    pub fn groups_mut(&mut self) -> &mut [TAE_AnimGroup] {
+    pub fn groups_mut(&mut self) -> &mut [TaeAnimGroup] {
         if self.groups.is_null() {
             return &mut [];
         }
@@ -375,29 +382,29 @@ impl TAE_AnimGroups {
     }
 }
 
-impl TAE_AnimData {
-    pub fn events(&self) -> &[TAE_Event] {
+impl TaeAnimData {
+    pub fn events(&self) -> &[TaeEvent] {
         if self.events.is_null() {
             return &[];
         }
         unsafe { std::slice::from_raw_parts(self.events, self.event_count as usize) }
     }
 
-    pub fn events_mut(&mut self) -> &mut [TAE_Event] {
+    pub fn events_mut(&mut self) -> &mut [TaeEvent] {
         if self.events.is_null() {
             return &mut [];
         }
         unsafe { std::slice::from_raw_parts_mut(self.events, self.event_count as usize) }
     }
 
-    pub fn event_groups(&self) -> &[TAE_EventGroup] {
+    pub fn event_groups(&self) -> &[TaeEventGroup] {
         if self.event_groups.is_null() {
             return &[];
         }
         unsafe { std::slice::from_raw_parts(self.event_groups, self.event_group_count as usize) }
     }
 
-    pub fn event_groups_mut(&mut self) -> &mut [TAE_EventGroup] {
+    pub fn event_groups_mut(&mut self) -> &mut [TaeEventGroup] {
         if self.event_groups.is_null() {
             return &mut [];
         }
@@ -406,7 +413,7 @@ impl TAE_AnimData {
         }
     }
 
-    /// Shared time pool; startTime/endTime in every [`TAE_Event`] were copied from here.
+    /// Shared time pool; startTime/endTime in every [`TaeEvent`] were copied from here.
     pub fn times(&self) -> &[f32] {
         if self.times.is_null() {
             return &[];
@@ -422,7 +429,7 @@ impl TAE_AnimData {
     }
 }
 
-impl TAE_EventGroup {
+impl TaeEventGroup {
     pub fn event_offset(&self) -> &[u32] {
         if self.event_data_offsets.is_null() {
             return &[];
@@ -439,21 +446,21 @@ impl TAE_EventGroup {
         }
     }
 
-    pub fn resolve_event(&self, index: usize) -> Option<&TAE_Event> {
+    pub fn get_event(&self, index: usize) -> Option<&TaeEvent> {
         let offsets = self.event_offset();
         let offset = *offsets.get(index)? as usize;
         let base = self.main_header as usize;
         (base + offset)
             .ne(&0)
-            .then(|| unsafe { &*((base + offset) as *const TAE_Event) })
+            .then(|| unsafe { &*((base + offset) as *const TaeEvent) })
     }
 
-    pub fn resolve_event_mut(&mut self, index: usize) -> Option<&mut TAE_Event> {
+    pub fn get_event_mut(&mut self, index: usize) -> Option<&mut TaeEvent> {
         let offsets = self.event_offset();
         let offset = *offsets.get(index)? as usize;
         let base = self.main_header as usize;
         (base + offset)
             .ne(&0)
-            .then(|| unsafe { &mut *((base + offset) as *mut TAE_Event) })
+            .then(|| unsafe { &mut *((base + offset) as *mut TaeEvent) })
     }
 }
