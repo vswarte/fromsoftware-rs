@@ -110,7 +110,9 @@ impl DebugDisplay for CSNetBloodMessageDb {
 
         ui.header("Discovered messages", || {
             render_message_table(
-                self.discovered_messages.iter().map(|f| f.as_ref().as_ref()),
+                self.discovered_messages
+                    .iter()
+                    .map(|f| unsafe { f.as_ref().as_ref() }),
                 ui,
             );
         });
