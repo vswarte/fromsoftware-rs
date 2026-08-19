@@ -534,7 +534,7 @@ impl DebugDisplay for EquipItemData {
             self.great_rune.gaitem_handle, self.great_rune.index
         ));
 
-        ui.nested("Equipment Entries", &self.equip_entries);
+        ui.nested("Equipment Entries", unsafe { self.equip_entries.as_ref() });
         ui.display("Selected Quick Slot", self.selected_quick_slot);
     }
 }

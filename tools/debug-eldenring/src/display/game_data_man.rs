@@ -161,8 +161,8 @@ impl DebugDisplay for GameDataMan {
         });
 
         ui.list(
-            "Session Player Game Data",
-            self.session_player_game_data_list.iter(),
+            "NPC Player Game Data",
+            self.npc_player_game_data_list.iter(),
             |ui, i, item| ui.nested_opt(format!("Slot {}", i), item.as_ref()),
         );
     }
