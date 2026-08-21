@@ -374,3 +374,59 @@ vftable = "ez_state_environment_query_impl_vmt"
 [[vmts]]
 class = "EzState::EzStateValue::EzStateSharedString"
 vftable = "ez_state_shared_string_vmt"
+
+[[vmts]]
+class = "DLUID::DLUserInputDeviceImpl<DLKR::DLMultiThreadingPolicy>"
+vftable = "dluser_input_device_impl_vmt"
+
+[[vmts]]
+class = "DLUID::VirtualMultiDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "virtual_multi_device_vmt"
+
+[[vmts]]
+class = "DLUID::PadDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "pad_device_vmt"
+
+[[vmts]]
+class = "DLUID::KeyboardDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "keyboard_device_vmt"
+
+[[vmts]]
+class = "DLUID::MouseDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "mouse_device_vmt"
+
+[[vmts]]
+class = "DLUID::DummyDevice<DLKR::DLMultiThreadingPolicy>"
+vftable = "dummy_device_vmt"
+
+[[vmts]]
+class = "CS::CSPad"
+vftable = "cspad_vmt"
+
+[[vmts]]
+class = "CS::CSInGamePad_UserInput1"
+vftable = "csin_game_pad_vmt"
+
+[[vmts]]
+class = "CS::CSMenuViewerPad"
+vftable = "csmenu_viewer_pad_vmt"
+
+[[vmts]]
+class = "CS::CSDebugCamPad"
+vftable = "csdebug_cam_pad_vmt"
+
+[[vmts]]
+class = "CS::CSKeyAssign"
+vftable = "cskey_assign_vmt"
+
+[[vmts]]
+class = "CS::CSInGamePad_UserInput1"
+vftable = "csin_game_key_assign_vmt"
+
+[[vmts]]
+class = "CS::CSMenuViewerPad"
+vftable = "csmenu_viewer_key_assign_vmt"
+
+[[patterns]]
+pattern = "40 57 48 83 EC 30 48 C7 44 24 20 FE FF FF FF 48 89 5C 24 58 E8 ? ? ? ? 48 8B F8 83 CA FF"
+captures = ["obtain_dl_user_input_manager"]
