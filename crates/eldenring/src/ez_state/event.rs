@@ -17,8 +17,6 @@ pub struct EzStateEvent {
     vftable: usize,
     pub id: EzStateRawValue,
     pub args: DLFixedVector<EzStateRawValue, 60>,
-    unk3d8: usize,
-    unk3f0: usize,
 }
 
 impl EzStateEvent {
@@ -44,8 +42,6 @@ impl Default for EzStateEvent {
                 .unwrap() as usize,
             id: Default::default(),
             args: Default::default(),
-            unk3d8: 0,
-            unk3f0: 0,
         }
     }
 }
