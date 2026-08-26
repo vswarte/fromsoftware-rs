@@ -9,15 +9,14 @@ use crate::{
 
 #[repr(C)]
 /// Holds the arguments for an invocation of an ESD query (i.e. a function call that returns a
-/// value). This contains between 1 and 8 values, since the ID is at index 0 and there is a maximum
-/// capacity of 7 arguments.
+/// value). There is a maximum capacity of 6 arguments.
 ///
 /// Source of name: RTTI
 pub struct EzStateEnvironmentQuery {
     vftable: usize,
     arity: u32,
     id: EzStateRawValue,
-    args: [EzStateRawValue; 7],
+    args: [EzStateRawValue; 6],
 }
 
 impl EzStateEnvironmentQuery {
@@ -48,7 +47,6 @@ impl Default for EzStateEnvironmentQuery {
             arity: 1,
             id: EzStateValue::Int32(0).into(),
             args: [
-                EzStateValue::Int32(0).into(),
                 EzStateValue::Int32(0).into(),
                 EzStateValue::Int32(0).into(),
                 EzStateValue::Int32(0).into(),
