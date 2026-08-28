@@ -51,20 +51,20 @@ nightreign = { path = "crates/nightreign", version = "0.14.0", package = "nightr
 sekiro = { path = "crates/sekiro", version = "0.14.0", package = "sekiro" }
 debug = { path = "crates/debug", version = "0.14.0", package = "debug" }
 binary_mapper = { path = "crates/binary-mapper" }
-bitflags = "2.11.0"
+bitflags = "2.13.1"
 thiserror = "1"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-tracing-appender = "0.2.3"
+tracing-appender = "0.2.5"
 tracing-panic = "0.1"
 glam = ">= 0.30"
 byteorder = "1"
 pelite = "0.10"
-vtable-rs = "0.1.4"
-bitfield = "0.19.2"
+vtable-rs = "0.1.5"
+bitfield = "0.19.5"
 encoding_rs = "0.8.35"
-libhotpatch = "1.1.0"
-toml = "1.0.3"
+libhotpatch = "1.2.0"
+toml = "1.1.4"
 num_enum = "0.7"
 
 [workspace.dependencies.serde]
