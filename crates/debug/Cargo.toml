@@ -19,4 +19,4 @@ tracing-subscriber.workspace = true
 tracing.workspace = true
 windows.workspace = true
 clipboard-win = "5.4.1"
-ilhook = { version = "2.2.0", features = ["x64"] }
+ilhook = { version = "2.3.0", features = ["x64"] }

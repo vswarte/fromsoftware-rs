@@ -298,10 +298,11 @@ pub struct ChrIns {
     unk3a0: usize,
     anim_skeleton_to_model_modifier: usize,
     unk3b0: usize,
+    unk3b8: usize,
     cloth_state: [u8; 0x30],
-    unk3e8: u32,
-    unk3ec: u32,
-    unk3f0: f32,
+    unk3f0: u32,
+    unk3f4: u32,
+    unk3f8: f32,
     /// Squared 3D distance to the main player character.
     pub distance_to_player_sqr: f32,
     /// Squared horizontal distance to the main player
@@ -314,7 +315,7 @@ pub struct ChrIns {
     pub chr_activate_threshold: f32,
     /// Final update priority used to sort characters for updates, lower is higher priority.
     pub update_priority: f32,
-    unk40c: u32,
+    unk414: u32,
     update_data_module_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_chr_ctrl_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
     update_chr_model_task: CSEzVoidTask<CSEzRabbitNoUpdateTask, ChrIns>,
@@ -329,9 +330,9 @@ pub struct ChrIns {
     /// Param ID of the current material character standing on
     /// (e.g. water, lava, etc.), -1 if none.
     pub hit_material_override: i32,
-    unk540: u32,
+    unk548: u32,
     pub debug_role_param_id: i32,
-    unk548: [u8; 0x38],
+    unk550: [u8; 0x30],
 }
 
 #[for_all_subclasses]

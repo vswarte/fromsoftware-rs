@@ -11,9 +11,9 @@ name = "rva_test"
 path = "rva_test.rs"
 
 [dependencies]
-anyhow = "1.0.102"
-glob = "0.3.3"
-regex = "1.12.3"
+anyhow = "1.0.104"
+glob = "0.3.4"
+regex = "1.13.1"
 regex-macro = "0.3.0"
 toml.workspace = true
 serde.workspace = true
