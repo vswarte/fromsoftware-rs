@@ -1,6 +1,9 @@
 use std::{borrow::Cow, ptr::NonNull};
 
-use crate::{DLMap, UnkDLTree, param::CEREMONY_PARAM_ST, position::HavokPosition, rva};
+use crate::{
+    DLMap, UnkDLTree, dlkr::InGameHeapAllocator, param::CEREMONY_PARAM_ST, position::HavokPosition,
+    rva,
+};
 use shared::{FromStatic, InstanceResult, OwnedPtr, Subclass, Superclass};
 
 use super::BlockId;
@@ -10,7 +13,7 @@ use super::BlockId;
 pub struct FieldArea {
     vtable: usize,
     unk8: usize,
-    pub world_info_owner: OwnedPtr<WorldInfoOwner>,
+    pub world_info_owner: NonNull<WorldInfoOwner>,
     world_info_owner_2: NonNull<WorldInfoOwner>,
     // TODO: rest
     unk20: [u8; 0x80],
@@ -155,7 +158,7 @@ pub struct WorldGridAreaInfo {
     unk6c: [f32; 4],
     pub skybox_block_id: BlockId,
     pub skybox_block_info: NonNull<WorldBlockInfo>,
-    pub blocks: DLMap<BlockId, OwnedPtr<WorldBlockInfo>>,
+    pub blocks: DLMap<BlockId, OwnedPtr<WorldBlockInfo, InGameHeapAllocator>>,
     unka0: UnkDLTree<()>,
     unkb8: u64,
     unkc0: UnkDLTree<()>,

@@ -2,7 +2,10 @@ use std::ptr::NonNull;
 
 use shared::{F32Vector4, F32ViewMatrix, OwnedPtr, Subclass, Superclass, for_all_subclasses};
 
-use crate::position::{HavokPosition, PositionDelta};
+use crate::{
+    dlkr::{GfxHeapAllocator, MainHeapAllocator},
+    position::{HavokPosition, PositionDelta},
+};
 
 use super::ChrIns;
 
@@ -11,10 +14,10 @@ use super::ChrIns;
 #[shared::singleton("CSCamera")]
 pub struct CSCamera {
     vftable: usize,
-    pub pers_cam_1: OwnedPtr<CSPersCam>,
-    pub pers_cam_2: OwnedPtr<CSPersCam>,
-    pub pers_cam_3: OwnedPtr<CSPersCam>,
-    pub pers_cam_4: OwnedPtr<CSPersCam>,
+    pub pers_cam_1: OwnedPtr<CSPersCam, GfxHeapAllocator>,
+    pub pers_cam_2: OwnedPtr<CSPersCam, GfxHeapAllocator>,
+    pub pers_cam_3: OwnedPtr<CSPersCam, GfxHeapAllocator>,
+    pub pers_cam_4: OwnedPtr<CSPersCam, GfxHeapAllocator>,
 
     // 0b00100000 // Copy from pers_cam_4 into pers_cam_1
     // 0b00010000 // Copy from pers_cam_3 into pers_cam_1
@@ -88,9 +91,9 @@ pub type CSPersCam = CSCam;
 #[derive(Subclass)]
 pub struct ChrCam {
     pub pers_cam: CSPersCam,
-    ex_follow_cam: OwnedPtr<CSPersCam>,
-    aim_cam: OwnedPtr<CSPersCam>,
-    dist_view_cam: OwnedPtr<CSPersCam>,
+    ex_follow_cam: OwnedPtr<CSPersCam, MainHeapAllocator>,
+    aim_cam: OwnedPtr<CSPersCam, MainHeapAllocator>,
+    dist_view_cam: OwnedPtr<CSPersCam, MainHeapAllocator>,
     /// Setting this to True will reset the camera to the default position.
     /// (behind player's back)
     pub request_camera_reset: bool,

@@ -23,7 +23,6 @@ impl DebugDisplay for CSWorldGeomMan {
 impl DebugDisplay for CSWorldGeomManBlockData {
     fn render_debug(&self, ui: &Ui) {
         ui.display("Block ID", self.block_id);
-        ui.text(format!("World block info: {:x}", self.world_block_info));
         ui.display(
             "Next GeomIns FieldIns index",
             self.next_geom_ins_field_ins_index,
@@ -31,7 +30,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.list(
             format!("Geometry Vector ({})", self.geom_ins_vector.len()),
-            self.geom_ins_vector.iter(),
+            self.geom_ins_vector.iter().map(|g| unsafe { g.as_ref() }),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins
@@ -39,6 +38,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                         .msb_parts_geom
                         .msb_parts
                         .msb_part
+                        .as_ref()
                         .name
                         .to_string()
                 }
@@ -59,7 +59,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
 
         ui.list(
             format!("Sign Geometry Vector ({})", self.sos_sign_geometry.len()),
-            self.sos_sign_geometry.iter(),
+            self.sos_sign_geometry.iter().map(|g| unsafe { g.as_ref() }),
             |ui, _i, geometry_ins| {
                 let name = unsafe {
                     geometry_ins
@@ -67,6 +67,7 @@ impl DebugDisplay for CSWorldGeomManBlockData {
                         .msb_parts_geom
                         .msb_parts
                         .msb_part
+                        .as_ref()
                         .name
                         .to_string()
                 }

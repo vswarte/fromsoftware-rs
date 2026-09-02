@@ -1,6 +1,7 @@
 use crate::{
     DLVector,
     cs::{BlockId, CSGaitemGameData, ChrType, PlayerGameData},
+    dlkr::MainHeapAllocator,
     fd4::FD4Time,
 };
 use bitfield::bitfield;
@@ -40,20 +41,21 @@ pub enum DeathState {
 
 #[repr(C)]
 pub struct GameDataMan {
-    pub trophy_equip_data: OwnedPtr<TrophyEquipData>,
-    pub main_player_game_data: OwnedPtr<PlayerGameData>,
-    pub player_game_data_list: OwnedPtr<[PlayerGameData; 5]>,
+    pub trophy_equip_data: OwnedPtr<TrophyEquipData, MainHeapAllocator>,
+    pub main_player_game_data: OwnedPtr<PlayerGameData, MainHeapAllocator>,
+    pub player_game_data_list: OwnedPtr<[PlayerGameData; 5], MainHeapAllocator>,
     /// Pointer to the game data of the player used for the baseline
     /// for the arena match multiplay scaling in active match.
     pub quickmatch_scaling_baseline_game_data: Option<NonNull<PlayerGameData>>,
-    pub remote_game_data_states: OwnedPtr<[RemotePlayerDataSlotState; 5]>,
-    pub session_player_game_data_list: OwnedPtr<[Option<OwnedPtr<PlayerGameData>>; 40]>,
-    pub gaitem_game_data: OwnedPtr<CSGaitemGameData>,
+    pub remote_game_data_states: OwnedPtr<[RemotePlayerDataSlotState; 5], MainHeapAllocator>,
+    pub npc_player_game_data_list:
+        OwnedPtr<[Option<OwnedPtr<PlayerGameData, MainHeapAllocator>>; 40], MainHeapAllocator>,
+    pub gaitem_game_data: OwnedPtr<CSGaitemGameData, MainHeapAllocator>,
     tutorial_data: usize,
     pub has_bloodstain: bool,
-    pub bloodstain: OwnedPtr<BloodstainData>,
+    pub bloodstain: OwnedPtr<BloodstainData, MainHeapAllocator>,
     pub bloodstain_entity_id: i32,
-    pub game_settings: OwnedPtr<GameSettings>,
+    pub game_settings: OwnedPtr<GameSettings, MainHeapAllocator>,
     menu_system_save_load: usize,
     menu_profile_save_load: usize,
     key_config_save_load: usize,

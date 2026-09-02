@@ -2,6 +2,7 @@ use pelite::pe64::Pe;
 
 use super::PlayerIns;
 use crate::{
+    dlkr::MainHeapAllocator,
     position::{HavokPosition, PositionDelta},
     rva,
 };
@@ -13,7 +14,7 @@ use shared::{OwnedPtr, program::Program};
 pub struct CSHavokMan {
     vftable: usize,
     unk8: [u8; 0x90],
-    pub phys_world: OwnedPtr<CSPhysWorld>,
+    pub phys_world: OwnedPtr<CSPhysWorld, MainHeapAllocator>,
 }
 
 // Source of name: RTTI

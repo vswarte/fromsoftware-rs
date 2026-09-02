@@ -26,14 +26,19 @@ impl StatefulDebugDisplay for WorldChrMan {
     fn render_debug_mut(&mut self, ui: &Ui, state: &mut Self::State) {
         state.chr_ins_states.track_reads();
 
-        ui.display("World Area Chr List Count", self.world_area_chr_list_count);
+        ui.display(
+            "World Area Chr List Count",
+            self.world_area_chr_accessor.count,
+        );
 
-        let world_block_chr_list_count = self.world_block_chr_list_count;
-        ui.display("World Block Chr List Count", world_block_chr_list_count);
+        ui.display(
+            "World Block Chr List Count",
+            self.world_block_chr_accessor.count,
+        );
 
         ui.display(
             "World Grid Area Chr List Count",
-            self.world_grid_area_chr_list_count,
+            self.world_grid_area_chr_accessor.count,
         );
 
         ui.display("World Area List Count", self.world_area_list_count);
