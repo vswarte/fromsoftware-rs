@@ -267,20 +267,36 @@ pub unsafe trait FnTarget: Sized {}
 impl<S: FnSig> Function<S, ()> {
     /// Creates a function from a Rust closure. Always heap-allocated.
     ///
+    /// `F: Sync` is required because the resulting `Function` is `Send +
+    /// Sync`: once handed to the program, `_Do_call` may be invoked from
+    /// whatever thread the program calls it from, including concurrently.
+    ///
     /// The captured callable's type is erased (`target()` is unavailable);
     /// use [`Function::new_with_target`] if you need it after.
-    pub fn new<F: FnCallable<S> + Clone + 'static>(f: F) -> Self {
+    pub fn new<F: FnCallable<S> + Clone + Sync + 'static>(f: F) -> Self {
         Self::new_impl(f)
     }
 }
 
-impl<S: FnSig, C: FnCallable<S> + FnTarget + Clone + 'static> Function<S, C> {
+impl<S: FnSig, C: FnCallable<S> + FnTarget + Clone + Sync + 'static> Function<S, C> {
     /// Creates a function from a Rust callable whose type is kept
     /// as `C`, so it can be read back later through [`Function::target`].
     pub fn new_with_target(c: C) -> Self {
         Self::new_impl(c)
     }
 }
+
+/// # Safety
+///
+/// Every non-empty `Function` is either constructed via `new`/
+/// `new_with_target` (both require the captured callable to be `Sync`),
+/// or read from the memory, where the program's C++ code
+/// itself already defines under what threading conditions its `_Do_call`
+/// is invoked.
+unsafe impl<S: FnSig, C> Send for Function<S, C> {}
+/// # Safety
+/// See the `Send` impl above.
+unsafe impl<S: FnSig, C> Sync for Function<S, C> {}
 
 impl<S: FnSig, C> Function<S, C> {
     fn new_impl<F: FnCallable<S> + Clone + 'static>(f: F) -> Self {
@@ -337,9 +353,9 @@ impl<S: FnSig, C> Function<S, C> {
     }
 
     #[inline]
-    fn impl_ptr_for_access(&mut self) -> *mut UnknownFuncImpl {
+    fn impl_ptr_for_access(&self) -> *mut UnknownFuncImpl {
         if self.is_local() {
-            self.storage.as_mut_ptr().cast()
+            self.storage.as_ptr().cast_mut().cast()
         } else {
             self.impl_ptr()
         }
@@ -350,7 +366,7 @@ impl<S: FnSig, C> Function<S, C> {
     /// # Panics
     ///
     /// If this function is empty, matching `std::bad_function_call`.
-    pub fn call(&mut self, args: S::Args) -> S::Ret {
+    pub fn call(&self, args: S::Args) -> S::Ret {
         assert!(!self.is_empty(), "Function::call: bad function call");
         let this = self.impl_ptr_for_access();
         unsafe { S::invoke(this, args) }

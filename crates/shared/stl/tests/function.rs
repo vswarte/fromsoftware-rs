@@ -51,19 +51,19 @@ fn function_impl_ptr_at_offset_24() {
 
 #[test]
 fn function_call_arity0() {
-    let mut f = Function::<fn() -> i32>::new(|| 42);
+    let f = Function::<fn() -> i32>::new(|| 42);
     assert_eq!(f.call(()), 42);
 }
 
 #[test]
 fn function_call_arity1_primitive() {
-    let mut f = Function::<fn(i32) -> i32>::new(|x: i32| x * 2);
+    let f = Function::<fn(i32) -> i32>::new(|x: i32| x * 2);
     assert_eq!(f.call((21,)), 42);
 }
 
 #[test]
 fn function_call_arity2_primitive() {
-    let mut f = Function::<fn(i32, i32) -> i32>::new(|a: i32, b: i32| a + b);
+    let f = Function::<fn(i32, i32) -> i32>::new(|a: i32, b: i32| a + b);
     assert_eq!(f.call((10, 32)), 42);
 }
 
@@ -71,20 +71,20 @@ fn function_call_arity2_primitive() {
 fn function_call_pointer_arg_and_return() {
     let mut value = 7i32;
     let ptr: *mut i32 = &mut value;
-    let mut f = Function::<fn(*mut i32) -> *mut i32>::new(|p: *mut i32| p);
+    let f = Function::<fn(*mut i32) -> *mut i32>::new(|p: *mut i32| p);
     assert_eq!(f.call((ptr,)), ptr);
 }
 
 #[test]
 fn function_call_float_args_and_return() {
-    let mut f = Function::<fn(f32, f64) -> f64>::new(|a: f32, b: f64| a as f64 + b);
+    let f = Function::<fn(f32, f64) -> f64>::new(|a: f32, b: f64| a as f64 + b);
     assert_eq!(f.call((1.5f32, 2.5f64)), 4.0);
 }
 
 #[test]
 fn function_call_ref_arg_mutates_referent() {
     let mut value = 10i32;
-    let mut f = Function::<fn(Ref<i32>)>::new(|r: Ref<i32>| unsafe {
+    let f = Function::<fn(Ref<i32>)>::new(|r: Ref<i32>| unsafe {
         *r.0.as_ptr() += 5;
     });
     f.call((Ref(std::ptr::NonNull::from(&mut value)),));
@@ -93,19 +93,57 @@ fn function_call_ref_arg_mutates_referent() {
 
 #[test]
 fn function_call_stateful_closure_across_calls() {
-    let count = std::cell::Cell::new(0i32);
-    let mut f = Function::<fn() -> i32>::new(move || {
-        count.set(count.get() + 1);
-        count.get()
-    });
+    let count = std::sync::Arc::new(AtomicUsize::new(0));
+    let f =
+        Function::<fn() -> i32>::new(move || (count.fetch_add(1, Ordering::Relaxed) + 1) as i32);
     assert_eq!(f.call(()), 1);
     assert_eq!(f.call(()), 2);
     assert_eq!(f.call(()), 3);
 }
 
 #[test]
+fn function_is_send_and_sync() {
+    fn assert_send_sync<T: Send + Sync>() {}
+    assert_send_sync::<Function<fn() -> i32>>();
+}
+
+#[test]
+fn function_call_from_multiple_threads_concurrently() {
+    use std::sync::Arc;
+
+    const THREADS: usize = 8;
+    const CALLS_PER_THREAD: usize = 1000;
+
+    let count = Arc::new(AtomicUsize::new(0));
+    let f = Arc::new(Function::<fn() -> i32>::new({
+        let count = count.clone();
+        move || {
+            count.fetch_add(1, Ordering::Relaxed);
+            0
+        }
+    }));
+
+    let handles: Vec<_> = (0..THREADS)
+        .map(|_| {
+            let f = f.clone();
+            std::thread::spawn(move || {
+                for _ in 0..CALLS_PER_THREAD {
+                    f.call(());
+                }
+            })
+        })
+        .collect();
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    assert_eq!(count.load(Ordering::Relaxed), THREADS * CALLS_PER_THREAD);
+}
+
+#[test]
 fn function_call_many_args() {
-    let mut f = Function::<fn(i32, i32, i32, i32, i32, i32, i32, i32) -> i32>::new(
+    let f = Function::<fn(i32, i32, i32, i32, i32, i32, i32, i32) -> i32>::new(
         |a, b, c, d, e, g, h, i| a + b + c + d + e + g + h + i,
     );
     assert_eq!(f.call((1, 2, 3, 4, 5, 6, 7, 8)), 36);
@@ -165,7 +203,7 @@ fn function_is_empty() {
 #[test]
 #[should_panic(expected = "bad function call")]
 fn function_call_on_empty_panics() {
-    let mut f = Function::<fn() -> i32>::empty();
+    let f = Function::<fn() -> i32>::empty();
     f.call(());
 }
 
@@ -197,7 +235,7 @@ unsafe impl FnTarget for CountingCallable {}
 
 #[test]
 fn function_typed_target_reads_captured_state() {
-    let mut f: Function<fn() -> i32, CountingCallable> =
+    let f: Function<fn() -> i32, CountingCallable> =
         Function::new_with_target(CountingCallable { n: 7 });
     assert_eq!(f.target().unwrap().n, 7);
     assert_eq!(f.call(()), 7);
