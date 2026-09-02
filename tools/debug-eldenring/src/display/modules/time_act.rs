@@ -10,7 +10,8 @@ impl DebugDisplay for CSChrTimeActModule {
             [
                 TableColumnSetup::new("Index"),
                 TableColumnSetup::new("Anim ID"),
-                TableColumnSetup::new("Play Time"),
+                TableColumnSetup::new("Prev Local Time"),
+                TableColumnSetup::new("Local Time"),
                 TableColumnSetup::new("Length"),
             ],
             self.anim_queue.iter(),
@@ -22,18 +23,22 @@ impl DebugDisplay for CSChrTimeActModule {
                 ui.text(entry.anim_id.to_string());
 
                 ui.table_next_column();
-                ui.text(entry.play_time.to_string());
+                ui.text(entry.prev_local_time.to_string());
+
+                ui.table_next_column();
+                ui.text(entry.local_time.to_string());
 
                 ui.table_next_column();
                 ui.text(entry.anim_length.to_string());
             },
         );
-        ui.display("Read index", self.read_idx);
-        ui.display("Write index", self.write_idx);
+        ui.display("Read IDX", self.read_idx);
+        ui.display("Write IDX", self.write_idx);
         ui.header("Current Anim Info", || {
             let current_anim_info = &self.anim_queue[self.read_idx as usize];
             ui.display("Anim ID", current_anim_info.anim_id);
-            ui.display("Play Time", current_anim_info.play_time);
+            ui.display("Local Time", current_anim_info.local_time);
+            ui.display("Prev Local Time", current_anim_info.prev_local_time);
             ui.display("Anim Length", current_anim_info.anim_length);
         });
     }
