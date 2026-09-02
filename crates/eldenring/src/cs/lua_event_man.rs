@@ -2,6 +2,7 @@
 use std::ptr::NonNull;
 
 use bitfield::bitfield;
+use fromsoftware_shared_stl::{FnTarget, Function};
 use shared::{F32Vector3, OwnedPtr, Subclass, Superclass, singleton};
 use vtable_rs::VPtr;
 
@@ -51,11 +52,24 @@ pub trait CSLuaEventMsgExecVmt {
 }
 
 #[repr(C)]
+pub struct CSLuaEventScriptImitationBinder {
+    pub member_fn: unsafe extern "C" fn(
+        *mut CSLuaEventScriptImitation,
+        *mut CSLuaEventProxy,
+        *mut CSScriptCallParam,
+    ),
+    _ph: [u8; 2],
+    pub this: NonNull<CSLuaEventScriptImitation>,
+}
+
+unsafe impl FnTarget for CSLuaEventScriptImitationBinder {}
+
+#[repr(C)]
 #[derive(Subclass)]
 pub struct CSLuaEventMsgExec_Func {
     pub base: CSLuaEventMsgExec,
-    /// `std::function(CSLuaEventScriptImitation*)(CSLuaEventProxy*, CSScriptCallParam*)`
-    func: [u8; 0x40],
+    pub func:
+        Function<fn(*mut CSLuaEventProxy, *mut CSScriptCallParam), CSLuaEventScriptImitationBinder>,
 }
 
 #[repr(C)]
