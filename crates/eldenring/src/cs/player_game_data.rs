@@ -6,7 +6,7 @@ use thiserror::Error;
 
 use crate::{
     ArrayWithHeader, DLList, DLVector,
-    cs::{ChrType, MultiplayRole},
+    cs::{ChrType, MultiplayRole, QuickmatchDesiredTeam},
     from_net::FNVector,
 };
 use shared::{IsEmpty, MaybeEmpty, NonEmptyIteratorExt, NonEmptyIteratorMutExt, OwnedPtr};
@@ -18,7 +18,7 @@ use crate::cs::{FieldInsHandle, GaitemHandle, ItemId, OptionalItemId};
 pub struct PlayerGameData {
     vftable: usize,
     /// Event id of this game data owner
-    pub character_event_id: u32,
+    pub character_event_id: i32,
     pub player_id: u32,
     pub current_hp: u32,
     pub current_max_hp: u32,
@@ -55,7 +55,7 @@ pub struct PlayerGameData {
     pub madness_resist: u32,
     pub pending_block_clear_bonus: f32,
     pub chr_type: ChrType,
-    character_name: [u16; 17],
+    pub character_name: [u16; 17],
     pub gender: u8,
     pub archetype: u8,
     pub vow_type: u8,
@@ -196,19 +196,26 @@ pub struct PlayerGameData {
     pub used_invasion_item_type: PlayerDataInvasionItemType,
     unka9a: [u8; 2],
     pub packed_time_stamp: u32,
+    /// team type for quickmatch, WhiteSign (2) for allies.
     pub quick_match_team: u8,
-    unkaa4: i32,
+    /// [0,1) range used to sample spawn locations in quickmatch.
+    pub quick_match_spawn_slot_fraction: f32,
     pub quick_match_duel_points: u16,
     pub quick_match_united_combat_points: u16,
     pub quick_match_spirit_ashes_points: u16,
     pub quickmatch_duel_rank: u8,
     pub quickmatch_united_combat_rank: u8,
     pub quickmatch_spirit_ashes_rank: u8,
-    pub unkaa9: bool,
-    unkb2: u8,
+    /// Whether this player is the lead player in quickmatch (player with the most points).
+    pub is_quick_match_lead: bool,
+    /// Whether this player is in [`HostInGame`] or [`GuestInGame`] state in quickmatch.
+    ///
+    /// [`HostInGame`]: crate::cs::CSQuickMatchingCtrlState::HostInGame
+    /// [`GuestInGame`]: crate::cs::CSQuickMatchingCtrlState::GuestInGame
+    pub is_quick_match_in_game: bool,
     pub is_quick_match_host: bool,
     pub quick_match_map_load_ready: bool,
-    pub quick_match_desired_team: u8,
+    pub quick_match_desired_team: QuickmatchDesiredTeam,
     unkab6: u8,
     /// Should sign cooldown be enabled?
     /// Each time your coop player dies and you have someone in your world
@@ -217,7 +224,9 @@ pub struct PlayerGameData {
     unkab8: [u8; 0x2],
     pub has_preorder_gesture: bool,
     pub has_preorder_sote_gesture: bool,
-    unkab4: [u8; 0x34],
+    pub host_scadutree_blessing: u8,
+    pub host_scaling_applied: bool,
+    unkab4: [u8; 0x32],
 }
 
 #[repr(u8)]
@@ -418,10 +427,13 @@ pub struct EquipGameData {
     pub equip_inventory_data: EquipInventoryData,
     pub equip_magic_data: OwnedPtr<EquipMagicData>,
     pub equip_item_data: EquipItemData,
-    equip_gesture_data: usize,
-    /// Tracker for the item replenishing from the chest
+    equip_gesture_data: Option<OwnedPtr<()>>,
+    /// Tracker for the item replenishing from the chest.
+    /// Only present in the main player's game data.
     pub item_replenish_state_tracker: Option<OwnedPtr<ItemReplenishStateTracker>>,
-    pub qm_item_backup_vector: OwnedPtr<DLVector<QMItemBackupVectorItem>>,
+    /// Tracker for the item restoration after quickmatch.
+    /// Only present in the main player's game data.
+    pub qm_item_backup_vector: Option<OwnedPtr<DLVector<QMItemBackupVectorItem>>>,
     pub equipment_entries: ChrAsmEquipEntries,
     pub physick_tears: [OptionalItemId; 2],
     pub extra_physick_tear: OptionalItemId,

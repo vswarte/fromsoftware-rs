@@ -1,10 +1,10 @@
 use crate::{
     DLVector,
-    cs::{CSGaitemGameData, ChrType, PlayerGameData},
+    cs::{BlockId, CSGaitemGameData, ChrType, PlayerGameData},
     fd4::FD4Time,
 };
 use bitfield::bitfield;
-use shared::{FromStatic, OwnedPtr, load_static_indirect};
+use shared::{F32Vector3, FromStatic, OwnedPtr, load_static_indirect};
 use std::{borrow::Cow, ptr::NonNull};
 
 #[repr(u8)]
@@ -50,7 +50,9 @@ pub struct GameDataMan {
     pub session_player_game_data_list: OwnedPtr<[Option<OwnedPtr<PlayerGameData>>; 40]>,
     pub gaitem_game_data: OwnedPtr<CSGaitemGameData>,
     tutorial_data: usize,
-    unk40: [u8; 0x18],
+    pub has_bloodstain: bool,
+    pub bloodstain: OwnedPtr<BloodstainData>,
+    pub bloodstain_entity_id: i32,
     pub game_settings: OwnedPtr<GameSettings>,
     menu_system_save_load: usize,
     menu_profile_save_load: usize,
@@ -82,9 +84,9 @@ pub struct GameDataMan {
     pub boss_fight_timer: FD4Time,
     /// Whether a boss fight is currently active
     pub boss_fight_active: bool,
-    /// Count of white phantoms currently summoned
+    /// Count of white phantoms summoned at the start of the boss fight
     /// Used to apply enemy level scaling
-    pub white_phantom_count: u32,
+    pub boss_start_helper_num: u32,
     pub boss_health_bar_entity_id: u32,
     pub boss_health_bar_npc_param_id: u32,
     unkd0: [u8; 0x4],
@@ -110,7 +112,15 @@ pub struct GameDataMan {
     pub net_penalty_points: u16,
     pub net_penalty_forgive_item_limit_time: f32,
     pub ng_lvl: u32,
-    unk124: [u8; 0x34],
+    pub random_appear_lot_slot: u32,
+    pub host_ng_level: u32,
+    pub host_random_appear_lot_slot: u32,
+    pub backup_ng_level: u32,
+    pub backup_random_appear_lot_slot: u32,
+    pub host_world_values_update_requested: bool,
+    pub host_world_values_applied: bool,
+    unk13a: [u8; 0x16],
+    pub default_random_appear_lot_slot: i32,
 }
 
 impl FromStatic for GameDataMan {
@@ -121,6 +131,17 @@ impl FromStatic for GameDataMan {
     fn instance_ptr() -> shared::InstanceResult<*mut Self> {
         unsafe { load_static_indirect(crate::rva::get().game_data_man) }
     }
+}
+
+#[repr(C)]
+pub struct BloodstainData {
+    pub msb_pos: F32Vector3,
+    pub rotation: F32Vector3,
+    unk18: [u8; 0x18],
+    pub hero_points: i32,
+    pub rune_count: i32,
+    pub block_id: BlockId,
+    unk3c: bool,
 }
 
 #[repr(C)]
@@ -236,8 +257,8 @@ bitfield! {
 
 #[repr(C)]
 pub struct GameVersionData {
-    /// Current version of the game data structure
-    pub game_data_version: u32,
+    /// First version of the game data structure in the save file
+    pub first_game_data_version: u32,
     /// Version of the game data read from the last save
     pub last_saved_game_data_version: u32,
     /// Whether the saved game data version is the latest

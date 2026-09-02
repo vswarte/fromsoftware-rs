@@ -2,8 +2,8 @@ use hudhook::imgui::{TableColumnSetup, Ui};
 
 use debug::UiExt;
 use eldenring::cs::{
-    CSGaitemGameData, GameDataMan, GameSettings, GameVersionData, TrophyAccessoryStats,
-    TrophyEquipData, TrophyGoodsStats, TrophyWeaponStats,
+    BloodstainData, CSGaitemGameData, GameDataMan, GameSettings, GameVersionData,
+    TrophyAccessoryStats, TrophyEquipData, TrophyGoodsStats, TrophyWeaponStats,
 };
 
 use super::{DebugDisplay, DisplayUiExt};
@@ -27,6 +27,40 @@ impl DebugDisplay for GameDataMan {
         ui.nested("Gaitem Game Data", &self.gaitem_game_data);
 
         ui.separator();
+        ui.display("Has Bloodstain", self.has_bloodstain);
+        ui.nested("Bloodstain", &self.bloodstain);
+        ui.display("Bloodstain Entity ID", self.bloodstain_entity_id);
+
+        ui.separator();
+        ui.nested_opt(
+            "Quickmatch Scaling Baseline Game Data",
+            self.quickmatch_scaling_baseline_game_data
+                .map(|ptr| unsafe { ptr.as_ref() }),
+        );
+
+        ui.separator();
+        ui.display("Random Appear Lot Slot", self.random_appear_lot_slot);
+        ui.display(
+            "Default Random Appear Lot Slot",
+            self.default_random_appear_lot_slot,
+        );
+        ui.display("Host NG Level", self.host_ng_level);
+        ui.display(
+            "Host Random Appear Lot Slot",
+            self.host_random_appear_lot_slot,
+        );
+        ui.display("Backup NG Level", self.backup_ng_level);
+        ui.display(
+            "Backup Random Appear Lot Slot",
+            self.backup_random_appear_lot_slot,
+        );
+        ui.display(
+            "Host World Values Update Requested",
+            self.host_world_values_update_requested,
+        );
+        ui.display("Host World Values Applied", self.host_world_values_applied);
+
+        ui.separator();
         ui.display("Boss Fight Active", self.boss_fight_active);
         ui.debug("Boss Fight Timer", self.boss_fight_timer.time);
         ui.display("Boss Health Bar Entity ID", self.boss_health_bar_entity_id);
@@ -34,7 +68,7 @@ impl DebugDisplay for GameDataMan {
             "Boss Health Bar NPC Param ID",
             self.boss_health_bar_npc_param_id,
         );
-        ui.display("White Phantom Count", self.white_phantom_count);
+        ui.display("Boss Start Helper Num", self.boss_start_helper_num);
 
         ui.separator();
         ui.debug("Death State", self.death_state);
@@ -212,9 +246,19 @@ impl DebugDisplay for CSGaitemGameData {
     }
 }
 
+impl DebugDisplay for BloodstainData {
+    fn render_debug(&self, ui: &Ui) {
+        ui.nested("Position", self.msb_pos);
+        ui.nested("Rotation", self.rotation);
+        ui.display("Hero Points", self.hero_points);
+        ui.display("Rune Count", self.rune_count);
+        ui.display("Block ID", self.block_id);
+    }
+}
+
 impl DebugDisplay for GameVersionData {
     fn render_debug(&self, ui: &Ui) {
-        ui.display("Game Data Version", self.game_data_version);
+        ui.display("First Game Data Version", self.first_game_data_version);
         ui.display(
             "Last Saved Game Data Version",
             self.last_saved_game_data_version,
