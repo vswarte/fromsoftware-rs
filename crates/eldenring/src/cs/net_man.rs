@@ -3,6 +3,7 @@ use std::ptr::NonNull;
 use crate::{
     DLVector,
     cs::{MultiplayRole, MultiplayType, PlayerGameData, SummonParamType},
+    dlkr::{CSNetworkAllocator, MainHeapAllocator},
     dltx::DLString,
     fd4::{FD4StepBase, FD4StepBaseInterface, FD4Time},
     from_net::{FNString, FNVector},
@@ -40,15 +41,15 @@ pub struct CSNetMan {
     wandering_ghost_db: usize,
     /// Keeps track of all all bloodmessages in the world as well as any rating and created
     /// bloodmessages.
-    pub blood_message_db: OwnedPtr<CSNetBloodMessageDb>,
+    pub blood_message_db: OwnedPtr<CSNetBloodMessageDb, CSNetworkAllocator>,
     bloodstain_db: usize,
     bonfire_db: usize,
     spiritual_statue_db: usize,
     unk98: usize,
     unka0: usize,
-    pub breakin_manager: OwnedPtr<BreakInManager>,
+    pub breakin_manager: OwnedPtr<BreakInManager, CSNetworkAllocator>,
     /// Keeps track of quickmatch gamemode state.
-    pub quickmatch_manager: OwnedPtr<QuickmatchManager>,
+    pub quickmatch_manager: OwnedPtr<QuickmatchManager, CSNetworkAllocator>,
     visitor_db: usize,
     penalty_manager: usize,
     /// Task that updates the structure (pulls in new data from server, spawn received signs,
@@ -68,7 +69,7 @@ pub struct CSNetMan {
 pub struct CSNetBloodMessageDb {
     vftable: usize,
     // Contains all CSNetBloodMessageDbItem?
-    pub entries: DLList<OwnedPtr<CSNetBloodMessageDbItem>>,
+    pub entries: DLList<OwnedPtr<CSNetBloodMessageDbItem, CSNetworkAllocator>>,
     unk20: usize,
     /// Seemingly contains message data for messages created by local user
     pub created_data: DLList<usize>,
@@ -77,7 +78,7 @@ pub struct CSNetBloodMessageDb {
     unk58: usize,
     blood_message_ins_man_1: usize,
     blood_message_ins_man_2: usize,
-    pub discovered_messages: DLList<OwnedPtr<OwnedPtr<CSNetBloodMessageDbItem>>>,
+    pub discovered_messages: DLList<OwnedPtr<NonNull<CSNetBloodMessageDbItem>, CSNetworkAllocator>>,
     unk88: [u8; 0xD0],
     /// Hosts any ongoing jobs for evaluations.
     evaluate_job: usize,
@@ -174,9 +175,9 @@ pub struct BreakInManager {
 #[repr(C)]
 pub struct QuickmatchManager {
     /// Stepper that updates the games quickmatch state.
-    pub quickmatching_ctrl: OwnedPtr<CSQuickMatchingCtrl>,
+    pub quickmatching_ctrl: OwnedPtr<CSQuickMatchingCtrl, MainHeapAllocator>,
     /// Keeps track of quickmatch settings as well as any participants.
-    pub battle_royal_context: OwnedPtr<CSBattleRoyalContext>,
+    pub battle_royal_context: OwnedPtr<CSBattleRoyalContext, MainHeapAllocator>,
     /// Populated during creation of the QM lobby locally. Either by joining or creating a room.
     pub active_battle_royal_context: Option<NonNull<CSBattleRoyalContext>>,
     unk18: f32,

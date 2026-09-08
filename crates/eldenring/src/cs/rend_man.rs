@@ -5,7 +5,7 @@ use pelite::pe64::Pe;
 use shared::program::Program;
 use shared::{F32Vector4, OwnedPtr, Triangle};
 
-use crate::dlkr::{DLAllocator, DLPlainLightMutex};
+use crate::dlkr::{DLAllocator, DLPlainLightMutex, GfxHeapAllocator};
 use crate::position::{HavokPosition, PositionDelta};
 use crate::rva;
 
@@ -17,17 +17,17 @@ pub struct RendMan {
     stage_rend: usize,
     gx_sg_layer_flat: usize,
     unk20: usize,
-    pub debug_ez_draw: OwnedPtr<CSEzDraw>,
+    pub debug_ez_draw: OwnedPtr<CSEzDraw, GfxHeapAllocator>,
     // TODO: rest
 }
 
 #[repr(C)]
 pub struct CSEzDraw {
     vftable: usize,
-    pub draw_context: OwnedPtr<FD4HkEzDrawContext>,
+    pub draw_context: OwnedPtr<FD4HkEzDrawContext, GfxHeapAllocator>,
     /// Double buffered command buffers for rendering
     /// one is being written to while the other is being read by the GPU
-    draw_command_buffers: [OwnedPtr<FD4HkEzDrawCommandBuffer>; 2],
+    draw_command_buffers: [OwnedPtr<FD4HkEzDrawCommandBuffer, GfxHeapAllocator>; 2],
     /// Index of the current writeable command buffer (0 or 1)
     pub current_buffer_index: u32,
     /// Lock to make writing to the command buffer thread-safe
@@ -195,7 +195,7 @@ pub struct FD4HkEzDrawCommandBuffer {
     pub write_ptr: NonNull<u8>,
     pub draw_state_allocator: &'static DLAllocator,
     pub ez_draw_context: NonNull<FD4HkEzDrawContext>,
-    pub ez_draw_state: OwnedPtr<FD4HkEzDrawState>,
+    pub ez_draw_state: OwnedPtr<FD4HkEzDrawState, GfxHeapAllocator>,
 }
 
 #[repr(C)]

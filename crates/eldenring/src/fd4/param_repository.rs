@@ -1,7 +1,8 @@
 use std::{ffi::CStr, iter, ptr::NonNull, slice};
 
-use crate::fd4::FD4ResCapHolder;
+use crate::dlkr::MainHeapAllocator;
 use crate::param::ParamDef;
+use crate::{dlkr::DLAllocator, fd4::FD4ResCapHolder};
 use shared::{OwnedPtr, Subclass};
 
 use super::{FD4ResCap, FD4ResRep};
@@ -39,7 +40,7 @@ pub struct FD4ParamRepository {
     /// Resource repository holding the actual param data.
     pub res_rep: FD4ResRep,
     res_cap_holder: FD4ResCapHolder<FD4ParamResCap>,
-    allocator: usize,
+    pub res_cap_allocator: &'static DLAllocator,
 }
 
 impl FD4ParamRepository {
@@ -129,7 +130,7 @@ pub struct FD4ParamResCap {
     pub size: u64,
 
     /// The raw row data for this param resource.
-    pub data: OwnedPtr<ParamFile>,
+    pub data: OwnedPtr<ParamFile, MainHeapAllocator>,
 }
 
 impl FD4ParamResCap {
