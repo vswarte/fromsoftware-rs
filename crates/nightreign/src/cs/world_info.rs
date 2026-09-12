@@ -48,21 +48,6 @@ impl WorldInfoOwner {
     pub fn world_block_info_by_map(&self, block_id: &BlockId) -> Option<&WorldBlockInfo> {
         let block_id = *block_id;
 
-        // // Figure out overworld map ID to prevent storing data reliant on randomized features.
-        // if block_id.is_small_base_map() {
-        //     // Figure out what grid area info stores the small bases
-        //     let world_area_info = self
-        //         .world_grid_area_info()
-        //         .iter()
-        //         .find(|w| w.base.hosts_small_bases)?;
-        //
-        //     for small_base in world_area_info.small_bases.iter() {
-        //         if small_base.block.small_base_block_id == block_id {
-        //             block_id = small_base.block.small_base_parent_block_id;
-        //         }
-        //     }
-        // }
-
         match block_id.is_overworld() {
             true => self
                 .world_grid_area_info()
