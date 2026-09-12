@@ -49,8 +49,7 @@ impl ParamDef for ACROSS_DAY_CORRECT_PARAM_ST {
     const NAME: &str = "ACROSS_DAY_CORRECT_PARAM_ST";
 }
 
-impl ACROSS_DAY_CORRECT_PARAM_ST {
-}
+impl ACROSS_DAY_CORRECT_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -305,7 +304,6 @@ impl ACTIONBUTTON_PARAM_ST {
     pub fn set_interact_icon_offset_z(&mut self, value: f32) {
         self.interact_icon_offset_z = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -450,7 +448,6 @@ impl AI_SOUND_PARAM_ST {
     pub fn set_replaning_state(&mut self, value: u8) {
         self.replaning_state = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -566,7 +563,6 @@ impl ANTIQUE_STAND_PARAM_ST {
     pub fn set_deep_relic_slot3(&mut self, value: i8) {
         self.deep_relic_slot3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -1669,7 +1665,6 @@ impl ASSET_GEOMETORY_PARAM_ST {
     pub fn set_exclude_activate_ratio_ps4_legacy(&mut self, value: u8) {
         self.exclude_activate_ratio_ps4_legacy = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -1970,7 +1965,6 @@ impl ASSET_MATERIAL_SFX_PARAM_ST {
     pub fn set_sfx_id_31(&mut self, value: u32) {
         self.sfx_id_31 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -2144,7 +2138,6 @@ impl ASSET_MODEL_SFX_PARAM_ST {
     pub fn set_is_disable_iv(&mut self, value: u8) {
         self.is_disable_iv = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -4083,7 +4076,6 @@ impl ATK_PARAM_ST {
     pub fn set_sub_category5(&mut self, value: u8) {
         self.sub_category5 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -4114,7 +4106,6 @@ impl ATTACHEFFECT_FILTER_CATEGORY_PARAM_ST {
     pub fn set_category(&mut self, value: i32) {
         self.category = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -4175,7 +4166,6 @@ impl ATTACHEFFECT_FILTER_PARAM_ST {
     pub fn set_event_flag_for_display(&mut self, value: i32) {
         self.event_flag_for_display = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -4225,7 +4215,6 @@ impl ATTACHEFFECT_FILTER_SUB_CATEGORY_PARAM_ST {
     pub fn set_display_event_flag(&mut self, value: i32) {
         self.display_event_flag = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -4511,7 +4500,6 @@ impl ATTACHEFFECT_PARAM_ST {
     pub fn set_permanent_sp_effect_id(&mut self, value: i32) {
         self.permanent_sp_effect_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -4552,7 +4540,6 @@ impl ATTACHEFFECT_TABLE_PARAM_ST {
     pub fn set_chance_weight_dlc(&mut self, value: i16) {
         self.chance_weight_dlc = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -5270,7 +5257,6 @@ impl ATTACK_ELEMENT_CORRECT_PARAM_ST {
     pub fn set_influence_luck_correct_rate_by_dark(&mut self, value: i16) {
         self.influence_luck_correct_rate_by_dark = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -5355,7 +5341,6 @@ impl AUTO_CREATE_ENV_SOUND_PARAM_ST {
     pub fn set_limite_rotate_max(&mut self, value: f32) {
         self.limite_rotate_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -5460,7 +5445,6 @@ impl BEHAVIOR_PARAM_ST {
     pub fn set_hero_point(&mut self, value: u8) {
         self.hero_point = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -6130,7 +6114,6 @@ impl BONFIRE_WARP_PARAM_ST {
     pub fn set_alt_forbidden_icon_id(&mut self, value: u16) {
         self.alt_forbidden_icon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -6249,7 +6232,6 @@ impl BUDDY_STONE_PARAM_ST {
     pub fn set_warn_region_entity_id(&mut self, value: u32) {
         self.warn_region_entity_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -6498,7 +6480,6 @@ impl BUDGET_PARAM_ST {
     pub fn set_havok_navimesh(&mut self, value: f32) {
         self.havok_navimesh = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -6532,7 +6513,6 @@ impl BULLET_CREATE_LIMIT_PARAM_ST {
     pub fn set_is_limit_each_owner(&mut self, value: bool) {
         self.bits_1 = (self.bits_1 & !(1 << 0)) | (u8::from(value) << 0);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -7652,7 +7632,6 @@ impl BULLET_PARAM_ST {
     pub fn set_fh_unknown_4(&mut self, value: u8) {
         self.fh_unknown_4 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -7837,7 +7816,6 @@ impl CACL_CORRECT_GRAPH_ST {
     pub fn set_boundry_value(&mut self, value: f32) {
         self.boundry_value = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -7896,7 +7874,6 @@ impl CAMERA_FADE_PARAM_ST {
     pub fn set_middle_alpha(&mut self, value: f32) {
         self.middle_alpha = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -7955,7 +7932,6 @@ impl CEREMONY_PARAM_ST {
     pub fn set_override_save_map_name_id(&mut self, value: i32) {
         self.override_save_map_name_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -8013,7 +7989,6 @@ impl CHAOS_MATCHING_CORRECT_PARAM_ST {
     pub fn set_sp_effect04(&mut self, value: i32) {
         self.sp_effect04 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -8091,7 +8066,6 @@ impl CHAOS_MATCHING_MUTATION_CATEGORY_PARAM_ST {
     pub fn set_modifier_map_id(&mut self, value: i32) {
         self.modifier_map_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -8225,7 +8199,6 @@ impl CHAOS_MATCHING_MUTATION_ENEMY_TABLE_PARAM_ST {
     pub fn set_modifier_map_id3(&mut self, value: i32) {
         self.modifier_map_id3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -8311,7 +8284,6 @@ impl CHAOS_MATCHING_RANK_CONTROL_PARAM_ST {
     pub fn set_cataclysm_weight_2(&mut self, value: u8) {
         self.cataclysm_weight_2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -8325,8 +8297,7 @@ impl ParamDef for CHAOS_MATCHING_REPLACE_TREASURE_COMMON_PARAM_ST {
     const NAME: &str = "CHAOS_MATCHING_REPLACE_TREASURE_COMMON_PARAM_ST";
 }
 
-impl CHAOS_MATCHING_REPLACE_TREASURE_COMMON_PARAM_ST {
-}
+impl CHAOS_MATCHING_REPLACE_TREASURE_COMMON_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -8357,8 +8328,7 @@ impl ParamDef for CHAOS_MATCHING_REPLACE_TREASURE_TABLE_PARAM_ST {
     const NAME: &str = "CHAOS_MATCHING_REPLACE_TREASURE_TABLE_PARAM_ST";
 }
 
-impl CHAOS_MATCHING_REPLACE_TREASURE_TABLE_PARAM_ST {
-}
+impl CHAOS_MATCHING_REPLACE_TREASURE_TABLE_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -9322,7 +9292,6 @@ impl CHARACTER_INIT_PARAM {
     pub fn set_hero_selection_background_id(&mut self, value: i32) {
         self.hero_selection_background_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -9436,7 +9405,6 @@ impl CHARMAKEMENUTOP_PARAM_ST {
     pub fn set_unlock_event_flag_id(&mut self, value: u32) {
         self.unlock_event_flag_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -9477,7 +9445,6 @@ impl CHARMAKEMENU_LISTITEM_PARAM_ST {
     pub fn set_icon_id(&mut self, value: u8) {
         self.icon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -9539,7 +9506,6 @@ impl CHR_MODEL_PARAM_ST {
     pub fn set_report_anim_mem_size_mb(&mut self, value: f32) {
         self.report_anim_mem_size_mb = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -9611,7 +9577,6 @@ impl CHR_PHYSICS_VELOCITY_CHANGE_ST {
     pub fn set_fall_control_param_id(&mut self, value: i32) {
         self.fall_control_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -9904,7 +9869,6 @@ impl CLEAR_COUNT_CORRECT_PARAM_ST {
     pub fn set_madness_damage_rate(&mut self, value: f32) {
         self.madness_damage_rate = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -9927,7 +9891,6 @@ impl COMMON_SYSTEM_PARAM_ST {
     pub fn set_map_save_map_name_id_on_game_start(&mut self, value: u32) {
         self.map_save_map_name_id_on_game_start = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10012,7 +9975,6 @@ impl COOL_TIME_PARAM_ST {
     pub fn set_observe_time_3(&mut self, value: f32) {
         self.observe_time_3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10044,7 +10006,6 @@ impl CS_AA_QUALITY_DETAIL {
     pub fn set_force_fxaa2(&mut self, value: u8) {
         self.force_fxaa2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10067,7 +10028,6 @@ impl CS_DECAL_QUALITY_DETAIL {
     pub fn set_enabled(&mut self, value: u8) {
         self.enabled = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10108,7 +10068,6 @@ impl CS_DOF_QUALITY_DETAIL {
     pub fn set_max_blur_level(&mut self, value: i32) {
         self.max_blur_level = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10221,7 +10180,6 @@ impl CS_EFFECT_QUALITY_DETAIL {
     pub fn set_f_scale_render_distance_scale(&mut self, value: f32) {
         self.f_scale_render_distance_scale = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10361,7 +10319,6 @@ impl CS_GRAPHICS_CONFIG_PARAM_ST {
     pub fn set_m_ray_tracing_quality(&mut self, value: u8) {
         self.m_ray_tracing_quality = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10456,7 +10413,6 @@ impl CS_KEY_ASSIGN_MENUITEM_PARAM {
     pub fn set_view_keyboard_mouse(&mut self, value: u8) {
         self.view_keyboard_mouse = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10506,7 +10462,6 @@ impl CS_LIGHTING_QUALITY_DETAIL {
     pub fn set_local_light_shadow_spec_level_max(&mut self, value: u8) {
         self.local_light_shadow_spec_level_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10582,7 +10537,6 @@ impl CS_MOTION_BLUR_QUALITY_DETAIL {
     pub fn set_blur_max_length_scale(&mut self, value: f32) {
         self.blur_max_length_scale = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10637,7 +10591,6 @@ impl CS_RAYTRACING_QUALITY_DETAIL {
     pub fn set_render_distance(&mut self, value: f32) {
         self.render_distance = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10742,7 +10695,6 @@ impl CS_REFLECTION_QUALITY_DETAIL {
     pub fn set_ssr_fresnel_reject_bias(&mut self, value: f32) {
         self.ssr_fresnel_reject_bias = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10791,7 +10743,6 @@ impl CS_SHADER_QUALITY_DETAIL {
     pub fn set_dmy(&mut self, value: [u8; 1]) {
         self.dmy = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10868,7 +10819,6 @@ impl CS_SHADOW_QUALITY_DETAIL {
     pub fn set_blur_count_bias(&mut self, value: i32) {
         self.blur_count_bias = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10918,7 +10868,6 @@ impl CS_SSAO_QUALITY_DETAIL {
     pub fn set_cs_use_normal_enabled_type(&mut self, value: u8) {
         self.cs_use_normal_enabled_type = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -10950,7 +10899,6 @@ impl CS_TEXTURE_FILTER_QUALITY_DETAIL {
     pub fn set_max_aniso_level(&mut self, value: u32) {
         self.max_aniso_level = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11100,7 +11048,6 @@ impl CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL {
     pub fn set_fog_volume_resolution(&mut self, value: u8) {
         self.fog_volume_resolution = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11123,7 +11070,6 @@ impl CS_WATER_QUALITY_DETAIL {
     pub fn set_interaction_enabled(&mut self, value: u8) {
         self.interaction_enabled = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11231,7 +11177,6 @@ impl CUTSCENE_GPARAM_TIME_PARAM_ST {
     pub fn set_post_play_ingame_time(&mut self, value: f32) {
         self.post_play_ingame_time = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11605,7 +11550,6 @@ impl CUTSCENE_GPARAM_WEATHER_PARAM_ST {
     pub fn set_override_map_gd_region_id(&mut self, value: i16) {
         self.override_map_gd_region_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11714,7 +11658,6 @@ impl CUTSCENE_MAP_ID_PARAM_ST {
     pub fn set_hit_parts_1(&mut self, value: i32) {
         self.hit_parts_1 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11893,7 +11836,6 @@ impl CUTSCENE_TEXTURE_LOAD_PARAM_ST {
     pub fn set_tex_name_15(&mut self, value: [u8; 16]) {
         self.tex_name_15 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11924,7 +11866,6 @@ impl CUTSCENE_TIMEZONE_CONVERT_PARAM_ST {
     pub fn set_dst_cutscen_time(&mut self, value: f32) {
         self.dst_cutscen_time = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -11946,7 +11887,6 @@ impl CUTSCENE_WEATHER_OVERRIDE_GPARAM_ID_CONVERT_PARAM_ST {
     pub fn set_weather_override_gparam_id(&mut self, value: u32) {
         self.weather_override_gparam_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -12713,7 +12653,6 @@ impl DECAL_PARAM_ST {
     pub fn set_max_decal_sfx_creatable_slope_angle_deg(&mut self, value: f32) {
         self.max_decal_sfx_creatable_slope_angle_deg = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -13883,7 +13822,6 @@ impl DEFAULT_KEY_ASSIGN {
     pub fn set_a2d_threshold_7(&mut self, value: f32) {
         self.a2d_threshold_7 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -13898,8 +13836,7 @@ impl ParamDef for DEFEAT_BOSS_SOUL_PARAM_ST {
     const NAME: &str = "DEFEAT_BOSS_SOUL_PARAM_ST";
 }
 
-impl DEFEAT_BOSS_SOUL_PARAM_ST {
-}
+impl DEFEAT_BOSS_SOUL_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -13923,7 +13860,6 @@ impl DIRECTION_CAMERA_PARAM_ST {
     pub fn set_is_use_option(&mut self, value: bool) {
         self.bits_0 = (self.bits_0 & !(1 << 0)) | (u8::from(value) << 0);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -14263,7 +14199,6 @@ impl ENEMY_COMMON_PARAM_ST {
     pub fn set_revive_damage_bonus_aggro_duration(&mut self, value: i32) {
         self.revive_damage_bonus_aggro_duration = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -14421,7 +14356,6 @@ impl ENV_OBJ_LOT_PARAM_ST {
     pub fn set_create_weight_7(&mut self, value: u8) {
         self.create_weight_7 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -14661,7 +14595,6 @@ impl EQUIP_MTRL_SET_PARAM_ST {
     pub fn set_is_disable_disp_num06(&mut self, value: bool) {
         self.bits_30 = (self.bits_30 & !(1 << 5)) | (u8::from(value) << 5);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -14803,7 +14736,6 @@ impl EQUIP_PARAM_ACCESSORY_ST {
     pub fn set_sp_effect_id_3(&mut self, value: i32) {
         self.sp_effect_id_3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -14959,7 +14891,6 @@ impl EQUIP_PARAM_ANTIQUE_ST {
     pub fn set_attach_effect_table_id_curse3(&mut self, value: i32) {
         self.attach_effect_table_id_curse3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -15093,7 +15024,6 @@ impl EQUIP_PARAM_CUSTOM_WEAPON_ST {
     pub fn set_attach_effect_table_id_6(&mut self, value: i32) {
         self.attach_effect_table_id_6 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -16292,7 +16222,6 @@ impl EQUIP_PARAM_GOODS_ST {
     pub fn set_fh_unknown_09c(&mut self, value: u16) {
         self.fh_unknown_09c = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -18534,7 +18463,6 @@ impl EQUIP_PARAM_PROTECTOR_ST {
     pub fn set_invisible_flag_sex_ver95(&mut self, value: u8) {
         self.invisible_flag_sex_ver95 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -21071,7 +20999,6 @@ impl EQUIP_PARAM_WEAPON_ST {
     pub fn set_revive_damage(&mut self, value: f32) {
         self.revive_damage = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -21265,7 +21192,6 @@ impl ESTUS_FLASK_RECOVERY_PARAM_ST {
     pub fn set_param_replace_id(&mut self, value: i32) {
         self.param_replace_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -21300,7 +21226,6 @@ impl EVENT_BGM_BOSSCHRID_CONVERT_PARAM_ST {
     pub fn set_param_str(&mut self, value: [u8; 32]) {
         self.param_str = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -21342,7 +21267,6 @@ impl EVENT_FLAG_USAGE_PARAM_ST {
     pub fn set_flag_num(&mut self, value: i32) {
         self.flag_num = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -23523,7 +23447,6 @@ impl FACE_PARAM_ST {
     pub fn set_face_geo_asym_data25(&mut self, value: u8) {
         self.face_geo_asym_data25 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -25390,7 +25313,6 @@ impl FACE_RANGE_PARAM_ST {
     pub fn set_burn_scar(&mut self, value: f32) {
         self.burn_scar = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -25423,7 +25345,6 @@ impl FALL_CONTROL_PARAM_ST {
     pub fn set_horizontal_velocity_change(&mut self, value: f32) {
         self.horizontal_velocity_change = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -25488,7 +25409,6 @@ impl FE_TEXT_EFFECT_PARAM_ST {
     pub fn set_can_mix_map_name(&mut self, value: bool) {
         self.bits_c = (self.bits_c & !(1 << 0)) | (u8::from(value) << 0);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -27301,7 +27221,6 @@ impl FOOT_SFX_PARAM_ST {
     pub fn set_sfx_id_199(&mut self, value: u32) {
         self.sfx_id_199 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -28711,19 +28630,29 @@ impl GAME_SYSTEM_COMMON_PARAM_ST {
         self.a_i_jump_anim_y_move_correct_rate_on_jump_off = value;
     }
 
-    pub fn stealth_system_sight_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(&self) -> f32 {
+    pub fn stealth_system_sight_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(
+        &self,
+    ) -> f32 {
         self.stealth_system_sight_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode
     }
 
-    pub fn set_stealth_system_sight_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(&mut self, value: f32) {
+    pub fn set_stealth_system_sight_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(
+        &mut self,
+        value: f32,
+    ) {
         self.stealth_system_sight_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode = value;
     }
 
-    pub fn stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(&self) -> f32 {
+    pub fn stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(
+        &self,
+    ) -> f32 {
         self.stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode
     }
 
-    pub fn set_stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(&mut self, value: f32) {
+    pub fn set_stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(
+        &mut self,
+        value: f32,
+    ) {
         self.stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode = value;
     }
 
@@ -28731,7 +28660,10 @@ impl GAME_SYSTEM_COMMON_PARAM_ST {
         self.stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_stealth_mode
     }
 
-    pub fn set_stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_stealth_mode(&mut self, value: f32) {
+    pub fn set_stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_stealth_mode(
+        &mut self,
+        value: f32,
+    ) {
         self.stealth_system_sight_rate_not_in_stealth_rigid_sight_hide_stealth_mode = value;
     }
 
@@ -28847,28 +28779,44 @@ impl GAME_SYSTEM_COMMON_PARAM_ST {
         self.ai_sight_rate_sunloss_very_dark = value;
     }
 
-    pub fn stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(&self) -> f32 {
+    pub fn stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(
+        &self,
+    ) -> f32 {
         self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode
     }
 
-    pub fn set_stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(&mut self, value: f32) {
+    pub fn set_stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode(
+        &mut self,
+        value: f32,
+    ) {
         self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_not_sight_hide_stealth_mode = value;
     }
 
-    pub fn stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(&self) -> f32 {
+    pub fn stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(
+        &self,
+    ) -> f32 {
         self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode
     }
 
-    pub fn set_stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(&mut self, value: f32) {
+    pub fn set_stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode(
+        &mut self,
+        value: f32,
+    ) {
         self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_not_stealth_mode = value;
     }
 
-    pub fn stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode(&self) -> f32 {
+    pub fn stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode(
+        &self,
+    ) -> f32 {
         self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode
     }
 
-    pub fn set_stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode(&mut self, value: f32) {
-        self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode = value;
+    pub fn set_stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode(
+        &mut self,
+        value: f32,
+    ) {
+        self.stealth_system_sight_angle_reduce_rate_not_in_stealth_rigid_sight_hide_stealth_mode =
+            value;
     }
 
     pub fn maching_weapon_level_upper_white_sign_11(&self) -> u8 {
@@ -29534,7 +29482,6 @@ impl GAME_SYSTEM_COMMON_PARAM_ST {
     pub fn set_special_reward_extra_amount2(&mut self, value: i32) {
         self.special_reward_extra_amount2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -29589,7 +29536,6 @@ impl GESTURE_PARAM_ST {
     pub fn set_cannot_use_riding(&mut self, value: bool) {
         self.bits_c = (self.bits_c & !(1 << 0)) | (u8::from(value) << 0);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -29624,7 +29570,6 @@ impl GPARAM_REF_SETTINGS_PARAM_ST {
     pub fn set_ref_target_map_id(&mut self, value: i32) {
         self.ref_target_map_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -29657,7 +29602,6 @@ impl GRAPHICS_COMMON_PARAM_ST {
     pub fn set_chara_wet_decal_fade_range(&mut self, value: f32) {
         self.chara_wet_decal_fade_range = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -29724,7 +29668,6 @@ impl GRASS_LOD_RANGE_PARAM_ST {
     pub fn set_lod2_play(&mut self, value: f32) {
         self.lod2_play = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -30055,7 +29998,6 @@ impl GRASS_TYPE_PARAM_ST {
     pub fn set_model1_name(&mut self, value: [u16; 16]) {
         self.model1_name = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -30080,8 +30022,7 @@ impl ParamDef for HERO_MENU_CAMERA_PARAM_ST {
     const NAME: &str = "HERO_MENU_CAMERA_PARAM_ST";
 }
 
-impl HERO_MENU_CAMERA_PARAM_ST {
-}
+impl HERO_MENU_CAMERA_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -30222,7 +30163,6 @@ impl HERO_MENU_PARAM_ST {
     pub fn set_arcane_grade(&mut self, value: i8) {
         self.arcane_grade = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -30293,7 +30233,6 @@ impl HERO_OPERATION_EXPLANATION_PARAM_ST {
     pub fn set_shortcut_text_id(&mut self, value: i32) {
         self.shortcut_text_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -30551,7 +30490,6 @@ impl HERO_PARAM_ST {
     pub fn set_fh_unknown_01(&mut self, value: i32) {
         self.fh_unknown_01 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -30694,7 +30632,6 @@ impl HERO_STATUS_PARAM {
     pub fn set_executor_beast_reinforce(&mut self, value: i32) {
         self.executor_beast_reinforce = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -30817,7 +30754,6 @@ impl HIT_EFFECT_SFX_CONCEPT_PARAM_ST {
     pub fn set_atk_none_2(&mut self, value: i16) {
         self.atk_none_2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -31010,7 +30946,6 @@ impl HIT_EFFECT_SFX_PARAM_ST {
     pub fn set_neutral_specific2(&mut self, value: i32) {
         self.neutral_specific2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -31292,7 +31227,6 @@ impl HIT_MTRL_PARAM_ST {
     pub fn set_sp_effect_id_for_wet04(&mut self, value: i32) {
         self.sp_effect_id_for_wet04 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32112,7 +32046,6 @@ impl ITEMLOT_PARAM_ST {
     pub fn set_lot_action_button_type_b_08(&mut self, value: i32) {
         self.lot_action_button_type_b_08 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32203,7 +32136,6 @@ impl ITEMTABLE_PARAM_ST {
     pub fn set_weapon_type_discovery(&mut self, value: i32) {
         self.weapon_type_discovery = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32294,7 +32226,6 @@ impl KEY_ASSIGN_PARAM_ST {
     pub fn set_shared_key(&mut self, value: i32) {
         self.shared_key = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32578,7 +32509,6 @@ impl KNOCKBACK_PARAM_ST {
     pub fn set_guard_brake_dec_time(&mut self, value: f32) {
         self.guard_brake_dec_time = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32630,7 +32560,6 @@ impl KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST {
     pub fn set_msg_id(&mut self, value: i32) {
         self.msg_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32806,7 +32735,6 @@ impl LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM {
     pub fn set_limited_map_regio_asset_id_range_max(&mut self, value: i32) {
         self.limited_map_regio_asset_id_range_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -32835,8 +32763,7 @@ impl ParamDef for LIMITED_DAY_ASSET_PARAM_ST {
     const NAME: &str = "LIMITED_DAY_ASSET_PARAM_ST";
 }
 
-impl LIMITED_DAY_ASSET_PARAM_ST {
-}
+impl LIMITED_DAY_ASSET_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -33038,7 +32965,6 @@ impl LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST {
     pub fn set_lv20(&mut self, value: f32) {
         self.lv20 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33126,7 +33052,6 @@ impl LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST {
     pub fn set_shadw_draw_dist_scale_end(&mut self, value: f32) {
         self.shadw_draw_dist_scale_end = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33420,7 +33345,6 @@ impl LOAD_BALANCER_PARAM_ST {
     pub fn set_dynamic_resolution_percentage_max(&mut self, value: u8) {
         self.dynamic_resolution_percentage_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33479,7 +33403,6 @@ impl LOBBY_MENU_NPC_PARAM_ST {
     pub fn set_hide_map_icon_event_flag(&mut self, value: i32) {
         self.hide_map_icon_event_flag = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33558,7 +33481,6 @@ impl LOBBY_MENU_PARAM_ST {
     pub fn set_map_position_entity_id(&mut self, value: i32) {
         self.map_position_entity_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33752,7 +33674,6 @@ impl LOCK_CAM_PARAM_ST {
     pub fn set_chr_trans_chase_rate_for_normal(&mut self, value: f32) {
         self.chr_trans_chase_rate_for_normal = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33838,7 +33759,6 @@ impl LOT_BASE_MAP_PATTERN_FLAG_ST {
     pub fn set_weight(&mut self, value: i32) {
         self.weight = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33879,7 +33799,6 @@ impl LOT_BASE_SMALBASE_AND_SPOT_ST {
     pub fn set_modifier2(&mut self, value: i32) {
         self.modifier2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -33956,7 +33875,6 @@ impl LOT_RESULT_MAP_PATTERN_FLAG_ST {
     pub fn set_rare_map(&mut self, value: i32) {
         self.rare_map = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -34069,7 +33987,6 @@ impl LOT_RESULT_PLAYAREA_PARAM_ST {
     pub fn set_extra_boss_modifier2(&mut self, value: i32) {
         self.extra_boss_modifier2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -34138,7 +34055,6 @@ impl LOT_RESULT_SMALLBASE_AND_SPOT_ST {
     pub fn set_modifier(&mut self, value: i32) {
         self.modifier = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35198,7 +35114,6 @@ impl MAGIC_PARAM_ST {
     pub fn set_sparring_grounds_weapon_id(&mut self, value: i32) {
         self.sparring_grounds_weapon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35241,7 +35156,6 @@ impl MAGIC_TABLE_PARAM_ST {
     pub fn set_chance_weight(&mut self, value: i32) {
         self.chance_weight = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35257,8 +35171,7 @@ impl ParamDef for MAIN_SCENARIO_MENU_PARAM_ST {
     const NAME: &str = "MAIN_SCENARIO_MENU_PARAM_ST";
 }
 
-impl MAIN_SCENARIO_MENU_PARAM_ST {
-}
+impl MAIN_SCENARIO_MENU_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -35351,7 +35264,6 @@ impl MANUAL_MAP_PATTERN_INFO_ST {
     pub fn set_modifier_id(&mut self, value: i32) {
         self.modifier_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35578,7 +35490,6 @@ impl MAP_DEFAULT_INFO_PARAM_ST {
     pub fn set_override_gi_resolution_xsx(&mut self, value: i8) {
         self.override_gi_resolution_xsx = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35612,7 +35523,6 @@ impl MAP_GD_REGION_DRAW_PARAM {
     pub fn set_override_iv_local_light_scale(&mut self, value: f32) {
         self.override_iv_local_light_scale = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35647,7 +35557,6 @@ impl MAP_GD_REGION_ID_PARAM_ST {
     pub fn set_map_region_id(&mut self, value: u32) {
         self.map_region_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35679,7 +35588,6 @@ impl MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST {
     pub fn set_grid_enable_create_height_max(&mut self, value: f32) {
         self.grid_enable_create_height_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35801,7 +35709,6 @@ impl MAP_MIMICRY_ESTABLISHMENT_PARAM_ST {
     pub fn set_mimicry_end_sfx_id2(&mut self, value: i32) {
         self.mimicry_end_sfx_id2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35864,7 +35771,6 @@ impl MAP_NAME_TEX_PARAM_ST {
     pub fn set_map_name_id(&mut self, value: i32) {
         self.map_name_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -35884,8 +35790,7 @@ impl ParamDef for MAP_PATTERN_COMMON_ST {
     const NAME: &str = "MAP_PATTERN_COMMON_ST";
 }
 
-impl MAP_PATTERN_COMMON_ST {
-}
+impl MAP_PATTERN_COMMON_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -35947,7 +35852,6 @@ impl MAP_PATTERN_MAP_LOT_CONDITION_ST {
     pub fn set_fh_unknown_00(&mut self, value: i32) {
         self.fh_unknown_00 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -37070,7 +36974,6 @@ impl MAP_PATTERN_SET_PARAM_ST {
     pub fn set_great_hollow_west_fort_library_modifier4_count(&mut self, value: i16) {
         self.great_hollow_west_fort_library_modifier4_count = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -37141,7 +37044,6 @@ impl MAP_PIECE_TEX_PARAM_ST {
     pub fn set_multi_play_area_id(&mut self, value: i32) {
         self.multi_play_area_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -37218,7 +37120,6 @@ impl MATERIAL_EX_PARAM_ST {
     pub fn set_material_param_value4(&mut self, value: f32) {
         self.material_param_value4 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -37276,7 +37177,6 @@ impl MENUPROPERTY_LAYOUT {
     pub fn set_icon_id(&mut self, value: i32) {
         self.icon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -37338,7 +37238,6 @@ impl MENUPROPERTY_SPEC {
     pub fn set_format_type(&mut self, value: u16) {
         self.format_type = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -37980,7 +37879,6 @@ impl MENU_COMMON_PARAM_ST {
     pub fn set_fh_unknown_10(&mut self, value: i32) {
         self.fh_unknown_10 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38129,7 +38027,6 @@ impl MENU_OFFSCR_REND_PARAM_ST {
     pub fn set_grapm_id_for_xb1(&mut self, value: u32) {
         self.grapm_id_for_xb1 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38216,7 +38113,6 @@ impl MENU_PARAM_COLOR_TABLE_ST {
     pub fn set_v3(&mut self, value: f32) {
         self.v3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38257,7 +38153,6 @@ impl MENU_VALUE_TABLE_SPEC {
     pub fn set_compare_type(&mut self, value: i8) {
         self.compare_type = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38333,7 +38228,6 @@ impl MENU_WINDOW_PARAM_ST {
     pub fn set_menu_property_layout_param_id(&mut self, value: i32) {
         self.menu_property_layout_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38347,8 +38241,7 @@ impl ParamDef for MESSAGEBOX_PARAM_ST {
     const NAME: &str = "MESSAGEBOX_PARAM_ST";
 }
 
-impl MESSAGEBOX_PARAM_ST {
-}
+impl MESSAGEBOX_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -38410,7 +38303,6 @@ impl MIMICRY_ESTABLISHMENT_TEX_PARAM_ST {
     pub fn set_mimicry_establishment_param_id(&mut self, value: i32) {
         self.mimicry_establishment_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38455,7 +38347,6 @@ impl MISSION_MANAGEMENT_PARAM_ST {
     pub fn set_map_pattern_map_lot_condition_id(&mut self, value: i32) {
         self.map_pattern_map_lot_condition_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38506,7 +38397,6 @@ impl MIXCRAFT_MAGIC_PARAM_ST {
     pub fn set_magic_id(&mut self, value: i32) {
         self.magic_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -38870,7 +38760,6 @@ impl MOVE_PARAM_ST {
     pub fn set_turn_wait_no_anim_angle(&mut self, value: u8) {
         self.turn_wait_no_anim_angle = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -39028,7 +38917,6 @@ impl MULTI_ESTUS_FLASK_BONUS_PARAM_ST {
     pub fn set_yellow_monk(&mut self, value: u8) {
         self.yellow_monk = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -39090,7 +38978,6 @@ impl MULTI_PLAY_CORRECTION_PARAM_ST {
     pub fn set_b_override_sp_effect(&mut self, value: u8) {
         self.b_override_sp_effect = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -39248,7 +39135,6 @@ impl MULTI_SOUL_BONUS_RATE_PARAM_ST {
     pub fn set_yellow_monk(&mut self, value: f32) {
         self.yellow_monk = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -39641,7 +39527,6 @@ impl NETWORK_MSG_PARAM_ST {
     pub fn set_force_join_black_c_npc(&mut self, value: i32) {
         self.force_join_black_c_npc = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -40970,7 +40855,6 @@ impl NETWORK_PARAM_ST {
     pub fn set_yellow_monk_overall_flow_time_out_time(&mut self, value: f32) {
         self.yellow_monk_overall_flow_time_out_time = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -41139,7 +41023,6 @@ impl NIGHT_BOSS_MENU_PARAM_ST {
     pub fn set_large_boss_icon_id(&mut self, value: i32) {
         self.large_boss_icon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -41180,7 +41063,6 @@ impl NPCBOT_TABLE_PARAM_ST {
     pub fn set_chara_init_param_id(&mut self, value: i32) {
         self.chara_init_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -41284,7 +41166,6 @@ impl NPC_AI_ACTION_PARAM_ST {
     pub fn set_b_life_end_success(&mut self, value: u8) {
         self.b_life_end_success = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -43097,7 +42978,6 @@ impl NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST {
     pub fn set_param199(&mut self, value: i16) {
         self.param199 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -46271,7 +46151,6 @@ impl NPC_PARAM_ST {
     pub fn set_analyse_dist_correction(&mut self, value: f32) {
         self.analyse_dist_correction = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47180,7 +47059,6 @@ impl NPC_THINK_PARAM_ST {
     pub fn set_surprise_anim_id(&mut self, value: i32) {
         self.surprise_anim_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47384,7 +47262,6 @@ impl OBJ_ACT_PARAM_ST {
     pub fn set_pre_action_sfx_id(&mut self, value: i32) {
         self.pre_action_sfx_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47413,7 +47290,6 @@ impl OPERATION_GUIDE_PARAM_ST {
     pub fn set_guide_text_id(&mut self, value: i32) {
         self.guide_text_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47463,7 +47339,6 @@ impl OVERLAY_MATERIAL_PARAM_ST {
     pub fn set_material_param_value1(&mut self, value: f32) {
         self.material_param_value1 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47821,7 +47696,6 @@ impl PARTS_DRAW_PARAM_ST {
     pub fn set_lb_draw_dist_scale_param_id(&mut self, value: u8) {
         self.lb_draw_dist_scale_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47897,7 +47771,6 @@ impl PERMANENT_BUFF_PARAM_ST {
     pub fn set_grace_sp_effect_id(&mut self, value: i32) {
         self.grace_sp_effect_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -47989,7 +47862,6 @@ impl PERSONAL_SCENARIO_PARAM_ST {
     pub fn set_spawnpoint_entity_id(&mut self, value: i32) {
         self.spawnpoint_entity_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -48255,7 +48127,6 @@ impl PHANTOM_PARAM_ST {
     pub fn set_glow_scale(&mut self, value: f32) {
         self.glow_scale = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -48280,8 +48151,7 @@ impl ParamDef for PIN_TYPE_PARAM_ST {
     const NAME: &str = "PIN_TYPE_PARAM_ST";
 }
 
-impl PIN_TYPE_PARAM_ST {
-}
+impl PIN_TYPE_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -48309,8 +48179,7 @@ impl ParamDef for PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST {
     const NAME: &str = "PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST";
 }
 
-impl PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST {
-}
+impl PLAYAREA_GIANT_ASSET_CTRL_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -49902,7 +49771,6 @@ impl PLAYER_COMMON_PARAM_ST {
     pub fn set_fh_unknown_80(&mut self, value: f32) {
         self.fh_unknown_80 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -50087,7 +49955,6 @@ impl PLAY_AREA_CREATE_COMMON_PARAM_ST {
     pub fn set_initial_circle_pos_z(&mut self, value: f32) {
         self.initial_circle_pos_z = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -50160,7 +50027,6 @@ impl PLAY_AREA_CREATE_DEFAULT_PARAM_ST {
     pub fn set_pos_z(&mut self, value: f32) {
         self.pos_z = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -50315,7 +50181,6 @@ impl PLAY_AREA_CREATE_PARAM_ST {
     pub fn set_extra_boss_attach_point(&mut self, value: i32) {
         self.extra_boss_attach_point = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -51065,7 +50930,6 @@ impl PLAY_REGION_PARAM_ST {
     pub fn set_map_menu_unlock_event_id(&mut self, value: u32) {
         self.map_menu_unlock_event_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -51366,7 +51230,6 @@ impl POSTURE_CONTROL_PARAM_PRO_ST {
     pub fn set_a015_left_arm_fb(&mut self, value: i16) {
         self.a015_left_arm_fb = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -51515,7 +51378,6 @@ impl POSTURE_CONTROL_PARAM_WEP_LEFT_ST {
     pub fn set_a003_left_weapon_rotation(&mut self, value: i16) {
         self.a003_left_weapon_rotation = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -52339,7 +52201,6 @@ impl POSTURE_CONTROL_PARAM_WEP_RIGHT_ST {
     pub fn set_a016_left_weapon_rotation(&mut self, value: i16) {
         self.a016_left_weapon_rotation = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -53365,7 +53226,6 @@ impl RANDOM_APPEAR_PARAM_ST {
     pub fn set_slot99(&mut self, value: bool) {
         self.bits_c = (self.bits_c & !(1 << 3)) | (u8::from(value) << 3);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -53408,7 +53268,6 @@ impl RARE_MAP_INFO_MENU_PARAM_ST {
     pub fn set_map_flag(&mut self, value: i32) {
         self.map_flag = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -53592,7 +53451,6 @@ impl REINFORCE_PARAM_PROTECTOR_ST {
     pub fn set_resist_madness_rate(&mut self, value: f32) {
         self.resist_madness_rate = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -53957,7 +53815,6 @@ impl REINFORCE_PARAM_WEAPON_ST {
     pub fn set_correct_spell_scaling_rate(&mut self, value: f32) {
         self.correct_spell_scaling_rate = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54060,7 +53917,6 @@ impl RESIST_CORRECT_PARAM_ST {
     pub fn set_add_rate5(&mut self, value: f32) {
         self.add_rate5 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54092,7 +53948,6 @@ impl RESULT_MENU_PLAY_SPEED_PARAM_ST {
     pub fn set_option_text_id(&mut self, value: i32) {
         self.option_text_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54114,7 +53969,6 @@ impl REVERB_AUX_SEND_BUS_PARAM_ST {
     pub fn set_reverb_aux_send_bus_name(&mut self, value: [u8; 32]) {
         self.reverb_aux_send_bus_name = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54245,7 +54099,6 @@ impl RIDE_PARAM_ST {
     pub fn set_diff_ang_max(&mut self, value: f32) {
         self.diff_ang_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54415,7 +54268,6 @@ impl ROLLING_OBJ_LOT_PARAM_ST {
     pub fn set_create_weight_7(&mut self, value: u8) {
         self.create_weight_7 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54474,7 +54326,6 @@ impl RUNTIME_BONE_CONTROL_PARAM_ST {
     pub fn set_target_bone2(&mut self, value: [u8; 32]) {
         self.target_bone2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54523,7 +54374,6 @@ impl SCENARIO_PLACEMENT_PARAM_ST {
     pub fn set_chara_init_param_id(&mut self, value: i32) {
         self.chara_init_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54592,7 +54442,6 @@ impl SCRATCHED_PARTS_PARAM_ST {
     pub fn set_dummy_poly_id(&mut self, value: i16) {
         self.dummy_poly_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54615,8 +54464,7 @@ impl ParamDef for SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {
     const NAME: &str = "SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST";
 }
 
-impl SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {
-}
+impl SESSION_RANDOM_ASSET_TEX_REPLACE_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -54684,7 +54532,6 @@ impl SESSION_REWARD_BY_MODE_RANK_PARAM_ST {
     pub fn set_item_lot_id_4(&mut self, value: i32) {
         self.item_lot_id_4 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54713,8 +54560,7 @@ impl ParamDef for SESSION_REWARD_COMMON_PARAM_ST {
     const NAME: &str = "SESSION_REWARD_COMMON_PARAM_ST";
 }
 
-impl SESSION_REWARD_COMMON_PARAM_ST {
-}
+impl SESSION_REWARD_COMMON_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -54735,7 +54581,6 @@ impl SE_ACTIVATION_RANGE_PARAM_ST {
     pub fn set_activate_range(&mut self, value: f32) {
         self.activate_range = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54758,7 +54603,6 @@ impl SE_MATERIAL_CONVERT_PARAM_ST {
     pub fn set_se_material_id(&mut self, value: u8) {
         self.se_material_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54772,8 +54616,7 @@ impl ParamDef for SFX_BLOCK_RES_SHARE_PARAM {
     const NAME: &str = "SFX_BLOCK_RES_SHARE_PARAM";
 }
 
-impl SFX_BLOCK_RES_SHARE_PARAM {
-}
+impl SFX_BLOCK_RES_SHARE_PARAM {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -54939,7 +54782,6 @@ impl SHOP_LINEUP_PARAM {
     pub fn set_menu_icon_id(&mut self, value: i16) {
         self.menu_icon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54974,7 +54816,6 @@ impl SIGN_PUDDLE_PARAM_ST {
     pub fn set_match_area_id(&mut self, value: i32) {
         self.match_area_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -54988,8 +54829,7 @@ impl ParamDef for SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {
     const NAME: &str = "SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST";
 }
 
-impl SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {
-}
+impl SMALBASE_SFX_LOD_EXCLUSION_LIST_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -55120,7 +54960,6 @@ impl SMALLBASE_AND_SPOT_ATTACH_POINT_ST {
     pub fn set_pos_z(&mut self, value: f32) {
         self.pos_z = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55396,7 +55235,6 @@ impl SMALLBASE_AND_SPOT_DEFINE_ST {
     pub fn set_world_map_point_icon_id3(&mut self, value: i16) {
         self.world_map_point_icon_id3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55438,7 +55276,6 @@ impl SMALLBASE_INVATION_NPC_PARAM_ST {
     pub fn set_chara_init_param_id(&mut self, value: i32) {
         self.chara_init_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55502,7 +55339,6 @@ impl SMALLBASE_LOT_MAP_COMBINATION_PARAM_ST {
     pub fn set_map_id4(&mut self, value: i16) {
         self.map_id4 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55737,7 +55573,6 @@ impl SMALLBASE_MAP_VARIATION_PARAM_ST {
     pub fn set_variation_icon_id_10(&mut self, value: u16) {
         self.variation_icon_id_10 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55863,7 +55698,6 @@ impl SORTIE_STARTING_POINT_ST {
     pub fn set_spawn_point_entity_id(&mut self, value: u32) {
         self.spawn_point_entity_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55885,7 +55719,6 @@ impl SOUND_ASSET_SOUND_OBJ_ENABLE_DIST_PARAM_ST {
     pub fn set_sound_obj_enable_dist(&mut self, value: f32) {
         self.sound_obj_enable_dist = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -55934,7 +55767,6 @@ impl SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST {
     pub fn set_follow_rate(&mut self, value: f32) {
         self.follow_rate = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56019,7 +55851,6 @@ impl SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST {
     pub fn set_ignore_dist_num_for_max(&mut self, value: u32) {
         self.ignore_dist_num_for_max = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56123,7 +55954,6 @@ impl SOUND_AUTO_REVERB_SELECT_PARAM_ST {
     pub fn set_no_hit_num_min(&mut self, value: i32) {
         self.no_hit_num_min = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56374,7 +56204,6 @@ impl SOUND_CHR_PHYSICS_SE_PARAM_ST {
     pub fn set_contact_check_rigid_idx15(&mut self, value: i8) {
         self.contact_check_rigid_idx15 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56405,7 +56234,6 @@ impl SOUND_COMMON_INGAME_PARAM_ST {
     pub fn set_param_value_str(&mut self, value: [u8; 32]) {
         self.param_value_str = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56436,7 +56264,6 @@ impl SOUND_COMMON_SYSTEM_PARAM_ST {
     pub fn set_param_value_str(&mut self, value: [u8; 32]) {
         self.param_value_str = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56518,7 +56345,6 @@ impl SOUND_CUTSCENE_PARAM_ST {
     pub fn set_enter_map_mute_stop_time_on_draw_cutscene(&mut self, value: f32) {
         self.enter_map_mute_stop_time_on_draw_cutscene = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -56621,7 +56447,6 @@ impl SPEEDTREE_MODEL_PARAM_ST {
     pub fn set_billboard_back_specular_weaken_param(&mut self, value: f32) {
         self.billboard_back_specular_weaken_param = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -60363,7 +60188,6 @@ impl SP_EFFECT_PARAM_ST {
     pub fn set_start_magic_id(&mut self, value: i32) {
         self.start_magic_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -60412,7 +60236,6 @@ impl SP_EFFECT_SET_PARAM_ST {
     pub fn set_sp_effect_id4(&mut self, value: i32) {
         self.sp_effect_id4 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -61020,7 +60843,6 @@ impl SP_EFFECT_VFX_PARAM_ST {
     pub fn set_overlay_material_param_id(&mut self, value: i32) {
         self.overlay_material_param_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -61035,8 +60857,7 @@ impl ParamDef for SUBSTORY_LINK_PARAM_ST {
     const NAME: &str = "SUBSTORY_LINK_PARAM_ST";
 }
 
-impl SUBSTORY_LINK_PARAM_ST {
-}
+impl SUBSTORY_LINK_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -61067,7 +60888,6 @@ impl SWORDARTS_TABLE_PARAM_ST {
     pub fn set_chance_weight(&mut self, value: i32) {
         self.chance_weight = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -61380,7 +61200,6 @@ impl SWORD_ARTS_PARAM_ST {
     pub fn set_is_start_skill_undertaker(&mut self, value: bool) {
         self.bits_30 = (self.bits_30 & !(1 << 7)) | (u8::from(value) << 7);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -61486,7 +61305,6 @@ impl TALK_PARAM_ST {
     pub fn set_dialogue_animation_id(&mut self, value: i32) {
         self.dialogue_animation_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -61503,8 +61321,7 @@ impl ParamDef for TEXT_EMBED_IMAGE_PARAM_ST {
     const NAME: &str = "TEXT_EMBED_IMAGE_PARAM_ST";
 }
 
-impl TEXT_EMBED_IMAGE_PARAM_ST {
-}
+impl TEXT_EMBED_IMAGE_PARAM_ST {}
 
 #[derive(Debug, Clone)]
 #[allow(non_camel_case_types)]
@@ -61528,7 +61345,6 @@ impl THROW_COUNTER_PARAM_ST {
     pub fn set_character_id(&mut self, value: i32) {
         self.character_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -61821,7 +61637,6 @@ impl THROW_DIRECTION_SFX_PARAM_ST {
     pub fn set_sfx_id_30(&mut self, value: i32) {
         self.sfx_id_30 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62186,7 +62001,6 @@ impl THROW_PARAM_ST {
     pub fn set_throw_following_end_easing_time(&mut self, value: f32) {
         self.throw_following_end_easing_time = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62246,7 +62060,6 @@ impl TOUGHNESS_PARAM_ST {
     pub fn set_pro_correction_rate(&mut self, value: f32) {
         self.pro_correction_rate = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62270,7 +62083,6 @@ impl TUTORIAL_CATEGORY_PARAM_ST {
     pub fn set_category_text_id(&mut self, value: i32) {
         self.category_text_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62383,7 +62195,6 @@ impl TUTORIAL_PARAM_ST {
     pub fn set_tutorial_category_id(&mut self, value: i16) {
         self.tutorial_category_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62453,7 +62264,6 @@ impl USER_DISP_LOG_PARAM_ST {
     pub fn set_se_id_2(&mut self, value: i32) {
         self.se_id_2 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62503,7 +62313,6 @@ impl WAYPOINT_PARAM_ST {
     pub fn set_attribute4(&mut self, value: i16) {
         self.attribute4 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62708,7 +62517,6 @@ impl WEATHER_ASSET_CREATE_PARAM_ST {
     pub fn set_create_asset_limit_id3(&mut self, value: i8) {
         self.create_asset_limit_id3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -62861,7 +62669,6 @@ impl WEATHER_ASSET_REPLACE_PARAM_ST {
     pub fn set_create_asset_limit_id3(&mut self, value: i8) {
         self.create_asset_limit_id3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -63220,7 +63027,6 @@ impl WEATHER_LOT_PARAM_ST {
     pub fn set_timezone_end_minute(&mut self, value: u8) {
         self.timezone_end_minute = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -63283,7 +63089,6 @@ impl WEATHER_LOT_TEX_PARAM_ST {
     pub fn set_weather_log_id(&mut self, value: i32) {
         self.weather_log_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -63450,7 +63255,6 @@ impl WEATHER_PARAM_ST {
     pub fn set_dist_view_weather_gparam_override_weight(&mut self, value: f32) {
         self.dist_view_weather_gparam_override_weight = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -63971,7 +63775,6 @@ impl WEP_ABSORP_POS_PARAM_ST {
     pub fn set_disp_pos_type_left_hang_3(&mut self, value: u8) {
         self.disp_pos_type_left_hang_3 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64061,7 +63864,6 @@ impl WET_ASPECT_PARAM_ST {
     pub fn set_shininess(&mut self, value: u8) {
         self.shininess = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64110,7 +63912,6 @@ impl WHITE_SIGN_COOL_TIME_PARAM_ST {
     pub fn set_limitation_time_guardian_dried_finger(&mut self, value: f32) {
         self.limitation_time_guardian_dried_finger = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64257,7 +64058,6 @@ impl WORLD_MAP_LEGACY_CONV_PARAM_ST {
     pub fn set_is_base_point(&mut self, value: bool) {
         self.bits_24 = (self.bits_24 & !(1 << 0)) | (u8::from(value) << 0);
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64391,7 +64191,6 @@ impl WORLD_MAP_PIECE_PARAM_ST {
     pub fn set_acquisition_event_res_offset_y(&mut self, value: f32) {
         self.acquisition_event_res_offset_y = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64490,7 +64289,6 @@ impl WORLD_MAP_PLACE_NAME_PARAM_ST {
     pub fn set_pos_z(&mut self, value: f32) {
         self.pos_z = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64512,7 +64310,6 @@ impl WORLD_MAP_POINT_ICON_PARAM_ST {
     pub fn set_icon_id(&mut self, value: i32) {
         self.icon_id = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64848,7 +64645,6 @@ impl WORLD_MAP_POINT_PARAM_ST {
     pub fn set_fh_unknown_03(&mut self, value: i32) {
         self.fh_unknown_03 = value;
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -64882,6 +64678,4 @@ impl WWISE_VALUE_TO_STR_CONVERT_PARAM_ST {
     pub fn set_param_str(&mut self, value: [u8; 32]) {
         self.param_str = value;
     }
-
 }
-

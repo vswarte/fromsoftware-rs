@@ -10,5 +10,5 @@
 /// These are populated from `mapper-profile.toml` in the root of this package
 /// using `tools/binary-generator`.
 pub struct RvaBundle {
-pub register_task: u32,
+    pub register_task: u32,
 }

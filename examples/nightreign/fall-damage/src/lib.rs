@@ -1,7 +1,10 @@
-use std::{time::Duration};
+use std::time::Duration;
 
 use fromsoftware_shared::{FromStatic, SharedTaskImpExt};
-use nightreign::{cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan}, fd4::FD4TaskData};
+use nightreign::{
+    cs::{CSTaskGroupIndex, CSTaskImp, WorldChrMan},
+    fd4::FD4TaskData,
+};
 
 const HEIGHT_DAMAGE_LOWER_BOUND: f32 = 8.0;
 const HEIGHT_DAMAGE_UPPER_BOUND: f32 = 20.0;
@@ -71,5 +74,3 @@ fn calc_fall_damage(hp_max: u32, height: f32) -> u32 {
         (hp_max as f32 * alpha.clamp(0.0, 1.0)) as u32
     }
 }
-
-
