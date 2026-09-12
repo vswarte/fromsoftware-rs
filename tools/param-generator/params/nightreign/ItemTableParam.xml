@@ -13,13 +13,15 @@
     <Field Def="s32 itemCategory"/>
     <Field Def="s32 itemId"/>
     <Field Def="u16 chanceWeight"/>
-    <Field Def="u8 unknown_4"/>
-    <Field Def="u8 unknown_5"/>
+    <Field Def="u8 quantity"/>
+    <Field Def="u8 onlyForClass"/>
     <Field Def="s32 eventFlagId"/>
     
     <Field Def="s32 unknown_6"/>
     <Field Def="s32 unknown_7"/>
     
-    <Field Def="dummy8 endPadding[4]"/>
+    <Field Def="dummy8 midstPadding[4]"/>
+    
+    <Field Def="s32 weaponTypeDiscovery" FirstVersion="10200000"/>
   </Fields>
 </PARAMDEF>
