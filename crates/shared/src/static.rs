@@ -82,9 +82,6 @@ pub trait FromStatic {
 /// Looks up instances of singleton instances by their name. Some singletons
 /// aren't necessarily always instanciated and available. Discovered singletons
 /// are cached so invokes after the first will be much faster.
-///
-/// Note: currently this never returns [InstanceError::NotFound], but callers
-/// shouldn't rely on that being true into the future.
 impl<T: FromSingleton> FromStatic for T {
     fn name() -> Cow<'static, str> {
         <Self as FromSingleton>::name()
@@ -98,9 +95,16 @@ impl<T: FromSingleton> FromStatic for T {
     /// populated (usually by calling the current game's `wait_for_system_init`
     /// function).
     fn instance_ptr() -> InstanceResult<*mut T> {
-        address_of::<T>()
-            .map(|nn| nn.as_ptr())
-            .ok_or(InstanceError::NotFound(Self::name()))
+        let static_ptr = static_of::<T>().ok_or_else(|| InstanceError::NotFound(Self::name()))?;
+
+        // SAFETY: pointer is valid for the read as insured by `static_of`.
+        let instance_ptr = unsafe { static_ptr.read() };
+
+        if instance_ptr.is_null() {
+            Err(InstanceError::Null(Self::name()))
+        } else {
+            Ok(instance_ptr)
+        }
     }
 }
 
