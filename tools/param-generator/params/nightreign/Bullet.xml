@@ -382,14 +382,7 @@
       <SortID>19100</SortID>
     </Field>
     
-    <Field Def="dummy8 pad_old:6" RemovedVersion="11210015" />
-    
-    <Field Def="u8 mayRemoteDetonate:1" FirstVersion="11210015" />
-    <Field Def="dummy8 pad:5" FirstVersion="11210015" >
-      <DisplayFormat>%d</DisplayFormat>
-      <EditFlags>Wrap</EditFlags>
-      <SortID>99202</SortID>
-    </Field>
+    <Field Def="dummy8 pad_old:6" />
     
     <Field Def="u8 launchConditionType">
       <DisplayName>発生条件</DisplayName>
@@ -656,14 +649,7 @@
       <SortID>20100</SortID>
     </Field>
     
-    <Field Def="dummy8 pad1:1" RemovedVersion="11210015" />
-    
-    <Field Def="u8 isDisableAiProjectileDodge:1" FirstVersion="11210015" >
-      <DisplayName>pad</DisplayName>
-      <DisplayFormat>%d</DisplayFormat>
-      <EditFlags>Wrap</EditFlags>
-      <SortID>99204</SortID>
-    </Field>
+    <Field Def="dummy8 pad1:1"/>
     
     <Field Def="u8 isNonDependenceMagicForFunnleNum:1">
       <DisplayName>PCのファンネル数が理力で変動しない</DisplayName>
@@ -839,7 +825,6 @@
       <SortID>33500</SortID>
     </Field>
     
-    
     <Field Def="f32 unknown_1"/>
     <Field Def="f32 unknown_2"/>
     <Field Def="f32 unknown_3"/>
@@ -857,5 +842,11 @@
     <Field Def="f32 unknown_15"/>
     <Field Def="f32 unknown_16"/>
     <Field Def="f32 unknown_17"/>
+    
+    <Field Def="u8 fh_unknown_1" FirstVersion="10340000" />
+    <Field Def="u8 fh_unknown_2" FirstVersion="10340000" />
+    <Field Def="u8 fh_unknown_3" FirstVersion="10340000" />
+    <Field Def="u8 fh_unknown_4" FirstVersion="10340000" />
+    <Field Def="dummy8 fh_unknown_padding[12]" FirstVersion="10340000" />
   </Fields>
 </PARAMDEF>

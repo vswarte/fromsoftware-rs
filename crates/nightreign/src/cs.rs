@@ -1,0 +1,23 @@
+mod block_id;
+mod camera;
+mod chr_ins;
+mod field_area;
+mod flipper;
+mod game_rend;
+mod move_map_step;
+mod task;
+mod world_area_time;
+mod world_chr_man;
+mod world_info;
+
+pub use block_id::*;
+pub use camera::*;
+pub use chr_ins::*;
+pub use field_area::*;
+pub use flipper::*;
+pub use game_rend::*;
+pub use move_map_step::*;
+pub use task::*;
+pub use world_area_time::*;
+pub use world_chr_man::*;
+pub use world_info::*;

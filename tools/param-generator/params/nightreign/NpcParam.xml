@@ -1967,12 +1967,14 @@
       <SortID>470010</SortID>
     </Field>
     
-    <Field Def="dummy8 pad7[1]" >
-      <DisplayName>pad</DisplayName>
-      <DisplayFormat>%d</DisplayFormat>
-      <EditFlags>Wrap</EditFlags>
-      <SortID>2000004</SortID>
-    </Field>
+    <Field Def="u8 affectedByNecromancy:1" /> <!-- Able to be raised as ghost? -->
+	<Field Def="u8 unknown_20b:1" />
+	<Field Def="u8 enableSpKillId:1" />
+	<Field Def="u8 unknown_20d:1" />
+	<Field Def="u8 unknown_20e:1" />
+	<Field Def="u8 unknown_20f:1" />
+	<Field Def="u8 unknown_20g:1" />
+	<Field Def="u8 unknown_20h:1" />
     
     <Field Def="u8 wheelRotType">
       <DisplayName>車輪制御タイプ</DisplayName>
@@ -2190,29 +2192,40 @@
     </Field>
     
     <Field Def="s32 rewardItemLot_2" />
-    <Field Def="s32 unknown_2" />
-    <Field Def="f32 unknown_3" />
-    <Field Def="f32 unknown_4" />
-    <Field Def="f32 unknown_5" />
-    <Field Def="f32 unknown_6" />
-    <Field Def="f32 unknown_7" />
-    <Field Def="f32 unknown_8" />
-    <Field Def="f32 unknown_9" />
-    <Field Def="f32 unknown_10" />
-    <Field Def="f32 unknown_11" />
-    <Field Def="f32 unknown_12" />
-    <Field Def="f32 unknown_13" />
-    <Field Def="f32 unknown_14" />
-    <Field Def="f32 unknown_15" />
-    <Field Def="f32 unknown_16" />
-    <Field Def="f32 unknown_17" />
-    <Field Def="f32 unknown_18" />
-    <Field Def="f32 unknown_19" />
-    <Field Def="f32 unknown_20" />
-    <Field Def="s8 unknown_21a" />
-    <Field Def="s8 unknown_21b" />
-    <Field Def="u8 unknown_21c" />
-    <Field Def="u8 unknown_21d" />
+    <Field Def="s32 day2SpEffectID">
+      <DisplayName>Day 2 SpEffectID</DisplayName>
+      <DisplayName>An SpEffectID applied only on Day 2</DisplayName>
+    </Field>
+    
+    <Field Def="f32 poiseBonusRate_Magic" />
+    <Field Def="f32 poiseBonusRate_Fire" />
+    <Field Def="f32 poiseBonusRate_Lightning" />
+    <Field Def="f32 poiseBonusRate_Holy" />
+    <Field Def="f32 poiseBonusRate_Poison" />
+    <Field Def="f32 poiseBonusRate_ScarletRot" />
+    <Field Def="f32 poiseBonusRate_Bleed" />
+    <Field Def="f32 poiseBonusRate_Blight" />
+    <Field Def="f32 poiseBonusRate_Frostbite" />
+    <Field Def="f32 poiseBonusRate_Sleep" />
+    <Field Def="f32 poiseBonusRate_Madness" />
+    <Field Def="f32 poiseBonusRate_WeakA" />
+    <Field Def="f32 poiseBonusRate_WeakB" />
+    <Field Def="f32 poiseBonusRate_WeakC" />
+    <Field Def="f32 poiseBonusRate_WeakD" />
+    <Field Def="f32 poiseBonusRate_WeakE" />
+    <Field Def="f32 poiseBonusRate_WeakF" />
+    <Field Def="f32 poiseBonusRate_Unk" />
+    <Field Def="s16 poiseBonusMax" />
+    <Field Def="s16 unknown_21" />
     <Field Def="f32 unknown_22" />
+    
+    <Field Def="s32 chaosMatchingCorrectParamId" FirstVersion="10200000"/>
+    <Field Def="s32 chaosMatchingSpEffectSetParamId" FirstVersion="10200000"/>
+    <Field Def="s32 chaosMatchingRewardLotId" FirstVersion="10200000"/>
+    <Field Def="s32 chaosMatchingItemLotId" FirstVersion="10200000"/>
+    <Field Def="s32 chaosMatchingUnk" FirstVersion="10200000"/>
+    
+    <Field Def="f32 analyseDistCorrection" FirstVersion="10200000"/>
+    <Field Def="dummy8 endPadding[8]" FirstVersion="10200000"/>
   </Fields>
 </PARAMDEF>

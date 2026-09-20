@@ -30,6 +30,8 @@ enum BinaryMapper {
     DarkSoulsIII(DarkSoulsIIIArgs),
     #[command(name = "sdt")]
     Sekiro(SekiroArgs),
+    #[command(name = "nr")]
+    Nightreign(NightreignArgs),
 }
 
 /// Maps a single EXE to a single output and prints it to stdout.
@@ -86,6 +88,18 @@ struct SekiroArgs {
 
     /// Root for the project folder.
     #[arg(long, env("MAPPER_SDT_PROJECT_ROOT"))]
+    project_root: Option<PathBuf>,
+}
+
+/// Shortcut to map all files for Sekiro.
+#[derive(Args)]
+struct NightreignArgs {
+    /// The EXE for patch ??? (Japenese or worldwide, either workds).
+    #[arg(long, env("MAPPER_NR_EXE"))]
+    exe: PathBuf,
+
+    /// Root for the project folder.
+    #[arg(long, env("MAPPER_NR_PROJECT_ROOT"))]
     project_root: Option<PathBuf>,
 }
 
@@ -179,6 +193,22 @@ fn main() {
             )
             .unwrap();
             cargo_fmt(&sdt);
+        }
+        BinaryMapper::Nightreign(args) => {
+            let nr = args
+                .project_root
+                .inspect(|r| {
+                    assert!(r.exists(), "Project root does not exist: {}", r.display());
+                })
+                .unwrap_or_else(|| game_crate_path("nightreign"));
+            let profile = read_profile(nr.join("mapper-profile.toml"));
+            fs::write(nr.join("src/rva/bundle.rs"), generate_rust_struct(&profile)).unwrap();
+            fs::write(
+                nr.join("src/rva/rva_data.rs"),
+                generate_rust_instance(&map_results(&profile, &args.exe)),
+            )
+            .unwrap();
+            cargo_fmt(&nr);
         }
     }
 }

@@ -222,15 +222,7 @@
       <SortID>350</SortID>
     </Field>
     
-    <Field Def="dummy8 pad_1:1" RemovedVersion="11210015" />
-    
-    <Field Def="u8 unknown_0x2f_7:1" FirstVersion="11210015" >
-      <DisplayName>パディング</DisplayName>
-      <Description>パディング</Description>
-      <DisplayFormat>%d</DisplayFormat>
-      <EditFlags>Wrap</EditFlags>
-      <SortID>7201</SortID>
-    </Field>
+    <Field Def="dummy8 pad_1:1" />
     
     <Field Def="s32 decalId1 = -1">
       <DisplayName>デカールID1</DisplayName>
@@ -453,7 +445,7 @@
     </Field>
     
     <Field Def="s16 unknown_1" />
-    <Field Def="s32 unknown_2" />
+    <Field Def="s32 overlayMaterialParamId = -1" />
     
     <Field Def="dummy8 pad_old[8]" />
     
