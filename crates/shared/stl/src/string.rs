@@ -227,16 +227,21 @@ where
     }
 
     fn reallocate(&mut self, new_cap: usize) {
+        let old_ptr = self.as_ptr();
         let new_ptr = self.allocator.allocate_n::<C>(new_cap + 1).cast::<C>();
-        // Copy existing data + NUL terminator in one shot
-        unsafe {
-            std::ptr::copy_nonoverlapping(self.as_ptr(), new_ptr.as_ptr(), self.size + 1);
-        }
-        if !self.is_sso() {
+        // Some allocators (e.g. single-slot fixed-buffer allocators) can
+        // hand back the same address on every call; skip the copy/free
+        // then, since the data is already where it needs to be.
+        if !std::ptr::eq(old_ptr, new_ptr.as_ptr()) {
             unsafe {
-                self.allocator
-                    .deallocate_raw(self.buffer.pointer.as_ptr() as _)
-            };
+                std::ptr::copy_nonoverlapping(old_ptr, new_ptr.as_ptr(), self.size + 1);
+            }
+            if !self.is_sso() {
+                unsafe {
+                    self.allocator
+                        .deallocate_raw(self.buffer.pointer.as_ptr() as _)
+                };
+            }
         }
         self.buffer.pointer = new_ptr;
         self.capacity = new_cap;

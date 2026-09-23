@@ -192,7 +192,10 @@ impl<A: StlAllocator> VectorBool<A> {
         unsafe {
             std::ptr::write_bytes(new_ptr.add(old_words), 0, new_words - old_words);
 
-            if old_words > 0 {
+            // Some allocators (e.g. single-slot fixed-buffer allocators) can
+            // hand back the same address on every call; skip the copy/free
+            // then, since the data is already where it needs to be.
+            if old_words > 0 && !std::ptr::eq(self.first, new_ptr) {
                 std::ptr::copy_nonoverlapping(self.first, new_ptr, old_words);
                 self.allocator.deallocate_raw(self.first as _);
             }
