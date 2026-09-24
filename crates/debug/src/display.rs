@@ -25,7 +25,9 @@ macro_rules! define_debug_display {
             }
         }
 
-        impl<T: DebugDisplay> DebugDisplay for ::fromsoftware_shared::OwnedPtr<T> {
+        impl<T: DebugDisplay, A: ::fromsoftware_shared::GameAllocator> DebugDisplay
+            for ::fromsoftware_shared::OwnedPtr<T, A>
+        {
             fn render_debug(&self, ui: &::hudhook::imgui::Ui) {
                 <T as DebugDisplay>::render_debug(self, ui);
             }

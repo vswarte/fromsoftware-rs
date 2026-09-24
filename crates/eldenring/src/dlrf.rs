@@ -1,4 +1,4 @@
-use shared::OwnedPtr;
+use std::ptr::NonNull;
 
 #[repr(C)]
 /// Part of the DLRF namespace, describes some aspects of a tracked class.
@@ -6,7 +6,7 @@ use shared::OwnedPtr;
 /// Source of name: RTTI
 pub struct DLRuntimeClass {
     vftable: usize,
-    pub base_class: OwnedPtr<DLRuntimeClass>,
+    pub base_class: NonNull<DLRuntimeClass>,
     unk10: usize,
     unk18: usize,
     unk20: usize,

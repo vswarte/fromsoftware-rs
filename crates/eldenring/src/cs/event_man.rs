@@ -5,6 +5,7 @@ use shared::{F32Vector3, FromStatic, OwnedPtr};
 use crate::{
     DLList,
     cs::{BlockId, MultiplayType, SummonParamType, WorldAreaTime},
+    dlkr::{InGameHeapAllocator, MainHeapAllocator},
 };
 
 use super::SosSignMan;
@@ -12,43 +13,44 @@ use super::SosSignMan;
 #[shared::singleton("CSEventMan")]
 #[repr(C)]
 pub struct CSEventManImp {
-    vftable: usize,
-    simple_info: usize,
-    dead_reset: usize,
-    obj_sfx: usize,
-    parts_damage: usize,
-    drop_item: usize,
-    sound: usize,
-    damage: usize,
-    dam_obj_hit: usize,
-    unk48: usize,
-    unk50: usize,
-    unk58: usize,
+    vftable: OwnedPtr<(), MainHeapAllocator>,
+    simple_info: OwnedPtr<(), MainHeapAllocator>,
+    dead_reset: OwnedPtr<(), MainHeapAllocator>,
+    obj_sfx: OwnedPtr<(), MainHeapAllocator>,
+    parts_damage: OwnedPtr<(), MainHeapAllocator>,
+    drop_item: OwnedPtr<(), MainHeapAllocator>,
+    sound: OwnedPtr<(), MainHeapAllocator>,
+    damage: OwnedPtr<(), MainHeapAllocator>,
+    dam_obj_hit: OwnedPtr<(), MainHeapAllocator>,
+    unk48: Option<OwnedPtr<(), MainHeapAllocator>>,
+    unk50: Option<OwnedPtr<(), MainHeapAllocator>>,
+    unk58: Option<OwnedPtr<(), MainHeapAllocator>>,
     pub sos_sign: OwnedPtr<CSEventSosSignCtrl>,
-    unk68: usize,
-    obj_act_exec: usize,
-    unk78: usize,
-    bloodstain: usize,
+    unk68: Option<OwnedPtr<(), MainHeapAllocator>>,
+    obj_act_exec: OwnedPtr<(), MainHeapAllocator>,
+    unk78: Option<OwnedPtr<(), MainHeapAllocator>>,
+    bloodstain: OwnedPtr<(), MainHeapAllocator>,
     pub script: OwnedPtr<CSEventScriptEventInfo>,
-    corpse: usize,
-    unk98: usize,
-    generator: usize,
-    unka8: usize,
-    system_flag: usize,
-    turn: usize,
+    corpse: OwnedPtr<(), MainHeapAllocator>,
+    unk98: Option<OwnedPtr<(), MainHeapAllocator>>,
+    generator: OwnedPtr<(), MainHeapAllocator>,
+    unka8: Option<OwnedPtr<(), MainHeapAllocator>>,
+    system_flag: OwnedPtr<(), MainHeapAllocator>,
+    turn: OwnedPtr<(), MainHeapAllocator>,
     pub world_area_time: OwnedPtr<CSEventWorldAreaTimeCtrl>,
-    fade_warp: usize,
-    unkd0: usize,
-    unkd8: usize,
-    retry_points: usize,
-    network_error_return_title_step: usize,
-    cutscene_warp: usize,
+    fade_warp: OwnedPtr<(), MainHeapAllocator>,
+    fade_info: OwnedPtr<(), MainHeapAllocator>,
+    unkd8: Option<OwnedPtr<(), MainHeapAllocator>>,
+    retry_points: OwnedPtr<(), MainHeapAllocator>,
+    network_error_return_title_step: OwnedPtr<(), MainHeapAllocator>,
+    cutscene_warp: OwnedPtr<(), MainHeapAllocator>,
+    unkf8: Option<OwnedPtr<(), MainHeapAllocator>>,
 }
 
 #[repr(C)]
 pub struct CSEventScriptEventInfo {
     vftable: usize,
-    pub event_info_by_block_id: DLList<OwnedPtr<EventInfoEntry>>,
+    pub event_info_by_block_id: DLList<OwnedPtr<EventInfoEntry, InGameHeapAllocator>>,
 }
 
 #[repr(C)]
@@ -56,6 +58,7 @@ pub struct EventInfoEntry {
     pub block_id: BlockId,
     pub event_ids: DLList<u32>,
 }
+
 #[repr(C)]
 pub struct CSEventSosSignData {
     pub sign_position: F32Vector3,

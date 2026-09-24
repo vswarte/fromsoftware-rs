@@ -14,7 +14,7 @@ impl DebugDisplay for CSEventFlagMan {
 
 impl DebugDisplay for CSFD4VirtualMemoryFlag {
     fn render_debug(&self, ui: &Ui) {
-        ui.debug_copiable("Event flag divisor", self.event_flag_divisor);
+        ui.debug_copiable("Flags per block", self.flags_per_block);
         ui.debug_copiable("Event flag holder size", self.event_flag_holder_size);
         ui.debug_copiable("Event flag holder count", self.event_flag_holder_count);
 

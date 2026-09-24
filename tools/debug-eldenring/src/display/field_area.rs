@@ -7,7 +7,9 @@ use super::{DebugDisplay, DisplayUiExt};
 
 impl DebugDisplay for FieldArea {
     fn render_debug(&self, ui: &Ui) {
-        ui.nested("World Info Owner", &self.world_info_owner);
+        ui.nested("World Info Owner", unsafe {
+            self.world_info_owner.as_ref()
+        });
         ui.display(
             "Enable Fast Travel Event Flag",
             self.enable_fast_travel_event_flag,

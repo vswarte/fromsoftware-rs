@@ -3,7 +3,7 @@ use shared::{OwnedPtr, Subclass};
 use crate::{
     ArrayWithHeader, DLMap, DLMultiMap, DLVector,
     cs::{BlockId, ItemCategory, ItemId},
-    dlkr::DLAllocator,
+    dlkr::{DLAllocator, MainHeapAllocator},
     fd4::{FD4ParamResCap, FD4ResCap, FD4ResRep, ParamFile},
     param::ParamDef,
 };
@@ -145,7 +145,7 @@ pub struct ParamResCap {
     // efficiency reasons, we don't allow access through [FD4ParamRepository]
     // without an `unsafe` block, which makes it safe for us to expose this as
     // an [OwnedPtr] here. See the comment on [FD4ParamRepository] for details.
-    pub param_res_cap: OwnedPtr<FD4ParamResCap>,
+    pub param_res_cap: OwnedPtr<FD4ParamResCap, MainHeapAllocator>,
 }
 
 impl ParamResCap {
@@ -186,7 +186,7 @@ pub struct SoloParamHolder {
     pub res_cap_count: u32,
     /// The list can hold up to 8 param res caps, but the game only seems to use first.
     /// Supposedly this is used for some versioning.
-    res_caps: [Option<OwnedPtr<ParamResCap>>; 8],
+    res_caps: [Option<OwnedPtr<ParamResCap, MainHeapAllocator>>; 8],
 }
 
 impl SoloParamHolder {

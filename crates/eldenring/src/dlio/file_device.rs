@@ -9,7 +9,7 @@ use vtable_rs::VPtr;
 use crate::{
     DLVector,
     dlio::DLIOResult,
-    dlkr::{DLAllocator, DLPlainLightMutex},
+    dlkr::{DLAllocator, DLPlainLightMutex, DLSystemHeapImpl},
     dltx::DLString,
     dlut::DLDateTime,
 };
@@ -304,8 +304,8 @@ pub struct BndEntry {
 #[repr(C)]
 pub struct DLFileOperatorContainer {
     allocator: &'static DLAllocator,
-    read_file_operator: OwnedPtr<DLFileOperatorBase>,
-    write_file_operator: OwnedPtr<DLFileOperatorBase>,
+    read_file_operator: NonNull<DLFileOperatorBase>,
+    write_file_operator: NonNull<DLFileOperatorBase>,
     flags: u32,
 }
 
@@ -313,12 +313,12 @@ pub struct DLFileOperatorContainer {
 pub struct DLFileDeviceManager {
     pub devices: DLVector<NonNull<DLFileDeviceBase>>,
     pub service_providers: DLVector<NonNull<DLFileDeviceImageSPIBase>>,
-    pub msvc_file_device: OwnedPtr<DLFileDeviceBase>,
+    pub msvc_file_device: OwnedPtr<DLFileDeviceBase, DLSystemHeapImpl>,
     pub virtual_roots: DLVector<[DLString; 2]>,
     pub bnd3_files: DLVector<BndEntry>,
     pub bnd4_files: DLVector<BndEntry>,
-    pub bnd3_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
-    pub bnd4_service_provider: OwnedPtr<DLFileDeviceImageSPIBase>,
+    pub bnd3_service_provider: OwnedPtr<DLFileDeviceImageSPIBase, DLSystemHeapImpl>,
+    pub bnd4_service_provider: OwnedPtr<DLFileDeviceImageSPIBase, DLSystemHeapImpl>,
     pub mutex: DLPlainLightMutex,
 }
 

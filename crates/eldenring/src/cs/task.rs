@@ -7,7 +7,7 @@ use pelite::pe64::Pe;
 use vtable_rs::VPtr;
 use windows::core::PCWSTR;
 
-use crate::dlkr::DLPlainConditionSignal;
+use crate::dlkr::{DLPlainConditionSignal, MainHeapAllocator};
 use crate::fd4::{FD4TaskBase, FD4TaskBaseVmt, FD4TaskData};
 use crate::{
     DLVector,
@@ -111,7 +111,7 @@ pub struct CSEzTaskProxy {
 #[shared::singleton("CSTaskGroup")]
 pub struct CSTaskGroup {
     vftable: usize,
-    pub task_groups: [OwnedPtr<CSTimeLineTaskGroupIns>; 168],
+    pub task_groups: [OwnedPtr<CSTimeLineTaskGroupIns, MainHeapAllocator>; 168],
 }
 
 #[repr(C)]
@@ -139,7 +139,7 @@ pub struct CSTimeLineTaskGroupIns {
 #[shared::singleton("CSTask")]
 pub struct CSTaskImp {
     vftable: usize,
-    pub inner: OwnedPtr<CSTask>,
+    pub inner: OwnedPtr<CSTask, MainHeapAllocator>,
 }
 
 impl CSTaskImp {
@@ -216,9 +216,9 @@ pub struct CSTask {
     unk40: usize,
     unk48: [usize; 3],
     unk60: [usize; 3],
-    pub task_runner_manager: OwnedPtr<CSTaskRunnerManager>,
-    pub task_runners: [OwnedPtr<CSTaskRunner>; 6],
-    pub task_runners_ex: [OwnedPtr<CSTaskRunnerEx>; 6],
+    pub task_runner_manager: OwnedPtr<CSTaskRunnerManager, MainHeapAllocator>,
+    pub task_runners: [OwnedPtr<CSTaskRunner, MainHeapAllocator>; 6],
+    pub task_runners_ex: [OwnedPtr<CSTaskRunnerEx, MainHeapAllocator>; 6],
     unke0: usize,
 }
 
@@ -226,7 +226,7 @@ pub struct CSTask {
 pub struct CSTaskRunner {
     vftable: usize,
     task_queue: usize,
-    pub task_runner_manager: OwnedPtr<CSTaskRunnerManager>,
+    pub task_runner_manager: OwnedPtr<CSTaskRunnerManager, MainHeapAllocator>,
     unk18: u32,
     _pad1c: u32,
     unk_string: PCWSTR,
@@ -240,8 +240,8 @@ pub struct CSTaskRunnerEx {
 #[repr(C)]
 pub struct CSTaskRunnerManager {
     allocator: usize,
-    pub concurrent_task_group_count: usize,
-    pub concurrent_task_group_policy: OwnedPtr<TaskGroupConcurrency>,
+    pub concurrent_task_group_count: u32,
+    pub concurrent_task_group_policy: OwnedPtr<TaskGroupConcurrency, MainHeapAllocator>,
     pub current_concurrent_task_group: u32,
     unk1c: u32,
     unk20: u32,

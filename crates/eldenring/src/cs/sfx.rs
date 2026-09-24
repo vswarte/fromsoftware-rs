@@ -1,3 +1,4 @@
+use crate::dlkr::GfxHeapAllocator;
 use crate::gxffx::GXFfxSceneCtrl;
 use crate::{DLVector, UnkDLTree};
 use shared::OwnedPtr;
@@ -14,7 +15,7 @@ pub struct CSSfxImp {
     unk48: usize,
     unk50: usize,
     unk58: usize,
-    pub scene_ctrl: OwnedPtr<GXFfxSceneCtrl>,
+    pub scene_ctrl: OwnedPtr<GXFfxSceneCtrl, GfxHeapAllocator>,
     unk68: usize,
     unk70: usize,
     unk78: usize,

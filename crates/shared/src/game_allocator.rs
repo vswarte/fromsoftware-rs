@@ -41,21 +41,6 @@ pub struct AllocError;
 /// [`allocate`]: Self::allocate
 /// [*compatible with*]: #allocator-compatibility
 /// [`deallocate`]: Self::deallocate
-///
-/// ### Memory fitting
-///
-/// Some of the methods require that a `layout` *fit* a memory block or vice
-/// versa. This means that the following conditions must hold:
-///
-/// * the memory block must be *currently allocated* with alignment of
-///   [`layout.align()`], and
-///
-/// * [`layout.size()`] must fall in the range `min ..= max`, where:
-///   - `min` is the size of the layout used to allocate the block, and
-///   - `max` is the actual size returned from [`allocate`].
-///
-/// [`layout.align()`]: Layout::align
-/// [`layout.size()`]: Layout::size
 pub trait GameAllocator {
     /// Attempts to allocate a block of memory.
     ///
@@ -90,13 +75,10 @@ pub trait GameAllocator {
     ///
     /// # Safety
     ///
-    /// * `ptr` must denote a block of memory [*currently allocated*] via this
-    ///   allocator, and
-    /// * `layout` must [*fit*] that block of memory.
+    /// * `ptr` must denote a block of memory [*currently allocated*] via this allocator.
     ///
     /// [*currently allocated*]: #currently-allocated-memory
-    /// [*fit*]: #memory-fitting
-    unsafe fn deallocate(ptr: NonNull<u8>, layout: Layout);
+    unsafe fn deallocate(ptr: NonNull<u8>);
 }
 
 /// A [`GameAllocator`] that never actually allocates or drops memory.
@@ -124,7 +106,7 @@ impl GameAllocator for NoOpAllocator {
     }
 
     /// Always panics.
-    unsafe fn deallocate(_ptr: NonNull<u8>, _layout: Layout) {
+    unsafe fn deallocate(_ptr: NonNull<u8>) {
         panic!("Can't drop data with NoOpAllocator");
     }
 }

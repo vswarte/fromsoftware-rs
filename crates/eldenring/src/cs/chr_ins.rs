@@ -11,7 +11,10 @@ use crate::cs::session_manager::SessionManagerPlayerEntryBase;
 use crate::cs::sp_effect::{NpcSpEffectEquipCtrl, SpecialEffect};
 use crate::cs::task::{CSEzRabbitNoUpdateTask, CSEzVoidTask};
 use crate::cs::world_chr_man::{ChrSetEntry, WorldChrMan};
-use crate::cs::{BlockId, CSPlayerMenuCtrl, ChrAsmHand, EquipmentDurabilityStatus, OptionalItemId};
+use crate::cs::{
+    BlockId, CSPlayerMenuCtrl, ChrAsmHand, EquipmentDurabilityStatus, OptionalItemId, PlayerSession,
+};
+use crate::dlkr::{GfxHeapAllocator, InGameHeapAllocator, MainHeapAllocator};
 use crate::dltx::DLString;
 use crate::fd4::FD4Time;
 use crate::param::{ATK_PARAM_ST, NPC_PARAM_ST};
@@ -141,8 +144,8 @@ pub struct ChrIns {
     pub chr_set_cleanup: u32,
     _pad44: u32,
     unk48: usize,
-    pub chr_model_ins: OwnedPtr<CSChrModelIns>,
-    pub chr_ctrl: OwnedPtr<ChrCtrl>,
+    pub chr_model_ins: OwnedPtr<CSChrModelIns, InGameHeapAllocator>,
+    pub chr_ctrl: OwnedPtr<ChrCtrl, MainHeapAllocator>,
     /// NPC param ID for this character.
     /// See [NPC_PARAM_ST]
     pub npc_param_id: i32,
@@ -200,7 +203,7 @@ pub struct ChrIns {
     /// [`EQUIP_PARAM_GOODS_ST::effect_sfx_id`]: crate::param::EQUIP_PARAM_GOODS_ST::effect_sfx_id
     pub item_use_effect_sfx_id: i32,
     /// Container for the speffects applied to this character.
-    pub special_effect: OwnedPtr<SpecialEffect>,
+    pub special_effect: OwnedPtr<SpecialEffect, MainHeapAllocator>,
     /// Refers to what field ins you were last hit by.
     pub last_hit_by: FieldInsHandle,
     /// 4 number identifier for this character.
@@ -208,7 +211,7 @@ pub struct ChrIns {
     /// Same as [Self::npc_id]
     pub character_id: u32,
     unk18c: u32,
-    pub modules: OwnedPtr<ChrInsModuleContainer>,
+    pub modules: OwnedPtr<ChrInsModuleContainer, MainHeapAllocator>,
     unk198: usize,
     /// Squared distance at which the character will be deactivated.
     pub squared_deactivation_distance: f32,
@@ -236,8 +239,8 @@ pub struct ChrIns {
     pub network_authority: u32,
     pub event_entity_id: u32,
     unk1ec: f32,
-    unk1f0: usize,
-    pub npc_sp_effect_equip_ctrl: OwnedPtr<NpcSpEffectEquipCtrl>,
+    unk1f0: OwnedPtr<(), MainHeapAllocator>,
+    pub npc_sp_effect_equip_ctrl: OwnedPtr<NpcSpEffectEquipCtrl, MainHeapAllocator>,
     unk200: usize,
     /// Amount of coop players currently in the session
     pub coop_players_for_multiplay_correction: u32,
@@ -575,7 +578,7 @@ pub struct ChrCtrl {
     pub chr_collision: usize,
     unk38: [u8; 0x88],
     hkxpwv_res_cap: usize,
-    pub modifier: OwnedPtr<ChrCtrlModifier>,
+    pub modifier: OwnedPtr<ChrCtrlModifier, MainHeapAllocator>,
     hover_warp_ctrl: usize,
     ai_jump_move_ctrl: usize,
     chr_model_pos_easing: usize,
@@ -637,7 +640,7 @@ pub struct ChrCtrl {
     pub scale_size_z: f32,
     pub offset_y: f32,
     unk2e4: [u8; 0x14],
-    location_mtx44_chr_entity: usize,
+    location_mtx44_chr_entity: OwnedPtr<(), MainHeapAllocator>,
     unk300: u8,
     /// Set by TAE Event 0 ChrActionFlag (action 113 INVOKEHEIGHTCORRECTION)
     pub height_correction_request: bool,
@@ -815,9 +818,10 @@ bitfield! {
 pub struct CSModelIns {
     vftable: usize,
     unk8: usize,
-    pub model_item: OwnedPtr<CSFD4ModelItem>,
-    pub model_disp_entity: usize,
-    pub location_entity: usize,
+    pub model_item: OwnedPtr<CSFD4ModelItem, MainHeapAllocator>,
+    model_disp_entity: usize,
+    location_entity: usize,
+    unk28: OwnedPtr<(), GfxHeapAllocator>,
 }
 
 #[repr(C)]
@@ -840,7 +844,8 @@ pub struct CSFD4ModelItem {
     mtx43_array_entity: usize,
     unk648: [u8; 0x8],
     default_dmypoly_location_modifier: usize,
-    pub location_aabb_exporter: OwnedPtr<CSFD4LocationGxModelMatricesAndAabbExporter>,
+    pub location_aabb_exporter:
+        OwnedPtr<CSFD4LocationGxModelMatricesAndAabbExporter, GfxHeapAllocator>,
     pub owning_model: NonNull<CSModelIns>,
     unk668: [u8; 0x58],
     unk6c0: DLString,
@@ -874,7 +879,7 @@ pub struct PlayerIns {
     unk590: usize,
     pub player_session_holder: PlayerSessionHolder,
     unk5c0: usize,
-    pub replay_recorder: Option<OwnedPtr<ReplayRecorder>>,
+    pub replay_recorder: Option<OwnedPtr<ReplayRecorder, MainHeapAllocator>>,
     unk5d0: u32,
     unk5d4: u32,
     pub snipe_mode_draw_alpha_fade_timer: f32,
@@ -889,7 +894,7 @@ pub struct PlayerIns {
     pro_sp_effect_equip_ctrl: usize,
     npc_sp_effect_equip_ctrl: usize,
     unk620: [u8; 0x18],
-    pub chr_asm: OwnedPtr<ChrAsm>,
+    pub chr_asm: OwnedPtr<ChrAsm, MainHeapAllocator>,
     chr_asm_model_res: usize,
     chr_asm_model_ins: usize,
     unk650: [u8; 0x28],
@@ -911,7 +916,7 @@ pub struct PlayerIns {
     pub player_menu_ctrl: NonNull<CSPlayerMenuCtrl>,
     unk6a8: [u8; 0x8],
     pub locked_on_enemy: FieldInsHandle,
-    pub session_manager_player_entry: OwnedPtr<SessionManagerPlayerEntryBase>,
+    pub session_manager_player_entry: OwnedPtr<SessionManagerPlayerEntryBase, MainHeapAllocator>,
     /// Position within the current block.
     pub block_position: BlockPosition,
     /// Current block ID the player is in.
@@ -1024,9 +1029,11 @@ pub struct EnemyIns {
 /// Source of name: RTTI
 pub struct PlayerSessionHolder {
     vftable: usize,
-    player_debug_session: usize,
-    unk10: usize,
-    pub player_network_session: OwnedPtr<PlayerNetworkSession>,
+    pub player_debug_session: Option<OwnedPtr<PlayerSession, MainHeapAllocator>>,
+    pub player_session: Option<OwnedPtr<PlayerSession, MainHeapAllocator>>,
+    /// Currently active session for this player.
+    /// Could be [`Self::player_session`] or `NullPlayerSession` if the player is offline.
+    pub active_session: NonNull<PlayerNetworkSession>,
     unk18: usize,
 }
 

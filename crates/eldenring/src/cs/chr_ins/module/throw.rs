@@ -2,7 +2,10 @@ use bitfield::bitfield;
 use shared::{OwnedPtr, Subclass};
 use std::ptr::NonNull;
 
-use crate::cs::{CSPairAnimNode, ChrIns, P2PEntityHandle};
+use crate::{
+    cs::{CSPairAnimNode, ChrIns, P2PEntityHandle},
+    dlkr::InGameHeapAllocator,
+};
 
 #[repr(C)]
 #[derive(Subclass)]
@@ -27,7 +30,7 @@ pub struct CSThrowNode {
 pub struct CSChrThrowModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    pub throw_node: OwnedPtr<CSThrowNode>,
+    pub throw_node: OwnedPtr<CSThrowNode, InGameHeapAllocator>,
     pub flags: ThrowModuleFlags,
     unk1c: u32,
     unk20: u32,
@@ -41,14 +44,15 @@ pub struct CSChrThrowModule {
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum ThrowNodeState {
-    Unk1 = 1,
-    Unk2 = 2,
+    None = 0,
+    PositioningAttacker = 1,
+    PositioningDefender = 2,
     InThrowAttacker = 3,
-    InThrowTarget = 4,
+    InThrowDefender = 4,
     DeathAttacker = 5,
-    DeathTarget = 6,
-    Unk7 = 7,
-    Unk8 = 8,
+    DeathDefender = 6,
+    EscapeAttacker = 7,
+    EscapeDefender = 8,
 }
 
 bitfield! {
