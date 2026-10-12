@@ -15,7 +15,7 @@
     <Field Def="s32 passiveSpEffectId_1"/>
     <Field Def="s32 passiveSpEffectId_2"/>
     <Field Def="s32 passiveSpEffectId_3"/>
-    <Field Def="s32 unknown_6"/>
+    <Field Def="s32 compatibilityId"/>
     <Field Def="s32 attachTextId"/>
     <Field Def="u8 isPersistentEffect:1"/>
     <Field Def="u8 isNumericEffect:1"/>
@@ -33,8 +33,8 @@
     <Field Def="u8 allowRevenant:1"/>
     <Field Def="u8 allowRecluse:1"/>
     <Field Def="u8 allowExecutor:1"/>
-    <Field Def="u8 unknown_9c1:1"/>
-    <Field Def="u8 unknown_9c2:1"/>
+    <Field Def="u8 allowScholar:1"/>
+    <Field Def="u8 allowUndertaker:1"/>
     <Field Def="dummy8 unknown_9c3:6"/>
     <Field Def="dummy8 unknown_9d[1]"/>
     <Field Def="s32 statusIconId"/>
