@@ -321,7 +321,7 @@ impl SoloParamRepository {
         // SAFETY: By construction, [SoloParam] only applies to parameters whose
         // indices are guaranteed by the game to be consistent.
         unsafe {
-            self.get_param_file::<P>()
+            self.get_param_file::<P>()?
                 .get_row_by_id::<P::StructType>(param_id)
         }
     }
@@ -332,7 +332,7 @@ impl SoloParamRepository {
         // SAFETY: By construction, [SoloParam] only applies to parameters whose
         // indices are guaranteed by the game to be consistent.
         unsafe {
-            self.get_param_file_mut::<P>()
+            self.get_param_file_mut::<P>()?
                 .get_row_by_id_mut::<P::StructType>(param_id)
         }
     }
@@ -348,7 +348,7 @@ impl SoloParamRepository {
         // SAFETY: By construction, [SoloParam] only applies to parameters whose
         // indices are guaranteed by the game to be consistent.
         unsafe {
-            self.get_param_file::<P>()
+            self.get_param_file::<P>()?
                 .get_row_by_index::<P::StructType>(row_index)
         }
     }
@@ -367,7 +367,7 @@ impl SoloParamRepository {
         // SAFETY: By construction, [SoloParam] only applies to parameters whose
         // indices are guaranteed by the game to be consistent.
         unsafe {
-            self.get_param_file_mut::<P>()
+            self.get_param_file_mut::<P>()?
                 .get_row_by_index_mut::<P::StructType>(row_index)
         }
     }
@@ -375,7 +375,7 @@ impl SoloParamRepository {
     /// Returns the index of a solo param (regulation.bin) row by its parameter
     /// type and ID.
     pub fn get_index_by_param_id<P: SoloParam>(&self, param_id: u32) -> Option<usize> {
-        self.get_param_file::<P>().find_index(param_id)
+        self.get_param_file::<P>()?.find_index(param_id)
     }
 
     /// Returns an equipment parameter row enum for the given item ID, or `None`
@@ -433,7 +433,11 @@ impl SoloParamRepository {
     pub fn rows<'a, P: SoloParam + 'a>(
         &'a self,
     ) -> impl Iterator<Item = (u32, &'a P::StructType)> + 'a {
-        unsafe { self.get_param_file::<P>().rows() }
+        self.get_param_file::<P>().into_iter().flat_map(|file| {
+            // SAFETY: By construction, [SoloParam] only applies to parameters
+            // whose indices are guaranteed by the game to be consistent.
+            unsafe { file.rows::<P::StructType>() }
+        })
     }
 
     /// Returns an iterator over each mutable row in parameter `P` along with
@@ -441,14 +445,22 @@ impl SoloParamRepository {
     pub fn rows_mut<'a, P: SoloParam + 'a>(
         &'a mut self,
     ) -> impl Iterator<Item = (u32, &'a mut P::StructType)> + 'a {
-        unsafe { self.get_param_file_mut::<P>().rows_mut() }
+        self.get_param_file_mut::<P>().into_iter().flat_map(|file| {
+            // SAFETY: By construction, [SoloParam] only applies to
+            // parameters whose indices are guaranteed by the game to be
+            // consistent.
+            unsafe { file.rows_mut::<P::StructType>() }
+        })
     }
 
     /// Returns the [ParamFile] associated with `P`, if it exists at the
-    /// expected index. This should never return `None` for a vanilla game,
-    /// because the only [SoloParam]s this library defines are ones that are
-    /// found in the game.
-    fn get_param_file<P: SoloParam>(&self) -> &ParamFile {
+    /// expected index, and has been initialized with a res cap.
+    ///
+    /// This will only return `None` if the param hasn't been loaded yet (e.g.
+    /// too early during game startup). For a vanilla game with the repository
+    /// fully initialized, this should never return `None`, because the only
+    /// [SoloParam]s this library defines are ones that are found in the game.
+    fn get_param_file<P: SoloParam>(&self) -> Option<&ParamFile> {
         let holder = self
             .solo_param_holders
             .get(P::INDEX as usize)
@@ -459,19 +471,20 @@ impl SoloParamRepository {
                     P::INDEX
                 )
             });
-        let res_cap = holder
-            .get_res_cap(0)
-            .expect("Expected param holder to have exactly one res cap");
+        let res_cap = holder.get_res_cap(0)?;
 
         res_cap.assert_matches_param::<P>();
-        &res_cap.param_res_cap.data
+        Some(&res_cap.param_res_cap.data)
     }
 
-    /// Returns the mutable [ParamFile] associated with `P`, if it exists at the
-    /// expected index. This should never return `None` for a vanilla game,
-    /// because the only [SoloParam]s this library defines are ones that are
-    /// found in the game.
-    fn get_param_file_mut<P: SoloParam>(&mut self) -> &mut ParamFile {
+    /// Returns the mutable [ParamFile] associated with `P`, if it exists at
+    /// the expected index, and has been initialized with a res cap.
+    ///
+    /// This will only return `None` if the param hasn't been loaded yet (e.g.
+    /// too early during game startup). For a vanilla game with the repository
+    /// fully initialized, this should never return `None`, because the only
+    /// [SoloParam]s this library defines are ones that are found in the game.
+    fn get_param_file_mut<P: SoloParam>(&mut self) -> Option<&mut ParamFile> {
         let holder = self
             .solo_param_holders
             .get_mut(P::INDEX as usize)
@@ -482,12 +495,10 @@ impl SoloParamRepository {
                     P::INDEX
                 )
             });
-        let res_cap = holder
-            .get_res_cap_mut(0)
-            .expect("Expected param holder to have exactly one res cap");
+        let res_cap = holder.get_res_cap_mut(0)?;
 
         res_cap.assert_matches_param::<P>();
-        &mut res_cap.param_res_cap.data
+        Some(&mut res_cap.param_res_cap.data)
     }
 }
 
