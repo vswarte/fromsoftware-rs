@@ -2,6 +2,7 @@ use std::num::ParseIntError;
 
 use crate::DLMap;
 use crate::cs::{BlockId, ChrAsmEquipment, FaceDataBuffer, MultiplayType, SummonParamType};
+use crate::dlkr::{CSNetworkAllocator, InGameHeapAllocator};
 use crate::fd4::FD4Time;
 use crate::{DLVector, stl::DLList};
 
@@ -14,7 +15,7 @@ use shared::OwnedPtr;
 pub struct SosSignMan {
     vftable: usize,
     /// Tree of the sign entries
-    pub signs: DLMap<i32, OwnedPtr<SosSignData>>,
+    pub signs: DLMap<i32, OwnedPtr<SosSignData, InGameHeapAllocator>>,
     /// Tree of sfx's for signs
     pub sign_sfx: DLMap<i32, usize>,
     /// List of signs that were requested to be summoned
@@ -24,7 +25,7 @@ pub struct SosSignMan {
     pub summon_param_type: SummonParamType,
     unk54: [u8; 4],
     /// List of data for join push notifications
-    pub join_data: DLList<OwnedPtr<PhantomJoinData>>,
+    pub join_data: DLList<OwnedPtr<PhantomJoinData, CSNetworkAllocator>>,
     /// Completely unused, no reads or writes other then initialization and destruction
     unk70: DLList<[u8; 0x28]>,
     unk88: u8,

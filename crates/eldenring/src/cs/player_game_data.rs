@@ -4,6 +4,7 @@ use std::ptr::NonNull;
 use bitfield::bitfield;
 use thiserror::Error;
 
+use crate::dlkr::MainHeapAllocator;
 use crate::{
     ArrayWithHeader, DLList, DLVector,
     cs::{ChrType, MultiplayRole, QuickmatchDesiredTeam},
@@ -135,7 +136,7 @@ pub struct PlayerGameData {
     pub equipment: EquipGameData,
     pub face_data: FaceData,
     /// Describes the storage box contents.
-    pub storage: Option<OwnedPtr<EquipInventoryData>>,
+    pub storage: Option<OwnedPtr<EquipInventoryData, MainHeapAllocator>>,
     gesture_game_data: usize,
     ride_game_data: usize,
     unk8e8: usize,
@@ -425,15 +426,17 @@ pub struct EquipGameData {
     unk68: u32,
     pub chr_asm: ChrAsm,
     pub equip_inventory_data: EquipInventoryData,
-    pub equip_magic_data: OwnedPtr<EquipMagicData>,
+    pub equip_magic_data: OwnedPtr<EquipMagicData, MainHeapAllocator>,
     pub equip_item_data: EquipItemData,
-    equip_gesture_data: Option<OwnedPtr<()>>,
+    equip_gesture_data: usize,
     /// Tracker for the item replenishing from the chest.
     /// Only present in the main player's game data.
-    pub item_replenish_state_tracker: Option<OwnedPtr<ItemReplenishStateTracker>>,
+    pub item_replenish_state_tracker:
+        Option<OwnedPtr<ItemReplenishStateTracker, MainHeapAllocator>>,
     /// Tracker for the item restoration after quickmatch.
     /// Only present in the main player's game data.
-    pub qm_item_backup_vector: Option<OwnedPtr<DLVector<QMItemBackupVectorItem>>>,
+    pub qm_item_backup_vector:
+        Option<OwnedPtr<DLVector<QMItemBackupVectorItem>, MainHeapAllocator>>,
     pub equipment_entries: ChrAsmEquipEntries,
     pub physick_tears: [OptionalItemId; 2],
     pub extra_physick_tear: OptionalItemId,
@@ -504,7 +507,7 @@ pub struct InventoryItemsData {
     pub normal_items_capacity: u32,
 
     /// A pointer to the head of the normal items inventory.
-    pub normal_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>>,
+    pub normal_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>, MainHeapAllocator>,
 
     /// The length currently in use of the normal items inventory.
     ///
@@ -518,7 +521,7 @@ pub struct InventoryItemsData {
     pub key_items_capacity: u32,
 
     /// A pointer to the head of the key items inventory.
-    pub key_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>>,
+    pub key_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>, MainHeapAllocator>,
 
     /// The length currently in use of the key items inventory.
     ///
@@ -536,7 +539,8 @@ pub struct InventoryItemsData {
     /// Unless new key items are somehow obtained in multiplayer, this only contains
     /// copies of the items from `key_items` that have `REGENERATIVE_MATERIAL`
     /// and `WONDROUS_PHYSICK_TEAR` types (pots and wondrous physic tears).
-    pub multiplay_key_items_head: OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>>,
+    pub multiplay_key_items_head:
+        OwnedPtr<MaybeEmpty<EquipInventoryDataListEntry>, MainHeapAllocator>,
 
     /// The length currently in use of the multiplayer key items inventory.
     ///
@@ -560,11 +564,11 @@ pub struct InventoryItemsData {
     pub key_items_accessor: InventoryItemListAccessor,
 
     /// Contains the indices into the item ID mapping list.
-    pub item_id_mapping_indices: OwnedPtr<[i16; 2017]>,
+    pub item_id_mapping_indices: OwnedPtr<[i16; 2017], MainHeapAllocator>,
     pub item_id_mapping_pool_len: u32,
     /// Contains table of item IDs and their corresponding location in the equip inventory data
     /// lists.
-    pub item_id_mapping: OwnedPtr<ArrayWithHeader<ItemIdMapping>>,
+    pub item_id_mapping: OwnedPtr<ArrayWithHeader<ItemIdMapping>, MainHeapAllocator>,
     /// Index of the latest `item_id_mapping` free head, or -1 if none
     pub item_id_mapping_free_head: i16,
 }
@@ -1035,8 +1039,8 @@ pub struct EquipItemData {
     pub quick_slots: [EquipDataItem; 10],
     pub pouch_slots: [EquipDataItem; 6],
     pub great_rune: EquipDataItem,
-    pub equip_entries: OwnedPtr<ChrAsmEquipEntries>,
-    pub inventory: OwnedPtr<EquipInventoryData>,
+    pub equip_entries: NonNull<ChrAsmEquipEntries>,
+    pub inventory: NonNull<EquipInventoryData>,
     pub selected_quick_slot: i32,
     unka4: u32,
 }

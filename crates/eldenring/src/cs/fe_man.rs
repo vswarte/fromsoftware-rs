@@ -1,6 +1,6 @@
 use std::{fmt::Display, ptr::NonNull};
 
-use crate::{CSFixedList, dltx::DLString};
+use crate::{CSFixedList, dlkr::MenuHeapAllocator, dltx::DLString};
 use shared::{F32Vector4, OwnedPtr};
 
 use super::{CSMenuManImp, FieldInsHandle};
@@ -28,7 +28,7 @@ pub struct CSFeManImp {
     game_rend: usize,
     pub menu_man: NonNull<CSMenuManImp>,
     /// Object, containing all scaleform data for FrontEnd (FE) scene
-    pub front_end_view: OwnedPtr<FrontEndView>,
+    pub front_end_view: OwnedPtr<FrontEndView, MenuHeapAllocator>,
     fade_screen: usize,
     fe_system_announce_view: usize,
     fe_summon_message_view: usize,

@@ -58,13 +58,13 @@ fn render_graphics_resource_manager<'a>(
             ui.table_next_column();
             ui.text(format!("{}", fxr_node.id));
             ui.table_next_column();
-            fxr_node.fxr_wrapper.render_debug(ui);
+            // fxr_node.fxr_wrapper.render_debug(ui);
         },
     );
 }
 
 impl DebugDisplay for FxrWrapper {
-    fn render_debug(&self, ui: &Ui) {
-        ui.pointer("FXR", &self.fxr);
+    fn render_debug(&self, _ui: &Ui) {
+        // ui.pointer("FXR", &self.fxr);
     }
 }

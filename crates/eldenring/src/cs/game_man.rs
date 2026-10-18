@@ -4,6 +4,7 @@ use crate::cs::{
     BlockId, CSEzTask, CSEzUpdateTask, CSRandSFMT, CSRandXorshift, MultiplayRole, PartyMemberInfo,
     SummonParamType,
 };
+use crate::dlkr::MainHeapAllocator;
 use crate::dlut::DLDateTime;
 use crate::position::BlockPosition;
 use fromsoftware_shared::{FromStatic, OwnedPtr, load_static_indirect};
@@ -175,7 +176,7 @@ pub struct GameMan {
     pub summon_param_type: SummonParamType,
     pub multiplay_role: MultiplayRole,
     pub has_password: bool,
-    pub party_member_info: OwnedPtr<PartyMemberInfo>,
+    pub party_member_info: OwnedPtr<PartyMemberInfo, MainHeapAllocator>,
     unld98: [u8; 0xd8],
     pub character_name_is_empty: bool,
 }

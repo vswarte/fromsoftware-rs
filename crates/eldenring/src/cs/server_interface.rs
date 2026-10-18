@@ -1,4 +1,4 @@
-use crate::{DLVector, dltx::DLString, from_net::FNAllocator};
+use crate::{DLVector, dlkr::CSNetworkAllocator, dltx::DLString, from_net::FNAllocator};
 use fromsoftware_shared::OwnedPtr;
 
 #[repr(C)]
@@ -6,8 +6,8 @@ use fromsoftware_shared::OwnedPtr;
 pub struct CSServerInterface {
     fn_client: usize,
     unk8: u32,
-    server_log_data_tracker: OwnedPtr<()>,
-    net_player_watcher: OwnedPtr<()>,
+    server_log_data_tracker: OwnedPtr<(), CSNetworkAllocator>,
+    net_player_watcher: OwnedPtr<(), CSNetworkAllocator>,
     unk20: usize,
     unk28: usize,
     unk30: usize,

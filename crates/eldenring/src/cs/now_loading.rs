@@ -1,7 +1,10 @@
 /// Used by the game to determine what background image to display during a loading screen.
-use crate::cs::{
-    CSRandXorshift,
-    task::{CSEzTask, CSEzUpdateTask},
+use crate::{
+    cs::{
+        CSRandXorshift,
+        task::{CSEzTask, CSEzUpdateTask},
+    },
+    dlkr::InGameHeapAllocator,
 };
 use shared::OwnedPtr;
 
@@ -12,7 +15,7 @@ use shared::OwnedPtr;
 #[shared::singleton("CSNowLoadingHelper")]
 pub struct CSNowLoadingHelper {
     vftable: u64,
-    pub rand_xorshift: OwnedPtr<CSRandXorshift>,
+    pub rand_xorshift: OwnedPtr<CSRandXorshift, InGameHeapAllocator>,
     pub update_task: CSEzUpdateTask<CSEzTask, Self>,
     unk38: u64,
     unk40: u64,

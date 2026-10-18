@@ -1,10 +1,14 @@
 use std::{borrow::Cow, ptr::NonNull};
 
-use shared::{FromStatic, OwnedPtr};
+use shared::{FromStatic, IncompleteArrayField, OwnedPtr};
 
 use vtable_rs::VPtr;
 
-use crate::{DLVector, dlkr::DLAllocator, rva};
+use crate::{
+    DLVector,
+    dlkr::{DLAllocator, DynamicMainHeapAllocator},
+    rva,
+};
 
 #[vtable_rs::vtable]
 pub trait DLCipherKeyVmt {
@@ -40,26 +44,26 @@ impl DLCipherKey {
 #[repr(C)]
 pub struct DLSerialCipherKey {
     pub base: DLCipherKey,
-    key: OwnedPtr<u8>,
-    key_length: usize,
+    pub key: OwnedPtr<IncompleteArrayField<u8>, DynamicMainHeapAllocator>,
+    pub key_length: usize,
 }
 
 #[repr(C)]
 pub struct AESEncrypter {
     vftable: usize,
-    algorithm: OwnedPtr<DLRijndaelAlgorithm>,
+    pub algorithm: OwnedPtr<DLCipherAlgorithm, DynamicMainHeapAllocator>,
     /// Set to 0x60, might be size of the IV or nonce?
     unk10: u64,
 }
 
 #[repr(C)]
 pub struct AESDecrypter {
-    base: DLDecrypter,
-    algorithm: OwnedPtr<DLRijndaelAlgorithm>,
+    pub base: DLDecrypter,
+    pub algorithm: OwnedPtr<DLCipherAlgorithm, DynamicMainHeapAllocator>,
 }
 
 #[repr(C)]
-pub struct DLRijndaelAlgorithm {
+pub struct DLCipherAlgorithm {
     vftable: usize,
 }
 
@@ -215,7 +219,7 @@ pub struct OpenSslAesCipher {
 #[repr(C)]
 pub struct OpenSslAesDecrypter {
     pub base: DLDecrypter,
-    pub cipher_data: OwnedPtr<OpenSslAesCipher>,
+    pub cipher_data: OwnedPtr<OpenSslAesCipher, DynamicMainHeapAllocator>,
 }
 
 #[repr(C)]
@@ -234,15 +238,15 @@ pub struct OpenSslRsaCipher {
     /// RSA key size in bytes
     pub rsa_size: u32,
     /// Input buffer for block operations
-    pub block_input_buffer: OwnedPtr<u8>,
+    pub block_input_buffer: OwnedPtr<u8, DynamicMainHeapAllocator>,
     /// Output buffer for block operations
-    pub block_output_buffer: OwnedPtr<u8>,
+    pub block_output_buffer: OwnedPtr<u8, DynamicMainHeapAllocator>,
 }
 
 #[repr(C)]
 pub struct OpenSslRsaDecrypter {
     pub base: DLDecrypter,
-    pub cipher_data: OwnedPtr<OpenSslRsaCipher>,
+    pub cipher_data: OwnedPtr<OpenSslRsaCipher, DynamicMainHeapAllocator>,
 }
 
 #[vtable_rs::vtable]
@@ -252,13 +256,13 @@ pub trait DLCipherSPIVmt {
         &self,
         params: &CipherInitParams,
         key: &DLCipherKey,
-        allocator: &DLAllocator,
+        allocator: &'static DLAllocator,
     ) -> Option<NonNull<DLDecrypter>>;
     fn get_encrypter(
         &self,
         params: &CipherInitParams,
         key: &DLCipherKey,
-        allocator: &DLAllocator,
+        allocator: &'static DLAllocator,
     ) -> usize;
 }
 
@@ -295,7 +299,7 @@ impl CryptoSPIRegistry {
         &self,
         params: &CipherInitParams,
         key: &DLCipherKey,
-        allocator: &DLAllocator,
+        allocator: &'static DLAllocator,
     ) -> Option<NonNull<DLDecrypter>> {
         if !params.is_valid() {
             return None;

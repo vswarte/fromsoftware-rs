@@ -1,7 +1,6 @@
-use std::mem::ManuallyDrop;
+use std::ptr::NonNull;
 
-use crate::DLMap;
-use shared::OwnedPtr;
+use crate::{DLMap, dlkr::MainHeapAllocator};
 
 #[repr(transparent)]
 pub struct EventFlag(u32);
@@ -39,13 +38,20 @@ pub struct CSEventFlagMan {
 /// Source of name: RTTI
 pub struct CSFD4VirtualMemoryFlag {
     vftable: usize,
-    allocator: usize,
-    unk10: u32,
-    unk14: u32,
-    unk18: u32,
-    /// Used to determine the event flag group.
-    pub event_flag_divisor: u32,
-    /// Size of an event flag group in bytes.
+    pub allocator: &'static MainHeapAllocator,
+    /// Exponent (base 10) used to derive [`Self::group_count`].
+    ///
+    /// 7 by default.
+    pub group_digit_count: u32,
+    /// `10^group_digit_count`. Upper bound on event flag group indices.
+    pub group_count: u32,
+    /// Exponent (base 10) used to derive [`Self::flags_per_block`] and [`Self::event_flag_holder_size`].
+    ///
+    /// 3 by default.
+    pub flag_digit_count: u32,
+    /// `10^flag_digit_count`. Amount of individual flags packed into one flag group.
+    pub flags_per_block: u32,
+    /// `(flags_per_block + 7) >> 3`. Size of one flag group in bytes.
     pub event_flag_holder_size: u32,
     /// Amount of event flag groups.
     pub event_flag_holder_count: u32,
@@ -109,7 +115,7 @@ impl FlagBlockDescriptor {
 
 union FlagBlockLocationUnion {
     holder_offset: u32,
-    external_location: ManuallyDrop<OwnedPtr<FlagBlock>>,
+    external_location: NonNull<FlagBlock>,
 }
 
 #[repr(C)]

@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use shared::{F32Vector3, F32Vector4, OwnedPtr};
 
-use crate::{DLMap, cs::BlockId};
+use crate::{DLMap, cs::BlockId, dlkr::MainHeapAllocator};
 
 #[repr(C)]
 pub struct AutoInvadePoint {
@@ -13,7 +13,7 @@ pub struct AutoInvadePoint {
 #[repr(C)]
 pub struct AutoInvadePointBlockEntry {
     pub count: usize,
-    head: OwnedPtr<AutoInvadePoint>,
+    head: OwnedPtr<AutoInvadePoint, MainHeapAllocator>,
 }
 
 impl AutoInvadePointBlockEntry {

@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use shared::OwnedPtr;
 
-use crate::param::SP_EFFECT_PARAM_ST;
+use crate::{dlkr::InGameHeapAllocator, param::SP_EFFECT_PARAM_ST};
 
 use super::ChrIns;
 
@@ -12,10 +12,10 @@ use super::ChrIns;
 /// Source of name: RTTI
 pub struct SpecialEffect {
     vftable: usize,
-    head: Option<OwnedPtr<SpecialEffectEntry>>,
+    head: Option<OwnedPtr<SpecialEffectEntry, InGameHeapAllocator>>,
     /// ChrIns this SpecialEffect structure belongs to.
     pub owner: NonNull<ChrIns>,
-    unk18: usize,
+    unk18: OwnedPtr<(), InGameHeapAllocator>,
     unk20: [u8; 0x118],
 }
 

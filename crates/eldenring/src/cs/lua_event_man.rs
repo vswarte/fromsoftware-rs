@@ -9,6 +9,7 @@ use crate::{
     DLList,
     cs::{BlockId, CSEzTask, CSEzVoidTask, DeathState, SummonParamType},
     dlkr::DLAllocator,
+    dlkr::{InGameHeapAllocator, MainHeapAllocator},
     dlrf::DLRuntimeClassImpl,
     dltx::{DLShiftJisStringKind, DLString, DLUTF16StringKind},
     fd4::FD4Time,
@@ -18,10 +19,10 @@ use num_enum::TryFromPrimitive;
 #[repr(C)]
 #[singleton("CSLuaEventMan")]
 pub struct CSLuaEventManImp {
-    pub lua_event_observer: OwnedPtr<CSLuaEventObserver>,
-    pub lua_event_proxy: OwnedPtr<CSLuaEventProxy>,
+    pub lua_event_observer: OwnedPtr<CSLuaEventObserver, MainHeapAllocator>,
+    pub lua_event_proxy: OwnedPtr<CSLuaEventProxy, MainHeapAllocator>,
     pub lua_event_script_imitation_class: NonNull<DLRuntimeClassImpl>,
-    pub lua_event_script_imitation: Option<OwnedPtr<CSLuaEventScriptImitation>>,
+    pub lua_event_script_imitation: Option<OwnedPtr<CSLuaEventScriptImitation, MainHeapAllocator>>,
     unk20: i32,
     unk24: i32,
     unk28: [u8; 0x18],
@@ -86,20 +87,20 @@ pub struct EventMsgExecListEntry {
     /// Whether this function is marked for deletion and
     /// should be removed on next game loop update.
     pub is_deleted: bool,
-    pub lua_event_msg_exec: OwnedPtr<CSLuaEventMsgExec>,
+    pub lua_event_msg_exec: OwnedPtr<CSLuaEventMsgExec, InGameHeapAllocator>,
 }
 
 #[repr(C)]
 pub struct CSLuaEventMsgMap {
     vftable: usize,
-    pub event_msg_exec_list: DLList<OwnedPtr<EventMsgExecListEntry>>,
+    pub event_msg_exec_list: DLList<OwnedPtr<EventMsgExecListEntry, InGameHeapAllocator>>,
     /// Entries that were executed but retained to prevent immediate re-execution
     /// - The list is checked before scheduling to reject duplicates.
     /// - After execution, entries with [`EventMsgExecListEntry::repetition`] [`LuaScriptExecuteRepetition::Once`] are either deleted or moved
     ///   here depending on event id and [`EventMsgExecListEntry.is_repeat_message`].
     ///
     /// [`EventMsgExecListEntry.is_repeat_message`]: EventMsgExecListEntry::is_repeat_message
-    pub deferred_event_exec_list: DLList<OwnedPtr<EventMsgExecListEntry>>,
+    pub deferred_event_exec_list: DLList<OwnedPtr<EventMsgExecListEntry, InGameHeapAllocator>>,
     pub lua_script_imitation_class: NonNull<DLRuntimeClassImpl>,
 }
 
@@ -280,8 +281,8 @@ bitfield! {
 #[repr(C)]
 pub struct CSLuaEventObserver {
     vftable: usize,
-    pub lua_event_observees: DLList<OwnedPtr<CSLuaEventCondition>>,
-    pub bonfire_event_observees: DLList<OwnedPtr<CSLuaEventCondition>>,
+    pub lua_event_observees: DLList<OwnedPtr<CSLuaEventCondition, InGameHeapAllocator>>,
+    pub bonfire_event_observees: DLList<OwnedPtr<CSLuaEventCondition, InGameHeapAllocator>>,
     pub bonfire_near_enemy_update_task: CSEzVoidTask<CSEzTask, Self>,
     unk60: i32,
 }

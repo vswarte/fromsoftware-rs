@@ -1,8 +1,11 @@
+use std::mem::MaybeUninit;
 use std::ptr::NonNull;
 
 use vtable_rs::VPtr;
 
-use crate::cs::{CSEzTask, CSEzVoidTask};
+use crate::cs::{CSEzTask, CSEzVoidTask, ManipulatorType, WorldBlockInfo};
+use crate::dlkr::{DebugHeapAllocator, InGameHeapAllocator, MainHeapAllocator};
+use crate::dltx::DLString;
 use crate::position::HavokPosition;
 use crate::{ChainingMap, DLList, DLMap, UnkDLTree};
 use crate::{DLVector, cs::ChrIns};
@@ -11,32 +14,41 @@ use shared::{F32Vector4, OwnedPtr, Subclass, Superclass};
 use super::{BlockId, ChrCam, FieldInsHandle, NetChrSync, PlayerIns};
 
 #[repr(C)]
+pub struct WorldChrManEntryAccessor<T> {
+    pub count: u32,
+    pub data: NonNull<T>,
+}
+
+impl<T> WorldChrManEntryAccessor<T> {
+    pub fn entries(&self) -> &[T] {
+        unsafe { std::slice::from_raw_parts(self.data.as_ref(), self.count as usize) }
+    }
+
+    pub fn entries_mut(&mut self) -> &mut [T] {
+        unsafe { std::slice::from_raw_parts_mut(self.data.as_mut(), self.count as usize) }
+    }
+}
+
+#[repr(C)]
 /// Source of name: RTTI
 #[shared::singleton("WorldChrMan")]
 pub struct WorldChrMan {
     vftable: usize,
     unk8: usize,
-    pub world_area_chr: [WorldAreaChr<ChrIns>; 28],
-    pub world_block_chr: [WorldBlockChr<ChrIns>; 192],
-    pub world_grid_area_chr: [WorldGridAreaChr; 6],
+    pub world_area_chr_storage: [MaybeUninit<WorldAreaChr<ChrIns>>; 28],
+    pub world_block_chr_storage: [MaybeUninit<WorldBlockChr<ChrIns>>; 192],
+    pub world_grid_area_chr_storage: [MaybeUninit<WorldGridAreaChr>; 6],
     pub world_area_info_owner: usize,
 
-    pub world_area_chr_list_count: u32,
-    unk10d9c: u32,
-    pub world_area_chr_ptr: usize,
+    pub world_area_chr_accessor: WorldChrManEntryAccessor<WorldAreaChr<ChrIns>>,
+    pub world_block_chr_accessor: WorldChrManEntryAccessor<WorldBlockChr<ChrIns>>,
+    pub world_grid_area_chr_accessor: WorldChrManEntryAccessor<WorldGridAreaChr>,
 
-    pub world_block_chr_list_count: u32,
-    unk10dac: u32,
-    pub world_block_chr_ptr: usize,
-
-    pub world_grid_area_chr_list_count: u32,
-    unk10dbc: u32,
-    pub world_grid_area_chr_ptr: usize,
-
-    pub world_area_list: [OwnedPtr<WorldAreaChrBase>; 34],
+    /// Combined list of pointers to entries in
+    /// [`Self::world_area_chr_storage`] and [`Self::world_grid_area_chr_storage`].
+    pub world_area_list: [Option<NonNull<WorldAreaChrBase>>; 34],
+    /// Count of occupied entries in [`Self::world_area_list`].
     pub world_area_list_count: u32,
-    unk10edc: u32,
-
     /// ChrSet holding the players.
     pub player_chr_set: ChrSet<PlayerIns>,
     /// ChrSet holding bloodmessage and bloodstain ghosts as well as replay ghosts.
@@ -51,36 +63,36 @@ pub struct WorldChrMan {
     pub chr_set_holder_count: u32,
     /// Array of ChrSet holders.
     pub chr_set_holders: [ChrSetHolder<ChrIns>; 196],
-    pub null_chr_set_holder: ChrSetHolder<ChrIns>,
+    pub null_chr_set_holder: Option<ChrSetHolder<ChrIns>>,
     pub chr_sets: [Option<OwnedPtr<ChrSet<ChrIns>>>; 196],
     pub null_chr_set: Option<OwnedPtr<ChrSet<ChrIns>>>,
     pub player_grid_area: Option<NonNull<WorldGridAreaChr>>,
     /// Points to the local player.
-    pub main_player: Option<OwnedPtr<PlayerIns>>,
+    pub main_player: Option<OwnedPtr<PlayerIns, MainHeapAllocator>>,
     /// Points to the chr id `30000` [`SinnerHunt`] player (Spears of the Church covenant boss)
     ///
     /// [`SinnerHunt`]: crate::cs::MultiplayType::SinnerHunt
-    pub sinner_hunter: Option<OwnedPtr<PlayerIns>>,
+    pub sinner_hunter: Option<OwnedPtr<PlayerIns, MainHeapAllocator>>,
 
     unk_block_id_1: BlockId,
     unk_block_id_2: BlockId,
 
     unk1e520: [u8; 0x18],
     /// Manages spirit summons (excluding Torrent).
-    pub summon_buddy_manager: OwnedPtr<SummonBuddyManager>,
+    pub summon_buddy_manager: OwnedPtr<SummonBuddyManager, MainHeapAllocator>,
     unk1e540: usize,
     unk1e548: usize,
     unk1e550: usize,
     unk1e558: u32,
     unk1e55c: f32,
     unk1e560: [u8; 0x80],
-    pub net_chr_sync: OwnedPtr<NetChrSync>,
-    unk1e5e8: usize,
-    unk1e5f0: usize,
-    unk1e5f8: usize,
-    unk1e600: usize,
+    pub net_chr_sync: OwnedPtr<NetChrSync, MainHeapAllocator>,
+    unk1e5e8: OwnedPtr<u8, MainHeapAllocator>,
+    unk1e5f0: OwnedPtr<u8, MainHeapAllocator>,
+    unk1e5f8: OwnedPtr<u8, MainHeapAllocator>,
+    unk1e600: OwnedPtr<u8, MainHeapAllocator>,
     unk1e608: [u8; 0x40],
-    pub debug_chr_creator: OwnedPtr<CSDebugChrCreator>,
+    pub debug_chr_creator: OwnedPtr<CSDebugChrCreator, DebugHeapAllocator>,
     unk1e650: usize,
     unk1e658: usize,
     unk1e660: usize,
@@ -214,7 +226,7 @@ pub struct CSDebugChrCreatorInitData {
     hamari_simulate: bool,
     unkca: [u8; 0x2],
     pub chara_init_param_id: i32,
-    spawn_manipulator_type: u32,
+    pub spawn_manipulator_type: ManipulatorType,
     unkd4: [u8; 0x18],
     spawn_count: u32,
     unkf0: [u8; 0x10],
@@ -239,7 +251,7 @@ where
     T: Subclass<ChrIns> + 'static,
 {
     pub base: WorldAreaChrBase,
-    pub world_area_info: usize,
+    world_area_info: usize,
     unk18: u32,
     unk1c: u32,
     pub world_block_chr: NonNull<WorldBlockChr<T>>,
@@ -250,7 +262,7 @@ where
 /// Source of name: RTTI
 pub struct WorldAreaChrBase {
     vftable: usize,
-    pub world_area_info: usize,
+    world_area_info: usize,
 }
 
 #[repr(C)]
@@ -260,16 +272,27 @@ where
     T: Subclass<ChrIns> + 'static,
 {
     vftable: usize,
-    pub world_block_info1: usize,
-    unk10: [u8; 0x68],
+    pub world_block_info: NonNull<WorldBlockInfo>,
+    pub block_id: BlockId,
+    unk14: [u32; 0x8],
+    unk34: [u32; 0x8],
+    unk54: [u32; 0x8],
     pub chr_set: ChrSet<T>,
     unkd0: [u8; 0x40],
-    pub world_block_info2: usize,
-    pub chr_set_ptr: NonNull<ChrSet<T>>,
-    allocator: usize,
-    unk128: [u8; 0x30],
-    pub block_id: BlockId,
+    pub debug_info: WorldBlockChrDebugInfo<T>,
+    unk158: f32,
     unk15c: u32,
+}
+
+#[repr(C)]
+pub struct WorldBlockChrDebugInfo<T>
+where
+    T: Subclass<ChrIns> + 'static,
+{
+    pub world_block_info: NonNull<WorldBlockInfo>,
+    pub chr_set: NonNull<ChrSet<T>>,
+    unk10: DLString,
+    unk40: i32,
 }
 
 #[vtable_rs::vtable]
@@ -515,7 +538,7 @@ pub struct SummonBuddyManager {
     pub requested_summon_goods_id: i32,
     /// ID of the currently active summon goods.
     pub active_summon_goods_id: i32,
-    pub warp_manager: OwnedPtr<SummonBuddyWarpManager>,
+    pub warp_manager: OwnedPtr<SummonBuddyWarpManager, InGameHeapAllocator>,
     unkf0: usize,
     /// BuddyStoneParam ID used for debug and memory profiling.
     pub debug_buddy_stone_param_id: u32,

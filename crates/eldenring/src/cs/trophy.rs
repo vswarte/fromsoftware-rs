@@ -3,7 +3,10 @@ use std::ops::{Index, IndexMut};
 use shared::{CCallback, OwnedPtr};
 use vtable_rs::VPtr;
 
-use crate::{DLVector, dlkr::DLRunnableVmt};
+use crate::{
+    DLVector,
+    dlkr::{DLRunnableVmt, MainHeapAllocator},
+};
 
 #[repr(C)]
 #[shared::singleton("CSTrophy")]
@@ -11,7 +14,7 @@ use crate::{DLVector, dlkr::DLRunnableVmt};
 pub struct CSTrophyImp {
     vtable: isize,
     /// Holds a structure for concrete achievement granting per platform.
-    pub trophy_platform: OwnedPtr<CSTrophyPlatformImp_forSteam>,
+    pub trophy_platform: OwnedPtr<CSTrophyPlatformImp_forSteam, MainHeapAllocator>,
     unk10: isize,
     unk18: u8,
 }
@@ -20,7 +23,7 @@ pub struct CSTrophyImp {
 pub struct CSTrophyPlatformImp {
     vftable: VPtr<dyn CSTrophyPlatformImpVmt, Self>,
     /// Game specific achievement data.
-    pub trophy_title_info: OwnedPtr<CSTrophyTitleInfo>,
+    pub trophy_title_info: &'static CSTrophyTitleInfo,
     /// Seems to be related to some debug features.
     unk10: DLVector<()>,
     unk30: isize,
@@ -70,7 +73,8 @@ pub struct CSTrophyPlatformImp_forSteam {
     pub base: CSTrophyPlatformImp,
     /// AppId these achievements are for
     pub steam_app_id: isize,
-    pub achievements: OwnedPtr<[CSTrophyPlatformImp_forSteamAchievementItem; 42]>,
+    pub achievements:
+        OwnedPtr<[CSTrophyPlatformImp_forSteamAchievementItem; 42], MainHeapAllocator>,
     /// Amount of the achievements this player unlocked
     pub unlocked_count: u32,
     /// Whether achievement info is initialized or not

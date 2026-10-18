@@ -3,6 +3,7 @@ use shared::{F32ModelMatrix, OwnedPtr, Subclass};
 use crate::{
     DLVector,
     cs::{CSPairAnimNode, ChrIns},
+    dlkr::InGameHeapAllocator,
     dltx::{DLString, DLUTF8StringKind},
     position::{HavokPosition, PositionDelta},
     rotation::{EulerAngles, Quaternion},
@@ -14,7 +15,7 @@ use std::ptr::NonNull;
 pub struct CSChrRideModule {
     vftable: usize,
     pub owner: NonNull<ChrIns>,
-    pub ride_node: OwnedPtr<CSRideNode>,
+    pub ride_node: OwnedPtr<CSRideNode, InGameHeapAllocator>,
     /// Gets populated when mounting another `ChrIns`.
     /// Note: This will be null if you load into the world and you've already mounted a `ChrIns`
     /// during the previous session. This is not populated on the receiving `ChrIns`.
