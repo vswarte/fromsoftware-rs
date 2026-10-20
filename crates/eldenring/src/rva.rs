@@ -13,8 +13,8 @@ use fromsoftware_shared::game_version::{GameVersion, LANG_ID_EN, LANG_ID_JP};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ERGameVersion {
-    Ww2710,
-    Jp2711,
+    Ww2720,
+    Jp2721,
 }
 
 impl GameVersion for ERGameVersion {
@@ -22,8 +22,8 @@ impl GameVersion for ERGameVersion {
 
     fn from_lang_version(lang_id: u16, version: &str) -> Option<Self> {
         match (lang_id, version) {
-            (LANG_ID_EN, "2.7.1.0") => Some(Self::Ww2710),
-            (LANG_ID_JP, "2.7.1.1") => Some(Self::Jp2711),
+            (LANG_ID_EN, "2.7.2.0") => Some(Self::Ww2720),
+            (LANG_ID_JP, "2.7.2.1") => Some(Self::Jp2721),
             _ => None,
         }
     }
@@ -32,8 +32,8 @@ impl GameVersion for ERGameVersion {
 impl ERGameVersion {
     const fn rvas(self) -> RvaBundle {
         match self {
-            Self::Ww2710 => rva_ww::RVAS,
-            Self::Jp2711 => rva_jp::RVAS,
+            Self::Ww2720 => rva_ww::RVAS,
+            Self::Jp2721 => rva_jp::RVAS,
         }
     }
 }
