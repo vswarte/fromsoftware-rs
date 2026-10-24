@@ -1,0 +1,31 @@
+[package]
+name = "nr-fall-damage"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+fromsoftware-shared.workspace = true
+nightreign.workspace = true
+simplelog = "0.12"
+log = "0.4"
+iced-x86 = "1"
+log-panics = { version = "2", features = ["with-backtrace"]}
+
+[dependencies.windows]
+version = "0.62"
+features = [
+    "Win32_Foundation",
+    "Win32_System_Kernel",
+    "Win32_System_Threading",
+    "Win32_System_Diagnostics_Debug",
+    "Win32_System_LibraryLoader",
+    "Win32_System_SystemInformation",
+    "Win32_System_Memory",
+    "Win32_Security",
+]
+
+[lib]
+crate-type = ["cdylib"]
