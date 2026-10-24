@@ -3,12 +3,13 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::ptr::NonNull;
+use std::str::FromStr;
 
 use encoding_rs::DecoderResult;
 use fromsoftware_shared_stl::{BasicString, CodeUnit};
 use thiserror::Error;
 
-use crate::dlkr::DLAllocator;
+use crate::dlkr::{DLAllocator, DLFixedStdAllocator};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
@@ -707,5 +708,192 @@ impl<T: DLStringKind, const N: usize> fmt::Display for DLInplaceStr<T, N> {
 impl<T: DLStringKind, const N: usize> fmt::Debug for DLInplaceStr<T, N> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.base.fmt(f)
+    }
+}
+
+#[repr(C)]
+/// Fixed-size string with embedded fixed buffer allocator.
+/// String itself is stored in either the sso buffer or fixed allocator's buffer.
+pub struct DLFixedString<T: DLStringKind, const N: usize> {
+    pub base: BasicString<T::Unit, DLFixedStdAllocator<T::Unit, N>>,
+    pub encoding: DLCharacterSet,
+}
+
+impl<T: DLStringKind, const N: usize> DLFixedString<T, N> {
+    fn decode_storage(&self) -> Result<Cow<'_, str>, DLStringError> {
+        T::decode(self.base.as_bytes())
+    }
+
+    pub fn new() -> Self {
+        Self {
+            base: BasicString::new_in(DLFixedStdAllocator::<T::Unit, N>::default()),
+            encoding: T::ENCODING,
+        }
+    }
+
+    /// Replaces the entire content by encoding a UTF-8 string.
+    pub fn assign_str(&mut self, s: impl AsRef<str>) -> Result<(), DLStringError> {
+        let units = T::encode(s.as_ref())?;
+        self.base.assign(&units);
+        Ok(())
+    }
+
+    /// Decodes the stored bytes to an owned UTF-8 `String`
+    pub fn to_string(&self) -> Result<String, DLStringError> {
+        self.decode_storage().map(Cow::into_owned)
+    }
+
+    /// Transcodes from a `DLFixedString` of a different kind.
+    /// If the encodings match the bytes are copied directly without going
+    /// through UTF-8
+    pub fn transcode_from<U: DLStringKind, const M: usize>(
+        other: &DLFixedString<U, M>,
+    ) -> Result<Self, DLStringError> {
+        if T::ENCODING == U::ENCODING {
+            // Safety: T::Unit and U::Unit are guaranteed to be the same here
+            let units: &[<T as DLStringKind>::Unit] =
+                unsafe { std::mem::transmute(other.base.as_code_units()) };
+            Ok(Self {
+                base: BasicString::from_units_in(
+                    units,
+                    DLFixedStdAllocator::<T::Unit, N>::default(),
+                ),
+                encoding: T::ENCODING,
+            })
+        } else {
+            Self::from_str(&other.decode_storage()?)
+        }
+    }
+}
+
+impl<T: DLStringKind, const N: usize> FromStr for DLFixedString<T, N> {
+    type Err = DLStringError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let units = T::encode(s)?;
+        Ok(Self {
+            base: BasicString::from_units_in(&units, DLFixedStdAllocator::<T::Unit, N>::default()),
+            encoding: T::ENCODING,
+        })
+    }
+}
+impl<T: DLStringKind, const N: usize> TryFrom<&str> for DLFixedString<T, N> {
+    type Error = DLStringError;
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        Self::from_str(s)
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Default for DLFixedString<T, N> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Deref for DLFixedString<T, N> {
+    type Target = BasicString<T::Unit, DLFixedStdAllocator<T::Unit, N>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.base
+    }
+}
+
+impl<T: DLStringKind, const N: usize> DerefMut for DLFixedString<T, N> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.base
+    }
+}
+
+impl<T: DLStringKind, const N: usize> fmt::Display for DLFixedString<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_string() {
+            Ok(s) => f.write_str(&s),
+            Err(_) => Err(fmt::Error),
+        }
+    }
+}
+
+impl<T: DLStringKind, const N: usize> fmt::Debug for DLFixedString<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.to_string() {
+            Ok(s) => write!(f, "DLFixedString({:?}, {:?})", T::ENCODING, s),
+            Err(_) => write!(f, "DLFixedString({:?}, <decode error>)", T::ENCODING),
+        }
+    }
+}
+
+/// `DLFixedString<T, N> == DLFixedString<U, M>`: byte comparison when same
+/// encoding, UTF-8 round-trip when different.
+impl<T: DLStringKind, U: DLStringKind, const N: usize, const M: usize>
+    PartialEq<DLFixedString<U, M>> for DLFixedString<T, N>
+{
+    fn eq(&self, other: &DLFixedString<U, M>) -> bool {
+        if T::ENCODING == U::ENCODING {
+            self.base.as_bytes() == other.base.as_bytes()
+        } else {
+            match (self.to_string(), other.to_string()) {
+                (Ok(a), Ok(b)) => a == b,
+                _ => false,
+            }
+        }
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Eq for DLFixedString<T, N> {}
+
+/// `DLFixedString == &str`, `DLFixedString == String`, `DLFixedString == Cow<str>`, etc.
+///
+/// For UTF-8/16/32 this is allocation-free.
+/// For legacy encodings (Shift-JIS, EUC-JP, ISO-8859-1) it uses a
+/// stack-allocated 64-byte decode buffer.
+impl<T: DLStringKind, const N: usize, S: AsRef<str>> PartialEq<S> for DLFixedString<T, N> {
+    fn eq(&self, other: &S) -> bool {
+        bytes_eq_str(self.base.as_bytes(), T::ENCODING, other.as_ref())
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Ord for DLFixedString<T, N>
+where
+    T::Unit: Ord,
+{
+    #[inline]
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.base.cmp(&other.base)
+    }
+}
+
+impl<T: DLStringKind, U: DLStringKind, const N: usize, const M: usize>
+    PartialOrd<DLFixedString<U, M>> for DLFixedString<T, N>
+{
+    #[inline]
+    fn partial_cmp(&self, other: &DLFixedString<U, M>) -> Option<std::cmp::Ordering> {
+        if T::ENCODING == U::ENCODING {
+            self.base.as_bytes().partial_cmp(other.base.as_bytes())
+        } else {
+            match (self.to_string(), other.to_string()) {
+                (Ok(a), Ok(b)) => a.partial_cmp(&b),
+                _ => None,
+            }
+        }
+    }
+}
+
+impl<T: DLStringKind, const N: usize, S: AsRef<str>> PartialOrd<S> for DLFixedString<T, N> {
+    #[inline]
+    fn partial_cmp(&self, other: &S) -> Option<std::cmp::Ordering> {
+        if T::ENCODING == DLCharacterSet::UTF8 {
+            self.base.as_bytes().partial_cmp(other.as_ref().as_bytes())
+        } else {
+            self.to_string()
+                .ok()
+                .as_deref()
+                .partial_cmp(&Some(other.as_ref()))
+        }
+    }
+}
+
+impl<T: DLStringKind, const N: usize> Hash for DLFixedString<T, N> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        T::ENCODING.hash(state);
+        self.base.as_code_units().hash(state);
     }
 }
